@@ -6,13 +6,13 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/01/06 03:28:58 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/01/06 18:14:28 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	server
 SRCS	=	main.cpp Encapsulator.cpp
-HEAD	=	Makefile Encapsulator.hpp defines.hpp
+HEAD	=	Makefile Encapsulator.hpp defines.hpp setup.hpp
 SHELL	=	/bin/sh
 CC		=	clang++ -std=c++98
 CCFLAGS	=	-Wall -Werror -Wextra -g

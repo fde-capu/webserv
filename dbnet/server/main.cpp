@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/01/06 06:41:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/01/06 18:28:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,15 @@
 #include <iostream>
 #include "Encapsulator.hpp"
 #include "defines.hpp"
-
-#define PORT "3490" // the port users will be connecting to
-
-#define BACKLOG 10 // how many pending connections queue will hold
-
-Encapsulator * g_capsule;
+#include "setup.hpp"
 
 void sigchld_handler(int s)
 {
 	(void)s;
 	g_capsule->~Encapsulator();
-	std::cout << std::endl << "Server is dn." << std::endl;
+	std::cout NL;
+	std::cout TURN_OFF;
+	std::cout THANK_YOU;
 	exit(0);
 }
 
@@ -50,7 +47,6 @@ void *get_in_addr(struct sockaddr *sa)
 	if (sa->sa_family == AF_INET) {
 		return &(((struct sockaddr_in*)sa)->sin_addr);
 	}
-
 	return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
@@ -66,6 +62,17 @@ void do_or_die(const int x, const char * motive)
 		die(motive);
 }
 
+void signals_up()
+{
+	struct sigaction sa;
+	sa.sa_handler = sigchld_handler;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = SA_SIGINFO;
+	do_or_die(sigaction(SIGINT, &sa, NULL), "sigaction");
+	do_or_die(sigaction(SIGQUIT, &sa, NULL), "sigaction");
+	do_or_die(sigaction(SIGTSTP, &sa, NULL), "sigaction");
+}
+
 int main(void)
 {
 	int sockfd, new_fd; // listen on sock_fd, new connection on new_fd
@@ -74,7 +81,6 @@ int main(void)
 	struct sockaddr_storage their_addr; // connector's address information
 	socklen_t sin_size;
 
-	struct sigaction sa;
 	int yes=1;
 //	char s[INET6_ADDRSTRLEN];
 	int rv;
@@ -129,13 +135,7 @@ int main(void)
 	pfds[0].events = POLLIN;
 	int num_events;
 
-	sa.sa_handler = sigchld_handler;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_SIGINFO;
-	if (sigaction(SIGINT, &sa, NULL) == -1) {
-		perror("sigaction");
-		exit(1);
-	}
+	signals_up();
 
 	std::cout RUNNING;
 
