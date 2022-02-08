@@ -1,0 +1,2 @@
+sed -i 's/80;/3491;/' $PWD/sandbox/conf/nginx.conf
+alias nginx=$PWD/sandbox/sbin/nginx
