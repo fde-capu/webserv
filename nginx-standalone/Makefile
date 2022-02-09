@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/07 20:55:24 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/08 20:26:32 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/08 20:40:26 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,6 +15,7 @@ DIRS	=	sandbox pcre
 BIN		=	$(PWD)/sandbox/sbin/nginx
 
 all:	$(DIRS) $(BIN)
+	@echo 'Please run: `source ./source-me-after-install-rc`.'
 
 $(BIN):
 	cd nginx-src && \
