@@ -21,18 +21,10 @@ curl -vD- localhost:3491
 
 { divider; } 2> /dev/null
 
-curl -vD- localhostB3491:3491
-
-{ divider; } 2> /dev/null
-
 curl -vD- localhost:3492
 
 { divider; } 2> /dev/null
 
 curl -vD- localhost:3493
-
-{ divider; } 2> /dev/null
-
-curl -vD- localhost:3499 # does not exist
 
 { divider; } 2> /dev/null
