@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/10 02:43:27 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/10 19:14:01 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,7 @@ nginx-build:
 	make && \
 	source source-me-after-install-rc
 nginx:		nginx-build
-	cd test-confs && \
+	-cd test-confs && \
 	pkill nginx
 	$(NGINX) -c $(CONF) && \
 	netstat -tunlp
@@ -69,3 +69,10 @@ nginx-fclean:
 nginx-re:
 	cd nginx-standalone && \
 	make re
+nginx-relog:
+	cd nginx-standalone/sandbox/logs && \
+	echo '' > error.log && \
+	echo '' > access.log
+nginx-vimlog:
+	cd nginx-standalone/sandbox/logs && \
+	vim -O error.log access.log
