@@ -28,3 +28,7 @@ curl -vD- localhost:3492
 curl -vD- localhost:3493
 
 { divider; } 2> /dev/null
+
+curl -LvD- localhost:3493
+
+{ divider; } 2> /dev/null

@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/10 01:12:36 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/10 02:43:27 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,14 +23,16 @@ VALFLAG	=	--tool=memcheck \
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--show-reachable=yes
+NGINX	=	$(PWD)/nginx-standalone/sandbox/sbin/nginx
+CONF	=	42_tester.conf
 all:		$(NAME)
 $(NAME):	$(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) -o $(NAME)
 $(OBJS):	%.o : %.cpp $(HEAD)
 	$(CC) $(CCFLAGS) -o $@ -c $<
-clean:
+clean:		nginx-clean
 	-rm -f $(OBJS)
-fclean:		clean
+fclean:		clean nginx-fclean
 	-rm -f $(NAME)
 re:			fclean all
 rt:			re t
@@ -41,12 +43,29 @@ t:			all
 v:			all
 	$(VAL) ./$(NAME)
 nginx-build:
-	cd nginx-standalone && \
-	make
+	-cd nginx-standalone && \
+	make && \
+	source source-me-after-install-rc
 nginx:		nginx-build
 	cd test-confs && \
 	pkill nginx
-	$(PWD)/nginx-standalone/sandbox/sbin/nginx -c 42_tester.conf && \
+	$(NGINX) -c $(CONF) && \
 	netstat -tunlp
 nginx-t:	nginx
 	./general_tests.sh
+nginx-r:
+	$(NGINX) -s reload
+	netstat -tunlp
+nginx-rt:	nginx-r
+	./general_tests.sh
+nginx-tc:
+	$(NGINX) -c $(CONF) -t
+nginx-clean:
+	cd nginx-standalone && \
+	make clean
+nginx-fclean:
+	cd nginx-standalone && \
+	make fclean
+nginx-re:
+	cd nginx-standalone && \
+	make re
