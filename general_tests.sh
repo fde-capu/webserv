@@ -83,7 +83,17 @@ curl -vD- http://localhost:3490 -H 'Host: krazything'
 
 { anounce \
 \
-	':3491, another server, another folder:' \
+	'This call must default to :3490 (first conf declaration).' \
+\
+; } 2> /dev/null
+
+curl -vD- http://localhost:3490 -H 'Host: unexistent_servername'
+
+#################################################################
+
+{ anounce \
+\
+	':3491, another port, another server, another folder:' \
 \
 ; } 2> /dev/null
 
