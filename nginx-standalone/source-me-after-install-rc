@@ -1,4 +1,0 @@
-sed -i 's/80;/3491;/' $PWD/sandbox/conf/nginx.conf
-alias nginx=$PWD/sandbox/sbin/nginx
-rm -rf $PWD/sandbox/html
-ln -s $PWD/../test-confs/* $PWD/sandbox

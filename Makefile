@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/12 13:01:57 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/12 17:39:09 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,10 @@ VALFLAG	=	--tool=memcheck \
 			--show-reachable=yes
 NGINX	=	$(PWD)/nginx-standalone/sandbox/sbin/nginx
 CONF	=	42_tester.conf
-all:		$(NAME)
+MAKEFLAGS =	--no-print-directory
+#all:		$(NAME)
+all:		nginx-build lynx
+	@echo 'Please run: `source ./source-me-after-install-rc`.'
 $(NAME):	$(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) -o $(NAME)
 $(OBJS):	%.o : %.cpp $(HEAD)
@@ -43,9 +46,10 @@ t:			all
 v:			all
 	$(VAL) ./$(NAME)
 nginx-build:
-	-cd nginx-standalone && \
-	make && \
-	source source-me-after-install-rc
+	@echo 'nginx: '
+	-@cd nginx-standalone && \
+	make
+	-@source source-me-after-install-rc
 nginx:		nginx-build
 	-cd test-confs && \
 	pkill nginx
@@ -77,7 +81,8 @@ nginx-vimlog:
 	cd nginx-standalone/sandbox/logs && \
 	vim -O error.log access.log
 lynx:
-	-cd lynx-standalone && \
+	@echo 'lynx: '
+	@-cd lynx-standalone && \
 	make
 lynx-fclean:
 	cd lynx-standalone && \
@@ -88,3 +93,5 @@ lynx-clean:
 lynx-re:
 	cd lynx-standalone && \
 	make re
+lynx-nginx: lynx nginx
+lynx-nginx-t: lynx nginx-t
