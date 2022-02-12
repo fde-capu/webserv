@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/12 17:39:09 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/12 21:48:49 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ nginx-build:
 	@echo 'nginx: '
 	-@cd nginx-standalone && \
 	make
-	-@source source-me-after-install-rc
+	-@source ./source-me-after-install-rc
 nginx:		nginx-build
 	-cd test-confs && \
 	pkill nginx
