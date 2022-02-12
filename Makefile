@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/10 19:14:01 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/12 13:01:57 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,9 +30,9 @@ $(NAME):	$(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) -o $(NAME)
 $(OBJS):	%.o : %.cpp $(HEAD)
 	$(CC) $(CCFLAGS) -o $@ -c $<
-clean:		nginx-clean
+clean:		nginx-clean lynx-clean
 	-rm -f $(OBJS)
-fclean:		clean nginx-fclean
+fclean:		clean nginx-fclean lynx-fclean
 	-rm -f $(NAME)
 re:			fclean all
 rt:			re t
@@ -76,3 +76,15 @@ nginx-relog:
 nginx-vimlog:
 	cd nginx-standalone/sandbox/logs && \
 	vim -O error.log access.log
+lynx:
+	-cd lynx-standalone && \
+	make
+lynx-fclean:
+	cd lynx-standalone && \
+	make fclean
+lynx-clean:
+	cd lynx-standalone && \
+	make clean
+lynx-re:
+	cd lynx-standalone && \
+	make re
