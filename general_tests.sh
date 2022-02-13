@@ -131,3 +131,13 @@ curl -vD- http://localhost:3493 -L
 curl -vD- http://localhost:3493
 
 #################################################################
+
+{ anounce \
+\
+	'Specific test for debug:' \
+\
+; } 2> /dev/null
+
+curl -vD- http://localhost:4242/directory
+echo '----------------------'
+curl -vD- http://localhost:4242/directory/
