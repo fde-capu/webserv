@@ -138,6 +138,6 @@ curl -vD- http://localhost:3493
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:4242/directory
+curl -vD- http://localhost:4242
 echo '----------------------'
 curl -vD- http://localhost:4242/directory/

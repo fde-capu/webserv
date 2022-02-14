@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/13 22:32:32 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/14 20:39:17 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,7 +55,7 @@ nginx:		nginx-build
 	pkill nginx
 	$(NGINX) -c $(CONF) && \
 	netstat -tunlp
-nginx-t:	nginx
+nginx-t:	nginx nginx-r
 	./general_tests.sh
 nginx-r:
 	$(NGINX) -s reload
