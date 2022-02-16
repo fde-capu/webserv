@@ -1,5 +1,7 @@
 #!/bin/bash
 
+name_server="127.0.0.1";
+
 # On 42SP Workspace, there are opened:
 
 #	tcp 	0	0.0.0.0:5901	0.0.0.0:*	LISTEN	-	(VNC server)
@@ -57,7 +59,7 @@ anounce()
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:3490
+curl -vD- http://$name_server:3490
 
 #################################################################
 
@@ -67,7 +69,7 @@ curl -vD- http://localhost:3490
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:3490/somesub/
+curl -vD- http://$name_server:3490/somesub/
 
 #################################################################
 
@@ -77,7 +79,7 @@ curl -vD- http://localhost:3490/somesub/
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:3490 -H 'Host: krazything'
+curl -vD- http://$name_server:3490 -H 'Host: krazything'
 
 #################################################################
 
@@ -87,7 +89,7 @@ curl -vD- http://localhost:3490 -H 'Host: krazything'
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:3490 -H 'Host: unexistent_servername'
+curl -vD- http://$name_server:3490 -H 'Host: unexistent_servername'
 
 #################################################################
 
@@ -97,7 +99,7 @@ curl -vD- http://localhost:3490 -H 'Host: unexistent_servername'
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:3491
+curl -vD- http://$name_server:3491
 
 #################################################################
 
@@ -107,7 +109,7 @@ curl -vD- http://localhost:3491
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:3492
+curl -vD- http://$name_server:3492
 
 #################################################################
 
@@ -118,7 +120,7 @@ curl -vD- http://localhost:3492
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:3493 -L
+curl -vD- http://$name_server:3493 -L
 
 #################################################################
 
@@ -128,7 +130,7 @@ curl -vD- http://localhost:3493 -L
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:3493
+curl -vD- http://$name_server:3493
 
 #################################################################
 
@@ -138,6 +140,6 @@ curl -vD- http://localhost:3493
 \
 ; } 2> /dev/null
 
-curl -vD- http://localhost:4242
+curl -vD- http://$name_server:4242
 echo '----------------------'
-curl -vD- http://localhost:4242/directory/
+curl -vD- http://$name_server:4242/directory/
