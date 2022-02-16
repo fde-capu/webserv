@@ -149,5 +149,6 @@ anounce()
 
 #curl -vD- http://$name_server:4242/directory/Yeah
 curl http://$name_server:3490/test.php -vD-
+curl http://$name_server:3490/cgi-bin/test.php -vD-
 
 #################################################################
