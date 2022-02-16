@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/16 14:25:12 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/16 17:37:42 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -78,11 +78,10 @@ nginx-relog:
 	cd nginx-standalone/sandbox/logs && \
 	echo '' > error.log && \
 	echo '' > access.log
-nginx-vimlog:
+nginx-catlog:
 	cd nginx-standalone/sandbox/logs && \
 	cat access.log && cat error.log
-
-nginx-log: nginx-relog nginx-t nginx-vimlog
+nginx-log: nginx-relog nginx-t nginx-catlog
 lynx:
 	@echo 'lynx: '
 	@-cd lynx-standalone && \

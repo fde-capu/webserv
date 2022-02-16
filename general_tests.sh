@@ -29,6 +29,7 @@ name_server="127.0.0.1";
 
 divider()
 {
+	return ;
 	{ set +x; } 2> /dev/null
 	echo '\n\n--------------------------\n\n'
 	set -x
@@ -36,6 +37,7 @@ divider()
 
 anounce()
 {
+	return ;
 	{ divider; } 2> /dev/null
 	echo $1
 	echo '\n'
@@ -146,6 +148,6 @@ anounce()
 #curl -vD- http://$name_server:4242/directory/unexistent_file
 
 #curl -vD- http://$name_server:4242/directory/Yeah
-curl -vD- http://$name_server:3490/test.php
+curl http://$name_server:3490/test.php -vD-
 
 #################################################################
