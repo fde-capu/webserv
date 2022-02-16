@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 name_server="127.0.0.1";
 
@@ -30,15 +30,15 @@ name_server="127.0.0.1";
 divider()
 {
 	{ set +x; } 2> /dev/null
-	echo -e '\n\n--------------------------\n\n'
+	echo '\n\n--------------------------\n\n'
 	set -x
 }
 
 anounce()
 {
 	{ divider; } 2> /dev/null
-	echo -e $1
-	echo -e '\n'
+	echo $1
+	echo '\n'
 }
 
 { anounce \
@@ -59,7 +59,7 @@ anounce()
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3490
+#curl -vD- http://$name_server:3490
 
 #################################################################
 
@@ -69,27 +69,27 @@ curl -vD- http://$name_server:3490
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3490/somesub/
+#curl -vD- http://$name_server:3490/somesub/
 
 #################################################################
 
 { anounce \
 \
-	'Send Host header as another server_name.' \
+	'Send Host header as another server_name (existent).' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3490 -H 'Host: krazything'
+#curl -vD- http://$name_server:3490 -H 'Host: krazything'
 
 #################################################################
 
 { anounce \
 \
-	'This call must default to :3490 (first conf declaration).' \
+	'Unexistent servername must default to :3490 (first conf declaration).' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3490 -H 'Host: unexistent_servername'
+#curl -vD- http://$name_server:3490 -H 'Host: unexistent_servername'
 
 #################################################################
 
@@ -99,7 +99,7 @@ curl -vD- http://$name_server:3490 -H 'Host: unexistent_servername'
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3491
+#curl -vD- http://$name_server:3491
 
 #################################################################
 
@@ -109,7 +109,7 @@ curl -vD- http://$name_server:3491
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3492
+#curl -vD- http://$name_server:3492
 
 #################################################################
 
@@ -120,7 +120,7 @@ curl -vD- http://$name_server:3492
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3493 -L
+#curl -vD- http://$name_server:3493 -L
 
 #################################################################
 
@@ -130,7 +130,7 @@ curl -vD- http://$name_server:3493 -L
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3493
+#curl -vD- http://$name_server:3493
 
 #################################################################
 
@@ -140,8 +140,12 @@ curl -vD- http://$name_server:3493
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:4242/directory/
-curl -vD- http://$name_server:4242/directory/unexistent_file
-curl -vD- http://$name_server:4242/directory/youpi.bla
+#curl -vD- http://$name_server:4242/directory/
+#curl -vD- http://$name_server:4242/directory/youpi.bla
+
+#curl -vD- http://$name_server:4242/directory/unexistent_file
+
+#curl -vD- http://$name_server:4242/directory/Yeah
+curl -vD- http://$name_server:3490/test.php
 
 #################################################################
