@@ -140,6 +140,8 @@ curl -vD- http://$name_server:3493
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:4242
-echo '----------------------'
 curl -vD- http://$name_server:4242/directory/
+curl -vD- http://$name_server:4242/directory/unexistent_file
+curl -vD- http://$name_server:4242/directory/youpi.bla
+
+#################################################################

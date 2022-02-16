@@ -6,10 +6,11 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/14 20:39:17 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/16 14:25:12 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+SERVER	=	127.0.0.1
 NAME	=	webserv
 SRCS	=	
 HEAD	=	Makefile
@@ -79,7 +80,9 @@ nginx-relog:
 	echo '' > access.log
 nginx-vimlog:
 	cd nginx-standalone/sandbox/logs && \
-	vim -O error.log access.log
+	cat access.log && cat error.log
+
+nginx-log: nginx-relog nginx-t nginx-vimlog
 lynx:
 	@echo 'lynx: '
 	@-cd lynx-standalone && \
@@ -95,3 +98,5 @@ lynx-re:
 	make re
 lynx-nginx: lynx nginx
 lynx-nginx-t: lynx nginx-t
+42:	all
+	./ubuntu_tester http://$(SERVER):4242
