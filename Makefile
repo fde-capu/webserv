@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/16 22:20:56 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/17 17:27:42 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,7 @@ VALFLAG	=	--tool=memcheck \
 			--track-origins=yes \
 			--show-reachable=yes
 NGINX	=	$(PWD)/nginx-standalone/sandbox/sbin/nginx
-CONF	=	42_tester.conf
+CONF	=	webserv.conf
 MAKEFLAGS =	--no-print-directory
 #all:		$(NAME)
 all:		nginx-build lynx
@@ -52,15 +52,15 @@ nginx-build:
 	make
 	-@source ./source-me-after-install-rc
 nginx:		nginx-build
-	-cd test-confs && \
+	-cd confs && \
 	pkill nginx
 	$(NGINX) -c $(CONF) && \
-	netstat -tunlp
+	netstat -tnl
 nginx-t:	nginx
 	./general_tests.sh
 nginx-r:
 	$(NGINX) -s reload
-	netstat -tunlp
+	netstat -tnl
 nginx-rt:	nginx-r
 	./general_tests.sh
 nginx-tc:
@@ -99,3 +99,5 @@ lynx-nginx: lynx nginx
 lynx-nginx-t: lynx nginx-t
 42:	all nginx-r
 	-./ubuntu_tester http://$(SERVER):4242
+g:	all nginx-r
+	./general_tests.sh

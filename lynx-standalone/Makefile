@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/12 11:38:34 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/12 17:30:10 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/17 13:56:15 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,6 @@ $(BIN):
 	mv src/lynx .
 	mv src/samples/lynx.lss .
 	sed src/lynx.cfg -e "s/^STARTFILE:.*/STARTFILE:http:\/\/localhost:3490\//" > ./lynx.cfg
-	-source source-me-after-install-rc
 
 clean:
 	rm -rf $(PWD)/src
