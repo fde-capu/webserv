@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/18 18:32:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 18:43:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,11 @@ bool die(std::string msg)
 {
 	std::cout << ALERT << ALERT_SEGUE << msg << std::endl;
 	return false;
+}
+
+void alert(std::string msg)
+{
+	std::cout << ALERT << ALERT_SEGUE << msg << std::endl;
 }
 
 void alert(std::string msg, std::string &line)
@@ -115,7 +120,7 @@ bool validate_args(int argc, char **argv)
 		return die(ERR_INVALID_FILE);
 	show_file(conf);
 	conf.close();
-	return !die(CONFIG_OK);
+	return !die(CONFIG_CHECKING);
 }
 
 maps read_conf(const char *file)
@@ -133,7 +138,7 @@ maps read_conf(const char *file)
 		if (!valid_line(line))
 		{
 			alert(ERR_INVALID_PARAM, line);
-			// empty map (to do)
+			conf.clear();
 			return conf;
 		}
 		if (line == "")
@@ -141,7 +146,7 @@ maps read_conf(const char *file)
 		parameter = get_parameter(line);
 		value = get_value(line);
 		conf[parameter] = value;
-		std::cout << "[" << parameter << "] = [" << value << "];" << std::endl;
+//		std::cout << "[" << parameter << "] = [" << value << "];" << std::endl;
 	}
 	conf_stream.close();
 	return conf;
@@ -153,6 +158,7 @@ int main (int argc, char **argv)
 		return !die(ERR_INVALID_ARGS);
 	maps conf = read_conf(argv[1]);
 	if (conf.empty())
-		return !die(ERR_INCOMPLETE_SETUP);
+		return !die(ALERT_BYE);
+	alert(CONFIG_OK);
 	return 0;
 }

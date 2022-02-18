@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 02:52:43 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/18 18:32:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 18:41:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 
 # define ALERT "(webserv)"
 # define ALERT_SEGUE " -> "
+# define ALERT_BYE "Bye."
 # define ERROR "Error: "
 # define ERR_INVALID_ARGS ERROR "Invalid arguments."
 # define ERR_INVALID_FILE ERROR "Invalid file."
@@ -32,5 +33,6 @@
 # define ERR_INCOMPLETE_SETUP ERROR "Incomplete setup."
 # define ERR_SYNTAX ERROR "Syntax error."
 # define CONFIG_OK "Configuration file ok."
+# define CONFIG_CHECKING "Checking configuration file."
 
 #endif
