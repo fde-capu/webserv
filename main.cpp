@@ -6,28 +6,31 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/07 18:22:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 17:51:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
+#include <unistd.h> // close
+/*
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <netdb.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
-#include <signal.h>
 #include <cstring>
-#include <poll.h>
-#include <iostream>
+#include <errno.h>
+*/
+#include <poll.h> // struct pollfd
+#include <signal.h> // struct sigaction
+#include <iostream> // cout
+#include <stdlib.h> // exit
+#include <netdb.h> // struct sockaddr
+#include <stdio.h> // cstdio: perror
 #include "Encapsulator.hpp"
 #include "defines.hpp"
 #include "setup.hpp"
+
 
 void sigchld_handler(int s)
 {
@@ -35,7 +38,6 @@ void sigchld_handler(int s)
 	g_capsule->~Encapsulator();
 	std::cout NL;
 	std::cout TURN_OFF;
-	std::cout THANK_YOU;
 	exit(0);
 }
 
@@ -74,7 +76,7 @@ void signals_up()
 
 int main(void)
 {
-	int sockfd, new_fd; // listen on sock_fd, new connection on new_fd
+	int sockfd, new_fd; // listen on sockfd, new connection on new_fd
 	struct addrinfo hints, *servinfo, *p;
 
 	struct sockaddr_storage their_addr; // connector's address information

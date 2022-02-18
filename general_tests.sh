@@ -29,7 +29,6 @@ name_server="127.0.0.1";
 
 divider()
 {
-	return ;
 	{ set +x; } 2> /dev/null
 	echo '\n\n--------------------------\n\n'
 	set -x
@@ -37,10 +36,9 @@ divider()
 
 anounce()
 {
-	return ;
 	{ divider; } 2> /dev/null
 	echo $1
-	echo '\n'
+	{ divider; } 2> /dev/null
 }
 
 { anounce \
@@ -49,6 +47,9 @@ anounce()
 \
 ; } 2> /dev/null
 
+{ divider; } 2> /dev/null
+{ divider; } 2> /dev/null
+{ divider; } 2> /dev/null
 { divider; } 2> /dev/null
 { divider; } 2> /dev/null
 { divider; } 2> /dev/null
@@ -61,7 +62,7 @@ anounce()
 \
 ; } 2> /dev/null
 
-#curl -vD- http://$name_server:3490
+curl -vD- http://$name_server:3490
 
 #################################################################
 
@@ -71,7 +72,17 @@ anounce()
 \
 ; } 2> /dev/null
 
-#curl -vD- http://$name_server:3490/somesub/
+curl -vD- http://$name_server:3490/somesub
+
+#################################################################
+
+{ anounce \
+\
+	"Subdirectory ending with '/'." \
+\
+; } 2> /dev/null
+
+curl -vD- http://$name_server:3490/somesub/
 
 #################################################################
 
@@ -81,7 +92,7 @@ anounce()
 \
 ; } 2> /dev/null
 
-#curl -vD- http://$name_server:3490 -H 'Host: krazything'
+curl -vD- http://$name_server:3490 -H 'Host: krazything'
 
 #################################################################
 
@@ -91,7 +102,7 @@ anounce()
 \
 ; } 2> /dev/null
 
-#curl -vD- http://$name_server:3490 -H 'Host: unexistent_servername'
+curl -vD- http://$name_server:3490 -H 'Host: unexistent_servername'
 
 #################################################################
 
@@ -101,7 +112,7 @@ anounce()
 \
 ; } 2> /dev/null
 
-#curl -vD- http://$name_server:3491
+curl -vD- http://$name_server:3491
 
 #################################################################
 
@@ -111,18 +122,17 @@ anounce()
 \
 ; } 2> /dev/null
 
-#curl -vD- http://$name_server:3492
+curl -vD- http://$name_server:3492
 
 #################################################################
 
 { anounce \
 \
-	':3493 redirects 301 to :3490. \n 
-	  - client redirecting:' \
+	':3493 redirects 301 to :3490. \n 	  - client redirecting:' \
 \
 ; } 2> /dev/null
 
-#curl -vD- http://$name_server:3493 -L
+curl -vD- http://$name_server:3493 -L
 
 #################################################################
 
@@ -132,20 +142,16 @@ anounce()
 \
 ; } 2> /dev/null
 
-#curl -vD- http://$name_server:3493
+curl -vD- http://$name_server:3493
 
 #################################################################
 
-{ anounce \
-\
-	'Specific test for debug:' \
-\
-; } 2> /dev/null
+{ divider; } 2> /dev/null
 
 #curl -vD- http://$name_server:4242/directory/
 #curl -vLD- http://$name_server:4242/directory/youpi.bla
 
-curl -vLD- http://$name_server:3490/.php
+#curl -vLD- http://$name_server:3490/.php
 
 #curl -vD- http://$name_server:4242/directory/unexistent_file
 

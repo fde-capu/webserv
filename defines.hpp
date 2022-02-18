@@ -6,19 +6,16 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 02:52:43 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/01/06 18:11:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 17:49:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DEFINES_HPP
 # define DEFINES_HPP
 
-# define SERVER_NAME "fde-capu's webserv @ 42SP"
 # define STATUS_200 "HTTP/1.1 200 OK"
-# define WELLCOME << std::endl << "Welcome to " << SERVER_NAME << "." << std::endl
 # define RUNNING << "Server is up." << std::endl;
 # define TURN_OFF << "Server is dn." << std::endl;
-# define THANK_YOU << "Thank you." << std::endl;
 # define NL << std::endl;
 
 #endif

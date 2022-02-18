@@ -6,15 +6,15 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/01/06 18:14:28 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/18 17:41:14 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	=	server
+NAME	=	webserv
 SRCS	=	main.cpp Encapsulator.cpp
 HEAD	=	Makefile Encapsulator.hpp defines.hpp setup.hpp
 SHELL	=	/bin/sh
-CC		=	clang++ -std=c++98
+CC		=	clang++ -std=c++98 -Wfatal-errors
 CCFLAGS	=	-Wall -Werror -Wextra -g
 OBJS	=	$(SRCS:.cpp=.o)
 VAL		=	valgrind
@@ -39,8 +39,12 @@ re:			fclean all
 rt:			re t
 vf:			all
 	$(VAL) $(VALFLAG) ./$(NAME)
-t:			all
+tserver:	all pk
 	./$(NAME)
+t:			all pk
+	./$(NAME) &
+	-./general_tests.sh
 v:			all
 	$(VAL) ./$(NAME)
-
+pk:
+	-pkill webserv
