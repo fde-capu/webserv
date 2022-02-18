@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/17 17:27:42 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/17 19:08:56 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,7 +51,7 @@ nginx-build:
 	-@cd nginx-standalone && \
 	make
 	-@source ./source-me-after-install-rc
-nginx:		nginx-build
+nginx:		nginx-build $(CONF)
 	-cd confs && \
 	pkill nginx
 	$(NGINX) -c $(CONF) && \
@@ -63,7 +63,7 @@ nginx-r:
 	netstat -tnl
 nginx-rt:	nginx-r
 	./general_tests.sh
-nginx-tc:
+nginx-tc:	$(CONF)
 	$(NGINX) -c $(CONF) -t
 nginx-clean:
 	cd nginx-standalone && \
@@ -99,5 +99,4 @@ lynx-nginx: lynx nginx
 lynx-nginx-t: lynx nginx-t
 42:	all nginx-r
 	-./ubuntu_tester http://$(SERVER):4242
-g:	all nginx-r
-	./general_tests.sh
+g:	nginx-log
