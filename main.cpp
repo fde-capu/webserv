@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/18 20:50:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 21:04:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,10 @@ bool valid_line(std::string line)
 	line = code_minimize(line);
 	if (line == "")
 		return true;
-	if (line.find(CONF_DELIMITER) == std::string::npos)
-		return false;
-	return true;
+	std::string::iterator it = line.begin();
+	while (is_in_set(*it++, PARAMETER_ALLOWED_CHARACTERS));
+	while (is_in_set(*it++, CONF_DELIMITERS));
+	return *it ? true : false;
 }
 
 maps read_conf(std::fstream &file)
