@@ -143,7 +143,9 @@ anounce()
 ; } 2> /dev/null
 
 #curl -vD- http://$name_server:4242/directory/
-#curl -vD- http://$name_server:4242/directory/youpi.bla
+#curl -vLD- http://$name_server:4242/directory/youpi.bla
+
+curl -vLD- http://$name_server:3490/.php
 
 #curl -vD- http://$name_server:4242/directory/unexistent_file
 
@@ -153,7 +155,7 @@ anounce()
 #curl -vLD- http://127.0.0.1:4242/directory/oulalala
 #curl -vLD- http://$name_server:4242/directory/Yeah
 
-curl -vLD- -X POST http://$name_server:4242/post_body -F 'file=./1M.noise'
+#curl -vLD- -X POST http://$name_server:4242/post_body -F 'file=./1M.noise'
 #curl -vLD- -X POST http://$name_server:4242/directory/youpi.bla
 
 #################################################################
