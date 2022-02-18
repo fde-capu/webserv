@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 02:52:43 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/18 20:59:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 18:32:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,14 @@
 # define PARAMETER_ALLOWED_CHARACTERS "abcdefghijklmnopqrstuvwxyz_0123456789"
 # define COMMENT_CHAR '#'
 
-# define ERR "(webserv) Error: "
-# define ERR_SEGUE " : "
-# define ERR_INVALID_ARGS "Invalid arguments."
-# define ERR_INVALID_FILE "Invalid file."
-# define ERR_INVALID_PARAM "Invalid parameter."
+# define ALERT "(webserv)"
+# define ALERT_SEGUE " -> "
+# define ERROR "Error: "
+# define ERR_INVALID_ARGS ERROR "Invalid arguments."
+# define ERR_INVALID_FILE ERROR "Invalid file."
+# define ERR_INVALID_PARAM ERROR "Invalid parameter."
+# define ERR_INCOMPLETE_SETUP ERROR "Incomplete setup."
+# define ERR_SYNTAX ERROR "Syntax error."
+# define CONFIG_OK "Configuration file ok."
 
 #endif

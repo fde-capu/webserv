@@ -6,11 +6,12 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/18 19:19:43 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/18 17:37:19 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	webserv
+ARGS	=	file
 SRCS	=	main.cpp Encapsulator.cpp
 HEAD	=	Makefile Encapsulator.hpp defines.hpp setup.hpp header.hpp
 SHELL	=	/bin/sh
@@ -38,15 +39,15 @@ fclean:		clean
 re:			fclean all
 rt:			re t
 vf:			all
-	$(VAL) $(VALFLAG) ./$(NAME)
+	$(VAL) $(VALFLAG) ./$(NAME) $(ARGS)
 tserver:	all pk
-	./$(NAME)
+	./$(NAME) $(ARGS)
 t:			all
-	./$(NAME)
+	./$(NAME) $(ARGS)
 tg:			all pk
-	./$(NAME) &
+	./$(NAME) $(ARGS) &
 	-./general_tests.sh
 v:			all
-	$(VAL) ./$(NAME)
+	$(VAL) ./$(NAME) $(ARGS)
 pk:
 	-pkill webserv

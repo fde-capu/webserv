@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/18 21:04:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 18:32:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,15 @@
 #include <cstdlib>
 #include <fstream>
 
-void die(std::string msg)
+bool die(std::string msg)
 {
-	std::cout << ERR << msg << std::endl;
-	exit (1);
+	std::cout << ALERT << ALERT_SEGUE << msg << std::endl;
+	return false;
+}
+
+void alert(std::string msg, std::string &line)
+{
+	std::cout << ALERT << ALERT_SEGUE << msg << ALERT_SEGUE << line << std::endl;
 }
 
 void show_file(std::fstream &file)
@@ -48,10 +53,9 @@ std::string trim_lr_set(std::string str, std::string set)
 	return str;
 }
 
-std::string code_minimize(std::string str)
+void code_minimize(std::string& str)
 {
 	str = trim_lr_set(str, TRIM_CHARACTERS);
-	return str;
 }
 
 bool is_in_set(char x, std::string set)
@@ -66,58 +70,89 @@ bool is_in_set(char x, std::string set)
 
 std::string get_parameter(std::string line)
 {
-	line = line.substr(0, line.find(CONF_DELIMITER));
-	std::string parameter("");
-	return parameter;
+	std::string::iterator it = line.begin();
+	while (is_in_set(*it, PARAMETER_ALLOWED_CHARACTERS))
+		it++;
+	return std::string(line.begin(), it);
+}
+
+std::string get_value(std::string line)
+{
+	std::string::iterator it = line.begin();
+	while (is_in_set(*it, PARAMETER_ALLOWED_CHARACTERS))
+		it++;
+	while (is_in_set(*it, CONF_DELIMITERS))
+		it++;
+	std::string value(it, line.end());
+	code_minimize(value);
+	return value;
+}
+
+void remove_comments(std::string& line)
+{
+	line = line.substr(0, line.find(COMMENT_CHAR));
 }
 
 bool valid_line(std::string line)
 {
-	line = line.substr(0, line.find(COMMENT_CHAR));
-	line = code_minimize(line);
 	if (line == "")
 		return true;
 	std::string::iterator it = line.begin();
-	while (is_in_set(*it++, PARAMETER_ALLOWED_CHARACTERS));
-	while (is_in_set(*it++, CONF_DELIMITERS));
-	return *it ? true : false;
+	while (is_in_set(*it, PARAMETER_ALLOWED_CHARACTERS))
+		it++;
+	while (is_in_set(*it, CONF_DELIMITERS))
+		it++;
+	return (it == line.end()) ? false : true;
 }
 
-maps read_conf(std::fstream &file)
-{
-	maps conf;
-	std::string line;
-	std::string split_a, split_b;
-	while (std::getline(file, line))
-	{
-		if (!valid_line(line))
-			die(ERR_INVALID_PARAM + std::string(ERR_SEGUE) + line);
-		split_a = get_parameter(line);
-		split_b = split_a;
-		conf[split_a] = split_b;
-		std::cout << "[" << split_a << "] = " << split_b << ";" << std::endl;
-	}
-	return conf;
-}
-
-maps validate_args(int argc, char **argv)
+bool validate_args(int argc, char **argv)
 {
 	if (argc != 2)
-		die(ERR_INVALID_ARGS);
+		return die(ERR_INVALID_ARGS);
 	std::fstream conf;
 	conf.open(static_cast<const char *>(argv[1]), std::ios::in);
 	if (!conf)
-		die(ERR_INVALID_FILE);
+		return die(ERR_INVALID_FILE);
 	show_file(conf);
 	conf.close();
-	conf.open(static_cast<const char *>(argv[1]), std::ios::in);
-	maps conf_map = read_conf(conf);
-	conf.close();
-	return conf_map;
+	return !die(CONFIG_OK);
+}
+
+maps read_conf(const char *file)
+{
+	maps conf;
+	std::fstream conf_stream;
+
+	conf_stream.open(file, std::ios::in);
+	std::string line, parameter, value;
+
+	while (std::getline(conf_stream, line))
+	{
+		remove_comments(line);
+		code_minimize(line);
+		if (!valid_line(line))
+		{
+			alert(ERR_INVALID_PARAM, line);
+			// empty map (to do)
+			return conf;
+		}
+		if (line == "")
+			continue ;
+		parameter = get_parameter(line);
+		value = get_value(line);
+		conf[parameter] = value;
+		std::cout << "[" << parameter << "] = [" << value << "];" << std::endl;
+	}
+	conf_stream.close();
+	return conf;
 }
 
 int main (int argc, char **argv)
 {
-	maps g_conf = validate_args(argc, argv);
+	if (!validate_args(argc, argv))
+		return !die(ERR_INVALID_ARGS);
+	maps conf = read_conf(argv[1]);
+	if (conf.empty())
+		return !die(ERR_INCOMPLETE_SETUP);
 	return 0;
 }
