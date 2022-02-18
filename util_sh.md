@@ -5,15 +5,15 @@
 # netstat -tnl					// --tcp --numeric --listening // Nothing shows.
 # (ps aux)						// all, show users, x = show parents
 # (pkill nginx)
-# nginx -c webserv.conf			// Listeners opened.
+#-> nginx -c webserv.conf			// Listeners opened.
 # netstat -tnl					// --tcp --numeric --listening // Nothing shows.
 # (ps aux)						// all, show users, x = show parents
 # lynx localhost:3490
 # curl localhost:3490
 # curl -vD- localhost:3490		// (-vD-: -v verbose, -D- all headers to stdout) Got 301.
 # cat /etc/hosts				// See: better use 127.0.0.1
-# export S=127.0.0.1			// Server
-# export P=3490					// Port
+#-> export S=127.0.0.1			// Server
+#-> export P=3490				// Port
 # curl -vD- $S:$P
 # ls confs/html					// Check index.htm (not html).
 # curl -vD- $S:$P/somesub/		// Subdirectories working.
