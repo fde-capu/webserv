@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/17 19:08:56 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/18 09:09:12 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,15 +52,14 @@ nginx-build:
 	make
 	-@source ./source-me-after-install-rc
 nginx:		nginx-build $(CONF)
-	-cd confs && \
-	pkill nginx
-	$(NGINX) -c $(CONF) && \
-	netstat -tnl
+	-pkill nginx
+	cd confs && $(NGINX) -c $(CONF)
+	netstat -tnl || ss -tnl
 nginx-t:	nginx
 	./general_tests.sh
 nginx-r:
 	$(NGINX) -s reload
-	netstat -tnl
+	netstat -tnl || ss -tnl
 nginx-rt:	nginx-r
 	./general_tests.sh
 nginx-tc:	$(CONF)

@@ -1,7 +1,7 @@
 #
 # make
 # (make clean)
-# source source-me-after-install-rc
+#-> source source-me-after-install-rc
 # netstat -tnl					// --tcp --numeric --listening // Nothing shows.
 # (ps aux)						// all, show users, x = show parents
 # (pkill nginx)
