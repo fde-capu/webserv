@@ -6,162 +6,117 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/18 17:51:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 20:50:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h> // close
-/*
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/wait.h>
-#include <cstring>
-#include <errno.h>
-*/
-#include <poll.h> // struct pollfd
-#include <signal.h> // struct sigaction
-#include <iostream> // cout
-#include <stdlib.h> // exit
-#include <netdb.h> // struct sockaddr
-#include <stdio.h> // cstdio: perror
-#include "Encapsulator.hpp"
+#include "header.hpp"
 #include "defines.hpp"
-#include "setup.hpp"
+#include <string>
+#include <iostream>
+#include <cstdlib>
+#include <fstream>
 
-
-void sigchld_handler(int s)
+void die(std::string msg)
 {
-	(void)s;
-	g_capsule->~Encapsulator();
-	std::cout NL;
-	std::cout TURN_OFF;
-	exit(0);
+	std::cout << ERR << msg << std::endl;
+	exit (1);
 }
 
-
-// get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa)
+void show_file(std::fstream &file)
 {
-	if (sa->sa_family == AF_INET) {
-		return &(((struct sockaddr_in*)sa)->sin_addr);
-	}
-	return &(((struct sockaddr_in6*)sa)->sin6_addr);
+	std::string line;
+	std::cout << std::endl << file << " ::::::::" << std::endl;
+	while (std::getline(file, line))
+		std::cout << line << std::endl;
+	std::cout << ":::::::::::::::::::::::" << std::endl << std::endl;
 }
 
-void die(const char * motive)
+std::string trim_lr(std::string &str, char x)
 {
-	perror(motive);
-	exit(1);
+	while (str[0] == x)
+		str.erase(0, 1);
+	while (str[str.length() - 1] == x)
+		str.erase(str.length() - 1, 1);
+	return str;
 }
 
-void do_or_die(const int x, const char * motive)
+std::string trim_lr_set(std::string str, std::string set)
 {
-	if (x == -1)
-		die(motive);
+	for (std::string::iterator it = set.begin(); it != set.end(); it++)
+		trim_lr(str, *it);
+	return str;
 }
 
-void signals_up()
+std::string code_minimize(std::string str)
 {
-	struct sigaction sa;
-	sa.sa_handler = sigchld_handler;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = SA_SIGINFO;
-	do_or_die(sigaction(SIGINT, &sa, NULL), "sigaction");
-	do_or_die(sigaction(SIGQUIT, &sa, NULL), "sigaction");
-	do_or_die(sigaction(SIGTSTP, &sa, NULL), "sigaction");
+	str = trim_lr_set(str, TRIM_CHARACTERS);
+	return str;
 }
 
-int main(void)
+bool is_in_set(char x, std::string set)
 {
-	int sockfd, new_fd; // listen on sockfd, new connection on new_fd
-	struct addrinfo hints, *servinfo, *p;
-
-	struct sockaddr_storage their_addr; // connector's address information
-	socklen_t sin_size;
-
-	int yes=1;
-//	char s[INET6_ADDRSTRLEN];
-	int rv;
-
-	memset(&hints, 0, sizeof hints);
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE; // use my IP
-
-	if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0) {
-		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(rv));
-		return 1;
-	}
-
-	// loop through all the results and bind to the first we can
-	for(p = servinfo; p != NULL; p = p->ai_next) {
-		if ((sockfd = socket(p->ai_family, p->ai_socktype,
-						p->ai_protocol)) == -1) {
-			perror("server: socket");
-			continue;
-		}
-
-		if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
-					sizeof(int)) == -1) {
-			perror("setsockopt");
-			exit(1);
-		}
-
-		if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-			close(sockfd);
-			perror("server: bind");
-			continue;
-		}
-
-		break;
-	}
-
-	freeaddrinfo(servinfo); // all done with this structure
-
-	if (p == NULL)
+	for (std::string::iterator it = set.begin(); it != set.end(); it++)
 	{
-		fprintf(stderr, "server: failed to bind\n");
-		exit(1);
+		if (*it == x)
+			return true;
 	}
+	return false;
+}
 
-	std::cout WELLCOME;
-	Encapsulator response("Wabadaba!\n");
-	g_capsule = &response;
-	int nfds = 1;
-	struct pollfd pfds[nfds];
-	pfds[0].fd = sockfd;
-	pfds[0].events = POLLIN;
-	int num_events;
+std::string get_parameter(std::string line)
+{
+	line = line.substr(0, line.find(CONF_DELIMITER));
+	std::string parameter("");
+	return parameter;
+}
 
-	signals_up();
+bool valid_line(std::string line)
+{
+	line = line.substr(0, line.find(COMMENT_CHAR));
+	line = code_minimize(line);
+	if (line == "")
+		return true;
+	if (line.find(CONF_DELIMITER) == std::string::npos)
+		return false;
+	return true;
+}
 
-	std::cout RUNNING;
-
-	while (1)
+maps read_conf(std::fstream &file)
+{
+	maps conf;
+	std::string line;
+	std::string split_a, split_b;
+	while (std::getline(file, line))
 	{
-		do_or_die(num_events = poll(pfds, nfds, 0), "poll");
+		if (!valid_line(line))
+			die(ERR_INVALID_PARAM + std::string(ERR_SEGUE) + line);
+		split_a = get_parameter(line);
+		split_b = split_a;
+		conf[split_a] = split_b;
+		std::cout << "[" << split_a << "] = " << split_b << ";" << std::endl;
+	}
+	return conf;
+}
 
-		if (!num_events)
-			continue ;
+maps validate_args(int argc, char **argv)
+{
+	if (argc != 2)
+		die(ERR_INVALID_ARGS);
+	std::fstream conf;
+	conf.open(static_cast<const char *>(argv[1]), std::ios::in);
+	if (!conf)
+		die(ERR_INVALID_FILE);
+	show_file(conf);
+	conf.close();
+	conf.open(static_cast<const char *>(argv[1]), std::ios::in);
+	maps conf_map = read_conf(conf);
+	conf.close();
+	return conf_map;
+}
 
-		do_or_die(listen(pfds[0].fd, BACKLOG), "listen");
-
-		sin_size = sizeof their_addr;
-		do_or_die(new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size), "accept");
-
-//		inet_ntop(their_addr.ss_family,
-//				get_in_addr((struct sockaddr *)&their_addr),
-//				s, sizeof s);
-//		printf("server: got connection from %s\n", s);
-
-		do_or_die(send(new_fd, response.encapsulate(), response.full_length(), 0), "send");
-
-		close(new_fd);
-
-	} // listen + accept loop
-
+int main (int argc, char **argv)
+{
+	maps g_conf = validate_args(argc, argv);
 	return 0;
 }

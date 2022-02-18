@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 02:51:27 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/18 17:11:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 18:44:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ Encapsulator::~Encapsulator()
 const void * Encapsulator::encapsulate()
 {
 	response.clear();
-	response << STATUS_200 << std::endl;
-	response << "Server:" << SERVER_NAME << std::endl;
+//	response << STATUS_200 << std::endl;
+//	response << "Server:" << SERVER_NAME << std::endl;
 	response << "Content-length: " << body.length() << std::endl;
 	response << "Connection: close" << std::endl;
 	response << std::endl;

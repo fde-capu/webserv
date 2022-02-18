@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 02:52:43 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/18 17:49:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/18 20:42:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,5 +17,16 @@
 # define RUNNING << "Server is up." << std::endl;
 # define TURN_OFF << "Server is dn." << std::endl;
 # define NL << std::endl;
+
+# define CONF_DELIMITER ':'
+# define TRIM_CHARACTERS " \t"
+# define PARAMETER_ALLOWED_CHARACTERS "abcdefghijklmnopqrstuvwxyz_0123456789"
+# define COMMENT_CHAR '#'
+
+# define ERR "(webserv) Error: "
+# define ERR_SEGUE " : "
+# define ERR_INVALID_ARGS "Invalid arguments."
+# define ERR_INVALID_FILE "Invalid file."
+# define ERR_INVALID_PARAM "Invalid parameter."
 
 #endif
