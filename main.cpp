@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/19 07:07:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/19 07:10:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,8 @@ maps read_conf(const char *file)
 		parameter = get_parameter(line);
 		value = get_value(line);
 		conf[parameter] = value;
-//		std::cout << "[" << parameter << "] = [" << value << "];" << std::endl;
+		if (VERBOSE)
+			std::cout << "[" << parameter << "] = [" << value << "];" << std::endl;
 	}
 	conf_stream.close();
 	return conf;
