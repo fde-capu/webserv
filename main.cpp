@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/18 18:43:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/19 07:07:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,8 @@ bool valid_line(std::string line)
 	std::string::iterator it = line.begin();
 	while (is_in_set(*it, PARAMETER_ALLOWED_CHARACTERS))
 		it++;
+	if (!is_in_set(*it, CONF_DELIMITERS))
+		return false;
 	while (is_in_set(*it, CONF_DELIMITERS))
 		it++;
 	return (it == line.end()) ? false : true;
@@ -118,9 +120,8 @@ bool validate_args(int argc, char **argv)
 	conf.open(static_cast<const char *>(argv[1]), std::ios::in);
 	if (!conf)
 		return die(ERR_INVALID_FILE);
-	show_file(conf);
 	conf.close();
-	return !die(CONFIG_CHECKING);
+	return true;
 }
 
 maps read_conf(const char *file)
@@ -158,7 +159,7 @@ int main (int argc, char **argv)
 		return !die(ERR_INVALID_ARGS);
 	maps conf = read_conf(argv[1]);
 	if (conf.empty())
-		return !die(ALERT_BYE);
+		return 1;
 	alert(CONFIG_OK);
 	return 0;
 }
