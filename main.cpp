@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/21 17:04:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/02/21 18:09:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,10 @@ bool read_conf(maps & conf, const char *file)
 
 bool essential_configuration(maps & conf)
 {
+	(void)conf;
+	/// To do. Has to have at least one server
+	// with at least "listen"
+	return true;
 }
 
 int main(int argc, char **argv)
