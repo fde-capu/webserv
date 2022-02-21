@@ -6,16 +6,16 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/18 17:37:19 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/21 16:44:47 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	webserv
 ARGS	=	file
-SRCS	=	main.cpp Encapsulator.cpp
+SRCS	=	main.cpp Encapsulator.cpp strings.cpp
 HEAD	=	Makefile Encapsulator.hpp defines.hpp setup.hpp header.hpp
 SHELL	=	/bin/sh
-CC		=	c++ -std=c++98 -Wfatal-errors
+CC		=	c++ -std=c++98 -Wfatal-errors -DVERBOSE=1
 CCFLAGS	=	-Wall -Werror -Wextra -g
 OBJS	=	$(SRCS:.cpp=.o)
 VAL		=	valgrind
