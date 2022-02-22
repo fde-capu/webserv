@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/12 17:04:34 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/18 16:51:44 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/02/22 12:22:19 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,11 +16,11 @@ sed -i 's/80;/3491;/' $PWD/nginx-standalone/sandbox/conf/nginx.conf
 alias nginx=$PWD/nginx-standalone/sandbox/sbin/nginx
 rm -rf $PWD/nginx-standalone/sandbox/html
 ln -fs $PWD/confs/* $PWD/nginx-standalone/sandbox
-ln -fs $PWD/webserv.conf $PWD/nginx-standalone/sandbox
+ln -fs $PWD/webserv-unit.conf $PWD/nginx-standalone/sandbox
 
 # lynx related:
 
 alias lynx=$PWD/lynx-standalone/lynx
 
 # Chain of instruction:
-echo 'Turn the server up if not already.';
+echo 'Sourcing ok. Remember to turn the server up if not already.';
