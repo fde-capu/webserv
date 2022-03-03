@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 09:59:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 19:00:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,20 @@
 
 bool validate_args(int argc, char **argv)
 {
-	if (argc != 2)
+	if (argc > 2)
 		return die(ERR_INVALID_ARGS);
-	std::fstream conf;
-	conf.open(static_cast<const char *>(argv[1]), std::ios::in);
-	if (!conf)
-		return die(ERR_INVALID_FILE);
-	conf.close();
 	return true;
+	(void)argv;
 }
 
-bool read_conf2(maps & cond, const char *file)
+bool read_conf2(maps & conf, const char *file)
 {
 	FileString file_conf(file);
 	if (file_conf.fail())
 		return die(ERR_INVALID_FILE);
-	(void)cond;
+	file_conf.process();
+	std::cout << "(processed)\n" << file_conf.processed();
+	(void)conf;
 	return true;
 }
 
