@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 19:01:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 19:05:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,10 @@ FileString::FileString(const char * file_name)
 		_content += line + "\n";
 }
 
-size_t FileString::find_outside_quotes(std::string str, std::string x)
+size_t FileString::find_outside_quotes(std::string x)
+{ return find_outside_quotes(_processed, x); }
+
+size_t FileString::find_outside_quotes(std::string& str, std::string x)
 {
 	std::string q = "";
 	for(std::string::iterator s = str.begin(); *s; s++)
@@ -63,13 +66,16 @@ size_t FileString::find_outside_quotes(std::string str, std::string x)
 }
 
 void FileString::hard_trim(std::string x)
+{ return hard_trim(this->_processed, x); }
+
+void FileString::hard_trim(std::string& dst, std::string x)
 {
 	std::string xx = x + x;
-	size_t pos = find_outside_quotes(_processed, xx);
+	size_t pos = find_outside_quotes(dst, xx);
 	while (pos != std::string::npos)
 	{
-		_processed.replace(pos, 2, x);
-		pos = find_outside_quotes(_processed, xx);
+		dst.replace(pos, 2, x);
+		pos = find_outside_quotes(dst, xx);
 	}
 }
 
