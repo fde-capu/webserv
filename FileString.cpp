@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 18:55:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 18:57:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ FileString::FileString(const char * file_name)
 		_content += line + "\n";
 }
 
-size_t FileString::find_outside_quotes(std::string trim_set)
-{ return find_outside_quotes(_processed, trim_set); }
+size_t FileString::find_outside_quotes(std::string quotes_set)
+{ return find_outside_quotes(_processed, quotes_set); }
 
-size_t FileString::find_outside_quotes(std::string& str, std::string trim_set)
+size_t FileString::find_outside_quotes(std::string& str, std::string quotes_set)
 {
 	std::string q = "";
 	for(std::string::iterator s = str.begin(); *s; s++)
@@ -53,7 +53,7 @@ size_t FileString::find_outside_quotes(std::string& str, std::string trim_set)
 			}
 			else
 			{
-				if (std::string(s, s + (trim_set.length())) == trim_set)
+				if (std::string(s, s + (quotes_set.length())) == quotes_set)
 				{
 					if (q.length() == 0)
 						return s - str.begin();
@@ -67,13 +67,13 @@ size_t FileString::find_outside_quotes(std::string& str, std::string trim_set)
 void FileString::hard_trim(std::string trim_set)
 { hard_trim(_processed, trim_set); }
 
-void FileString::hard_trim(std::string& dst, std::string trim_set)
+void FileString::hard_trim(std::string& dst, std::string single_char)
 {
-	std::string xx = trim_set + trim_set;
+	std::string xx = single_char + single_char;
 	size_t pos = find_outside_quotes(dst, xx);
 	while (pos != std::string::npos)
 	{
-		dst.replace(pos, 2, trim_set);
+		dst.replace(pos, 2, single_char);
 		pos = find_outside_quotes(dst, xx);
 	}
 }
