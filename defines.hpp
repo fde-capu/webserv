@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 02:52:43 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/21 18:08:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 09:23:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,5 +36,6 @@
 # define ERR_SYNTAX ERROR "Syntax error."
 # define CONFIG_OK "Configuration ok."
 # define CONFIG_CHECKING "Checking configuration file."
+# define BYE "Bye!"
 
 #endif

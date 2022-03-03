@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/21 18:09:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 09:59:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,15 @@ bool validate_args(int argc, char **argv)
 	if (!conf)
 		return die(ERR_INVALID_FILE);
 	conf.close();
+	return true;
+}
+
+bool read_conf2(maps & cond, const char *file)
+{
+	FileString file_conf(file);
+	if (file_conf.fail())
+		return die(ERR_INVALID_FILE);
+	(void)cond;
 	return true;
 }
 
@@ -66,8 +75,8 @@ int main(int argc, char **argv)
 	maps conf;
 
 	if (!validate_args(argc, argv))
-		return !die(ERR_INVALID_ARGS);
-	if (!read_conf(conf, DEFAULT_CONFIG_FILE) || !read_conf(conf, argv[1]) ||
+		return !die(BYE);
+	if (!read_conf2(conf, DEFAULT_CONFIG_FILE) || !read_conf2(conf, argv[1]) ||
 		!essential_configuration(conf))
 		return 1;
 	alert(CONFIG_OK);

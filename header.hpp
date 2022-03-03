@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/02/21 16:51:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 09:56:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <iostream>
 # include <cstdlib>
 # include <fstream>
+# include "FileString.hpp"
 
 # ifndef VERBOSE
 #  define VERBOSE 0
