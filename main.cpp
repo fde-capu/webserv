@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 20:31:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 20:53:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool read_conf2(maps & conf, const char *file)
 	if (file_conf.fail())
 		return die(ERR_INVALID_FILE);
 	file_conf.process();
-	std::cout << "(processed)\n" << file_conf.processed();
+	std::cout << file_conf << std::endl;
 	(void)conf;
 	return true;
 }

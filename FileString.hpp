@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 19:21:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 20:57:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ class FileString
 		std::string _comment_open;
 		std::string _comment_close;
 		std::string _comment_inline;
-		std::string processed();
+		std::string processed() const;
 		void process();
 		void soft_trim();
 		void soft_trim(std::string x);

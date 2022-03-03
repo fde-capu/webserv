@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 20:12:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 21:00:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ FileString::FileString(const char * file_name)
 		_content += line + "\n";
 }
 
-size_t FileString::find_outside_quotes(std::string x)
-{ return find_outside_quotes(_processed, x); }
+size_t FileString::find_outside_quotes(std::string trim_set)
+{ return find_outside_quotes(_processed, trim_set); }
 
-size_t FileString::find_outside_quotes(std::string& str, std::string x)
+size_t FileString::find_outside_quotes(std::string& str, std::string trim_set)
 {
 	std::string q = "";
 	for(std::string::iterator s = str.begin(); *s; s++)
@@ -54,7 +54,7 @@ size_t FileString::find_outside_quotes(std::string& str, std::string x)
 			}
 			else
 			{
-				if (std::string(s, s + (x.length())) == x)
+				if (std::string(s, s + (trim_set.length())) == trim_set)
 				{
 					if (q.length() == 0)
 						return s - str.begin();
@@ -65,16 +65,16 @@ size_t FileString::find_outside_quotes(std::string& str, std::string x)
 	return std::string::npos;
 }
 
-void FileString::hard_trim(std::string x)
-{ hard_trim(_processed, x); }
+void FileString::hard_trim(std::string trim_set)
+{ hard_trim(_processed, trim_set); }
 
-void FileString::hard_trim(std::string& dst, std::string x)
+void FileString::hard_trim(std::string& dst, std::string trim_set)
 {
-	std::string xx = x + x;
+	std::string xx = trim_set + trim_set;
 	size_t pos = find_outside_quotes(dst, xx);
 	while (pos != std::string::npos)
 	{
-		dst.replace(pos, 2, x);
+		dst.replace(pos, 2, trim_set);
 		pos = find_outside_quotes(dst, xx);
 	}
 }
@@ -85,19 +85,36 @@ void FileString::hard_trim()
 		hard_trim(std::string(i, i + 1));
 }
 
-void FileString::soft_trim(std::string& dst, std::string x)
+void FileString::soft_trim(std::string& dst, std::string trim_set)
 {
-	size_t nl = dst.find("\n");
-	if (nl != std::string::npos)
-		std::cout << "FLSADKNLSDFKN" << std::endl;
-//	for(std::string::iterator i = _soft_trim.begin(); *i; i++)
-//	{
-//	}
-(void)x;
+	bool pass = false;
+	while (!pass)
+	{
+		pass = true;
+		for(std::string::iterator i = trim_set.begin(); *i; i++)
+		{
+			std::string nlpv = std::string(std::string(*i, 1) + "\n");
+			std::string nlnx = std::string("\n" + std::string(*i, 1));
+			size_t pospv = find_outside_quotes(dst, nlpv);
+			size_t posnx = find_outside_quotes(dst, nlnx);
+			if (pospv != std::string::npos)
+			{
+				dst.replace(pospv, 2, "\n");
+				pass = false;
+				continue ;
+			}
+			if (posnx != std::string::npos)
+			{
+				dst.replace(posnx, 2, "\n");
+				pass = false;
+				continue ;
+			}
+		}
+	}
 }
 
-void FileString::soft_trim(std::string x)
-{ soft_trim(_processed, x); }
+void FileString::soft_trim(std::string trim_set)
+{ soft_trim(_processed, trim_set); }
 
 void FileString::soft_trim()
 { soft_trim(_processed, _soft_trim); }
@@ -113,7 +130,7 @@ void FileString::process()
 	_processed_ok = true;
 }
 
-std::string FileString::processed()
+std::string FileString::processed() const
 { return _processed; }
 
 FileString::FileString(FileString & src)
@@ -148,8 +165,7 @@ char * FileString::getFileName()
 
 std::ostream & operator<< (std::ostream & o, FileString const & self)
 {
-	o << "::FileString::" << std::endl;
-	(void)self;
+	o << self.processed();
 	return o;
 }
 
