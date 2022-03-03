@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 19:00:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 20:13:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ bool read_conf2(maps & conf, const char *file)
 
 bool read_conf(maps & conf, const char *file)
 {
+	static bool
 	std::fstream conf_stream;
 
 	conf_stream.open(file, std::ios::in);

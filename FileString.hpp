@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 19:05:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 19:21:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # endif
 
 # define FILESTRING_DEFAULT_X_NL true
-# define FILESTRING_TRIMSET " \t"
+# define FILESTRING_SOFT_TRIM " \t"
 # define FILESTRING_HARD_TRIM " \t#"
 # define FILESTRING_QUOTE_SET "\"'`"
 # define FILESTRING_COMMENT_OPEN "#"
@@ -49,7 +49,7 @@ class FileString
 		bool success();
 		bool isProcessed();
 		bool _exclude_newline;
-		std::string _trim_set;
+		std::string _soft_trim;
 		std::string _hard_trim;
 		std::string _quote_set;
 		std::string _comment_open;
@@ -57,6 +57,10 @@ class FileString
 		std::string _comment_inline;
 		std::string processed();
 		void process();
+		void soft_trim();
+		void soft_trim(std::string x);
+		void soft_trim(std::string& dst, std::string x);
+		void hard_trim();
 		void hard_trim(std::string x);
 		void hard_trim(std::string& dst, std::string x);
 		size_t find_outside_quotes(std::string& str, std::string x);
