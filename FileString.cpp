@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 18:52:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 18:55:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ FileString::FileString(const char * file_name)
   _read_ok(true), _processed_ok(false), 
   _exclude_newline(FILESTRING_DEFAULT_X_NL),
   _soft_trim(FILESTRING_SOFT_TRIM), _hard_trim(FILESTRING_HARD_TRIM), _quote_set(FILESTRING_QUOTE_SET),
-  _comment_open(FILESTRING_COMMENT_OPEN), _comment_close(FILESTRING_COMMENT_CLOSE),
   _comment_inline(FILESTRING_COMMENT_INLINE)
 {
 	std::fstream file_read;
