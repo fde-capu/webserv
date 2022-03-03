@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 21:00:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 18:52:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,8 +93,8 @@ void FileString::soft_trim(std::string& dst, std::string trim_set)
 		pass = true;
 		for(std::string::iterator i = trim_set.begin(); *i; i++)
 		{
-			std::string nlpv = std::string(std::string(*i, 1) + "\n");
-			std::string nlnx = std::string("\n" + std::string(*i, 1));
+			std::string nlpv = std::string(i, i + 1) + "\n";
+			std::string nlnx = "\n" + std::string(i, i + 1);
 			size_t pospv = find_outside_quotes(dst, nlpv);
 			size_t posnx = find_outside_quotes(dst, nlnx);
 			if (pospv != std::string::npos)
