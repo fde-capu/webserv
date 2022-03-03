@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 18:48:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 18:58:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@
 # define FILESTRING_SOFT_TRIM "x \t"
 # define FILESTRING_HARD_TRIM " \t#"
 # define FILESTRING_QUOTE_SET "\"'`"
-# define FILESTRING_COMMENT_OPEN "#"
-# define FILESTRING_COMMENT_CLOSE ""
 # define FILESTRING_COMMENT_INLINE "#"
 
 class FileString
