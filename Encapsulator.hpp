@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/06 02:51:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/01/06 05:55:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 20:33:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 # include <cstring>
 # include <sstream>
 # include <memory>
-# include "defines.hpp"
 
 class Encapsulator
 {

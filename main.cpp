@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 20:13:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/03 20:31:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,35 +31,35 @@ bool read_conf2(maps & conf, const char *file)
 	return true;
 }
 
-bool read_conf(maps & conf, const char *file)
-{
-	static bool
-	std::fstream conf_stream;
-
-	conf_stream.open(file, std::ios::in);
-	std::string line, parameter, value;
-
-	while (std::getline(conf_stream, line))
-	{
-		remove_comments(line);
-		code_minimize(line);
-		if (!valid_line(line))
-		{
-			alert(ERR_INVALID_PARAM, line);
-			conf.clear();
-			return false;
-		}
-		if (line == "")
-			continue ;
-		parameter = get_parameter(line);
-		value = get_value(line);
-		conf[parameter] = value;
-		if (VERBOSE)
-			std::cout << "[" << parameter << "] = [" << value << "];" << std::endl;
-	}
-	conf_stream.close();
-	return true;
-}
+//bool read_conf(maps & conf, const char *file)
+//{
+//	static bool
+//	std::fstream conf_stream;
+//
+//	conf_stream.open(file, std::ios::in);
+//	std::string line, parameter, value;
+//
+//	while (std::getline(conf_stream, line))
+//	{
+//		remove_comments(line);
+//		code_minimize(line);
+//		if (!valid_line(line))
+//		{
+//			alert(ERR_INVALID_PARAM, line);
+//			conf.clear();
+//			return false;
+//		}
+//		if (line == "")
+//			continue ;
+//		parameter = get_parameter(line);
+//		value = get_value(line);
+//		conf[parameter] = value;
+//		if (VERBOSE)
+//			std::cout << "[" << parameter << "] = [" << value << "];" << std::endl;
+//	}
+//	conf_stream.close();
+//	return true;
+//}
 
 bool essential_configuration(maps & conf)
 {
