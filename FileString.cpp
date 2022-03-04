@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/04 20:51:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/04 20:57:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,13 +83,16 @@ void FileString::hard_trim()
 }
 
 void FileString::soft_trim(std::string& dst, std::string trim_set)
+{ erase_boundaries(dst, "\n", trim_set); }
+
+void FileString::erase_boundaries(std::string &dst, std::string center, std::string trim_set)
 {
 	for(std::string::iterator i = trim_set.begin(); *i; i++)
 	{
-		std::string nlpv = std::string(i, i + 1) + "\n";
-		std::string nlnx = "\n" + std::string(i, i + 1);
-		substitute_all(dst, nlpv, "\n");
-		substitute_all(dst, nlnx, "\n");
+		std::string nlpv = std::string(i, i + 1) + center;
+		std::string nlnx = center + std::string(i, i + 1);
+		substitute_all(dst, nlpv, center);
+		substitute_all(dst, nlnx, center);
 	}
 }
 
@@ -135,7 +138,8 @@ void FileString::substitute_all(std::string& dst, std::string before, std::strin
 void FileString::parse()
 {
 	std::string parsed(_processed);
-	remove_all(parsed, "\n");
+	substitute_all(parsed, "\n", " ");
+	hard_trim(parsed, " ");
 	_processed = parsed;
 }
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/04 20:41:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/04 20:58:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ class FileString
 		void hard_trim(std::string& dst, std::string x);
 		void remove_all(std::string& dst, std::string x);
 		void substitute_all(std::string& dst, std::string before, std::string after);
+		void erase_boundaries(std::string &dst, std::string center, std::string trim_set);
 		size_t find_outside_quotes(std::string& str, std::string x);
 		size_t find_outside_quotes(std::string x);
 		void remove_comments();
