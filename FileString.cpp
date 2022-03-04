@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/04 20:57:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/04 21:44:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,11 +135,61 @@ void FileString::substitute_all(std::string& dst, std::string before, std::strin
 	}
 }
 
+vec_pair_str FileString::split_no_quotes(const std::string str, std::string split_set)
+{
+	std::vector<std::pair<std::string, std::string> > out;
+	std::string ops = str;
+	size_t val_pos;
+	size_t div_pos;
+	std::string c;
+	bool pass;
+
+	for(std::string::iterator i = split_set.begin(); *i; i++)
+	{
+		c = std::string(i, i + 1);
+		pass = false;
+		while (!pass)
+		{
+			pass = true;
+			div_pos = find_outside_quotes(ops, c);
+			if (div_pos != std::string::npos)
+			{
+				pass = false;
+				val_pos = find_outside_quotes(ops, " ");
+				if (val_pos != std::string::npos)
+				{
+					std::string key = ops.substr(0, val_pos);
+					ops = ops.substr(val_pos + 1);
+					div_pos = find_outside_quotes(ops, c);
+					std::string val = ops.substr(0, div_pos);
+					ops = ops.substr(div_pos + 1);
+					soft_trim(key, _soft_trim);
+					soft_trim(val, _soft_trim);
+					out.push_back(pair_str(key, val));
+				}
+				else
+				{
+				}
+			}
+		}
+	}
+	for (size_t i = 0; i < out.size(); i++)
+	{
+		std::cout << "] " << out[i].first << " : " << out[i].second << std::endl;
+	}
+	return out;
+}
+
 void FileString::parse()
 {
 	std::string parsed(_processed);
 	substitute_all(parsed, "\n", " ");
+	substitute_all(parsed, "\t", " ");
 	hard_trim(parsed, " ");
+	erase_boundaries(parsed, ";", _soft_trim);
+	erase_boundaries(parsed, "{", _soft_trim);
+	erase_boundaries(parsed, "}", _soft_trim);
+	vec_pair_str block = split_no_quotes(parsed, ";");
 	_processed = parsed;
 }
 
