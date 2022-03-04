@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 18:58:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/04 20:21:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,15 @@
 
 # include <iostream>
 # include <fstream>
+# include <sstream>
 
 # ifndef VERBOSE
 #  define VERBOSE 0
 # endif
 
 # define FILESTRING_DEFAULT_X_NL true
-# define FILESTRING_SOFT_TRIM "x \t"
-# define FILESTRING_HARD_TRIM " \t#"
+# define FILESTRING_SOFT_TRIM " \t\n"
+# define FILESTRING_HARD_TRIM " \t"
 # define FILESTRING_QUOTE_SET "\"'`"
 # define FILESTRING_COMMENT_INLINE "#"
 
@@ -63,6 +64,7 @@ class FileString
 		void hard_trim(std::string& dst, std::string x);
 		size_t find_outside_quotes(std::string& str, std::string x);
 		size_t find_outside_quotes(std::string x);
+		void remove_comments();
 };
 
 std::ostream & operator<< (std::ostream & o, FileString const & i);

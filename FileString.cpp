@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/03 18:57:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/04 20:06:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,10 +118,25 @@ void FileString::soft_trim(std::string trim_set)
 void FileString::soft_trim()
 { soft_trim(_processed, _soft_trim); }
 
+void FileString::remove_comments()
+{
+	std::string line;
+	std::string new_p = "";
+	std::istringstream ptois(_processed);
+	std::string new_line;
+	while (std::getline(ptois, line))
+	{
+		new_line = line.substr(0, line.find(FILESTRING_COMMENT_INLINE)) + "\n";
+		if (new_line != "\n")
+			new_p += new_line;
+	}
+	_processed = new_p;
+}
+
 void FileString::process()
 {
 	_processed = _content;
-//	remove_comments();
+	remove_comments();
 	soft_trim();
 	hard_trim();
 
@@ -164,7 +179,7 @@ char * FileString::getFileName()
 
 std::ostream & operator<< (std::ostream & o, FileString const & self)
 {
-	o << self.processed();
+	o << ">>>" << self.processed() << "<<<";
 	return o;
 }
 
