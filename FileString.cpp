@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/04 20:06:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/04 20:48:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ size_t FileString::find_outside_quotes(std::string& str, std::string quotes_set)
 			{
 				if (*(q.end() - 1) == *i)
 					q = q.substr(0, q.length() - 1);
-				else
-					q += *s;
 			}
 			else
 			{
@@ -133,13 +131,38 @@ void FileString::remove_comments()
 	_processed = new_p;
 }
 
+void FileString::remove_all(std::string& dst, std::string to_remove)
+{ substitute_all(dst, to_remove, ""); }
+
+void FileString::substitute_all(std::string& dst, std::string before, std::string after)
+{
+	bool pass = false;
+	while (!pass)
+	{
+		pass = true;
+		size_t pos = find_outside_quotes(dst, before);
+		if (pos != std::string::npos)
+		{
+			pass = false;
+			dst.replace(pos, before.length(), after);
+		}
+	}
+}
+
+void FileString::parse()
+{
+	std::string parsed(_processed);
+	remove_all(parsed, "\n");
+	_processed = parsed;
+}
+
 void FileString::process()
 {
 	_processed = _content;
 	remove_comments();
 	soft_trim();
 	hard_trim();
-
+	parse();
 //	hard_trim("#");
 	_processed_ok = true;
 }

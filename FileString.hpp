@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/04 20:21:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/04 20:41:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <iostream>
 # include <fstream>
 # include <sstream>
+# include <map>
 
 # ifndef VERBOSE
 #  define VERBOSE 0
@@ -42,6 +43,7 @@ class FileString
 		FileString(FileString & src);
 		FileString & operator= (FileString & rhs);
 		~FileString(void);
+		std::map<std::string, void*> _map;
 		char * getFileName();
 		std::string getContent();
 		bool fail();
@@ -62,9 +64,12 @@ class FileString
 		void hard_trim();
 		void hard_trim(std::string x);
 		void hard_trim(std::string& dst, std::string x);
+		void remove_all(std::string& dst, std::string x);
+		void substitute_all(std::string& dst, std::string before, std::string after);
 		size_t find_outside_quotes(std::string& str, std::string x);
 		size_t find_outside_quotes(std::string x);
 		void remove_comments();
+		void parse();
 };
 
 std::ostream & operator<< (std::ostream & o, FileString const & i);
