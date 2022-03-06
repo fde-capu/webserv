@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/06 22:26:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/06 22:51:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,9 +183,6 @@ DataFold FileString::split_no_quotes(const std::string str, std::string split_se
 			}
 		}
 	}
-
-	std::cout << out << std::endl;
-
 	return out;
 }
 
@@ -198,7 +195,7 @@ void FileString::parse()
 	erase_boundaries(parsed, ";", _soft_trim);
 	erase_boundaries(parsed, "{", _soft_trim);
 	erase_boundaries(parsed, "}", _soft_trim);
-	data = split_no_quotes(parsed, ";");
+	this->data = split_no_quotes(parsed, ";");
 //	_processed = parsed;
 }
 
@@ -248,7 +245,8 @@ char * FileString::getFileName()
 
 std::ostream & operator<< (std::ostream & o, FileString const & self)
 {
-	o << ">>>" << self.processed() << "<<<";
+	o << ">>>" << self.processed() << "<<<" << std::endl;
+	o << self.data << std::endl;
 	return o;
 }
 

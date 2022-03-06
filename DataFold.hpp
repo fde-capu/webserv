@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/06 21:27:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/06 22:53:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ std::ostream & operator<< (std::ostream & o, datafold_type const &);
 
 class DataFold
 {
-	private:
+	public:
 		typedef std::vector<datafold_t> datavec;
+	private:
 		datavec	core;
 		int		index;
 	public:

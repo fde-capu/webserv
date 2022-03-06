@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/06 21:40:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/06 22:46:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,8 @@ int main(int argc, char **argv)
 
 	if (!validate_args(argc, argv))
 		return !die(BYE);
-	if (!read_conf2(conf, DEFAULT_CONFIG_FILE) || !read_conf2(conf, argv[1]) ||
+//	if (!read_conf2(conf, DEFAULT_CONFIG_FILE) || !read_conf2(conf, argv[1]) ||
+	if (!read_conf2(conf, argv[1]) ||
 		!essential_configuration(conf))
 		return 1;
 	alert(CONFIG_OK);

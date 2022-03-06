@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/06 21:41:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/06 22:54:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <iostream>
 
 DataFold::DataFold(void)
+: index(0)
 {
 	return ;
 }
@@ -42,21 +43,21 @@ DataFold & DataFold::operator= (DataFold const & rhs)
 
 std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 {
-	o << "{" << std::endl;
-	o << "\tindex: " << self.index << "," << std::endl;
-	o << "\tkey: " << self.key << "," << std::endl;
+	o << "{ ";;
+	o << "index: " << self.index << ", ";
+	o << "key: '" << self.key << "', ";
 	if (self.type & DF_TYPE_STRING)
-		o << "\tval: " << self.val << "," << std::endl;
+	o << "val: " << self.val << ", ";
 	if (self.type & DF_TYPE_SUB)
-		o << "\tsub: " << self.sub << "," << std::endl;
-	o << "}" << std::endl;
+		o << "sub: " << self.sub << ", ";
+	o << "}, ";
 	return o;
 }
 
 std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const & self)
 {
 	for (size_t i = 0; i < self.size(); i++)
-		o << self[i] << std::endl;
+		o << self[i];
 	return o;
 }
 
