@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/04 22:45:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/06 18:14:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,7 @@ vec_pair_str FileString::split_no_quotes(const std::string str, std::string spli
 			{
 				pass = false;
 				key = ops.substr(0, pos[1]);
-				ops = ops.substr(pos[1] + 0);
+				ops = ops.substr(pos[1] + 0); // Let '{' in.
 				div_pos = find_outside_quotes(ops, "}");
 				val = ops.substr(0, div_pos);
 				ops = ops.substr(div_pos + 1);
@@ -204,7 +204,7 @@ void FileString::parse()
 	erase_boundaries(parsed, "{", _soft_trim);
 	erase_boundaries(parsed, "}", _soft_trim);
 	vec_pair_str block = split_no_quotes(parsed, ";");
-	_processed = parsed;
+//	_processed = parsed;
 }
 
 void FileString::process()

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/04 22:37:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/06 18:35:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,11 @@ class FileString
 		bool _processed_ok;
 
 	public:
+		std::vector<std::pair<std::string, void*> > _config;
 		FileString(const char * file_name);
 		FileString(FileString & src);
 		FileString & operator= (FileString & rhs);
 		~FileString(void);
-		std::map<std::string, void*> _map;
 		char * getFileName();
 		std::string getContent();
 		bool fail();
