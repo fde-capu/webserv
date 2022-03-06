@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/06 18:14:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/06 22:26:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,9 +135,9 @@ void FileString::substitute_all(std::string& dst, std::string before, std::strin
 	}
 }
 
-vec_pair_str FileString::split_no_quotes(const std::string str, std::string split_set)
+DataFold FileString::split_no_quotes(const std::string str, std::string split_set)
 {
-	std::vector<std::pair<std::string, std::string> > out;
+	DataFold out;
 	std::string ops = str;
 	size_t div_pos;
 	std::string c;
@@ -165,32 +165,27 @@ vec_pair_str FileString::split_no_quotes(const std::string str, std::string spli
 				ops = ops.substr(div_pos + 1);
 				soft_trim(key, _soft_trim);
 				soft_trim(val, _soft_trim);
-				out.push_back(pair_str(key, val));
+				out.push_back(key, val);
 				continue ;
 			}
 			if (pos[1] < pos[0] && pos[1] != std::string::npos)
 			{
 				pass = false;
 				key = ops.substr(0, pos[1]);
-				ops = ops.substr(pos[1] + 0); // Let '{' in.
+				ops = ops.substr(pos[1] + 1);
 				div_pos = find_outside_quotes(ops, "}");
 				val = ops.substr(0, div_pos);
 				ops = ops.substr(div_pos + 1);
 				soft_trim(key, _soft_trim);
 				soft_trim(val, _soft_trim);
-				out.push_back(pair_str(key, val));
+				out.push_back(key, split_no_quotes(val, split_set));
 				continue ;
 			}
 		}
 	}
-	for (size_t i = 0; i < out.size(); i++)
-	{
-		std::cout << "] " << out[i].first << " : " << out[i].second << std::endl;
-		if (*out[i].second.begin() == '{')
-		{
-			std::cout << "!!!!!!!!!!" << *out[i].second.begin() << std::endl;
-		}
-	}
+
+	std::cout << out << std::endl;
+
 	return out;
 }
 
@@ -203,7 +198,7 @@ void FileString::parse()
 	erase_boundaries(parsed, ";", _soft_trim);
 	erase_boundaries(parsed, "{", _soft_trim);
 	erase_boundaries(parsed, "}", _soft_trim);
-	vec_pair_str block = split_no_quotes(parsed, ";");
+	data = split_no_quotes(parsed, ";");
 //	_processed = parsed;
 }
 

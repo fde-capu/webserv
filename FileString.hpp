@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/06 19:18:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/06 19:38:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 # include <utility>
 # include "DataFold.hpp"
 
-typedef std::pair<std::string, std::string> pair_str;
 typedef std::vector<pair_str> vec_pair_str;
 
 # ifndef VERBOSE
@@ -75,7 +74,7 @@ class FileString
 		size_t find_outside_quotes(std::string& str, std::string x);
 		size_t find_outside_quotes(std::string x);
 		void remove_comments();
-		vec_pair_str split_no_quotes(const std::string dst, std::string split_set);
+		DataFold split_no_quotes(const std::string dst, std::string split_set);
 		void parse();
 };
 
