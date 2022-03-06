@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/06 22:54:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/06 23:10:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,21 +43,27 @@ DataFold & DataFold::operator= (DataFold const & rhs)
 
 std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 {
-	o << "{ ";;
-	o << "index: " << self.index << ", ";
-	o << "key: '" << self.key << "', ";
+//	o << "{ ";;
+//	o << "index: " << self.index << ", ";
+	o << "'" << self.key << "' : ";
 	if (self.type & DF_TYPE_STRING)
-	o << "val: " << self.val << ", ";
+	o << "" << self.val << "";
 	if (self.type & DF_TYPE_SUB)
-		o << "sub: " << self.sub << ", ";
-	o << "}, ";
+		o << self.sub;
+//	o << " , ";
 	return o;
 }
 
 std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const & self)
 {
+	o << "{ ";
 	for (size_t i = 0; i < self.size(); i++)
+	{
 		o << self[i];
+		if (i + 1 < self.size())
+			o << " , ";
+	}
+	o << " } ";
 	return o;
 }
 
