@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/06 22:53:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 00:14:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 # define DF_TYPE_STRING	4
 # define DF_TYPE_SUB	8
+# define DF_QUOTE_SET "\"\'`"
 
 typedef std::pair<std::string, std::string> pair_str;
 
@@ -53,6 +54,7 @@ class DataFold
 		std::vector<datafold_t> getCore() const;
 		int getIndex() const;
 		operator datavec();
+		std::string correct_quotes(std::string val);
 };
 
 std::ostream & operator<< (std::ostream & o, DataFold const &);
