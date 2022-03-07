@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 21:28:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 21:38:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,14 +141,19 @@ const std::string DataFold::getFirstByKey(std::string key) const
 
 std::string DataFold::eqvals_to_arrstr(std::string key) const
 {
+	bool put_coma = false;
 	std::string out("[ ");
 	for (int i = 0; i < index; i++)
 	{
 		if (core[i].key == key)
-			out += apply_quotes(core[i].val) + " , ";
+		{
+			if (put_coma)
+				out += " , ";
+			out += apply_quotes(core[i].val);
+			put_coma = true;
+		}
 	}
-	out += "]";
-	substitute_all(out, ", ]", "]");
+	out += " ]";
 	return out;
 }
 
