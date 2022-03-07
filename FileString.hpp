@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 02:30:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 02:43:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ class FileString : public StringTools
 		bool isProcessed();
 		std::string processed() const;
 		void process();
-		DataFold split_no_quotes(const std::string dst, std::string split_set);
 		void parse();
 };
 
