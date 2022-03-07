@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 21:38:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 21:53:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,36 @@ DataFold & DataFold::operator= (DataFold const & rhs)
 	return *this;
 }
 
+std::string DataFold::quoted_val(datafold_t dt) const
+{
+	std::string out;
+	if (dt.type & DF_TYPE_NUMBER)
+		out = apply_quotes(dt.val, DF_NUM_QUOTE);
+	if (dt.type & DF_TYPE_STRING)
+		out = apply_quotes(dt.val, DF_VAL_QUOTE);
+	if (dt.type & DF_TYPE_SUB)
+		out = dt.sub;
+	return out;
+}
+
+std::string DataFold::eqvals_to_arrstr(std::string key) const
+{
+	bool put_coma = false;
+	std::string out("[ ");
+	for (int i = 0; i < index; i++)
+	{
+		if (core[i].key == key)
+		{
+			if (put_coma)
+				out += " , ";
+			out += quoted_val(core[i]);
+			put_coma = true;
+		}
+	}
+	out += " ]";
+	return out;
+}
+
 std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 {
 	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << " : ";
@@ -60,6 +90,11 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 		o << self.sub;
 	return o;
 }
+
+//std::string std::vector<datafold_t>::operator= ()
+//{
+//	return std::string("HEYA");
+//}
 
 std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const & self)
 {
@@ -137,24 +172,6 @@ const std::string DataFold::getFirstByKey(std::string key) const
 		if (key == core[i].key)
 			return core[i].val;
 	return std::string("");
-}
-
-std::string DataFold::eqvals_to_arrstr(std::string key) const
-{
-	bool put_coma = false;
-	std::string out("[ ");
-	for (int i = 0; i < index; i++)
-	{
-		if (core[i].key == key)
-		{
-			if (put_coma)
-				out += " , ";
-			out += apply_quotes(core[i].val);
-			put_coma = true;
-		}
-	}
-	out += " ]";
-	return out;
 }
 
 const std::string DataFold::operator[] (std::string key) const

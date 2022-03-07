@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 21:06:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 21:53:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@
 # define DF_TYPE_ARRAY	8 // not implemented
 # define DF_TYPE_SUB	16
 # define DF_QUOTE_SET "\"\'`"
-# define DF_KEY_QUOTE '\''
+# define DF_KEY_QUOTE "\'"
 # define DF_NUM_QUOTE ""
-# define DF_VAL_QUOTE '\''
+# define DF_VAL_QUOTE "\'"
 
 typedef std::pair<std::string, std::string> pair_str;
 
@@ -67,6 +67,7 @@ class DataFold : public StringTools
 		int key_count(std::string key) const;
 		const std::string getFirstByKey(std::string key) const;
 		std::string eqvals_to_arrstr(std::string key) const;
+		std::string quoted_val(datafold_t) const;
 };
 
 std::ostream & operator<< (std::ostream & o, DataFold const &);
