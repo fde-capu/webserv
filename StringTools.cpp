@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 16:23:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:28:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,13 @@ void StringTools::remove_comments(std::string& dst)
 
 void StringTools::remove_all(std::string& dst, std::string to_remove)
 { substitute_all(dst, to_remove, ""); }
+
+std::string StringTools::itos(int i) const
+{
+	std::ostringstream s;
+	s << i;
+	return std::string(s.str());
+}
 
 std::string StringTools::substitute_all(std::string& dst, std::string before, std::string after)
 {

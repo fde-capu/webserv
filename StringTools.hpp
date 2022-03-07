@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 16:24:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:23:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class StringTools
 		std::string clean_before_parse(std::string &);
 		bool isNumber(std::string);
 		bool isDigit(char);
+		std::string itos(int) const;
 };
 
 std::ostream & operator<< (std::ostream & o, StringTools const & i);
