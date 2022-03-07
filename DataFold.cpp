@@ -6,12 +6,41 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 21:53:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 00:33:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "DataFold.hpp"
 #include <iostream>
+
+datafold_type::operator std::string()
+{
+	std::string out;
+	if ((type & DF_TYPE_NUMBER)
+	|| (type & DF_TYPE_STRING))
+		out = val;
+	if (type & DF_TYPE_SUB)
+	{
+//		out = static_cast<DataVec>(sub);
+		out = "Flav";
+	}
+	return out;
+}
+
+std::ostream & operator<< (std::ostream & o, datafold_t const & self)
+{
+	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << " : ";
+	if (self.type & DF_TYPE_NUMBER)
+		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
+	if (self.type & DF_TYPE_STRING)
+	{
+		std::string esc_val = StringTools().escape_char(self.val, "'");
+		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
+	}
+	if (self.type & DF_TYPE_SUB)
+		o << self.sub;
+	return o;
+}
 
 DataFold::DataFold(void)
 : index(0)
@@ -30,7 +59,7 @@ DataFold::DataFold(DataFold const & src)
 	return ;
 }
 
-std::vector<datafold_t> DataFold::getCore() const
+datavec DataFold::getCore() const
 { return core; }
 
 int DataFold::getIndex() const
@@ -53,8 +82,8 @@ std::string DataFold::quoted_val(datafold_t dt) const
 		out = apply_quotes(dt.val, DF_NUM_QUOTE);
 	if (dt.type & DF_TYPE_STRING)
 		out = apply_quotes(dt.val, DF_VAL_QUOTE);
-	if (dt.type & DF_TYPE_SUB)
-		out = dt.sub;
+//	if (dt.type & DF_TYPE_SUB)
+//		out = dt.sub;
 	return out;
 }
 
@@ -76,27 +105,12 @@ std::string DataFold::eqvals_to_arrstr(std::string key) const
 	return out;
 }
 
-std::ostream & operator<< (std::ostream & o, datafold_t const & self)
-{
-	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << " : ";
-	if (self.type & DF_TYPE_NUMBER)
-		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
-	if (self.type & DF_TYPE_STRING)
-	{
-		std::string esc_val = StringTools().escape_char(self.val, "'");
-		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
-	}
-	if (self.type & DF_TYPE_SUB)
-		o << self.sub;
-	return o;
-}
-
-//std::string std::vector<datafold_t>::operator= ()
+//std::string datavec::operator= ()
 //{
 //	return std::string("HEYA");
 //}
 
-std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const & self)
+std::ostream & operator<< (std::ostream & o, datavec const & self)
 {
 	o << "{ ";
 	for (size_t i = 0; i < self.size(); i++)
@@ -185,7 +199,7 @@ const std::string DataFold::operator[] (std::string key) const
 	return eqvals_to_arrstr(key);
 }
 
-DataFold::operator DataFold::datavec()
+DataFold::operator datavec()
 { return core; }
 
 DataFold DataFold::parse_data(const std::string str, std::string split_set)

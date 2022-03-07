@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 21:53:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 00:30:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,16 @@ typedef struct datafold_type
 	std::string					key;
 	std::string					val;
 	std::vector<datafold_type>	sub;
+	operator std::string();
 } datafold_t;
 
-std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const & self);
+typedef std::vector<datafold_t> datavec;
+
+std::ostream & operator<< (std::ostream & o, datavec const &);
 std::ostream & operator<< (std::ostream & o, datafold_type const &);
 
 class DataFold : public StringTools
 {
-	public:
-		typedef std::vector<datafold_t> datavec;
 	private:
 		datavec	core;
 		int		index;
@@ -59,7 +60,7 @@ class DataFold : public StringTools
 		size_t size() const;
 		const datafold_type operator[] (size_t idx) const;
 		const std::string operator[] (std::string) const;
-		std::vector<datafold_t> getCore() const;
+		datavec getCore() const;
 		int getIndex() const;
 		operator datavec();
 		DataFold parse_data(const std::string dst, std::string split_set);
