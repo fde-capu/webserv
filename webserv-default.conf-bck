@@ -1,17 +1,17 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    webserv-default.conf                               :+:      :+:    :+:    #
+#    webserv-default.conf-bck                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/21 17:09:19 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/21 18:22:02 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/03/07 16:47:13 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 server_name "fde-capu's webserv @ 42SP";
-wellcome_message "Welcome to fde-capu's webserv @ 42 SP";
+welcome_message "Welcome to fde-capu's webserv @ 42 SP";
 bye_message "Thank you.";
 
 server
