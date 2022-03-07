@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 03:54:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 04:53:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@
 
 # define DF_TYPE_NUMBER 2
 # define DF_TYPE_STRING	4
-# define DF_TYPE_SUB	8
+# define DF_TYPE_ARRAY	8 // not implemented
+# define DF_TYPE_SUB	16
 # define DF_QUOTE_SET "\"\'`"
 
 typedef std::pair<std::string, std::string> pair_str;

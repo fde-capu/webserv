@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 03:57:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 04:46:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ std::string StringTools::substitute_all(std::string& dst, std::string before, st
 size_t StringTools::find_outside_quotes(std::string &dst)
 { return find_outside_quotes(dst, _quote_set); }
 
-size_t StringTools::find_outside_quotes(std::string& str, std::string quotes_set)
+size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 {
 	std::string q = "";
 	for(std::string::iterator s = str.begin(); *s; s++)
@@ -135,10 +135,12 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string quotes_set
 			{
 				if (*(q.end() - 1) == *i)
 					q = q.substr(0, q.length() - 1);
+				else if (q.empty())
+					q = q + *i;
 			}
 			else
 			{
-				if (std::string(s, s + (quotes_set.length())) == quotes_set)
+				if (std::string(s, s + (needle.length())) == needle)
 				{
 					if (q.length() == 0)
 						return s - str.begin();
@@ -191,6 +193,7 @@ bool StringTools::isNumber(std::string str)
 {
 	bool dot = false;
 	soft_trim(str);
+	correct_quotes(str);
 	for (size_t i = 0; i < str.size(); i++)
 	{
 		if (i == 0 && str[0] != '-' && str[0] != '+' && !isDigit(str[0]) && str[0] != '.')

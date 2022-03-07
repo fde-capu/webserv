@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 03:54:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 04:56:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,13 @@ DataFold & DataFold::operator= (DataFold const & rhs)
 
 std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 {
-//	o << "{ ";;
-//	o << "index: " << self.index << ", ";
-	o << "'" << self.key << "' : ";
+	o << "" << self.key << " : ";
 	if (self.type & DF_TYPE_NUMBER)
 		o << "" << self.val << "";
 	if (self.type & DF_TYPE_STRING)
 		o << "'" << self.val << "'";
 	if (self.type & DF_TYPE_SUB)
 		o << self.sub;
-//	o << " , ";
 	return o;
 }
 
@@ -70,7 +67,7 @@ std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const & sel
 		if (i + 1 < self.size())
 			o << " , ";
 	}
-	o << " } ";
+	o << " }";
 	return o;
 }
 
@@ -88,8 +85,11 @@ DataFold::~DataFold(void)
 int DataFold::df_type(std::string val)
 {
 	int out;
+	soft_trim(val);
+// For future implementation:
+//	if (find_outside_quotes(val, " ") != std::string::npos)
+//		return DF_TYPE_ARRAY;
 	out = isNumber(val) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
-	std::cout << "### " << val << " - " << isNumber(val) << std::endl;
 	return out;
 }
 
@@ -97,10 +97,10 @@ void DataFold::push_back(std::string key, std::string val)
 {
 	datafold_t entry;
 	entry.index = index++;
-	correct_quotes(val);
 	entry.type = df_type(val);
 	entry.key = key;
-	entry.val = val;
+	if (entry.type & DF_TYPE_STRING || entry.type & DF_TYPE_NUMBER)
+		entry.val = correct_quotes(val);
 	core.push_back(entry);
 }
 
