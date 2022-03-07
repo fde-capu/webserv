@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 00:17:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 02:37:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <iostream>
 
 DataFold::DataFold(void)
-: index(0)
+: StringTools(), index(0)
 {
 	return ;
 }
@@ -46,8 +46,10 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 //	o << "{ ";;
 //	o << "index: " << self.index << ", ";
 	o << "'" << self.key << "' : ";
+	if (self.type & DF_TYPE_NUMBER)
+		o << "" << self.val << "";
 	if (self.type & DF_TYPE_STRING)
-	o << "'" << self.val << "'";
+		o << "'" << self.val << "'";
 	if (self.type & DF_TYPE_SUB)
 		o << self.sub;
 //	o << " , ";
@@ -76,21 +78,6 @@ std::ostream & operator<< (std::ostream & o, DataFold const & self)
 DataFold::~DataFold(void)
 {
 	return ;
-}
-
-std::string DataFold::correct_quotes(std::string val)
-{
-	std::cout << "###########" << val << std::endl;
-	std::string::iterator f = val.begin();
-	std::string::iterator l = val.end() - 1;
-	std::string first(f, f + 1);
-	std::string last(l, l + 1);
-	if (first == last && (first == "\"" || first == "\'"))
-		return std::string(f + 1, l);
-
-	std::cout << std::string(f, f + 1) << " - " << std::string(l, l + 1);
-	std::cout << std::endl;
-	return val;
 }
 
 void DataFold::push_back(std::string key, std::string val)

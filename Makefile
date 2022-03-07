@@ -6,15 +6,16 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/03/06 22:21:52 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/03/07 01:43:37 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	webserv
 ARGS	=	webserv-default.conf
-SRCS	=	main.cpp Encapsulator.cpp strings.cpp FileString.cpp DataFold.cpp
+SRCS	=	main.cpp Encapsulator.cpp strings.cpp FileString.cpp DataFold.cpp \
+			StringTools.cpp
 HEAD	=	Makefile Encapsulator.hpp setup.hpp header.hpp \
-			FileString.hpp DataFold.hpp
+			FileString.hpp DataFold.hpp StringTools.hpp
 SHELL	=	/bin/sh
 CC		=	c++ -std=c++98 -Wfatal-errors -DVERBOSE=1
 CCFLAGS	=	-Wall -Werror -Wextra -g -O0
