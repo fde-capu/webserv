@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 17:28:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:52:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 	return std::string::npos;
 }
 
-std::string StringTools::escape_char(std::string& dst, std::string esc)
+std::string StringTools::escape_char(const std::string dst, std::string esc)
 {
 	return substitute_all(dst, esc, std::string("\\" + esc));
 }
@@ -175,7 +175,7 @@ std::string StringTools::correct_quotes(std::string& dst, std::string quote)
 	std::string last(l, l + 1);
 	if (first == last && (first == "\"" || first == "'"))
 		out = std::string(f + 1, l);
-	escape_char(out, quote);
+//	escape_char(out, quote);
 	dst = out;
 	return out;
 }
