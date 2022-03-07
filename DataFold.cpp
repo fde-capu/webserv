@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 20:48:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 20:55:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ DataFold::operator DataFold::datavec()
 DataFold DataFold::parse_data(const std::string str, std::string split_set)
 {
 	DataFold out;
-	std::string ops(str);
+	std::string ops = str;
 	size_t div_pos;
 	std::string c;
 	bool pass;
