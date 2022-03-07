@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 17:19:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:32:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,6 @@ const std::string DataFold::operator[] (std::string key) const
 	{
 		out += " " + itos(key_count(key)) + " " + core[i].key;	
 	}
-	(void)key;
 	return out;
 }
 
