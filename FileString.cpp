@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 02:56:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 03:27:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,7 @@ FileString::FileString(const char * file_name)
 
 void FileString::parse()
 {
-	std::string parsed(_processed);
-	substitute_all(parsed, "\n", " ");
-	substitute_all(parsed, "\t", " ");
-	hard_trim(parsed, " ");
-	erase_boundaries(parsed, ";");
-	erase_boundaries(parsed, "{");
-	erase_boundaries(parsed, "}");
-	this->data = DataFold(parsed);
+	this->data = DataFold(_processed);
 //	_processed = parsed;
 }
 
