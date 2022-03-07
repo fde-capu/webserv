@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 02:37:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 02:53:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class DataFold : public StringTools
 		datavec	core;
 		int		index;
 	public:
+		DataFold(std::string data);
 		DataFold(void);
 		DataFold(DataFold const & src);
 		DataFold & operator= (DataFold const & rhs);
@@ -56,6 +57,7 @@ class DataFold : public StringTools
 		std::vector<datafold_t> getCore() const;
 		int getIndex() const;
 		operator datavec();
+		DataFold parse_data(const std::string dst, std::string split_set);
 };
 
 std::ostream & operator<< (std::ostream & o, DataFold const &);
