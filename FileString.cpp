@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 16:55:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 20:33:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ FileString::FileString(const char * file_name)
 }
 
 std::string const FileString::operator[](std::string key) const
-{ return data[key]; }
+{ return fs_data[key]; }
 
 void FileString::parse()
 {
@@ -41,7 +41,7 @@ void FileString::parse()
 	soft_trim(_processed);
 	hard_trim(_processed);
 	_processed_ok = true;
-	this->data = DataFold(_processed);
+	this->fs_data = DataFold(_processed);
 }
 
 std::string FileString::processed() const
@@ -74,7 +74,7 @@ char * FileString::getFileName()
 std::ostream & operator<< (std::ostream & o, FileString const & self)
 {
 	o << ">>>" << self.processed() << "<<<" << std::endl;
-	o << self.data << std::endl;
+	o << self.fs_data << std::endl;
 	return o;
 }
 

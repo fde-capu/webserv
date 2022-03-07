@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 17:49:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 20:48:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ DataFold::DataFold(void)
 	return ;
 }
 
-DataFold::DataFold(std::string data)
+DataFold::DataFold(std::string df_data)
 {
-	*this = parse_data(data, ";");
+	*this = parse_data(df_data, ";");
 }
 
 DataFold::DataFold(DataFold const & src)
@@ -52,7 +52,10 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 	if (self.type & DF_TYPE_NUMBER)
 		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
 	if (self.type & DF_TYPE_STRING)
-		o << DF_VAL_QUOTE << self.val << DF_VAL_QUOTE;
+	{
+		std::string esc_val = StringTools().escape_char(self.val, "'");
+		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
+	}
 	if (self.type & DF_TYPE_SUB)
 		o << self.sub;
 	return o;

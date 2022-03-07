@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 16:53:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 20:33:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class FileString : public StringTools
 		bool _processed_ok;
 
 	public:
-		DataFold data;
+		DataFold fs_data;
 		FileString(const char * file_name);
 		FileString(FileString & src);
 		FileString & operator= (FileString & rhs);

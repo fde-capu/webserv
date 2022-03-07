@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 17:52:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 20:42:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,13 @@ std::string StringTools::itos(int i) const
 	return std::string(s.str());
 }
 
+std::string StringTools::substitute_all_ret(const std::string dst, std::string before, std::string after)
+{
+	std::string out(static_cast<std::string>(dst));
+	substitute_all(out, before, after);
+	return out;
+}
+
 std::string StringTools::substitute_all(std::string& dst, std::string before, std::string after)
 {
 	bool pass = false;
@@ -118,8 +125,8 @@ std::string StringTools::substitute_all(std::string& dst, std::string before, st
 	{
 		pass = true;
 		size_t pos = find_outside_quotes(dst, before);
-		size_t escaped = find_outside_quotes(dst, std::string("\\" + before));
-		if (pos != escaped + 1 && pos != std::string::npos)
+		size_t scap_t = find_outside_quotes(dst, std::string("\\" + before));
+		if (pos != scap_t + 1 && pos != std::string::npos)
 		{
 			pass = false;
 			dst.replace(pos, before.length(), after);
@@ -160,13 +167,10 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 
 std::string StringTools::escape_char(const std::string dst, std::string esc)
 {
-	return substitute_all(dst, esc, std::string("\\" + esc));
+	return substitute_all_ret(dst, esc, std::string("\\" + esc));
 }
 
 std::string StringTools::correct_quotes(std::string& dst)
-{ return correct_quotes(dst, ST_DEFAULT_QUOTE); }
-
-std::string StringTools::correct_quotes(std::string& dst, std::string quote)
 {
 	std::string out(dst);
 	std::string::iterator f = dst.begin();
@@ -175,7 +179,6 @@ std::string StringTools::correct_quotes(std::string& dst, std::string quote)
 	std::string last(l, l + 1);
 	if (first == last && (first == "\"" || first == "'"))
 		out = std::string(f + 1, l);
-//	escape_char(out, quote);
 	dst = out;
 	return out;
 }
