@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 20:58:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 21:00:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 			}
 			else
 			{
-				if (e - s > static_cast<long>(needle.size()))
+				if (e - s < static_cast<long>(needle.size()))
 					return std::string::npos;
 				if (std::string(s, s + (needle.length())) == needle)
 				{
