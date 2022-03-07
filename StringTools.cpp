@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 02:36:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 03:13:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,19 +104,21 @@ void StringTools::remove_comments(std::string& dst)
 void StringTools::remove_all(std::string& dst, std::string to_remove)
 { substitute_all(dst, to_remove, ""); }
 
-void StringTools::substitute_all(std::string& dst, std::string before, std::string after)
+std::string StringTools::substitute_all(std::string& dst, std::string before, std::string after)
 {
 	bool pass = false;
 	while (!pass)
 	{
 		pass = true;
 		size_t pos = find_outside_quotes(dst, before);
-		if (pos != std::string::npos)
+		size_t escaped = find_outside_quotes(dst, std::string("\\" + before));
+		if (pos != escaped + 1 && pos != std::string::npos)
 		{
 			pass = false;
 			dst.replace(pos, before.length(), after);
 		}
 	}
+	return dst;
 }
 
 size_t StringTools::find_outside_quotes(std::string &dst)
@@ -147,24 +149,22 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string quotes_set
 	return std::string::npos;
 }
 
-std::string StringTools::escape_char(std::string& dst, char esc)
+std::string StringTools::escape_char(std::string& dst, std::string esc)
 {
-	(void)esc;
-	return dst;
+	std::cout << "###########" << esc << std::endl;
+	return substitute_all(dst, esc, std::string("\\" + esc));
 }
 
 std::string StringTools::correct_quotes(std::string& dst)
 {
-	std::cout << "###########" << dst << std::endl;
+	std::string out(dst);
 	std::string::iterator f = dst.begin();
 	std::string::iterator l = dst.end() - 1;
 	std::string first(f, f + 1);
 	std::string last(l, l + 1);
-	if (first == last && (first == "\"" || first == "\'"))
-		return std::string(f + 1, l);
-
-	std::cout << std::string(f, f + 1) << " - " << std::string(l, l + 1);
-	std::cout << std::endl;
-	return dst;
+	if (first == last && (first == "\"" || first == "'"))
+		out = std::string(f + 1, l);
+	escape_char(out, "\'");
+	return out;
 }
 

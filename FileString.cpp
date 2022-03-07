@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 02:47:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 02:56:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 #include <algorithm>
 
 FileString::FileString(const char * file_name)
-: StringTools(),
-  _file_name(const_cast<char *>(file_name)), _content(""), _processed(""),
+: _file_name(const_cast<char *>(file_name)), _content(""), _processed(""),
   _read_ok(true), _processed_ok(false) 
 {
 	std::fstream file_read;
