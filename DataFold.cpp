@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 03:29:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 03:54:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,13 +85,22 @@ DataFold::~DataFold(void)
 	return ;
 }
 
+int DataFold::df_type(std::string val)
+{
+	int out;
+	out = isNumber(val) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
+	std::cout << "### " << val << " - " << isNumber(val) << std::endl;
+	return out;
+}
+
 void DataFold::push_back(std::string key, std::string val)
 {
 	datafold_t entry;
 	entry.index = index++;
-	entry.type = DF_TYPE_STRING;
+	correct_quotes(val);
+	entry.type = df_type(val);
 	entry.key = key;
-	entry.val = correct_quotes(val);
+	entry.val = val;
 	core.push_back(entry);
 }
 
@@ -166,4 +175,3 @@ DataFold DataFold::parse_data(const std::string str, std::string split_set)
 	}
 	return out;
 }
-

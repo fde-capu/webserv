@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 03:30:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 03:57:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,7 @@ std::string StringTools::correct_quotes(std::string& dst)
 	if (first == last && (first == "\"" || first == "'"))
 		out = std::string(f + 1, l);
 	escape_char(out, "\'");
+	dst = out;
 	return out;
 }
 
@@ -179,4 +180,30 @@ std::string StringTools::clean_before_parse(std::string& dst)
 	erase_boundaries(dst, "{");
 	erase_boundaries(dst, "}");
 	return dst;
+}
+
+bool StringTools::isDigit(char d)
+{
+	return d >= '0' && d <= '9';
+}
+
+bool StringTools::isNumber(std::string str)
+{
+	bool dot = false;
+	soft_trim(str);
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		if (i == 0 && str[0] != '-' && str[0] != '+' && !isDigit(str[0]) && str[0] != '.')
+			return false;
+		if (str[i] == '.')
+		{
+			if (dot)
+				return false;
+			dot = true;
+			continue ;
+		}
+		if (!isDigit(str[i]))
+			return false;
+	}
+	return true;
 }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 03:28:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 03:40:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ class StringTools
 		std::string correct_quotes(std::string&);
 		std::string escape_char(std::string&, std::string);
 		std::string clean_before_parse(std::string &);
+		bool isNumber(std::string);
+		bool isDigit(char);
 };
 
 std::ostream & operator<< (std::ostream & o, StringTools const & i);
