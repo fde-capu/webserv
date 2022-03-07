@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 20:41:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 21:30:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,19 +40,21 @@ class StringTools
 		void hard_trim(std::string&);
 		void hard_trim(std::string&, std::string);
 		void remove_all(std::string&, std::string);
-		std::string substitute_all(std::string&, std::string, std::string);
-		std::string substitute_all_ret(const std::string, std::string, std::string);
+		std::string substitute_all(std::string&, std::string, std::string) const;
+		std::string substitute_all_ret(const std::string, std::string, std::string) const;
 		void erase_boundaries(std::string&, std::string);
 		void erase_boundaries(std::string&, std::string, std::string);
-		size_t find_outside_quotes(std::string&, std::string);
-		size_t find_outside_quotes(std::string&);
+		size_t find_outside_quotes(std::string&, std::string) const;
+		size_t find_outside_quotes(std::string&) const;
 		void remove_comments(std::string&);
 		std::string correct_quotes(std::string&);
-		std::string escape_char(const std::string, std::string);
+		std::string escape_char(const std::string, std::string) const;
 		std::string clean_before_parse(std::string &);
 		bool isNumber(std::string);
 		bool isDigit(char);
 		std::string itos(int) const;
+		std::string apply_quotes(std::string) const;
+		std::string apply_quotes(std::string, std::string) const;
 };
 
 std::ostream & operator<< (std::ostream & o, StringTools const & i);

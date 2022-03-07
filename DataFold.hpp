@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 20:34:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 21:06:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ class DataFold : public StringTools
 		int df_type(std::string);
 		int key_count(std::string key) const;
 		const std::string getFirstByKey(std::string key) const;
+		std::string eqvals_to_arrstr(std::string key) const;
 };
 
 std::ostream & operator<< (std::ostream & o, DataFold const &);

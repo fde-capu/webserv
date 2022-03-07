@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 20:55:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 21:28:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,19 @@ const std::string DataFold::getFirstByKey(std::string key) const
 	return std::string("");
 }
 
+std::string DataFold::eqvals_to_arrstr(std::string key) const
+{
+	std::string out("[ ");
+	for (int i = 0; i < index; i++)
+	{
+		if (core[i].key == key)
+			out += apply_quotes(core[i].val) + " , ";
+	}
+	out += "]";
+	substitute_all(out, ", ]", "]");
+	return out;
+}
+
 const std::string DataFold::operator[] (std::string key) const
 {
 	int kc = key_count(key);
@@ -147,7 +160,7 @@ const std::string DataFold::operator[] (std::string key) const
 		return std::string("");
 	if (kc == 1)
 		return getFirstByKey(key);
-	return std::string("");
+	return eqvals_to_arrstr(key);
 }
 
 DataFold::operator DataFold::datavec()

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 21:00:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 21:30:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,14 +111,14 @@ std::string StringTools::itos(int i) const
 	return std::string(s.str());
 }
 
-std::string StringTools::substitute_all_ret(const std::string dst, std::string before, std::string after)
+std::string StringTools::substitute_all_ret(const std::string dst, std::string before, std::string after) const
 {
 	std::string out(static_cast<std::string>(dst));
 	substitute_all(out, before, after);
 	return out;
 }
 
-std::string StringTools::substitute_all(std::string& dst, std::string before, std::string after)
+std::string StringTools::substitute_all(std::string& dst, std::string before, std::string after) const
 {
 	bool pass = false;
 	while (!pass)
@@ -135,16 +135,22 @@ std::string StringTools::substitute_all(std::string& dst, std::string before, st
 	return dst;
 }
 
-size_t StringTools::find_outside_quotes(std::string &dst)
+size_t StringTools::find_outside_quotes(std::string &dst) const
 { return find_outside_quotes(dst, _quote_set); }
 
-size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
+std::string StringTools::apply_quotes(std::string str) const
+{ return apply_quotes(str, ST_DEFAULT_QUOTE); }
+
+std::string StringTools::apply_quotes(std::string str, std::string quote) const
+{ return std::string(quote + escape_char(str, quote) + quote); }
+
+size_t StringTools::find_outside_quotes(std::string& str, std::string needle) const
 {
 	std::string q = "";
 	std::string::iterator e = str.end();
 	for(std::string::iterator s = str.begin(); *s; s++)
 	{
-		for(std::string::iterator i = _quote_set.begin(); *i; i++)
+		for(std::string::const_iterator i = _quote_set.begin(); *i; i++)
 		{
 			if (*i == *s)
 			{
@@ -168,7 +174,7 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 	return std::string::npos;
 }
 
-std::string StringTools::escape_char(const std::string dst, std::string esc)
+std::string StringTools::escape_char(const std::string dst, std::string esc) const
 {
 	return substitute_all_ret(dst, esc, std::string("\\" + esc));
 }
