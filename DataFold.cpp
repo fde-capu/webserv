@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 04:56:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 16:26:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ DataFold & DataFold::operator= (DataFold const & rhs)
 
 std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 {
-	o << "" << self.key << " : ";
+	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << " : ";
 	if (self.type & DF_TYPE_NUMBER)
-		o << "" << self.val << "";
+		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
 	if (self.type & DF_TYPE_STRING)
-		o << "'" << self.val << "'";
+		o << DF_VAL_QUOTE << self.val << DF_VAL_QUOTE;
 	if (self.type & DF_TYPE_SUB)
 		o << self.sub;
 	return o;

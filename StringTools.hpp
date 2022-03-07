@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 03:40:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/07 16:24:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # define ST_HARD_TRIM " \t"
 # define ST_QUOTE_SET "\"'`"
 # define ST_COMMENT_INLINE "#"
+# define ST_DEFAULT_QUOTE "'"
 
 class StringTools
 {
@@ -46,6 +47,7 @@ class StringTools
 		size_t find_outside_quotes(std::string&);
 		void remove_comments(std::string&);
 		std::string correct_quotes(std::string&);
+		std::string correct_quotes(std::string&, std::string);
 		std::string escape_char(std::string&, std::string);
 		std::string clean_before_parse(std::string &);
 		bool isNumber(std::string);
