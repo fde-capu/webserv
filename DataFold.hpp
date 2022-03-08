@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 23:23:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 23:43:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,9 @@
 # define DF_OBJ_END " }"
 # define DF_ENDVAL_SET ";"
 
-# define DF_ERR_NO_KEY "Key not found."
-# define DF_ERR_IS_ARRAY "Value is array."
+# define DFK "'" + key + "'" +
+# define DF_ERR_NO_KEY DFK " not found."
+# define DF_ERR_IS_ARRAY DFK " is array."
 
 typedef std::pair<std::string, std::string> pair_str;
 
@@ -86,6 +87,7 @@ class DataFold : public StringTools
 		std::string quoted_val(datafold_t) const;
 		const std::string getValStr(std::string key) const;
 		datafold_t get_datafold(std::string key);
+		void key_count_single_check(std::string key);
 
 		template <typename T>
 		T get(std::string key)

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 23:24:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 23:44:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,8 +189,18 @@ int DataFold::key_count(std::string key) const
 	return out;
 }
 
+void DataFold::key_count_single_check(std::string key)
+{
+	int count = key_count(key);
+	if (count == 0)
+		throw std::invalid_argument(DF_ERR_NO_KEY);
+	if (count != 1)
+		throw std::invalid_argument(DF_ERR_IS_ARRAY);
+}
+
 datafold_t DataFold::get_datafold(std::string key)
 {
+	key_count_single_check(key);
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
 			return core[i];
