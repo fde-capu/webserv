@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 21:04:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 23:24:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ class FileString : public StringTools
 		std::string processed() const;
 		std::string const operator[](std::string) const;
 		void parse();
-		int getInt(std::string);
 
 		template <typename T>
 		T get(std::string key)

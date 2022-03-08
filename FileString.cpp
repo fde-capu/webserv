@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 19:37:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 23:23:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,6 @@ FileString::FileString(const char * file_name)
 	while (std::getline(file_read, line))
 		_content += line + "\n";
 }
-
-int FileString::getInt(std::string key)
-{ return fs_data.getInt(key); }
 
 std::string const FileString::operator[](std::string key) const
 { return fs_data[key]; }

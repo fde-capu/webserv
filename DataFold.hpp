@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 21:10:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 23:23:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ class DataFold : public StringTools
 		const std::string getFirstByKey(std::string key) const;
 		std::string eqvals_to_arrstr(std::string key) const;
 		std::string quoted_val(datafold_t) const;
-		int getInt(std::string);
 		const std::string getValStr(std::string key) const;
 		datafold_t get_datafold(std::string key);
 
