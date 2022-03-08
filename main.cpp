@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 19:23:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 21:03:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,16 @@ bool read_conf2(maps & conf, const char *file)
 //	std::cout << "--" << serv << "--" << std::endl;
 
 //	int test_int = file_conf["client_max_body_size"];
-	int test_int = file_conf.getInt("test_port");
+//	int test_int = file_conf.getInt("test_port");
+	int test_int = file_conf.get<int>("test_port");
 	std::cout << "int: " << test_int << std::endl;
+
+	std::string servn = file_conf.get<std::string>("server_name");
+	std::string serv = file_conf.get<std::string>("server");
+//	std::string serv = file_conf["server"];
+	std::cout << "--" << servn << "--" << std::endl;
+	std::cout << "--" << serv << "--" << std::endl;
+
 
 	(void)conf;
 	return true;

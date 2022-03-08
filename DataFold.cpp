@@ -6,18 +6,25 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 20:43:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 21:07:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "DataFold.hpp"
 #include <iostream>
+#include <cstdlib>
 
 datafold_type::operator std::string()
 {
+	return std::string("FLAV");
 	std::stringstream o;
 	o << this;
 	return o.str();
+}
+
+datafold_t::operator int()
+{
+	return atoi(val.c_str());
 }
 
 datavec::operator std::string()
@@ -186,14 +193,9 @@ const datafold_type DataFold::operator[] (size_t idx) const
 
 int DataFold::key_count(std::string key) const
 {
-	std::cout << core << std::endl;
 	int out = 0;
 	for (int i = 0; i < index; i++)
-	{
-		std::cout << core[i] << std::endl;
 		out += core[i].key == key ? 1 : 0;
-		std::cout << out << ": " << key << " : " << core[i].key << std::endl;
-	}
 	return out;
 }
 
