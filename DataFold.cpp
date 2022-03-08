@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 21:07:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 21:10:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 datafold_type::operator std::string()
 {
-	return std::string("FLAV");
+//	return std::string("FLAV");
 	std::stringstream o;
 	o << this;
 	return o.str();

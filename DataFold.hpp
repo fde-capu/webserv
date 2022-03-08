@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 21:00:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 21:10:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ class DataFold : public StringTools
 
 		template <typename T>
 		T get(std::string key)
-		{ return T(get_datafold(key)); }
+		{ return get_datafold(key); }
 };
 
 std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const &);
