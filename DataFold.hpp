@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 23:43:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 23:48:37 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,6 @@
 # define DFK "'" + key + "'" +
 # define DF_ERR_NO_KEY DFK " not found."
 # define DF_ERR_IS_ARRAY DFK " is array."
-
-typedef std::pair<std::string, std::string> pair_str;
 
 typedef struct datafold_type
 {

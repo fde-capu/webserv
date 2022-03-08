@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 23:24:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 23:48:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@
 # include <utility>
 # include "DataFold.hpp"
 # include "StringTools.hpp"
-
-typedef std::vector<pair_str> vec_pair_str;
 
 # ifndef VERBOSE
 #  define VERBOSE 0
