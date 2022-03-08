@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 21:30:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 20:45:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,7 @@ std::string StringTools::clean_before_parse(std::string& dst)
 	remove_comments(dst);
 	soft_trim(dst);
 	hard_trim(dst);
-	substitute_all(dst, "\n", " ");
+	hard_trim(dst, "\n");
 	substitute_all(dst, "\t", " ");
 	hard_trim(dst, " ");
 	erase_boundaries(dst, ";");

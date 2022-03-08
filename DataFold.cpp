@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 01:39:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 20:43:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,11 @@ DataFold::DataFold(void)
 
 DataFold::DataFold(std::string df_data)
 {
-	*this = parse_data(df_data, ";");
+	*this = parse_data(df_data);
 }
 
 DataFold::DataFold(DataFold const & src)
+: StringTools()
 {
 	*this = src;
 	return ;
@@ -90,6 +91,17 @@ datavec DataFold::getCore() const
 
 int DataFold::getIndex() const
 { return index; }
+
+int DataFold::getInt(std::string key)
+{
+	int kc = key_count(key);
+
+	if (!kc)
+		throw std::invalid_argument(DF_ERR_NO_KEY);
+	if (kc != 1)
+		throw std::invalid_argument(DF_ERR_IS_ARRAY);
+	return std::atoi(get_datafold(key).val.c_str());
+}
 
 DataFold & DataFold::operator= (DataFold const & rhs)
 {
@@ -174,13 +186,26 @@ const datafold_type DataFold::operator[] (size_t idx) const
 
 int DataFold::key_count(std::string key) const
 {
+	std::cout << core << std::endl;
 	int out = 0;
 	for (int i = 0; i < index; i++)
+	{
+		std::cout << core[i] << std::endl;
 		out += core[i].key == key ? 1 : 0;
+		std::cout << out << ": " << key << " : " << core[i].key << std::endl;
+	}
 	return out;
 }
 
-const std::string DataFold::getFirstByKey(std::string key) const
+datafold_t DataFold::get_datafold(std::string key)
+{
+	for (int i = 0; i < index; i++)
+		if (key == core[i].key)
+			return core[i];
+	return datafold_t();
+}
+
+const std::string DataFold::getValStr(std::string key) const
 {
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
@@ -195,61 +220,62 @@ const std::string DataFold::operator[] (std::string key) const
 	if (!kc)
 		return std::string("");
 	if (kc == 1)
-		return getFirstByKey(key);
+		return getValStr(key);
 	return eqvals_to_arrstr(key);
 }
 
 DataFold::operator datavec()
 { return core; }
 
-DataFold DataFold::parse_data(const std::string str, std::string split_set)
+DataFold DataFold::parse_data(const std::string str)
 {
 	DataFold out;
 	std::string ops = str;
 	size_t div_pos;
-	std::string c;
 	bool pass;
 	std::string key;
 	std::string val;
-	size_t pos[2];
+	size_t pos[4];
 
 	clean_before_parse(ops);
 
-	for(std::string::iterator i = split_set.begin(); *i; i++)
+	pass = false;
+	while (!pass)
 	{
-		c = std::string(i, i + 1);
-		pass = false;
-		while (!pass)
+		pass = true;
+		pos[0] = find_outside_quotes(ops, " ");
+		pos[1] = find_outside_quotes(ops, "{");
+		pos[2] = find_outside_quotes(ops, ";");
+		pos[3] = find_outside_quotes(ops, "\n");
+
+		if (pos[0] < pos[1] && pos[0] != std::string::npos)
 		{
-			pass = true;
-			pos[0] = find_outside_quotes(ops, " ");
-			pos[1] = find_outside_quotes(ops, "{");
-			if (pos[0] < pos[1] && pos[0] != std::string::npos)
-			{
-				pass = false;
-				key = ops.substr(0, pos[0]);
-				ops = ops.substr(pos[0] + 1);
-				div_pos = find_outside_quotes(ops, c);
-				val = ops.substr(0, div_pos);
-				ops = ops.substr(div_pos + 1);
-				soft_trim(key);
-				soft_trim(val);
-				out.push_back(key, val);
-				continue ;
-			}
-			if (pos[1] < pos[0] && pos[1] != std::string::npos)
-			{
-				pass = false;
-				key = ops.substr(0, pos[1]);
-				ops = ops.substr(pos[1] + 1);
-				div_pos = find_outside_quotes(ops, "}");
-				val = ops.substr(0, div_pos);
-				ops = ops.substr(div_pos + 1);
-				soft_trim(key);
-				soft_trim(val);
-				out.push_back(key, parse_data(val, split_set));
-				continue ;
-			}
+			pass = false;
+			key = ops.substr(0, pos[0]);
+			ops = ops.substr(pos[0] + 1);
+			if (pos[2] < pos[3])
+				div_pos = find_outside_quotes(ops, ";");
+			else
+				div_pos = find_outside_quotes(ops, "\n");
+			val = ops.substr(0, div_pos);
+			ops = ops.substr(div_pos + 1);
+			soft_trim(key);
+			soft_trim(val);
+			out.push_back(key, val);
+			continue ;
+		}
+		if (pos[1] < pos[0] && pos[1] != std::string::npos)
+		{
+			pass = false;
+			key = ops.substr(0, pos[1]);
+			ops = ops.substr(pos[1] + 1);
+			div_pos = find_outside_quotes(ops, "}");
+			val = ops.substr(0, div_pos);
+			ops = ops.substr(div_pos + 1);
+			soft_trim(key);
+			soft_trim(val);
+			out.push_back(key, parse_data(val));
+			continue ;
 		}
 	}
 	return out;

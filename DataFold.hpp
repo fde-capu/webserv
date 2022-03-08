@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 01:37:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 19:58:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <vector>
 # include <utility>
 # include "StringTools.hpp"
+# include <cstdlib>
 
 # define DF_TYPE_NUMBER 2
 # define DF_TYPE_STRING	4
@@ -32,6 +33,10 @@
 # define DF_KVDIV " : "
 # define DF_OBJ_INIT "{ "
 # define DF_OBJ_END " }"
+# define DF_ENDVAL_SET ";"
+
+# define DF_ERR_NO_KEY "Key not found."
+# define DF_ERR_IS_ARRAY "Value is array."
 
 typedef std::pair<std::string, std::string> pair_str;
 
@@ -72,12 +77,15 @@ class DataFold : public StringTools
 		int getIndex() const;
 		operator datavec();
 		operator std::string();
-		DataFold parse_data(const std::string dst, std::string split_set);
+		DataFold parse_data(const std::string dst);
 		int df_type(std::string);
 		int key_count(std::string key) const;
 		const std::string getFirstByKey(std::string key) const;
 		std::string eqvals_to_arrstr(std::string key) const;
 		std::string quoted_val(datafold_t) const;
+		int getInt(std::string);
+		const std::string getValStr(std::string key) const;
+		datafold_t get_datafold(std::string key);
 };
 
 std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const &);
