@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 00:33:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 01:39:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,30 +15,56 @@
 
 datafold_type::operator std::string()
 {
-	std::string out;
-	if ((type & DF_TYPE_NUMBER)
-	|| (type & DF_TYPE_STRING))
-		out = val;
-	if (type & DF_TYPE_SUB)
-	{
-//		out = static_cast<DataVec>(sub);
-		out = "Flav";
-	}
-	return out;
+	std::stringstream o;
+	o << this;
+	return o.str();
+}
+
+datavec::operator std::string()
+{
+	std::stringstream o;
+	o << this;
+	return o.str();
+}
+
+DataFold::operator std::string()
+{
+	std::stringstream o;
+	o << getCore();
+	return o.str();
 }
 
 std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 {
-	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << " : ";
+	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << DF_KVDIV;
 	if (self.type & DF_TYPE_NUMBER)
 		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
 	if (self.type & DF_TYPE_STRING)
 	{
-		std::string esc_val = StringTools().escape_char(self.val, "'");
+		std::string esc_val = StringTools().escape_char(self.val, DF_VAL_QUOTE);
 		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
 	}
 	if (self.type & DF_TYPE_SUB)
 		o << self.sub;
+	return o;
+}
+
+std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const & self)
+{
+	o << DF_OBJ_INIT;
+	for (size_t i = 0; i < self.size(); i++)
+	{
+		o << self[i];
+		if (i + 1 < self.size())
+			o << DF_COMMA;
+	}
+	o << DF_OBJ_END;
+	return o;
+}
+
+std::ostream & operator<< (std::ostream & o, DataFold const & self)
+{
+	o << self.getCore();
 	return o;
 }
 
@@ -77,62 +103,36 @@ DataFold & DataFold::operator= (DataFold const & rhs)
 
 std::string DataFold::quoted_val(datafold_t dt) const
 {
-	std::string out;
+	std::stringstream out;
 	if (dt.type & DF_TYPE_NUMBER)
-		out = apply_quotes(dt.val, DF_NUM_QUOTE);
+		out << apply_quotes(dt.val, DF_NUM_QUOTE);
 	if (dt.type & DF_TYPE_STRING)
-		out = apply_quotes(dt.val, DF_VAL_QUOTE);
-//	if (dt.type & DF_TYPE_SUB)
-//		out = dt.sub;
-	return out;
+		out << apply_quotes(dt.val, DF_VAL_QUOTE);
+	if (dt.type & DF_TYPE_SUB)
+		out << dt.sub;
+	return out.str();
 }
 
 std::string DataFold::eqvals_to_arrstr(std::string key) const
 {
-	bool put_coma = false;
-	std::string out("[ ");
+	bool put_comma = false;
+	std::string out(DF_ARRAY_INIT);
 	for (int i = 0; i < index; i++)
 	{
 		if (core[i].key == key)
 		{
-			if (put_coma)
-				out += " , ";
+			if (put_comma)
+				out += DF_COMMA;
 			out += quoted_val(core[i]);
-			put_coma = true;
+			put_comma = true;
 		}
 	}
-	out += " ]";
+	out += DF_ARRAY_END;
 	return out;
 }
 
-//std::string datavec::operator= ()
-//{
-//	return std::string("HEYA");
-//}
-
-std::ostream & operator<< (std::ostream & o, datavec const & self)
-{
-	o << "{ ";
-	for (size_t i = 0; i < self.size(); i++)
-	{
-		o << self[i];
-		if (i + 1 < self.size())
-			o << " , ";
-	}
-	o << " }";
-	return o;
-}
-
-std::ostream & operator<< (std::ostream & o, DataFold const & self)
-{
-	o << self.getCore();
-	return o;
-}
-
 DataFold::~DataFold(void)
-{
-	return ;
-}
+{ return ; }
 
 int DataFold::df_type(std::string val)
 {

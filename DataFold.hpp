@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 00:30:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 01:37:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@
 # define DF_KEY_QUOTE "\'"
 # define DF_NUM_QUOTE ""
 # define DF_VAL_QUOTE "\'"
+# define DF_ARRAY_INIT "[ "
+# define DF_COMMA " , "
+# define DF_ARRAY_END " ]"
+# define DF_KVDIV " : "
+# define DF_OBJ_INIT "{ "
+# define DF_OBJ_END " }"
 
 typedef std::pair<std::string, std::string> pair_str;
 
@@ -39,10 +45,12 @@ typedef struct datafold_type
 	operator std::string();
 } datafold_t;
 
-typedef std::vector<datafold_t> datavec;
-
-std::ostream & operator<< (std::ostream & o, datavec const &);
-std::ostream & operator<< (std::ostream & o, datafold_type const &);
+//typedef std::vector<datafold_t> datavec;
+class datavec : public std::vector<datafold_t>
+{
+	public:
+		operator std::string();
+};
 
 class DataFold : public StringTools
 {
@@ -63,6 +71,7 @@ class DataFold : public StringTools
 		datavec getCore() const;
 		int getIndex() const;
 		operator datavec();
+		operator std::string();
 		DataFold parse_data(const std::string dst, std::string split_set);
 		int df_type(std::string);
 		int key_count(std::string key) const;
@@ -71,6 +80,8 @@ class DataFold : public StringTools
 		std::string quoted_val(datafold_t) const;
 };
 
+std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const &);
+std::ostream & operator<< (std::ostream & o, datafold_type const &);
 std::ostream & operator<< (std::ostream & o, DataFold const &);
 
 #endif

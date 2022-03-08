@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 20:51:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/08 01:20:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,12 @@ bool read_conf2(maps & conf, const char *file)
 	file_conf.parse();
 	std::cout << file_conf << std::endl;
 	std::cout << file_conf["server_name"] << std::endl;
-	std::cout << file_conf["bla"] << std::endl;
 	std::cout << ">" << file_conf["server"] << "<" << std::endl;
+
+	std::string servn = file_conf["server_name"];
+	std::string serv = file_conf["server"];
+	std::cout << "--" << servn << "--" << std::endl;
+	std::cout << "--" << serv << "--" << std::endl;
 	(void)conf;
 	return true;
 }
