@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 20:38:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 20:42:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 ** FileString conf;
 ** conf.load(file_name);
+** conf.load(another_file); // Will complement previous load.
 
 ** Get values/vectors directly:
 ** std::string value = conf.get<std::string>(key);
