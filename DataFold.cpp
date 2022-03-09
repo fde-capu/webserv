@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 23:44:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 13:22:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ datafold_type::operator std::string()
 
 datafold_t::operator int()
 {
+	if (!(type & DF_TYPE_NUMBER))
+		throw std::invalid_argument(DF_ERR_NOT_NUMBER);
 	return atoi(val.c_str());
 }
 
