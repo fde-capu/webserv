@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 17:47:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 18:50:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,14 @@ std::vector<int> DataFold::get_vector_int(std::string key)
 		{
 			if (!(core[i].type & DF_TYPE_NUMBER))
 				throw std::invalid_argument(DF_ERR_NOT_NUMBER);
-			out.push_back(std::atoi(core[i].val.c_str()));
+			if (!(core[i].type & DF_TYPE_ARRAY))
+				out.push_back(std::atoi(core[i].val.c_str()));
+			else
+			{
+				std::vector<std::string> arr_split = splitOutsideQuotes(core[i].val);
+				for (size_t j = 0; j < arr_split.size(); j++)
+					out.push_back(std::atoi(arr_split[j].c_str()));
+			}
 		}
 	return out;
 }
@@ -253,11 +260,15 @@ DataFold::operator datavec()
 
 int DataFold::df_type(std::string val)
 {
-	int out;
 	hard_trim(val);
+	int out = 0;
 	if (find_outside_quotes(val, " ") != std::string::npos)
-		return DF_TYPE_ARRAY;
-	out = isNumber(val) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
+	{
+		out += DF_TYPE_ARRAY;
+		out += isAllNumber(splitOutsideQuotes(val)) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
+	}
+	else
+		out += isNumber(val) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
 	return out;
 }
 

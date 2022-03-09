@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 18:30:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 18:49:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -235,6 +235,7 @@ std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecst
 		spl = spl.substr(pos + 1);
 		pos = find_outside_quotes(spl, " ");
 	}
+	out.push_back(spl);
 	return out;
 }
 
