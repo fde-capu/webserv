@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:25:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:45:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,9 @@ typedef struct datafold_type
 
 	operator std::string();
 	operator int();
+
+	void log_self();
+
 } datafold_t;
 
 class datavec : public std::vector<datafold_t>
@@ -96,7 +99,7 @@ class DataFold : public StringTools
 		{ return get_datafold(key); }
 };
 
-std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const &);
+std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const &);
 std::ostream & operator<< (std::ostream & o, datafold_type const &);
 std::ostream & operator<< (std::ostream & o, DataFold const &);
 

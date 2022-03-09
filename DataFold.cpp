@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:29:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:45:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,15 @@ datafold_t DataFold::get_datafold(std::string key)
 		if (key == core[i].key)
 			return core[i];
 	return datafold_t();
+}
+
+void datafold_t::log_self()
+{
+	std::cout << "index:\t" << index << std::endl;
+	std::cout << "type:\t" << type << std::endl;
+	std::cout << "key:\t" << key << std::endl;
+	std::cout << "val:\t" << val << std::endl;
+	std::cout << "sub:\t" << sub << std::endl;
 }
 
 std::vector<int> DataFold::get_vector_int(std::string key)
@@ -47,6 +56,7 @@ std::vector<std::string> DataFold::get_vector_str(std::string key)
 
 datafold_t::operator std::string()
 {
+	log_self();
 	return val;
 }
 
@@ -86,7 +96,7 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 	return o;
 }
 
-std::ostream & operator<< (std::ostream & o, std::vector<datafold_t> const & self)
+std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const & self)
 {
 	o << DF_OBJ_INIT;
 	for (size_t i = 0; i < self.size(); i++)

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:31:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:35:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,18 @@ bool read_conf2(maps & conf, const char *file)
 	if (file_conf.fail())
 		return die(ERR_INVALID_FILE);
 	file_conf.parse();
+
+//	int sub_int = file_conf.get<int>("server");
+//	std::cout << "sub_int: " << sub_int << std::endl;
+	// Ok error server is array.
+
+//	std::vector<int> sub_vint = file_conf.get<std::vector<int> >("server");
+//	std::cout << "sub_vint: " << sub_vint[0] << std::endl;
+	// Ok error server is not a number.
+
+	std::string sub_str = file_conf.get<std::string>("server");
+	std::cout << "sub_str: " << sub_str << std::endl;
+	// Ok error server is array when server is array.
 
 	(void)conf;
 	return true;
