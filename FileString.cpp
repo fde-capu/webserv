@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 20:27:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 20:29:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,8 @@ void FileString::load(const char * file_name)
 	std::string line;
 	while (std::getline(file_read, line))
 		_content += line + "\n";
-	std::cout << "CONTENT " << _content << std::endl;
 	parse();
 	_processed_ok = true; // Should make an actual test.
-	std::cout << "PARSED " << _processed << std::endl;
 }
 
 FileString::FileString(const char * file_name)

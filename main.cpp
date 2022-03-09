@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 19:58:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 20:33:37 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,9 @@ int main(int argc, char **argv)
 //		!essential_configuration(conf))
 //		return !die(BYE);
 
-	std::string name = conf.get<std::string>("server_name");
-	std::cout << "name: " << name << std::endl;
+	std::cout << "as array: " << conf["server_name"] << std::endl;
+//	std::string name = conf.get<std::string>("server_name");
+//	std::cout << "name: " << name << std::endl;
 
 	if (conf.success())
 		alert(CONFIG_OK);

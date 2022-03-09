@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 20:28:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 20:29:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -338,8 +338,6 @@ DataFold DataFold::parse_data(const std::string str)
 			ops = ops.substr(div_pos + 1);
 			hard_trim(key);
 			hard_trim(val);
-			if (VERBOSE)
-				std::cout << " " << key << ": " << val << std::endl;
 			out.push_back(key, val);
 			continue ;
 		}
@@ -353,11 +351,7 @@ DataFold DataFold::parse_data(const std::string str)
 			ops = ops.substr(div_pos + 1);
 			hard_trim(key);
 			hard_trim(val);
-			if (VERBOSE)
-				std::cout << key << std::endl << "{" << std::endl;
 			out.push_back(key, parse_data(val));
-			if (VERBOSE)
-				std::cout << "}" << std::endl;
 			continue ;
 		}
 	}
