@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 20:45:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 18:30:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,13 @@ std::ostream & operator<< (std::ostream & o, StringTools const & self)
 StringTools::~StringTools(void)
 {
 	return ;
+}
+
+std::string StringTools::hard_trim(const std::string &dst)
+{
+	std::string out(dst);
+	hard_trim(out);
+	return out;
 }
 
 void StringTools::hard_trim(std::string &dst)
@@ -209,6 +216,34 @@ std::string StringTools::clean_before_parse(std::string& dst)
 bool StringTools::isDigit(char d)
 {
 	return d >= '0' && d <= '9';
+}
+
+std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecstr)
+{
+	std::vector<std::string> out;
+	std::string spl = hard_trim(vecstr);
+	size_t pos = find_outside_quotes(spl, " ");
+	if (pos == std::string::npos)
+	{
+		out.push_back(spl);
+		return out;
+	}
+	size_t pre = 0;
+	while (pos != std::string::npos)
+	{
+		out.push_back(spl.substr(pre, pos));
+		spl = spl.substr(pos + 1);
+		pos = find_outside_quotes(spl, " ");
+	}
+	return out;
+}
+
+bool StringTools::isAllNumber(std::vector<std::string> vecstring)
+{
+	for (size_t i = 0; i < vecstring.size(); i++)
+		if (!isNumber(vecstring[i]))
+			return false;
+	return true;
 }
 
 bool StringTools::isNumber(std::string str)

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/07 21:35:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 18:29:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <iostream>
 # include <sstream>
+# include <vector>
 
 # define ST_SOFT_TRIM " \t\n"
 # define ST_HARD_TRIM " \t"
@@ -38,6 +39,7 @@ class StringTools
 		void soft_trim(std::string&);
 		void soft_trim(std::string&, std::string);
 		void hard_trim(std::string&);
+		std::string hard_trim(const std::string&);
 		void hard_trim(std::string&, std::string);
 		void remove_all(std::string&, std::string);
 		std::string substitute_all(std::string&, std::string, std::string) const;
@@ -51,10 +53,12 @@ class StringTools
 		std::string escape_char(const std::string, std::string) const;
 		std::string clean_before_parse(std::string &);
 		bool isNumber(std::string);
+		bool isAllNumber(std::vector<std::string>);
 		bool isDigit(char);
 		std::string itos(int) const;
 		std::string apply_quotes(std::string) const;
 		std::string apply_quotes(std::string, std::string) const;
+		std::vector<std::string> splitOutsideQuotes(std::string);
 };
 
 std::ostream & operator<< (std::ostream & o, StringTools const & i);
