@@ -28,6 +28,12 @@
 //	std::string serv = file_conf["server"];
 //	std::cout << "--" << servn << "--" << std::endl;
 
+	vstr aa = file_conf.get<vstr>("test_port");
+	std::cout << "aa " << aa[0] << std::endl;
+	std::cout << "aa " << aa[1] << std::endl;
+	std::cout << "aa " << aa[2] << std::endl;
+	std::cout << "aa " << aa[3] << std::endl;
+
 //	std::string serv = file_conf.get<std::string>("server");
 //	std::cout << "--" << serv << "--" << std::endl;
 

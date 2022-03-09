@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 17:37:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 20:04:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 class FileString : public StringTools
 {
 	private:
-		FileString(void);
 		char * _file_name;
 		std::string _content;
 		std::string _processed;
@@ -36,12 +35,15 @@ class FileString : public StringTools
 
 	public:
 		DataFold fs_data;
-		FileString(const char * file_name);
+		FileString();
+		FileString(const char *);
+		void load(const char *);
 		FileString(FileString & src);
 		FileString & operator= (FileString & rhs);
 		~FileString(void);
 		char * getFileName();
 		std::string getContent();
+		std::string getProcessed();
 		bool fail();
 		bool success();
 		bool isProcessed();

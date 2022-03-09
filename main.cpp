@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 19:24:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 19:58:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,52 +20,15 @@ bool validate_args(int argc, char **argv)
 	(void)argv;
 }
 
-bool read_conf2(maps & conf, const char *file)
+bool read_conf(maps & conf, const char *file)
 {
 	FileString file_conf(file);
 	if (file_conf.fail())
 		return die(ERR_INVALID_FILE);
-	file_conf.parse();
-
-	vstr aa = file_conf.get<vstr>("test_port");
-	std::cout << "aa " << aa[0] << std::endl;
-	std::cout << "aa " << aa[1] << std::endl;
-	std::cout << "aa " << aa[2] << std::endl;
-	std::cout << "aa " << aa[3] << std::endl;
 
 	(void)conf;
 	return true;
 }
-
-//bool read_conf(maps & conf, const char *file)
-//{
-//	static bool
-//	std::fstream conf_stream;
-//
-//	conf_stream.open(file, std::ios::in);
-//	std::string line, parameter, value;
-//
-//	while (std::getline(conf_stream, line))
-//	{
-//		remove_comments(line);
-//		code_minimize(line);
-//		if (!valid_line(line))
-//		{
-//			alert(ERR_INVALID_PARAM, line);
-//			conf.clear();
-//			return false;
-//		}
-//		if (line == "")
-//			continue ;
-//		parameter = get_parameter(line);
-//		value = get_value(line);
-//		conf[parameter] = value;
-//		if (VERBOSE)
-//			std::cout << "[" << parameter << "] = [" << value << "];" << std::endl;
-//	}
-//	conf_stream.close();
-//	return true;
-//}
 
 bool essential_configuration(maps & conf)
 {
@@ -77,14 +40,25 @@ bool essential_configuration(maps & conf)
 
 int main(int argc, char **argv)
 {
-	maps conf;
+	FileString conf;
 
-	if (!validate_args(argc, argv))
+//	if (!validate_args(argc, argv))
+//		return !die(BYE);
+	conf.load(DEFAULT_CONFIG_FILE);
+	
+//	if (!read_conf(conf, DEFAULT_CONFIG_FILE) || !read_conf2(conf, argv[1]) ||
+//		!essential_configuration(conf))
+//		return !die(BYE);
+
+	std::string name = conf.get<std::string>("server_name");
+	std::cout << "name: " << name << std::endl;
+
+	if (conf.success())
+		alert(CONFIG_OK);
+	if (conf.fail())
 		return !die(BYE);
-//	if (!read_conf2(conf, DEFAULT_CONFIG_FILE) || !read_conf2(conf, argv[1]) ||
-	if (!read_conf2(conf, argv[1]) ||
-		!essential_configuration(conf))
-		return 1;
-	alert(CONFIG_OK);
+
+	(void)argc;
+	(void)argv;
 	return 0;
 }

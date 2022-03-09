@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 23:23:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 20:27:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,12 @@
 #include <iostream>
 #include <algorithm>
 
-FileString::FileString(const char * file_name)
-: _file_name(const_cast<char *>(file_name)), _content(""), _processed(""),
-  _read_ok(true), _processed_ok(false) 
+FileString::FileString()
+: _read_ok(false), _processed_ok(false) {}
+
+void FileString::load(const char * file_name)
 {
+	_file_name = const_cast<char *>(file_name);
 	std::fstream file_read;
 	file_read.open(_file_name, std::ios::in);
 	if (!file_read)
@@ -26,9 +28,22 @@ FileString::FileString(const char * file_name)
 		file_read.close();
 		return ;
 	}
+	else
+		_read_ok = true;
 	std::string line;
 	while (std::getline(file_read, line))
 		_content += line + "\n";
+	std::cout << "CONTENT " << _content << std::endl;
+	parse();
+	_processed_ok = true; // Should make an actual test.
+	std::cout << "PARSED " << _processed << std::endl;
+}
+
+FileString::FileString(const char * file_name)
+: _content(""), _processed(""),
+  _read_ok(false), _processed_ok(false) 
+{
+	load(file_name);
 }
 
 std::string const FileString::operator[](std::string key) const
@@ -61,7 +76,8 @@ FileString & FileString::operator= (FileString & rhs)
 		this->_file_name = rhs.getFileName();
 		this->_content = rhs.getContent();
 		this->_read_ok = rhs.success();
-		this->_processed = rhs.isProcessed();
+		this->_processed_ok = rhs.isProcessed();
+		this->_processed = rhs.getProcessed();
 	}
 	return *this;
 }
@@ -83,6 +99,9 @@ FileString::~FileString(void)
 {
 	return ;
 }
+
+std::string FileString::getProcessed()
+{ return _processed; }
 
 std::string FileString::getContent()
 { return _content; }

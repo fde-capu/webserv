@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 19:24:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 20:28:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 
 datafold_t DataFold::get_datafold(std::string key)
 {
+	if (VERBOSE)
+		std::cout << "get_datafold " << key << std::endl;
 	key_count_single_check(key);
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
@@ -336,6 +338,8 @@ DataFold DataFold::parse_data(const std::string str)
 			ops = ops.substr(div_pos + 1);
 			hard_trim(key);
 			hard_trim(val);
+			if (VERBOSE)
+				std::cout << " " << key << ": " << val << std::endl;
 			out.push_back(key, val);
 			continue ;
 		}
@@ -349,7 +353,11 @@ DataFold DataFold::parse_data(const std::string str)
 			ops = ops.substr(div_pos + 1);
 			hard_trim(key);
 			hard_trim(val);
+			if (VERBOSE)
+				std::cout << key << std::endl << "{" << std::endl;
 			out.push_back(key, parse_data(val));
+			if (VERBOSE)
+				std::cout << "}" << std::endl;
 			continue ;
 		}
 	}
