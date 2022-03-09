@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:45:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:52:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,19 @@ std::vector<std::string> DataFold::get_vector_str(std::string key)
 	std::vector<std::string> out;
 	for (int i = 0; i < index; i++)
 		if (core[i].key == key)
+		{
+// Here by accident, might be usefull.
+//			if (core[i].type & DF_TYPE_SUB)
+//				throw std::invalid_argument(DF_ERR_IS_OBJECT);
 			out.push_back(core[i].val);
+		}
 	return out;
 }
 
 datafold_t::operator std::string()
 {
-	log_self();
+	if (type & DF_TYPE_SUB)
+		throw std::invalid_argument(DF_ERR_IS_OBJECT);
 	return val;
 }
 

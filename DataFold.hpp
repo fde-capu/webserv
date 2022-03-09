@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:45:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:51:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@
 # define DF_ERR_NO_KEY DFK " not found."
 # define DF_ERR_IS_ARRAY DFK " is array."
 # define DF_ERR_NOT_NUMBER DFK " is not a number."
+# define DF_ERR_IS_OBJECT DFK " is an object."
 
 typedef struct datafold_type
 {
