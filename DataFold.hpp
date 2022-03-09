@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 13:24:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:09:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,17 +76,19 @@ class DataFold : public StringTools
 		const std::string operator[] (std::string) const;
 		datavec getCore() const;
 		int getIndex() const;
-		operator datavec();
-		operator std::string();
 		DataFold parse_data(const std::string dst);
 		int df_type(std::string);
-		int key_count(std::string key) const;
 		const std::string getFirstByKey(std::string key) const;
 		std::string eqvals_to_arrstr(std::string key) const;
 		std::string quoted_val(datafold_t) const;
 		const std::string getValStr(std::string key) const;
-		datafold_t get_datafold(std::string key);
+		int key_count(std::string key) const;
+		void key_count_exists_check(std::string key);
 		void key_count_single_check(std::string key);
+		operator datavec();
+		operator std::string();
+		datafold_t get_datafold(std::string key);
+		std::vector<int> get_vector(std::string key);
 
 		template <typename T>
 		T get(std::string key)

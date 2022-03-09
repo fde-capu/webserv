@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 13:20:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:13:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,14 @@ bool read_conf2(maps & conf, const char *file)
 	int test_int = file_conf.get<int>("test_port");
 	std::cout << "int: " << test_int << std::endl;
 
-	int fail_int = file_conf.get<int>("bye_message");
-	std::cout << "fail: " << fail_int << std::endl;
+//	int fail_int = file_conf.get<int>("bye_message");
+//	std::cout << "fail: " << fail_int << std::endl;
+
+//	std::string string_int = file_conf.get<std::string>("test_port");
+//	std::cout << "string int: " << string_int << std::endl;
+
+	int arr_int = file_conf.get<std::vector<int> >("test_int_array")[1];
+	std::cout << "int array: " << arr_int << std::endl;
 
 //	std::string servn = file_conf.get<std::string>("server_name");
 //	std::string serv = file_conf["server"];

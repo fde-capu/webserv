@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 13:22:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:12:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,38 @@
 #include <iostream>
 #include <cstdlib>
 
-datafold_type::operator std::string()
+datafold_t DataFold::get_datafold(std::string key)
+{
+	key_count_single_check(key);
+	for (int i = 0; i < index; i++)
+		if (key == core[i].key)
+			return core[i];
+	return datafold_t();
+}
+
+std::vector<int> DataFold::get_vector(std::string key)
+{
+	std::vector<int> out;
+	for (int i = 0; i < index; i++)
+		if (core[i].key == key)
+		{
+			if (!(core[i].type & DF_TYPE_NUMBER))
+				throw std::invalid_argument(DF_ERR_NOT_NUMBER);
+			out.push_back(std::atoi(core[i].val.c_str()));
+		}
+	return out;
+}
+
+datafold_t::operator std::string()
 {
 	return val;
-//	return std::string("FLAV");
-//	std::stringstream o;
-//	o << this;
-//	return *o.str();
 }
 
 datafold_t::operator int()
 {
 	if (!(type & DF_TYPE_NUMBER))
 		throw std::invalid_argument(DF_ERR_NOT_NUMBER);
-	return atoi(val.c_str());
+	return std::atoi(val.c_str());
 }
 
 datavec::operator std::string()
@@ -191,6 +209,12 @@ int DataFold::key_count(std::string key) const
 	return out;
 }
 
+void DataFold::key_count_exists_check(std::string key)
+{
+	if (!key_count(key))
+		throw std::invalid_argument(DF_ERR_NO_KEY);
+}
+
 void DataFold::key_count_single_check(std::string key)
 {
 	int count = key_count(key);
@@ -198,15 +222,6 @@ void DataFold::key_count_single_check(std::string key)
 		throw std::invalid_argument(DF_ERR_NO_KEY);
 	if (count != 1)
 		throw std::invalid_argument(DF_ERR_IS_ARRAY);
-}
-
-datafold_t DataFold::get_datafold(std::string key)
-{
-	key_count_single_check(key);
-	for (int i = 0; i < index; i++)
-		if (key == core[i].key)
-			return core[i];
-	return datafold_t();
 }
 
 const std::string DataFold::getValStr(std::string key) const

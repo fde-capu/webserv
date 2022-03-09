@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/08 23:48:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 13:50:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,10 @@ class FileString : public StringTools
 		template <typename T>
 		T get(std::string key)
 		{ return fs_data.get_datafold(key); }
+
+		template <>
+		std::vector<int> get(std::string key)
+		{ return fs_data.get_vector(key); }
 };
 
 std::ostream & operator<< (std::ostream & o, FileString const & i);
