@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:35:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:54:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,10 @@ bool read_conf2(maps & conf, const char *file)
 //	std::cout << "sub_vint: " << sub_vint[0] << std::endl;
 	// Ok error server is not a number.
 
-	std::string sub_str = file_conf.get<std::string>("server");
+	std::string sub_str = file_conf.get<std::string>("double_message");
 	std::cout << "sub_str: " << sub_str << std::endl;
 	// Ok error server is array when server is array.
+	// Ok error when server is na object.
 
 	(void)conf;
 	return true;
