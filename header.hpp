@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 13:31:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 17:36:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@
 # endif
 
 typedef std::map<std::string, std::string> maps;
+typedef DataFold::vint vint;
+typedef DataFold::vstr vstr;
+
 bool die(std::string msg);
 void remove_comments(std::string& line);
 bool valid_line(std::string line);

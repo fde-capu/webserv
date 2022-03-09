@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 15:38:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 17:42:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,9 @@ class DataFold : public StringTools
 		datavec	core;
 		int		index;
 	public:
+		typedef std::vector<int>			vint;
+		typedef std::vector<std::string>	vstr;
+
 		DataFold(std::string);
 		DataFold(void);
 		DataFold(DataFold const & src);

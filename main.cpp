@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 15:07:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 17:43:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,26 +27,15 @@ bool read_conf2(maps & conf, const char *file)
 		return die(ERR_INVALID_FILE);
 	file_conf.parse();
 
-//	int sub_int = file_conf.get<int>("server");
-//	std::cout << "sub_int: " << sub_int << std::endl;
-	// Ok error server is array.
+	int test_int = file_conf.get<int>("test_port");
+	std::cout << "int: " << test_int << std::endl;
 
-//	std::vector<int> sub_vint = file_conf.get<std::vector<int> >("server");
-//	std::cout << "sub_vint: " << sub_vint[0] << std::endl;
-	// Ok error server is not a number.
-
-//	std::string sub_str = file_conf.get<std::string>("server");
-//	std::cout << "sub_str: " << sub_str << std::endl;
-	// Ok error server is array when server is array.
-	// Ok error when server is object.
-
-//	std::vector<std::string> sub_vecs = file_conf.get<std::vector<std::string> >("server");
-//	std::cout << "sub_vecs: " << sub_vecs[0] << std::endl;
-//	std::cout << "sub_vecs: " << sub_vecs[1] << std::endl;
-	// ok error server is object.
-
-	int server_listen = file_conf.get<int>("server", "listen");
-	std::cout << "server_listen: " << server_listen << std::endl;
+//	vstr test_single_vec = file_conf.get<vstr>("test_port");
+//	std::cout << "single vec: " << test_single_vec[0] << std::endl;
+	
+//	std::vector<int> test_single_vec_implicit = file_conf.get<int>("test_port");
+//	std::cout << "single vec: " << test_single_vec[0] << std::endl;
+	
 
 	(void)conf;
 	return true;

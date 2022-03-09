@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 15:44:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 17:47:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,20 +28,9 @@ datafold_t DataFold::get_datafold(std::string key, std::string ksub)
 	key_count_single_check(key);
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
-		{
-			core[i].log_self();
 			for (size_t j = 0; j < core[i].sub.size(); j++)
-			{
 				if (ksub == core[i].sub[j].key)
-				{
 					return core[i].sub[j];
-				}
-			}
-//			std::string df_sub = dv;
-//			std::cout << "df_sub: " << df_sub << std::endl;
-//			DataFold fold(core[i].sub);
-//			return fold.get_datafold(sub);
-		}
 	return datafold_t();
 }
 
@@ -89,6 +78,8 @@ datafold_t::operator std::string()
 
 datafold_t::operator int()
 {
+	if (type & DF_TYPE_ARRAY)
+		throw std::invalid_argument(DF_ERR_IS_ARRAY);
 	if (!(type & DF_TYPE_NUMBER))
 		throw std::invalid_argument(DF_ERR_NOT_NUMBER);
 	return std::atoi(val.c_str());
@@ -209,38 +200,6 @@ std::string DataFold::eqvals_to_arrstr(std::string key) const
 DataFold::~DataFold(void)
 { return ; }
 
-int DataFold::df_type(std::string val)
-{
-	int out;
-	soft_trim(val);
-// For future implementation:
-//	if (find_outside_quotes(val, " ") != std::string::npos)
-//		return DF_TYPE_ARRAY;
-	out = isNumber(val) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
-	return out;
-}
-
-void DataFold::push_back(std::string key, std::string val)
-{
-	datafold_t entry;
-	entry.index = index++;
-	entry.type = df_type(val);
-	entry.key = key;
-	if (entry.type & DF_TYPE_STRING || entry.type & DF_TYPE_NUMBER)
-		entry.val = correct_quotes(val);
-	core.push_back(entry);
-}
-
-void DataFold::push_back(std::string key, DataFold sub)
-{
-	datafold_t entry;
-	entry.index = index++;
-	entry.type = DF_TYPE_SUB;
-	entry.key = key;
-	entry.sub = sub;
-	core.push_back(entry);
-}
-
 size_t DataFold::size() const
 { return core.size(); }
 
@@ -292,6 +251,37 @@ const std::string DataFold::operator[] (std::string key) const
 DataFold::operator datavec()
 { return core; }
 
+int DataFold::df_type(std::string val)
+{
+	int out;
+	hard_trim(val);
+	if (find_outside_quotes(val, " ") != std::string::npos)
+		return DF_TYPE_ARRAY;
+	out = isNumber(val) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
+	return out;
+}
+
+void DataFold::push_back(std::string key, std::string val)
+{
+	datafold_t entry;
+	entry.index = index++;
+	entry.type = df_type(val);
+	entry.key = key;
+	if (entry.type & DF_TYPE_STRING || entry.type & DF_TYPE_NUMBER)
+		entry.val = correct_quotes(val);
+	core.push_back(entry);
+}
+
+void DataFold::push_back(std::string key, DataFold sub)
+{
+	datafold_t entry;
+	entry.index = index++;
+	entry.type = DF_TYPE_SUB;
+	entry.key = key;
+	entry.sub = sub;
+	core.push_back(entry);
+}
+
 DataFold DataFold::parse_data(const std::string str)
 {
 	DataFold out;
@@ -324,8 +314,8 @@ DataFold DataFold::parse_data(const std::string str)
 				div_pos = find_outside_quotes(ops, "\n");
 			val = ops.substr(0, div_pos);
 			ops = ops.substr(div_pos + 1);
-			soft_trim(key);
-			soft_trim(val);
+			hard_trim(key);
+			hard_trim(val);
 			out.push_back(key, val);
 			continue ;
 		}
@@ -337,8 +327,8 @@ DataFold DataFold::parse_data(const std::string str)
 			div_pos = find_outside_quotes(ops, "}");
 			val = ops.substr(0, div_pos);
 			ops = ops.substr(div_pos + 1);
-			soft_trim(key);
-			soft_trim(val);
+			hard_trim(key);
+			hard_trim(val);
 			out.push_back(key, parse_data(val));
 			continue ;
 		}

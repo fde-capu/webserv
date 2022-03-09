@@ -37,3 +37,28 @@
 
 	std::vector<std::string> single_str = file_conf.get<std::vector<std::string> >("bye_message");
 	std::cout << "single : " << single_str[0] << std::endl;
+
+//	int sub_int = file_conf.get<int>("server");
+//	std::cout << "sub_int: " << sub_int << std::endl;
+	// Ok error server is array.
+
+//	std::vector<int> sub_vint = file_conf.get<std::vector<int> >("server");
+//	std::cout << "sub_vint: " << sub_vint[0] << std::endl;
+	// Ok error server is not a number.
+
+//	std::string sub_str = file_conf.get<std::string>("server");
+//	std::cout << "sub_str: " << sub_str << std::endl;
+	// Ok error server is array when server is array.
+	// Ok error when server is object.
+
+//	std::vector<std::string> sub_vecs = file_conf.get<std::vector<std::string> >("server");
+//	std::cout << "sub_vecs: " << sub_vecs[0] << std::endl;
+//	std::cout << "sub_vecs: " << sub_vecs[1] << std::endl;
+	// ok error server is object.
+
+//	int server_listen = file_conf.get<int>("server", "listen");
+//	std::cout << "server_listen: " << server_listen << std::endl;
+
+//	int port = file_conf.get<int>("test_port");
+//	std::cout << "port: " << port << std::endl;
+	// ok error port is not number (3491 3492)
