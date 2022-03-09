@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:12:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:26:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ datafold_t DataFold::get_datafold(std::string key)
 	return datafold_t();
 }
 
-std::vector<int> DataFold::get_vector(std::string key)
+std::vector<int> DataFold::get_vector_int(std::string key)
 {
 	std::vector<int> out;
 	for (int i = 0; i < index; i++)
@@ -33,6 +33,15 @@ std::vector<int> DataFold::get_vector(std::string key)
 				throw std::invalid_argument(DF_ERR_NOT_NUMBER);
 			out.push_back(std::atoi(core[i].val.c_str()));
 		}
+	return out;
+}
+
+std::vector<std::string> DataFold::get_vector_str(std::string key)
+{
+	std::vector<std::string> out;
+	for (int i = 0; i < index; i++)
+		if (core[i].key == key)
+			out.push_back(core[i].val);
 	return out;
 }
 

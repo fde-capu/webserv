@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:18:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:22:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,10 @@ bool read_conf2(maps & conf, const char *file)
 
 //	std::string serv = file_conf.get<std::string>("server");
 //	std::cout << "--" << serv << "--" << std::endl;
+
+	std::vector<std::string> dmsg = file_conf.get<std::vector<std::string> >("double_message");
+	std::cout << "dmsg : " << dmsg[0] << std::endl;
+	std::cout << "dmsg : " << dmsg[1] << std::endl;
 
 	(void)conf;
 	return true;

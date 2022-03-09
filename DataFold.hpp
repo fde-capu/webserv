@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:09:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:25:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,8 @@ class DataFold : public StringTools
 		operator datavec();
 		operator std::string();
 		datafold_t get_datafold(std::string key);
-		std::vector<int> get_vector(std::string key);
+		std::vector<int> get_vector_int(std::string key);
+		std::vector<std::string> get_vector_str(std::string key);
 
 		template <typename T>
 		T get(std::string key)
