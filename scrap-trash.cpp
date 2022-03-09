@@ -62,3 +62,23 @@
 //	int port = file_conf.get<int>("test_port");
 //	std::cout << "port: " << port << std::endl;
 	// ok error port is not number (3491 3492)
+
+//	int test_int = file_conf.get<int>("test_port");
+//	std::cout << "int: " << test_int << std::endl;
+	// ok error if test_port is array 3490 3491
+
+//	vstr test_single_vec = file_conf.get<vstr>("test_port");
+//	std::cout << "single vec str: " << test_single_vec[0] << std::endl;
+//	
+//	vint single_int = file_conf.get<vint>("test_port");
+//	std::cout << "single vec int: " << single_int[0] << std::endl;
+//	std::cout << "single vec int: " << single_int[1] << std::endl;
+//	std::cout << "single vec int: " << single_int[2] << std::endl;
+//	std::cout << "single vec int: " << single_int[3] << std::endl;
+//	
+//	vint inline_vec = file_conf.get<vint>("test_port");
+//	std::cout << "inline vec: " << inline_vec[0] << std::endl;
+//	std::cout << "inline vec: " << inline_vec[1] << std::endl;
+//	std::cout << "inline vec: " << inline_vec[2] << std::endl;
+//	std::cout << "inline vec: " << inline_vec[9] << std::endl; // std::vector accepts!
+//	std::cout << "size(): " << inline_vec.size() << std::endl;

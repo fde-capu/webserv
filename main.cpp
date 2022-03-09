@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 18:50:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 19:10:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,19 +26,6 @@ bool read_conf2(maps & conf, const char *file)
 	if (file_conf.fail())
 		return die(ERR_INVALID_FILE);
 	file_conf.parse();
-
-//	int test_int = file_conf.get<int>("test_port");
-//	std::cout << "int: " << test_int << std::endl;
-	// ok error if test_port is array 3490 3491
-
-//	vstr test_single_vec = file_conf.get<vstr>("test_port");
-//	std::cout << "single vec: " << test_single_vec[0] << std::endl;
-	
-	vint test_single_vec = file_conf.get<vint>("test_port");
-	std::cout << "single vec: " << test_single_vec[0] << std::endl;
-	std::cout << "single vec: " << test_single_vec[1] << std::endl;
-	std::cout << "single vec: " << test_single_vec[2] << std::endl;
-	
 
 	(void)conf;
 	return true;

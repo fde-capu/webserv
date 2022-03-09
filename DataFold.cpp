@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 18:50:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 19:01:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,7 +211,9 @@ size_t DataFold::size() const
 { return core.size(); }
 
 const datafold_type DataFold::operator[] (size_t idx) const
-{ return core[idx]; }
+{
+	return core[idx];
+}
 
 int DataFold::key_count(std::string key) const
 {
