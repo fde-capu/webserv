@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 19:10:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 19:24:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@ bool read_conf2(maps & conf, const char *file)
 	if (file_conf.fail())
 		return die(ERR_INVALID_FILE);
 	file_conf.parse();
+
+	vstr aa = file_conf.get<vstr>("test_port");
+	std::cout << "aa " << aa[0] << std::endl;
+	std::cout << "aa " << aa[1] << std::endl;
+	std::cout << "aa " << aa[2] << std::endl;
+	std::cout << "aa " << aa[3] << std::endl;
 
 	(void)conf;
 	return true;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 19:01:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 19:24:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,14 @@ std::vector<std::string> DataFold::get_vector_str(std::string key)
 		{
 			if (core[i].type & DF_TYPE_SUB)
 				throw std::invalid_argument(DF_ERR_IS_OBJECT);
-			out.push_back(core[i].val);
+			if (!(core[i].type & DF_TYPE_ARRAY))
+				out.push_back(core[i].val);
+			else
+			{
+				std::vector<std::string> arr_split = splitOutsideQuotes(core[i].val);
+				for (size_t j = 0; j < arr_split.size(); j++)
+					out.push_back(arr_split[j]);
+			}
 		}
 	return out;
 }
