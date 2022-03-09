@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 14:13:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 14:18:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ bool read_conf2(maps & conf, const char *file)
 //	int test_int = file_conf.getInt("test_port");
 	int test_int = file_conf.get<int>("test_port");
 	std::cout << "int: " << test_int << std::endl;
+
+	std::vector<int> test_single_vec = file_conf.get<std::vector<int> >("test_port");
+	std::cout << "single vec: " << test_single_vec[0] << std::endl;
 
 //	int fail_int = file_conf.get<int>("bye_message");
 //	std::cout << "fail: " << fail_int << std::endl;
