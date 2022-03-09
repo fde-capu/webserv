@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 18:49:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 18:55:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,14 @@ std::string StringTools::escape_char(const std::string dst, std::string esc) con
 	return substitute_all_ret(dst, esc, std::string("\\" + esc));
 }
 
+
+std::string StringTools::correct_quotes(const std::string& dst)
+{
+	std::string out = dst;
+	correct_quotes(*const_cast<std::string*>(&dst));
+	return dst;
+}
+
 std::string StringTools::correct_quotes(std::string& dst)
 {
 	std::string out(dst);
@@ -221,21 +229,21 @@ bool StringTools::isDigit(char d)
 std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecstr)
 {
 	std::vector<std::string> out;
-	std::string spl = hard_trim(vecstr);
+	std::string spl = correct_quotes(hard_trim(vecstr));
 	size_t pos = find_outside_quotes(spl, " ");
 	if (pos == std::string::npos)
 	{
-		out.push_back(spl);
+		out.push_back(correct_quotes(spl));
 		return out;
 	}
 	size_t pre = 0;
 	while (pos != std::string::npos)
 	{
-		out.push_back(spl.substr(pre, pos));
+		out.push_back(correct_quotes(spl.substr(pre, pos)));
 		spl = spl.substr(pos + 1);
 		pos = find_outside_quotes(spl, " ");
 	}
-	out.push_back(spl);
+	out.push_back(correct_quotes(spl));
 	return out;
 }
 

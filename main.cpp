@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 18:40:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/09 18:50:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ bool read_conf2(maps & conf, const char *file)
 	vint test_single_vec = file_conf.get<vint>("test_port");
 	std::cout << "single vec: " << test_single_vec[0] << std::endl;
 	std::cout << "single vec: " << test_single_vec[1] << std::endl;
+	std::cout << "single vec: " << test_single_vec[2] << std::endl;
 	
 
 	(void)conf;
