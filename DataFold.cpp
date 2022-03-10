@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 20:29:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 16:27:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ std::ostream & operator<< (std::ostream & o, DataFold const & self)
 	return o;
 }
 
-DataFold::DataFold(void)
+DataFold::DataFold()
 : index(0)
 {
 	return ;
@@ -213,7 +213,7 @@ std::string DataFold::eqvals_to_arrstr(std::string key) const
 	return out;
 }
 
-DataFold::~DataFold(void)
+DataFold::~DataFold()
 { return ; }
 
 size_t DataFold::size() const

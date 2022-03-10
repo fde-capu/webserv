@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 20:29:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 16:28:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ std::ostream & operator<< (std::ostream & o, FileString const & self)
 	return o;
 }
 
-FileString::~FileString(void)
+FileString::~FileString()
 {
 	return ;
 }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 18:53:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 16:28:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,10 @@
 class StringTools
 {
 	public:
-		StringTools(void);
+		StringTools();
 		StringTools(StringTools const & src);
 		StringTools & operator= (StringTools const & rhs);
-		~StringTools(void);
+		~StringTools();
 		std::string _soft_trim_set;
 		std::string _hard_trim_set;
 		std::string _quote_set;

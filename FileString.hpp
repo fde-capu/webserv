@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 20:42:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 16:27:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ class FileString : public StringTools
 		void load(const char *);
 		FileString(FileString & src);
 		FileString & operator= (FileString & rhs);
-		~FileString(void);
+		~FileString();
 		char * getFileName();
 		std::string getContent();
 		std::string getProcessed();

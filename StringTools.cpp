@@ -6,14 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 18:55:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 16:26:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "StringTools.hpp"
 #include <iostream>
 
-StringTools::StringTools(void)
+StringTools::StringTools()
 : _soft_trim_set(ST_SOFT_TRIM), _hard_trim_set(ST_HARD_TRIM),
   _quote_set(ST_QUOTE_SET), _comment_inline(ST_COMMENT_INLINE)
 {
@@ -43,11 +43,11 @@ StringTools & StringTools::operator= (StringTools const & rhs)
 std::ostream & operator<< (std::ostream & o, StringTools const & self)
 {
 	o << "::StringTools::" << std::endl;
-	(void)self;
+	static_cast<void>(self);
 	return o;
 }
 
-StringTools::~StringTools(void)
+StringTools::~StringTools()
 {
 	return ;
 }

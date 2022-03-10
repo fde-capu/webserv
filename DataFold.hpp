@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 18:58:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 16:27:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,10 +72,10 @@ class DataFold : public StringTools
 		typedef std::vector<std::string>	vstr;
 
 		DataFold(std::string);
-		DataFold(void);
+		DataFold();
 		DataFold(DataFold const & src);
 		DataFold & operator= (DataFold const & rhs);
-		~DataFold(void);
+		~DataFold();
 		void push_back(std::string key, std::string val);
 		void push_back(std::string key, DataFold sub);
 		size_t size() const;
