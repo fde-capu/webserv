@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 18:08:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 18:11:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,14 +86,15 @@ char * FileString::getFileName()
 std::ostream & operator<< (std::ostream & o, FileString const & self)
 {
 	o << ">>>" << self.getProcessed() << "<<<" << std::endl;
-	o << self.fs_data << std::endl;
+	o << self.getDataFold() << std::endl;
 	return o;
 }
 
 FileString::~FileString()
-{
-	return ;
-}
+{ return ; }
+
+DataFold FileString::getDataFold() const
+{ return fs_data; }
 
 std::string FileString::getProcessed()
 { return _processed; }
