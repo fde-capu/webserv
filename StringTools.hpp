@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 19:17:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 20:21:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ class StringTools
 		std::string apply_quotes(std::string, std::string) const;
 		std::vector<std::string> splitOutsideQuotes(std::string);
 		std::string itoa(int);
+		bool valid_filename(std::string);
+		bool isAllInSet(std::string, std::string);
 };
 
 std::ostream & operator<< (std::ostream & o, StringTools const & i);

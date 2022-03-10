@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 19:15:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 20:28:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,4 +282,23 @@ std::string StringTools::itoa(int i)
 	std::ostringstream ss;
 	ss << i;
 	return ss.str();
+}
+
+bool StringTools::valid_filename(std::string fn)
+{ return isAllInSet(fn, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_"); }
+
+bool StringTools::isAllInSet(std::string str, std::string set)
+{
+	size_t pass;
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		for (pass = 0; pass < set.size(); pass++)
+		{
+			if (str[i] == set[pass])
+				break ;
+		}
+		if (pass >= set.size())
+			return false;
+	}
+	return true;
 }
