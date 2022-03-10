@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 16:27:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 18:33:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@
 # define DF_OBJ_END " }"
 # define DF_ENDVAL_SET ";"
 
-# define DFK "'" + key + "'" +
+# define SERVER_TAG "(webserv controled error)"
+# define DFK SERVER_TAG " '" + key + "'" +
 # define DF_ERR_NO_KEY DFK " not found."
 # define DF_ERR_IS_ARRAY DFK " is array."
 # define DF_ERR_NOT_NUMBER DFK " is not a number."
