@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 16:26:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 19:15:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,4 +275,11 @@ bool StringTools::isNumber(std::string str)
 			return false;
 	}
 	return true;
+}
+
+std::string StringTools::itoa(int i)
+{
+	std::ostringstream ss;
+	ss << i;
+	return ss.str();
 }

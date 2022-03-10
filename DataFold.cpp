@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 16:27:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 20:07:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 
 datafold_t DataFold::get_datafold(std::string key)
 {
-	if (VERBOSE)
-		std::cout << "get_datafold " << key << std::endl;
 	key_count_single_check(key);
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
@@ -34,15 +32,6 @@ datafold_t DataFold::get_datafold(std::string key, std::string ksub)
 				if (ksub == core[i].sub[j].key)
 					return core[i].sub[j];
 	return datafold_t();
-}
-
-void datafold_t::log_self()
-{
-	std::cout << "index:\t" << index << std::endl;
-	std::cout << "type:\t" << type << std::endl;
-	std::cout << "key:\t" << key << std::endl;
-	std::cout << "val:\t" << val << std::endl;
-	std::cout << "sub:\t" << sub << std::endl;
 }
 
 std::vector<int> DataFold::get_vector_int(std::string key)
@@ -62,6 +51,28 @@ std::vector<int> DataFold::get_vector_int(std::string key)
 					out.push_back(std::atoi(arr_split[j].c_str()));
 			}
 		}
+	return out;
+}
+
+std::vector<int> DataFold::get_vector_int(std::string key, std::string ksub)
+{
+	std::vector<int> out;
+	for (int i = 0; i < index; i++)
+		if (key == core[i].key)
+			for (size_t j = 0; j < core[i].sub.size(); j++)
+				if (ksub == core[i].sub[j].key)
+				{
+					if (!(core[i].sub[j].type & DF_TYPE_NUMBER))
+						throw std::invalid_argument(DF_ERR_NOT_NUMBER);
+					if (!(core[i].sub[j].type & DF_TYPE_ARRAY))
+						out.push_back(std::atoi(core[i].sub[j].val.c_str()));
+					else
+					{
+						std::vector<std::string> arr_split = splitOutsideQuotes(core[i].sub[j].val);
+						for (size_t j = 0; j < arr_split.size(); j++)
+							out.push_back(std::atoi(arr_split[j].c_str()));
+					}
+				}
 	return out;
 }
 
@@ -85,6 +96,28 @@ std::vector<std::string> DataFold::get_vector_str(std::string key)
 	return out;
 }
 
+std::vector<std::string> DataFold::get_vector_str(std::string key, std::string ksub)
+{
+	std::vector<std::string> out;
+	for (int i = 0; i < index; i++)
+		if (key == core[i].key)
+			for (size_t j = 0; j < core[i].sub.size(); j++)
+				if (ksub == core[i].sub[j].key)
+				{
+					if (core[i].sub[j].type & DF_TYPE_SUB)
+						throw std::invalid_argument(DF_ERR_IS_OBJECT);
+					if (!(core[i].sub[j].type & DF_TYPE_ARRAY))
+						out.push_back(core[i].sub[j].val);
+					else
+					{
+						std::vector<std::string> arr_split = splitOutsideQuotes(core[i].sub[j].val);
+						for (size_t j = 0; j < arr_split.size(); j++)
+							out.push_back(arr_split[j]);
+					}
+				}
+	return out;
+}
+
 datafold_t::operator std::string()
 {
 	if (type & DF_TYPE_SUB)
@@ -100,6 +133,34 @@ datafold_t::operator int()
 		throw std::invalid_argument(DF_ERR_NOT_NUMBER);
 	return std::atoi(val.c_str());
 }
+
+void datafold_t::log_self()
+{
+	std::cout << "index:\t" << index << std::endl;
+	std::cout << "type:\t" << type << std::endl;
+	std::cout << "key:\t" << key << std::endl;
+	std::cout << "val:\t" << val << std::endl;
+	std::cout << "sub:\t" << sub << std::endl;
+}
+
+//datafold_t::operator std::vector<std::string> >()
+//{
+//	std::vector<std::string> out;
+//	std::vector<std::string> arr_split = splitOutsideQuotes(val);
+//	for (size_t j = 0; j < arr_split.size(); j++)
+//		out.push_back(arr_split[j]);
+//	return out;
+//}
+//
+//datafold_t::operator std::vector<int>()
+//{
+//	std::vector<int> out;
+//	std::vector<std::string> arr_split = splitOutsideQuotes(val);
+//	for (size_t j = 0; j < arr_split.size(); j++)
+//		out.push_back(std::atoi(arr_split[j].c_str()));
+//
+//	return out;
+//}
 
 datavec::operator std::string()
 {

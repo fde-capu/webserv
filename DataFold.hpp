@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 18:33:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 20:06:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ typedef struct datafold_type
 
 	operator std::string();
 	operator int();
+//	operator std::vector<std::string>();
+//	operator std::vector<int>();
 
 	void log_self();
 
@@ -98,7 +100,9 @@ class DataFold : public StringTools
 		datafold_t get_datafold(std::string);
 		datafold_t get_datafold(std::string, std::string);
 		std::vector<int> get_vector_int(std::string);
+		std::vector<int> get_vector_int(std::string, std::string);
 		std::vector<std::string> get_vector_str(std::string);
+		std::vector<std::string> get_vector_str(std::string, std::string);
 
 		template <typename T>
 		T get(std::string key)

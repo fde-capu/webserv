@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/09 20:42:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/10 18:36:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,14 @@
 
 bool validate_args(int argc, char **argv)
 {
+	ArgVal av = ArgVal(argc, argv);
+	std::cout << av << std::endl;
+	std::cout << "fail: " << av.fail() << std::endl;
+
 	if (argc > 2)
 		return die(ERR_INVALID_ARGS);
-	return true;
+
+	return false;
 	(void)argv;
 }
 
@@ -42,20 +47,12 @@ int main(int argc, char **argv)
 {
 	FileString conf;
 
-//	if (!validate_args(argc, argv))
-//		return !die(BYE);
-	conf.load(DEFAULT_CONFIG_FILE);
+	if (!validate_args(argc, argv))
+		return !die(BYE);
+
 	conf.load(DEFAULT_CONFIG_FILE);
 	conf.load("test.conf");
 	
-//	if (!read_conf(conf, DEFAULT_CONFIG_FILE) || !read_conf2(conf, argv[1]) ||
-//		!essential_configuration(conf))
-//		return !die(BYE);
-
-	std::cout << "as array: " << conf["server_name"] << std::endl;
-//	std::string name = conf.get<std::string>("server_name");
-//	std::cout << "name: " << name << std::endl;
-
 	if (conf.success())
 		alert(CONFIG_OK);
 	if (conf.fail())
