@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 20:06:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/11 15:06:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,13 @@
 # define DF_OBJ_END " }"
 # define DF_ENDVAL_SET ";"
 
-# define SERVER_TAG "(webserv controled error)"
+# define SERVER_TAG "(DataFold controled error)"
 # define DFK SERVER_TAG " '" + key + "'" +
 # define DF_ERR_NO_KEY DFK " not found."
 # define DF_ERR_IS_ARRAY DFK " is array."
 # define DF_ERR_NOT_NUMBER DFK " is not a number."
 # define DF_ERR_IS_OBJECT DFK " is object."
+# define DF_ERR_NO_FILE SERVER_TAG " No file to read."
 
 typedef struct datafold_type
 {
@@ -103,6 +104,7 @@ class DataFold : public StringTools
 		std::vector<int> get_vector_int(std::string, std::string);
 		std::vector<std::string> get_vector_str(std::string);
 		std::vector<std::string> get_vector_str(std::string, std::string);
+		void core_check() const;
 
 		template <typename T>
 		T get(std::string key)

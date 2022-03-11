@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 20:07:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/11 15:05:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 
 datafold_t DataFold::get_datafold(std::string key)
 {
+	core_check();
 	key_count_single_check(key);
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
@@ -25,6 +26,7 @@ datafold_t DataFold::get_datafold(std::string key)
 
 datafold_t DataFold::get_datafold(std::string key, std::string ksub)
 {
+	core_check();
 	key_count_single_check(key);
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
@@ -36,6 +38,7 @@ datafold_t DataFold::get_datafold(std::string key, std::string ksub)
 
 std::vector<int> DataFold::get_vector_int(std::string key)
 {
+	core_check();
 	std::vector<int> out;
 	for (int i = 0; i < index; i++)
 		if (core[i].key == key)
@@ -56,6 +59,7 @@ std::vector<int> DataFold::get_vector_int(std::string key)
 
 std::vector<int> DataFold::get_vector_int(std::string key, std::string ksub)
 {
+	core_check();
 	std::vector<int> out;
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
@@ -78,6 +82,7 @@ std::vector<int> DataFold::get_vector_int(std::string key, std::string ksub)
 
 std::vector<std::string> DataFold::get_vector_str(std::string key)
 {
+	core_check();
 	std::vector<std::string> out;
 	for (int i = 0; i < index; i++)
 		if (core[i].key == key)
@@ -98,6 +103,7 @@ std::vector<std::string> DataFold::get_vector_str(std::string key)
 
 std::vector<std::string> DataFold::get_vector_str(std::string key, std::string ksub)
 {
+	core_check();
 	std::vector<std::string> out;
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
@@ -231,6 +237,9 @@ DataFold::DataFold(DataFold const & src)
 datavec DataFold::getCore() const
 { return core; }
 
+DataFold::operator datavec()
+{ return core; }
+
 int DataFold::getIndex() const
 { return index; }
 
@@ -281,8 +290,12 @@ size_t DataFold::size() const
 { return core.size(); }
 
 const datafold_type DataFold::operator[] (size_t idx) const
+{ return core[idx]; }
+
+void DataFold::core_check() const
 {
-	return core[idx];
+	if (core.empty())
+		throw std::runtime_error(DF_ERR_NO_FILE);
 }
 
 int DataFold::key_count(std::string key) const
@@ -326,9 +339,6 @@ const std::string DataFold::operator[] (std::string key) const
 		return getValStr(key);
 	return eqvals_to_arrstr(key);
 }
-
-DataFold::operator datavec()
-{ return core; }
 
 int DataFold::df_type(std::string val)
 {

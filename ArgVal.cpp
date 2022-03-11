@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 14:03:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/11 14:07:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,6 @@
 ArgVal::ArgVal(int argc, char ** argv)
 : _fail(false)
 {
-	if (!(_board.success()))
-		throw std::exception();
-	_board.load(_board_file_name);
-
 	try {
 		if (argc != _board.get<int>("argc", "fixed"))
 			_fail = true;
