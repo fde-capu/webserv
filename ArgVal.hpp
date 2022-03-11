@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 14:01:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/11 15:17:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class ArgVal : public StringTools
 		FileString _board;
 		FileString _config;
 		bool _fail;
-		const char * _board_file_name;
+		char * _board_file_name;
 	public:
 		ArgVal(int, char **);
 		ArgVal();
@@ -39,6 +39,9 @@ class ArgVal : public StringTools
 		typedef DataFold::vint vint;
 		typedef DataFold::vstr vstr;
 
+		int argc;
+		char ** argv;
+		void load_conditions(const char *);
 		FileString& getBoard()const;
 		FileString& getConfig()const;
 		bool fail() const;
