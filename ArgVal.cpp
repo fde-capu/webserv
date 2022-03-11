@@ -6,21 +6,26 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 15:17:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/11 16:14:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ArgVal.hpp"
 
-ArgVal::ArgVal(int argc, char ** argv)
-: _fail(false),
+ArgVal::ArgVal(int argc, char ** argv, std::string u_board_file_name)
+: _fail(false), _board_file_name(const_cast<char *>(u_board_file_name.c_str())),
   argc(argc), argv(argv)
+{
+	_board.load(_board_file_name);
+	run();
+}
+
+ArgVal::ArgVal(int argc, char ** argv)
+: _fail(false), argc(argc), argv(argv)
 { }
 
-void ArgVal::load_conditions(const char * u_conditions)
+void ArgVal::run()
 {
-	_board_file_name = const_cast<char *>(u_conditions);
-	_board.load(_board_file_name);
 	try {
 		if (argc != _board.get<int>("argc", "fixed"))
 			_fail = true;
@@ -53,6 +58,13 @@ void ArgVal::load_conditions(const char * u_conditions)
 			}
 		}
 	}
+}
+
+void ArgVal::load_conditions(const char * u_condition_file)
+{
+	_board_file_name = const_cast<char *>(u_condition_file);
+	_board.load(_board_file_name);
+	run();
 }
 
 ArgVal::ArgVal()
