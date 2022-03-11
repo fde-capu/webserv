@@ -6,13 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 20:48:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/11 13:40:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ArgVal.hpp"
 
 ArgVal::ArgVal(int argc, char ** argv)
+: _fail(false)
 {
 	_board.load(AV_FILE_BOARD);
 
@@ -40,14 +41,21 @@ ArgVal::ArgVal(int argc, char ** argv)
 		{
 			if (!valid_filename(std::string(argv[1])))
 				_fail = true;
-			if (vt[n] == "comply")
+			if (vt.size() > 1 && vt[1] == "comply")
 			{
-				_config.load(vt[0]);
+				_config.load(vt[0].c_str());
 				if (!comply())
 					_fail = true;
 			}
 		}
 	}
+}
+
+ArgVal::ArgVal()
+: _fail(false)
+{
+	_board.load(AV_FILE_BOARD);
+//	_board = FileString(AV_FILE_BOARD);
 }
 
 bool ArgVal::comply() const
@@ -58,12 +66,6 @@ bool ArgVal::comply() const
 
 bool ArgVal::fail() const
 { return _fail; }
-
-ArgVal::ArgVal()
-{
-	_board.load(AV_FILE_BOARD);
-//	_board = FileString(AV_FILE_BOARD);
-}
 
 ArgVal::ArgVal(ArgVal const & src)
 {
@@ -77,6 +79,7 @@ ArgVal & ArgVal::operator= (ArgVal const & rhs)
 	{
 		_board = rhs.getBoard();
 		_config = rhs.getConfig();
+		_fail = rhs.fail();
 	}
 	return *this;
 }
