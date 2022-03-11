@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 13:40:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/11 14:03:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,9 @@
 ArgVal::ArgVal(int argc, char ** argv)
 : _fail(false)
 {
-	_board.load(AV_FILE_BOARD);
+	if (!(_board.success()))
+		throw std::exception();
+	_board.load(_board_file_name);
 
 	try {
 		if (argc != _board.get<int>("argc", "fixed"))
@@ -39,7 +41,7 @@ ArgVal::ArgVal(int argc, char ** argv)
 		vt = _board.get<vstr>("argv", itoa(argi));
 		if (vt[0] == "file_name")
 		{
-			if (!valid_filename(std::string(argv[1])))
+			if (!valid_file_name(std::string(argv[1])))
 				_fail = true;
 			if (vt.size() > 1 && vt[1] == "comply")
 			{
@@ -54,14 +56,14 @@ ArgVal::ArgVal(int argc, char ** argv)
 ArgVal::ArgVal()
 : _fail(false)
 {
-	_board.load(AV_FILE_BOARD);
-//	_board = FileString(AV_FILE_BOARD);
+	_board.load(_board_file_name);
+//	_board = FileString(_board_file_name);
 }
 
 bool ArgVal::comply() const
 {
 	std::cout << "todo comply" << std::endl;
-	return false;
+	return true;
 }
 
 bool ArgVal::fail() const

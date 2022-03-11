@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 13:33:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/11 14:01:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <stdlib.h> // no itoa in <cstdlib>
 # include <vector>
 
-# define AV_FILE_BOARD "argval.conf"
+//# define AV_FILE_BOARD "argval.conf"
 //# define AV_FILE_CONFIG ""
 
 class ArgVal : public StringTools
@@ -28,6 +28,7 @@ class ArgVal : public StringTools
 		FileString _board;
 		FileString _config;
 		bool _fail;
+		const char * _board_file_name;
 	public:
 		ArgVal(int, char **);
 		ArgVal();

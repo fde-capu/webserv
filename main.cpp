@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 20:30:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/11 13:46:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,6 @@ bool validate_args(int argc, char **argv)
 	(void)argv;
 }
 
-bool read_conf(maps & conf, const char *file)
-{
-	FileString file_conf(file);
-	if (file_conf.fail())
-		return die(ERR_INVALID_FILE);
-
-	(void)conf;
-	return true;
-}
-
 bool essential_configuration(maps & conf)
 {
 	(void)conf;
@@ -49,8 +39,8 @@ int main(int argc, char **argv)
 	if (!validate_args(argc, argv))
 		return !die(BYE);
 
-	conf.load(DEFAULT_CONFIG_FILE);
-	conf.load("test.conf");
+//	conf.load(DEFAULT_CONFIG_FILE);
+//	conf.load("test.conf");
 	
 	if (conf.success())
 		alert(CONFIG_OK);

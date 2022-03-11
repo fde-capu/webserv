@@ -89,9 +89,6 @@
 //	std::cout << "inline vec: " << inline_vec[9] << std::endl; // std::vector accepts!
 //	std::cout << "size(): " << inline_vec.size() << std::endl;
 
-//	if (!read_conf(conf, DEFAULT_CONFIG_FILE) || !read_conf2(conf, argv[1]) ||
-//		!essential_configuration(conf))
-//		return !die(BYE);
 
 	std::cout << "as array: " << conf["server_name"] << std::endl;
 //	std::cout << conf << std::endl;
