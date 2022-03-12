@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 16:13:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/12 21:35:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class ArgVal : public StringTools
 		bool _fail;
 		char * _board_file_name;
 	public:
-		ArgVal(int, char **, std::string);
+		ArgVal(int, char **, char *);
 		ArgVal(int, char **);
 		ArgVal();
 		ArgVal(ArgVal const & src);
@@ -42,7 +42,7 @@ class ArgVal : public StringTools
 
 		int argc;
 		char ** argv;
-		void load_conditions(const char *);
+		void load_conditions(char *);
 		void run();
 		FileString& getBoard()const;
 		FileString& getConfig()const;

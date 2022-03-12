@@ -6,14 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 16:14:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/12 21:40:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ArgVal.hpp"
 
-ArgVal::ArgVal(int argc, char ** argv, std::string u_board_file_name)
-: _fail(false), _board_file_name(const_cast<char *>(u_board_file_name.c_str())),
+ArgVal::ArgVal(int argc, char ** argv, char * u_board_file_name)
+: _fail(false), _board_file_name(u_board_file_name),
   argc(argc), argv(argv)
 {
 	_board.load(_board_file_name);
@@ -22,7 +22,7 @@ ArgVal::ArgVal(int argc, char ** argv, std::string u_board_file_name)
 
 ArgVal::ArgVal(int argc, char ** argv)
 : _fail(false), argc(argc), argv(argv)
-{ }
+{}
 
 void ArgVal::run()
 {
@@ -52,7 +52,9 @@ void ArgVal::run()
 				_fail = true;
 			if (vt.size() > 1 && vt[1] == "comply")
 			{
-				_config.load(vt[0].c_str());
+				_config.load(argv[0]);
+//				_config.load("webserv-default.conf");
+//				std::cout << "_config: " << _config << std::endl;
 				if (!comply())
 					_fail = true;
 			}
@@ -60,23 +62,20 @@ void ArgVal::run()
 	}
 }
 
-void ArgVal::load_conditions(const char * u_condition_file)
+void ArgVal::load_conditions(char * u_condition_file)
 {
-	_board_file_name = const_cast<char *>(u_condition_file);
+	_board_file_name = u_condition_file;
 	_board.load(_board_file_name);
 	run();
 }
 
 ArgVal::ArgVal()
 : _fail(false)
-{
-//	_board.load(_board_file_name);
-//	_board = FileString(_board_file_name);
-}
+{}
 
 bool ArgVal::comply() const
 {
-	std::cout << "todo comply" << std::endl;
+	std::cout << "Comply (to do):" << std::endl;
 	return true;
 }
 
