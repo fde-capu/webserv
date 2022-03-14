@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 15:05:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 18:33:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,25 +149,6 @@ void datafold_t::log_self()
 	std::cout << "sub:\t" << sub << std::endl;
 }
 
-//datafold_t::operator std::vector<std::string> >()
-//{
-//	std::vector<std::string> out;
-//	std::vector<std::string> arr_split = splitOutsideQuotes(val);
-//	for (size_t j = 0; j < arr_split.size(); j++)
-//		out.push_back(arr_split[j]);
-//	return out;
-//}
-//
-//datafold_t::operator std::vector<int>()
-//{
-//	std::vector<int> out;
-//	std::vector<std::string> arr_split = splitOutsideQuotes(val);
-//	for (size_t j = 0; j < arr_split.size(); j++)
-//		out.push_back(std::atoi(arr_split[j].c_str()));
-//
-//	return out;
-//}
-
 datavec::operator std::string()
 {
 	std::stringstream o;
@@ -193,7 +174,9 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
 	}
 	if (self.type & DF_TYPE_SUB)
+	{
 		o << self.sub;
+	}
 	return o;
 }
 
@@ -416,8 +399,10 @@ DataFold DataFold::parse_data(const std::string str)
 		{
 			pass = false;
 			key = ops.substr(0, pos[1]);
+
 			ops = ops.substr(pos[1] + 1);
-			div_pos = find_outside_quotes(ops, "}");
+			div_pos = find_closing_bracket(ops);
+
 			val = ops.substr(0, div_pos);
 			ops = ops.substr(div_pos + 1);
 			hard_trim(key);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 17:15:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 17:43:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,6 @@ void ArgVal::run()
 			if (vt.size() > 1 && vt[1] == "comply")
 			{
 				_config.load(argv[argi]);
-//				_config.load("webserv-default.conf");
-//				std::cout << "_config: " << _config << std::endl;
 				if (!comply())
 					_fail = true;
 			}
@@ -77,6 +75,7 @@ bool ArgVal::comply() const
 {
 	std::cout << "Comply:" << std::endl;
 	std::cout << _config << std::endl;
+	std::cout << _board << std::endl;
 	return true;
 }
 

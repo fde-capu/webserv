@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 14:03:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 18:32:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,26 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle) co
 		}
 	}
 	return std::string::npos;
+}
+
+size_t StringTools::find_closing_bracket(std::string ops)
+{
+	std::string stack("");
+	size_t pos = 0;
+	std::cout << "find_relative" << std::endl;
+	while (ops[pos])
+	{
+		if (ops[pos] == '{')
+			stack += "{";
+		if (ops[pos] == '}')
+		{
+			if (stack == "")
+				return pos;
+			stack = stack.substr(0, stack.size() - 1);
+		}
+		pos++;
+	}
+	return pos;
 }
 
 std::string StringTools::escape_char(const std::string dst, std::string esc) const

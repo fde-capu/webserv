@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 14:02:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 18:30:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class StringTools
 		void erase_boundaries(std::string&, std::string, std::string);
 		size_t find_outside_quotes(std::string&, std::string) const;
 		size_t find_outside_quotes(std::string&) const;
+		size_t find_closing_bracket(std::string);
 		void remove_comments(std::string&);
 		std::string correct_quotes(std::string&);
 		std::string correct_quotes(const std::string&);
