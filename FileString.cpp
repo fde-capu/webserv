@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 13:58:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 17:15:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void FileString::load(const char * file_name)
 	while (std::getline(file_read, line))
 		_content += line + "\n";
 	parse();
-	_processed_ok = true; // Should make an actual test.
+	_processed_ok = true;
 }
 
 FileString::FileString(const char * file_name)
@@ -85,8 +85,8 @@ char * FileString::getFileName()
 
 std::ostream & operator<< (std::ostream & o, FileString const & self)
 {
-	o << ">>>" << self.getProcessed() << "<<<" << std::endl;
-	o << self.getDataFold() << std::endl;
+//	o << ">>>" << self.getProcessed() << "<<<" << std::endl;
+ 	o << self.getDataFold() << std::endl;
 	return o;
 }
 
@@ -97,10 +97,10 @@ DataFold FileString::getDataFold() const
 { return fs_data; }
 
 std::string FileString::getProcessed()
-{ return _processed; }
+{ return _processed_ok ? _processed : 0; }
 
 std::string FileString::getProcessed() const
-{ return _processed; }
+{ return _processed_ok ? _processed : 0; }
 
 std::string FileString::getContent()
 { return _content; }
