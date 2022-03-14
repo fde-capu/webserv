@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/11 15:06:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 19:22:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,19 +51,17 @@ typedef struct datafold_type
 	std::string					val;
 	std::vector<datafold_type>	sub;
 
-	operator std::string();
-	operator int();
-//	operator std::vector<std::string>();
-//	operator std::vector<int>();
+	operator std::string() const;
+	operator int() const;
 
-	void log_self();
+	void log_self() const;
 
 } datafold_t;
 
 class datavec : public std::vector<datafold_t>
 {
 	public:
-		operator std::string();
+		operator std::string() const;
 };
 
 class DataFold : public StringTools
@@ -94,16 +92,16 @@ class DataFold : public StringTools
 		std::string quoted_val(datafold_t) const;
 		const std::string getValStr(std::string key) const;
 		int key_count(std::string key) const;
-		void key_count_exists_check(std::string key);
-		void key_count_single_check(std::string key);
-		operator datavec();
-		operator std::string();
-		datafold_t get_datafold(std::string);
-		datafold_t get_datafold(std::string, std::string);
-		std::vector<int> get_vector_int(std::string);
-		std::vector<int> get_vector_int(std::string, std::string);
-		std::vector<std::string> get_vector_str(std::string);
-		std::vector<std::string> get_vector_str(std::string, std::string);
+		void key_count_exists_check(std::string key) const;
+		void key_count_single_check(std::string key) const;
+		operator datavec() const;
+		operator std::string() const;
+		datafold_t get_datafold(std::string) const;
+		datafold_t get_datafold(std::string, std::string) const;
+		std::vector<int> get_vector_int(std::string) const;
+		std::vector<int> get_vector_int(std::string, std::string) const;
+		std::vector<std::string> get_vector_str(std::string) const;
+		std::vector<std::string> get_vector_str(std::string, std::string) const;
 		void core_check() const;
 
 		template <typename T>

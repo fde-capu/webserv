@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 18:32:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 19:28:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,17 +52,17 @@ StringTools::~StringTools()
 	return ;
 }
 
-std::string StringTools::hard_trim(const std::string &dst)
+std::string StringTools::hard_trim(const std::string &dst) const
 {
 	std::string out(dst);
 	hard_trim(out);
 	return out;
 }
 
-void StringTools::hard_trim(std::string &dst)
+void StringTools::hard_trim(std::string &dst) const
 { hard_trim(dst, _hard_trim_set); }
 
-void StringTools::hard_trim(std::string& dst, std::string single_char)
+void StringTools::hard_trim(std::string& dst, std::string single_char) const
 {
 	std::string xx = single_char + single_char;
 	size_t pos = find_outside_quotes(dst, xx);
@@ -73,13 +73,13 @@ void StringTools::hard_trim(std::string& dst, std::string single_char)
 	}
 }
 
-void StringTools::soft_trim(std::string& dst, std::string trim_set)
+void StringTools::soft_trim(std::string& dst, std::string trim_set) const
 { erase_boundaries(dst, "\n", trim_set); }
 
-void StringTools::erase_boundaries(std::string &dst, std::string center)
+void StringTools::erase_boundaries(std::string &dst, std::string center) const
 { erase_boundaries(dst, center, _soft_trim_set); }
 
-void StringTools::erase_boundaries(std::string &dst, std::string center, std::string trim_set)
+void StringTools::erase_boundaries(std::string &dst, std::string center, std::string trim_set) const
 {
 	for(std::string::iterator i = trim_set.begin(); *i; i++)
 	{
@@ -90,10 +90,10 @@ void StringTools::erase_boundaries(std::string &dst, std::string center, std::st
 	}
 }
 
-void StringTools::soft_trim(std::string& dst)
+void StringTools::soft_trim(std::string& dst) const
 { soft_trim(dst, _soft_trim_set); }
 
-void StringTools::remove_comments(std::string& dst)
+void StringTools::remove_comments(std::string& dst) const
 {
 	std::string line;
 	std::string new_p = "";
@@ -108,7 +108,7 @@ void StringTools::remove_comments(std::string& dst)
 	dst = new_p;
 }
 
-void StringTools::remove_all(std::string& dst, std::string to_remove)
+void StringTools::remove_all(std::string& dst, std::string to_remove) const
 { substitute_all(dst, to_remove, ""); }
 
 std::string StringTools::itos(int i) const
@@ -181,11 +181,10 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle) co
 	return std::string::npos;
 }
 
-size_t StringTools::find_closing_bracket(std::string ops)
+size_t StringTools::find_closing_bracket(std::string ops) const
 {
 	std::string stack("");
 	size_t pos = 0;
-	std::cout << "find_relative" << std::endl;
 	while (ops[pos])
 	{
 		if (ops[pos] == '{')
@@ -207,14 +206,14 @@ std::string StringTools::escape_char(const std::string dst, std::string esc) con
 }
 
 
-std::string StringTools::correct_quotes(const std::string& dst)
+std::string StringTools::correct_quotes(const std::string& dst) const
 {
 	std::string out = dst;
 	correct_quotes(*const_cast<std::string*>(&dst));
 	return dst;
 }
 
-std::string StringTools::correct_quotes(std::string& dst)
+std::string StringTools::correct_quotes(std::string& dst) const
 {
 	std::string out(dst);
 	std::string::iterator f = dst.begin();
@@ -227,7 +226,7 @@ std::string StringTools::correct_quotes(std::string& dst)
 	return out;
 }
 
-std::string StringTools::clean_before_parse(std::string& dst)
+std::string StringTools::clean_before_parse(std::string& dst) const
 {
 	remove_comments(dst);
 	soft_trim(dst);
@@ -241,12 +240,12 @@ std::string StringTools::clean_before_parse(std::string& dst)
 	return dst;
 }
 
-bool StringTools::isDigit(char d)
+bool StringTools::isDigit(char d) const
 {
 	return d >= '0' && d <= '9';
 }
 
-std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecstr)
+std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecstr) const
 {
 	std::vector<std::string> out;
 	std::string spl = correct_quotes(hard_trim(vecstr));
@@ -267,7 +266,7 @@ std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecst
 	return out;
 }
 
-bool StringTools::isAllNumber(std::vector<std::string> vecstring)
+bool StringTools::isAllNumber(std::vector<std::string> vecstring) const
 {
 	for (size_t i = 0; i < vecstring.size(); i++)
 		if (!isNumber(vecstring[i]))
@@ -275,7 +274,7 @@ bool StringTools::isAllNumber(std::vector<std::string> vecstring)
 	return true;
 }
 
-bool StringTools::isNumber(std::string str)
+bool StringTools::isNumber(std::string str) const
 {
 	bool dot = false;
 	soft_trim(str);
@@ -297,17 +296,17 @@ bool StringTools::isNumber(std::string str)
 	return true;
 }
 
-std::string StringTools::itoa(int i)
+std::string StringTools::itoa(int i) const
 {
 	std::ostringstream ss;
 	ss << i;
 	return ss.str();
 }
 
-bool StringTools::valid_file_name(std::string fn)
+bool StringTools::valid_file_name(std::string fn) const
 { return isAllInSet(fn, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_"); }
 
-bool StringTools::isAllInSet(std::string str, std::string set)
+bool StringTools::isAllInSet(std::string str, std::string set) const
 {
 	size_t pass;
 	for (size_t i = 0; i < str.size(); i++)

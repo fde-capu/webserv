@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 18:33:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 19:50:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <iostream>
 #include <cstdlib>
 
-datafold_t DataFold::get_datafold(std::string key)
+datafold_t DataFold::get_datafold(std::string key) const
 {
 	core_check();
 	key_count_single_check(key);
@@ -24,7 +24,7 @@ datafold_t DataFold::get_datafold(std::string key)
 	return datafold_t();
 }
 
-datafold_t DataFold::get_datafold(std::string key, std::string ksub)
+datafold_t DataFold::get_datafold(std::string key, std::string ksub) const
 {
 	core_check();
 	key_count_single_check(key);
@@ -36,7 +36,7 @@ datafold_t DataFold::get_datafold(std::string key, std::string ksub)
 	return datafold_t();
 }
 
-std::vector<int> DataFold::get_vector_int(std::string key)
+std::vector<int> DataFold::get_vector_int(std::string key) const
 {
 	core_check();
 	std::vector<int> out;
@@ -57,7 +57,7 @@ std::vector<int> DataFold::get_vector_int(std::string key)
 	return out;
 }
 
-std::vector<int> DataFold::get_vector_int(std::string key, std::string ksub)
+std::vector<int> DataFold::get_vector_int(std::string key, std::string ksub) const
 {
 	core_check();
 	std::vector<int> out;
@@ -80,7 +80,7 @@ std::vector<int> DataFold::get_vector_int(std::string key, std::string ksub)
 	return out;
 }
 
-std::vector<std::string> DataFold::get_vector_str(std::string key)
+std::vector<std::string> DataFold::get_vector_str(std::string key) const
 {
 	core_check();
 	std::vector<std::string> out;
@@ -101,7 +101,7 @@ std::vector<std::string> DataFold::get_vector_str(std::string key)
 	return out;
 }
 
-std::vector<std::string> DataFold::get_vector_str(std::string key, std::string ksub)
+std::vector<std::string> DataFold::get_vector_str(std::string key, std::string ksub) const
 {
 	core_check();
 	std::vector<std::string> out;
@@ -124,14 +124,14 @@ std::vector<std::string> DataFold::get_vector_str(std::string key, std::string k
 	return out;
 }
 
-datafold_t::operator std::string()
+datafold_t::operator std::string() const
 {
 	if (type & DF_TYPE_SUB)
 		throw std::invalid_argument(DF_ERR_IS_OBJECT);
 	return val;
 }
 
-datafold_t::operator int()
+datafold_t::operator int() const
 {
 	if (type & DF_TYPE_ARRAY)
 		throw std::invalid_argument(DF_ERR_IS_ARRAY);
@@ -140,7 +140,7 @@ datafold_t::operator int()
 	return std::atoi(val.c_str());
 }
 
-void datafold_t::log_self()
+void datafold_t::log_self() const
 {
 	std::cout << "index:\t" << index << std::endl;
 	std::cout << "type:\t" << type << std::endl;
@@ -149,14 +149,14 @@ void datafold_t::log_self()
 	std::cout << "sub:\t" << sub << std::endl;
 }
 
-datavec::operator std::string()
+datavec::operator std::string() const
 {
 	std::stringstream o;
 	o << this;
 	return o.str();
 }
 
-DataFold::operator std::string()
+DataFold::operator std::string() const
 {
 	std::stringstream o;
 	o << getCore();
@@ -220,7 +220,7 @@ DataFold::DataFold(DataFold const & src)
 datavec DataFold::getCore() const
 { return core; }
 
-DataFold::operator datavec()
+DataFold::operator datavec() const
 { return core; }
 
 int DataFold::getIndex() const
@@ -289,13 +289,13 @@ int DataFold::key_count(std::string key) const
 	return out;
 }
 
-void DataFold::key_count_exists_check(std::string key)
+void DataFold::key_count_exists_check(std::string key) const
 {
 	if (!key_count(key))
 		throw std::invalid_argument(DF_ERR_NO_KEY);
 }
 
-void DataFold::key_count_single_check(std::string key)
+void DataFold::key_count_single_check(std::string key) const
 {
 	int count = key_count(key);
 	if (count == 0)

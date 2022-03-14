@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 17:38:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 19:51:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,17 @@ void FileString::parse()
 	hard_trim(_processed);
 	_processed_ok = true;
 	this->fs_data = DataFold(_processed);
+}
+
+void FileString::parse(std::string str)
+{
+	_content = str;
+	_processed = _content;
+	remove_comments(_processed);
+	soft_trim(_processed);
+	hard_trim(_processed);
+	_processed_ok = true;
+	this->fs_data = DataFold(_processed); // Future: implement +=
 }
 
 FileString::FileString(FileString & src)
