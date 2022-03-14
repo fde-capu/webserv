@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 19:50:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 20:57:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,24 +88,6 @@ class FileString : public StringTools
 		template <>
 		std::vector<std::string> get(std::string key) const
 		{ return fs_data.get_vector_str(key); }
-
-		template <>
-		FileString get(std::string key) const
-		{
-			FileString out;
-			std::string str = fs_data[key];
-			std::cout << "[str] " << str << std::endl;
-//			out.parse(fs_data(key));
-			return out;
-		}
-
-		template <>
-		std::string get(std::string key) const
-		{
-			std::stringstream o;
-			o << fs_data[key];
-			return o.str();
-		}
 
 		template <typename T>
 		T get(std::string key, std::string sub) const

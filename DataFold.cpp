@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 19:50:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 21:25:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,12 @@ std::vector<std::string> DataFold::get_vector_str(std::string key, std::string k
 datafold_t::operator std::string() const
 {
 	if (type & DF_TYPE_SUB)
-		throw std::invalid_argument(DF_ERR_IS_OBJECT);
+	{
+		std::stringstream o;
+		o << *this;
+		return o.str();
+	}
+//		throw std::invalid_argument(DF_ERR_IS_OBJECT);
 	return val;
 }
 
@@ -138,6 +143,13 @@ datafold_t::operator int() const
 	if (!(type & DF_TYPE_NUMBER))
 		throw std::invalid_argument(DF_ERR_NOT_NUMBER);
 	return std::atoi(val.c_str());
+}
+
+datafold_t::operator DataFold() const
+{
+	std::stringstream o;
+	o << *this;
+	return DataFold(o.str());
 }
 
 void datafold_t::log_self() const

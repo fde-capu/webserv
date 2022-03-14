@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 19:22:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 21:23:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@
 # define DF_ERR_IS_OBJECT DFK " is object."
 # define DF_ERR_NO_FILE SERVER_TAG " No file to read."
 
+class DataFold;
+
 typedef struct datafold_type
 {
 	int							index;
@@ -53,6 +55,7 @@ typedef struct datafold_type
 
 	operator std::string() const;
 	operator int() const;
+	operator DataFold() const;
 
 	void log_self() const;
 
@@ -69,6 +72,7 @@ class DataFold : public StringTools
 	private:
 		datavec	core;
 		int		index;
+
 	public:
 		typedef std::vector<int>			vint;
 		typedef std::vector<std::string>	vstr;
@@ -81,8 +85,8 @@ class DataFold : public StringTools
 		void push_back(std::string key, std::string val);
 		void push_back(std::string key, DataFold sub);
 		size_t size() const;
-		const datafold_type operator[] (size_t idx) const;
 		const std::string operator[] (std::string) const;
+		const datafold_type operator[] (size_t idx) const;
 		datavec getCore() const;
 		int getIndex() const;
 		DataFold parse_data(const std::string dst);

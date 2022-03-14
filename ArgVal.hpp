@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/12 21:35:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/14 21:02:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,13 @@ class ArgVal : public StringTools
 		FileString _config;
 		bool _fail;
 		char * _board_file_name;
+
 	public:
 		ArgVal(int, char **, char *);
 		ArgVal(int, char **);
 		ArgVal();
 		ArgVal(ArgVal const & src);
-		ArgVal & operator= (ArgVal const & rhs);
+		ArgVal & operator= (ArgVal const &);
 		~ArgVal();
 
 		typedef DataFold::vint vint;
@@ -51,6 +52,6 @@ class ArgVal : public StringTools
 		bool comply() const;
 };
 
-std::ostream & operator<< (std::ostream & o, ArgVal const & i);
+std::ostream & operator<< (std::ostream &, ArgVal const &);
 
 #endif
