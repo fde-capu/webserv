@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 21:21:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/15 16:50:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void ArgVal::run()
 	while (++argi < argc)
 	{
 		vt = _board.get<vstr>("argv", itoa(argi));
-		if (vt[0] == "file_name")
+		if (vt.size() && vt[0] == "file_name")
 		{
 			if (!valid_file_name(std::string(argv[1])))
 				_fail = true;
@@ -75,7 +75,13 @@ bool ArgVal::comply() const
 {
 	std::cout << "Comply:" << std::endl;
 	DataFold cply(_board.get<DataFold>("comply"));
-	std::cout << "**" << cply << std::endl;
+	std::cout << "----->" << cply << std::endl;
+	std::string cplystr = _board.get<std::string>("comply");
+	std::cout << "----->" << cplystr << std::endl;
+	std::string cplystr2 = cply;
+	std::cout << "----->" << cplystr2 << std::endl;
+
+
 //	std::cout << "**" << _board.get<std::string>("accept_unique_keys") << std::endl;
 	return true;
 }

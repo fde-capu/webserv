@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 21:25:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/15 18:39:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,7 @@ datafold_t::operator DataFold() const
 {
 	std::stringstream o;
 	o << *this;
+	std::cout << "datafold::" << o.str() << std::endl << std::endl;
 	return DataFold(o.str());
 }
 
@@ -338,6 +339,8 @@ const std::string DataFold::operator[] (std::string key) const
 int DataFold::df_type(std::string val)
 {
 	hard_trim(val);
+	if (*val.begin() == '{' && *(val.end() - 1) == '}')
+		return DF_TYPE_SUB;
 	int out = 0;
 	if (find_outside_quotes(val, " ") != std::string::npos)
 	{
@@ -354,7 +357,7 @@ void DataFold::push_back(std::string key, std::string val)
 	datafold_t entry;
 	entry.index = index++;
 	entry.type = df_type(val);
-	entry.key = key;
+	entry.key = correct_quotes(key);
 	if (entry.type & DF_TYPE_STRING || entry.type & DF_TYPE_NUMBER)
 		entry.val = correct_quotes(val);
 	core.push_back(entry);
@@ -365,7 +368,7 @@ void DataFold::push_back(std::string key, DataFold sub)
 	datafold_t entry;
 	entry.index = index++;
 	entry.type = DF_TYPE_SUB;
-	entry.key = key;
+	entry.key = correct_quotes(key);
 	entry.sub = sub;
 	core.push_back(entry);
 }
@@ -382,14 +385,17 @@ DataFold DataFold::parse_data(const std::string str)
 
 	clean_before_parse(ops);
 
+	std::cout << std::endl << "Parsing: " << ops << std::endl;
+
 	pass = false;
 	while (!pass)
 	{
 		pass = true;
-		pos[0] = find_outside_quotes(ops, " ");
-		pos[1] = find_outside_quotes(ops, "{");
-		pos[2] = find_outside_quotes(ops, ";");
-		pos[3] = find_outside_quotes(ops, "\n");
+		pos[0] = find_outside_quotes_set(ops, " :");
+		pos[1] = find_outside_quotes_set(ops, "{");
+		pos[2] = find_outside_quotes_set(ops, ";,");
+		pos[3] = find_outside_quotes_set(ops, "\n");
+		std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
 
 		if (pos[0] < pos[1] && pos[0] != std::string::npos)
 		{
@@ -397,7 +403,7 @@ DataFold DataFold::parse_data(const std::string str)
 			key = ops.substr(0, pos[0]);
 			ops = ops.substr(pos[0] + 1);
 			if (pos[2] < pos[3])
-				div_pos = find_outside_quotes(ops, ";");
+				div_pos = find_outside_quotes_set(ops, ";,");
 			else
 				div_pos = find_outside_quotes(ops, "\n");
 			val = ops.substr(0, div_pos);
@@ -411,10 +417,8 @@ DataFold DataFold::parse_data(const std::string str)
 		{
 			pass = false;
 			key = ops.substr(0, pos[1]);
-
 			ops = ops.substr(pos[1] + 1);
 			div_pos = find_closing_bracket(ops);
-
 			val = ops.substr(0, div_pos);
 			ops = ops.substr(div_pos + 1);
 			hard_trim(key);
@@ -423,5 +427,6 @@ DataFold DataFold::parse_data(const std::string str)
 			continue ;
 		}
 	}
+	std::cout << "Parsed: " << out << std::endl << std::endl;
 	return out;
 }

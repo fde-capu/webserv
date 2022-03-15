@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 19:28:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/15 18:20:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,18 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle) co
 	return std::string::npos;
 }
 
+size_t StringTools::find_outside_quotes_set(std::string& str, std::string set) const
+{
+	size_t out = std::string::npos;
+	for (std::string::iterator i = set.begin(); *i; i++)
+	{
+		size_t first = find_outside_quotes(str, std::string(i, i + 1));
+		if (first < out)
+			out = first;
+	}
+	return out;
+}
+
 size_t StringTools::find_closing_bracket(std::string ops) const
 {
 	std::string stack("");
@@ -235,6 +247,8 @@ std::string StringTools::clean_before_parse(std::string& dst) const
 	substitute_all(dst, "\t", " ");
 	hard_trim(dst, " ");
 	erase_boundaries(dst, ";");
+	erase_boundaries(dst, ",");
+	erase_boundaries(dst, ":");
 	erase_boundaries(dst, "{");
 	erase_boundaries(dst, "}");
 	return dst;

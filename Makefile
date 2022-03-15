@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/03/10 16:23:26 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/03/15 13:31:34 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ HEAD	=	Makefile Encapsulator.hpp setup.hpp header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp
 SHELL	=	/bin/sh
 CC		=	c++ -std=c++98 -Wfatal-errors -DVERBOSE=1
-CCFLAGS	=	-Wall -Werror -Wextra -g -O0
+CCFLAGS	=	-Wall -Werror -Wextra -g -fno-limit-debug-info -O0
 OBJS	=	$(SRCS:.cpp=.o)
 VAL		=	valgrind
 VALFLAG	=	--tool=memcheck \
@@ -53,3 +53,5 @@ v:			all
 	$(VAL) ./$(NAME) $(ARGS)
 pk:
 	-pkill webserv
+g:			all
+	gdb --args ./$(NAME) $(ARGS)
