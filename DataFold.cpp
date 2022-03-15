@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/15 18:39:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/15 19:37:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,6 @@ datafold_t::operator std::string() const
 		o << *this;
 		return o.str();
 	}
-//		throw std::invalid_argument(DF_ERR_IS_OBJECT);
 	return val;
 }
 
@@ -149,7 +148,6 @@ datafold_t::operator DataFold() const
 {
 	std::stringstream o;
 	o << *this;
-	std::cout << "datafold::" << o.str() << std::endl << std::endl;
 	return DataFold(o.str());
 }
 
@@ -179,6 +177,11 @@ DataFold::operator std::string() const
 std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 {
 	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << DF_KVDIV;
+	if (self.type & DF_TYPE_SUB)
+	{
+		o << self.sub;
+		return o;
+	}
 	if (self.type & DF_TYPE_NUMBER)
 		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
 	if (self.type & DF_TYPE_STRING)
@@ -186,15 +189,12 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 		std::string esc_val = StringTools().escape_char(self.val, DF_VAL_QUOTE);
 		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
 	}
-	if (self.type & DF_TYPE_SUB)
-	{
-		o << self.sub;
-	}
 	return o;
 }
 
 std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const & self)
 {
+	std::string obj;
 	o << DF_OBJ_INIT;
 	for (size_t i = 0; i < self.size(); i++)
 	{
@@ -395,9 +395,10 @@ DataFold DataFold::parse_data(const std::string str)
 		pos[1] = find_outside_quotes_set(ops, "{");
 		pos[2] = find_outside_quotes_set(ops, ";,");
 		pos[3] = find_outside_quotes_set(ops, "\n");
-		std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
+		if (VERBOSE)
+			std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
 
-		if (pos[0] < pos[1] && pos[0] != std::string::npos)
+		if (pos[0] < pos[1] && pos[0] != std::string::npos && pos[1] != pos[0] + 1)
 		{
 			pass = false;
 			key = ops.substr(0, pos[0]);
@@ -413,18 +414,34 @@ DataFold DataFold::parse_data(const std::string str)
 			out.push_back(key, val);
 			continue ;
 		}
-		if (pos[1] < pos[0] && pos[1] != std::string::npos)
+		if ((pos[1] < pos[0] && pos[1] != std::string::npos) || pos[1] == pos[0] + 1)
 		{
-			pass = false;
-			key = ops.substr(0, pos[1]);
-			ops = ops.substr(pos[1] + 1);
-			div_pos = find_closing_bracket(ops);
-			val = ops.substr(0, div_pos);
-			ops = ops.substr(div_pos + 1);
-			hard_trim(key);
-			hard_trim(val);
-			out.push_back(key, parse_data(val));
-			continue ;
+			if (pos[1] != pos[0] + 1)
+			{
+				pass = false;
+				key = ops.substr(0, pos[1]);
+				ops = ops.substr(pos[1] + 1);
+				div_pos = find_closing_bracket(ops);
+				val = ops.substr(0, div_pos);
+				ops = ops.substr(div_pos + 1);
+				hard_trim(key);
+				hard_trim(val);
+				out.push_back(key, parse_data(val));
+				continue ;
+			}
+			else
+			{
+				pass = false;
+				key = ops.substr(0, pos[0] + 0);
+				ops = ops.substr(pos[1] + 1);
+				div_pos = find_closing_bracket(ops);
+				val = ops.substr(0, div_pos);
+				ops = ops.substr(div_pos + 1);
+				hard_trim(key);
+				hard_trim(val);
+				out.push_back(key, parse_data(val));
+				continue ;
+			}
 		}
 	}
 	std::cout << "Parsed: " << out << std::endl << std::endl;

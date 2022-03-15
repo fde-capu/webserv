@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/15 16:50:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/15 19:36:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,13 +73,14 @@ ArgVal::ArgVal()
 
 bool ArgVal::comply() const
 {
-	std::cout << "Comply:" << std::endl;
+	std::cout << " =============== Comply: ==============" << std::endl;
 	DataFold cply(_board.get<DataFold>("comply"));
-	std::cout << "----->" << cply << std::endl;
+	std::cout << "1 ----->" << cply << std::endl;
+	std::cout << "2 ----->" << cply.get_datafold("comply", "accept_unique_keys") << std::endl;
 	std::string cplystr = _board.get<std::string>("comply");
-	std::cout << "----->" << cplystr << std::endl;
+	std::cout << "3 ----->" << cplystr << std::endl;
 	std::string cplystr2 = cply;
-	std::cout << "----->" << cplystr2 << std::endl;
+	std::cout << "4 ----->" << cplystr2 << std::endl;
 
 
 //	std::cout << "**" << _board.get<std::string>("accept_unique_keys") << std::endl;
