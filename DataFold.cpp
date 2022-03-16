@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/15 19:53:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 11:44:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,86 +124,11 @@ std::vector<std::string> DataFold::get_vector_str(std::string key, std::string k
 	return out;
 }
 
-datafold_t::operator std::string() const
-{
-	if (type & DF_TYPE_SUB)
-	{
-		std::stringstream o;
-		o << *this;
-		return o.str();
-	}
-	return val;
-}
-
-datafold_t::operator int() const
-{
-	if (type & DF_TYPE_ARRAY)
-		throw std::invalid_argument(DF_ERR_IS_ARRAY);
-	if (!(type & DF_TYPE_NUMBER))
-		throw std::invalid_argument(DF_ERR_NOT_NUMBER);
-	return std::atoi(val.c_str());
-}
-
-datafold_t::operator DataFold() const
-{
-	std::stringstream o;
-	o << *this;
-	return DataFold(o.str());
-}
-
-void datafold_t::log_self() const
-{
-	std::cout << "index:\t" << index << std::endl;
-	std::cout << "type:\t" << type << std::endl;
-	std::cout << "key:\t" << key << std::endl;
-	std::cout << "val:\t" << val << std::endl;
-	std::cout << "sub:\t" << sub << std::endl;
-}
-
-datavec::operator std::string() const
-{
-	std::stringstream o;
-	o << this;
-	return o.str();
-}
-
 DataFold::operator std::string() const
 {
 	std::stringstream o;
 	o << getCore();
 	return o.str();
-}
-
-std::ostream & operator<< (std::ostream & o, datafold_t const & self)
-{
-	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << DF_KVDIV;
-	if (self.type & DF_TYPE_SUB)
-	{
-		o << self.sub;
-		return o;
-	}
-	if (self.type & DF_TYPE_NUMBER)
-		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
-	if (self.type & DF_TYPE_STRING)
-	{
-		std::string esc_val = StringTools().escape_char(self.val, DF_VAL_QUOTE);
-		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
-	}
-	return o;
-}
-
-std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const & self)
-{
-	std::string obj;
-	o << DF_OBJ_INIT;
-	for (size_t i = 0; i < self.size(); i++)
-	{
-		o << self[i];
-		if (i + 1 < self.size())
-			o << DF_COMMA;
-	}
-	o << DF_OBJ_END;
-	return o;
 }
 
 std::ostream & operator<< (std::ostream & o, DataFold const & self)
