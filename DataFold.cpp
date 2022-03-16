@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 18:30:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 19:19:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,9 +252,13 @@ const std::string DataFold::operator[] (std::string key) const
 
 int DataFold::df_type(std::string val)
 {
+	std::cout << "TYPE for >" << val << "<: ";
 	hard_trim(val);
 	if (*val.begin() == '{' && *(val.end() - 1) == '}')
+	{
+		std::cout << DF_TYPE_SUB << std::endl;
 		return DF_TYPE_SUB;
+	}
 	int out = 0;
 	if (find_outside_quotes(val, " ") != std::string::npos)
 	{
@@ -263,6 +267,7 @@ int DataFold::df_type(std::string val)
 	}
 	else
 		out += isNumber(val) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
+	std::cout << out << std::endl;
 	return out;
 }
 
@@ -273,7 +278,7 @@ void DataFold::push_back(std::string key, std::string val)
 	entry.type = df_type(val);
 	entry.key = correct_quotes(key);
 	if (entry.type & DF_TYPE_STRING || entry.type & DF_TYPE_NUMBER)
-		entry.val = correct_quotes(val);
+		entry.val = entry.type & DF_TYPE_ARRAY ? val : correct_quotes(val);
 	core.push_back(entry);
 }
 
@@ -303,7 +308,10 @@ void DataFold::array_into_inline(std::string& dst) const
 		substitute_all(blk, ",", " ");
 		hard_trim(blk);
 		soft_trim(blk);
+		std::cout << "DST >" << dst << "<" << std::endl;
 		std::cout << "BLK >" << blk << "<" << std::endl;
+		if (dst.substr(p_op - 1, 1) == ":")
+			p_op--;
 		dst = dst.substr(0, p_op) + " " + blk + dst.substr(p_cl + 1);
 		p_op = find_outside_quotes(dst, "[");
 		p_cl = find_outside_quotes(dst, "]");
@@ -325,13 +333,8 @@ std::string DataFold::clean_before_parse(std::string& dst) const
 
 	dual_trim(dst, "{}");
 	soft_trim(dst);
-	erase_boundaries(dst, ":[],");
-	substitute_super(dst, ":", " ");
+	erase_boundaries(dst, ":,{}[]");
 	array_into_inline(dst);
-	substitute_super(dst, ",", ";");
-	hard_trim(dst, " ");
-	erase_boundaries(dst, "{}");
-
 	return dst;
 }
 
@@ -354,9 +357,9 @@ DataFold DataFold::parse_data(const std::string str)
 	while (!pass)
 	{
 		pass = true;
-		pos[0] = find_outside_quotes_set(ops, " ");
+		pos[0] = find_outside_quotes_set(ops, " :");
 		pos[1] = find_outside_quotes_set(ops, "{");
-		pos[2] = find_outside_quotes_set(ops, ";");
+		pos[2] = find_outside_quotes_set(ops, ";,");
 		pos[3] = find_outside_quotes_set(ops, "\n");
 
 		if (VERBOSE >= 3)
