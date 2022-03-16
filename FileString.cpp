@@ -6,13 +6,11 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 19:51:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 13:17:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FileString.hpp"
-#include <iostream>
-#include <algorithm>
 
 FileString::FileString()
 : _read_ok(false), _processed_ok(false) {}

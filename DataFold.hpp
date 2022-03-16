@@ -6,66 +6,21 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 21:23:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 13:25:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DATAFOLD_HPP
 # define DATAFOLD_HPP
 
-# include <iostream>
-# include <vector>
-# include <utility>
+# include "datavec.hpp"
 # include "StringTools.hpp"
+# include "DataFold_defines.hpp"
 # include <cstdlib>
-
-# define DF_TYPE_NUMBER 2
-# define DF_TYPE_STRING	4
-# define DF_TYPE_ARRAY	8 // not implemented
-# define DF_TYPE_SUB	16
-# define DF_QUOTE_SET "\"\'`"
-# define DF_KEY_QUOTE "\'"
-# define DF_NUM_QUOTE ""
-# define DF_VAL_QUOTE "\'"
-# define DF_ARRAY_INIT "[ "
-# define DF_COMMA " , "
-# define DF_ARRAY_END " ]"
-# define DF_KVDIV " : "
-# define DF_OBJ_INIT "{ "
-# define DF_OBJ_END " }"
-# define DF_ENDVAL_SET ";"
-
-# define SERVER_TAG "(DataFold controled error)"
-# define DFK SERVER_TAG " '" + key + "'" +
-# define DF_ERR_NO_KEY DFK " not found."
-# define DF_ERR_IS_ARRAY DFK " is array."
-# define DF_ERR_NOT_NUMBER DFK " is not a number."
-# define DF_ERR_IS_OBJECT DFK " is object."
-# define DF_ERR_NO_FILE SERVER_TAG " No file to read."
-
-class DataFold;
-
-typedef struct datafold_type
-{
-	int							index;
-	int							type;
-	std::string					key;
-	std::string					val;
-	std::vector<datafold_type>	sub;
-
-	operator std::string() const;
-	operator int() const;
-	operator DataFold() const;
-
-	void log_self() const;
-
-} datafold_t;
-
-class datavec : public std::vector<datafold_t>
-{
-	public:
-		operator std::string() const;
-};
+//# include <iostream>
+//# include <vector>
+//# include <utility>
+//# include "datafold_type.hpp"
 
 class DataFold : public StringTools
 {
@@ -109,12 +64,17 @@ class DataFold : public StringTools
 		void core_check() const;
 
 		template <typename T>
-		T get(std::string key)
-		{ return get_datafold(key); }
+		T get(std::string key) const
+		{
+			core_check();
+			key_count_single_check(key);
+			for (int i = 0; i < index; i++)
+				if (key == core[i].key)
+					return T(core[i]);
+			return T();
+		}
 };
 
-std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const &);
-std::ostream & operator<< (std::ostream & o, datafold_type const &);
 std::ostream & operator<< (std::ostream & o, DataFold const &);
 
 #endif

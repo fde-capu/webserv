@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 20:57:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 13:23:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,13 @@
 #ifndef FILESTRING_HPP
 # define FILESTRING_HPP
 
-# include <iostream>
-# include <fstream>
-# include <vector>
-# include <utility>
-# include "DataFold.hpp"
 # include "StringTools.hpp"
+# include "DataFold.hpp"
+
+# include <fstream>
+//# include <iostream>
+//# include <vector>
+//# include <utility>
 
 # ifndef VERBOSE
 #  define VERBOSE 0
@@ -79,7 +80,7 @@ class FileString : public StringTools
 
 		template <typename T>
 		T get(std::string key) const
-		{ return fs_data.get_datafold(key); }
+		{ return fs_data.get<T>(key); }
 
 		template <>
 		std::vector<int> get(std::string key) const

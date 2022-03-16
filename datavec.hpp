@@ -1,34 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   datavec.cpp                                        :+:      :+:    :+:   */
+/*   datavec.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/16 11:42:45 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 11:57:51 by fde-capu         ###   ########.fr       */
+/*   Created: 2022/03/16 11:47:13 by fde-capu          #+#    #+#             */
+/*   Updated: 2022/03/16 13:26:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "datavec.hpp"
+#ifndef DATAVEC_HPP
+# define DATAVEC_HPP
 
-datavec::operator std::string() const
-{
-	std::stringstream o;
-	o << this;
-	return o.str();
-}
+# include "datafold_type.hpp"
+# include <sstream>
+# include "DataFold_defines.hpp"
+//# include <vector>
 
-std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const & self)
+class datavec : public std::vector<datafold_t>
 {
-	std::string obj;
-	o << DF_OBJ_INIT;
-	for (size_t i = 0; i < self.size(); i++)
-	{
-		o << self[i];
-		if (i + 1 < self.size())
-			o << DF_COMMA;
-	}
-	o << DF_OBJ_END;
-	return o;
-}
+	public:
+		operator std::string() const;
+};
+
+std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const &);
+
+#endif

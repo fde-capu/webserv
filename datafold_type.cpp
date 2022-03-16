@@ -6,11 +6,11 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 11:44:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 13:16:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "DataFold.hpp"
+#include "datafold_type.hpp"
 
 datafold_t::operator std::string() const
 {
@@ -30,13 +30,6 @@ datafold_t::operator int() const
 	if (!(type & DF_TYPE_NUMBER))
 		throw std::invalid_argument(DF_ERR_NOT_NUMBER);
 	return std::atoi(val.c_str());
-}
-
-datafold_t::operator DataFold() const
-{
-	std::stringstream o;
-	o << *this;
-	return DataFold(o.str());
 }
 
 void datafold_t::log_self() const
