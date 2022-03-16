@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 19:19:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 19:25:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,6 +335,7 @@ std::string DataFold::clean_before_parse(std::string& dst) const
 	soft_trim(dst);
 	erase_boundaries(dst, ":,{}[]");
 	array_into_inline(dst);
+	substitute_super(dst, ":{", "{");
 	return dst;
 }
 
