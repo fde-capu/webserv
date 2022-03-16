@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 13:29:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 15:18:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,16 @@
 # include <cstdlib>
 # include <iostream>
 # include "StringTools.hpp"
-//# include "DataFold.hpp"
+
+typedef struct datafold_type datafold_t;
+
+class datavec : public std::vector<datafold_t>
+{
+	public:
+		operator std::string() const;
+};
+
+std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const &);
 
 typedef struct datafold_type
 {
@@ -28,7 +37,7 @@ typedef struct datafold_type
 	int							type;
 	std::string					key;
 	std::string					val;
-	std::vector<datafold_type>	sub;
+	datavec			sub;
 
 	operator std::string() const;
 	operator int() const;

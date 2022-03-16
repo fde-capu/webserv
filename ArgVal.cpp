@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 14:23:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 15:11:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,19 +74,23 @@ ArgVal::ArgVal()
 bool ArgVal::comply() const
 {
 	std::cout << " =============== Comply: ==============" << std::endl;
-	std::string argvt(_board.get<std::string>("single"));
-	std::cout << "0 ----->" << argvt << std::endl;
-	std::cout << "_board: " << _board << std::endl;
-	DataFold cply(_board.get<DataFold>("comply"));
-	std::cout << "1 ----->" << cply << std::endl;
-	std::cout << "2 ----->" << cply.get<std::string>("server") << std::endl;
-	std::string cplystr = _board.get<std::string>("comply");
-	std::cout << "3 ----->" << cplystr << std::endl;
-	std::string cplystr2 = cply;
-	std::cout << "4 ----->" << cplystr2 << std::endl;
-
-
-//	std::cout << "**" << _board.get<std::string>("accept_unique_keys") << std::endl;
+	std::cout << *this << std::endl;
+	DataFold comply(_board.get<DataFold>("comply"));
+	std::cout << comply << std::endl;
+	while (comply.loop())
+	{
+		std::cout << comply.key << " : " << comply.val << std::endl;
+	}
+//	std::string argvt(_board.get<std::string>("single"));
+//	std::cout << "0 ----->" << argvt << std::endl;
+//	std::cout << "_board: " << _board << std::endl;
+//	DataFold cply(_board.get<DataFold>("comply"));
+//	std::cout << "1 ----->" << cply << std::endl;
+//	std::cout << "2 ----->" << cply.get<std::string>("server") << std::endl;
+//	std::string cplystr = _board.get<std::string>("comply");
+//	std::cout << "3 ----->" << cplystr << std::endl;
+//	std::string cplystr2 = cply;
+//	std::cout << "4 ----->" << cplystr2 << std::endl;
 	return true;
 }
 
@@ -119,8 +123,7 @@ FileString& ArgVal::getBoard() const
 std::ostream & operator<< (std::ostream & o, ArgVal const & self)
 {
 	o << "::ArgVal::" << std::endl;
-	o << self.getBoard() << std::endl;
-	o << self.getConfig() << std::endl;
+	o << "_board: " << self.getBoard() << "_config: " << self.getConfig();
 	return o;
 }
 

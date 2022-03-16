@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:45 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 11:57:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 15:21:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 datavec::operator std::string() const
 {
 	std::stringstream o;
-	o << this;
+	o << *this;
 	return o.str();
 }
 

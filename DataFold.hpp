@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 14:18:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 14:56:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ class DataFold : public StringTools
 	private:
 		datavec	core;
 		int		index;
+		int		loop_index;
 
 	public:
 		typedef std::vector<int>			vint;
@@ -63,13 +64,15 @@ class DataFold : public StringTools
 		template <typename T>
 		T get(std::string key) const
 		{
-			core_check();
-			key_count_single_check(key);
 			for (int i = 0; i < index; i++)
 				if (key == core[i].key)
 					return T(core[i]);
 			return T();
 		}
+
+		bool loop();
+		std::string key;
+		std::string val;
 };
 
 std::ostream & operator<< (std::ostream & o, DataFold const &);

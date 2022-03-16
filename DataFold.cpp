@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 14:30:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 15:21:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ std::ostream & operator<< (std::ostream & o, DataFold const & self)
 }
 
 DataFold::DataFold()
-: index(0)
+: index(0), loop_index(0)
 {
 	return ;
 }
@@ -158,6 +158,7 @@ DataFold & DataFold::operator= (DataFold const & rhs)
 	{
 		core = rhs.getCore();
 		index = rhs.getIndex();
+		loop_index = 0;
 	}
 	return *this;
 }
@@ -317,7 +318,7 @@ DataFold DataFold::parse_data(const std::string str)
 
 	clean_before_parse(ops);
 
-	if (VERBOSE)
+	if (VERBOSE >= 2)
 		std::cout << std::endl << "Parsing: " << ops << std::endl;
 
 	pass = false;
@@ -329,7 +330,7 @@ DataFold DataFold::parse_data(const std::string str)
 		pos[2] = find_outside_quotes_set(ops, ";");
 		pos[3] = find_outside_quotes_set(ops, "\n");
 
-		if (VERBOSE)
+		if (VERBOSE >= 2)
 			std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
 
 		if (pos[0] < pos[1] && pos[0] != std::string::npos && pos[1] != pos[0] + 1)
@@ -363,8 +364,24 @@ DataFold DataFold::parse_data(const std::string str)
 		}
 	}
 
-	if (VERBOSE)
+	if (VERBOSE >= 2)
 		std::cout << "Parsed: " << out << std::endl << std::endl;
 
 	return out;
+}
+
+bool DataFold::loop()
+{
+	if (loop_index == index)
+	{
+		loop_index = 0;
+		return false;
+	}
+	key = core[loop_index].key;
+	if (core[loop_index].type & DF_TYPE_SUB)
+		val = core[loop_index].sub;
+	else
+		val = core[loop_index].val;
+	loop_index++;
+	return true;
 }
