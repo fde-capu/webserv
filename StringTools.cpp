@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 14:12:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 18:07:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,19 +62,37 @@ std::string StringTools::hard_trim(const std::string &dst) const
 void StringTools::hard_trim(std::string &dst) const
 { hard_trim(dst, _hard_trim_set); }
 
-void StringTools::hard_trim(std::string& dst, std::string single_char) const
+void StringTools::hard_trim(std::string& dst, std::string set) const
 {
-	std::string xx = single_char + single_char;
-	size_t pos = find_outside_quotes(dst, xx);
-	while (pos != std::string::npos)
+	for (std::string::iterator i = set.begin(); *i; i++)
 	{
-		dst.replace(pos, 2, single_char);
-		pos = find_outside_quotes(dst, xx);
+		std::string xx = std::string(i, i + 1) + std::string(i, i + 1);
+		substitute_super(dst, xx, std::string(i, i + 1));
 	}
 }
 
-void StringTools::soft_trim(std::string& dst, std::string trim_set) const
-{ erase_boundaries(dst, "\n", trim_set); }
+void StringTools::soft_trim(std::string& dst, std::string set) const
+{
+	bool pass = false;
+
+	while (!pass)
+	{
+		pass = true;
+		for (std::string::iterator i = set.begin(); *i; i++)
+		{
+			if (*dst.begin() == *i)
+			{
+				dst = dst.substr(1);
+				pass = false;
+			}
+			if (*(dst.end() - 1) == *i)
+			{
+				dst = dst.substr(0, dst.size() - 1);
+				pass = false;
+			}
+		}
+	}
+}
 
 void StringTools::erase_boundaries(std::string &dst, std::string center) const
 {
@@ -90,8 +108,8 @@ void StringTools::erase_boundaries(std::string &dst, std::string center, std::st
 	{
 		std::string nlpv = std::string(i, i + 1) + center;
 		std::string nlnx = center + std::string(i, i + 1);
-		substitute_all(dst, nlpv, center);
-		substitute_all(dst, nlnx, center);
+		substitute_super(dst, nlpv, center);
+		substitute_super(dst, nlnx, center);
 	}
 }
 
@@ -121,7 +139,7 @@ void StringTools::remove_comments(std::string& dst) const
 }
 
 void StringTools::remove_all(std::string& dst, std::string to_remove) const
-{ substitute_all(dst, to_remove, ""); }
+{ substitute_super(dst, to_remove, ""); }
 
 std::string StringTools::itos(int i) const
 {
@@ -137,7 +155,7 @@ std::string StringTools::substitute_all_ret(const std::string dst, std::string b
 	return out;
 }
 
-std::string StringTools::substitute_all(std::string& dst, std::string before, std::string after) const
+std::string StringTools::substitute_super(std::string& dst, std::string before, std::string after) const
 {
 	bool pass = false;
 	while (!pass)
@@ -148,6 +166,25 @@ std::string StringTools::substitute_all(std::string& dst, std::string before, st
 		if (pos != scap_t + 1 && pos != std::string::npos)
 		{
 			pass = false;
+			dst.replace(pos, before.length(), after);
+		}
+	}
+	return dst;
+}
+
+std::string StringTools::substitute_all(std::string& dst, std::string before, std::string after) const
+{
+	bool pass = false;
+	size_t lastp = 0;
+	while (!pass)
+	{
+		pass = true;
+		size_t pos = find_outside_quotes(dst, before);
+		size_t scap_t = find_outside_quotes(dst, std::string("\\" + before));
+		if (pos != scap_t + 1 && pos != std::string::npos && pos > lastp)
+		{
+			pass = false;
+			lastp = pos;
 			dst.replace(pos, before.length(), after);
 		}
 	}

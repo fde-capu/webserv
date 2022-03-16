@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 14:04:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 17:09:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class StringTools
 		std::string dual_trim(std::string&, std::string) const;
 		void remove_all(std::string&, std::string) const;
 		std::string substitute_all(std::string&, std::string, std::string) const;
+		std::string substitute_super(std::string&, std::string, std::string) const;
 		std::string substitute_all_ret(const std::string, std::string, std::string) const;
 		void erase_boundaries(std::string&, std::string) const;
 		void erase_boundaries(std::string&, std::string, std::string) const;

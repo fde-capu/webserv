@@ -6,19 +6,20 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/03/16 14:43:26 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/03/16 15:46:59 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	webserv
 ARGS	=	webserv-default.conf
+DEBUG	=	2
 SRCS	=	main.cpp Encapsulator.cpp strings.cpp FileString.cpp DataFold.cpp \
-			StringTools.cpp ArgVal.cpp datavec.cpp datafold_type.cpp
+			StringTools.cpp ArgVal.cpp datafold_type.cpp
 HEAD	=	Makefile Encapsulator.hpp setup.hpp header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
-			datavec.hpp datafold_type.hpp DataFold_defines.hpp
+			datafold_type.hpp DataFold_defines.hpp
 SHELL	=	/bin/sh
-CC		=	c++ -std=c++98 -Wfatal-errors -DVERBOSE=1
+CC		=	c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(DEBUG)
 CCFLAGS	=	-Wall -Werror -Wextra -g -fno-limit-debug-info -O0
 OBJS	=	$(SRCS:.cpp=.o)
 VAL		=	valgrind

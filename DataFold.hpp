@@ -6,14 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 14:56:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 17:21:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DATAFOLD_HPP
 # define DATAFOLD_HPP
 
-# include "datavec.hpp"
+# include "datafold_type.hpp"
 # include "StringTools.hpp"
 # include "DataFold_defines.hpp"
 # include <cstdlib>
@@ -31,8 +31,8 @@ class DataFold : public StringTools
 
 		DataFold(std::string);
 		DataFold();
-		DataFold(DataFold const & src);
-		DataFold & operator= (DataFold const & rhs);
+		DataFold(DataFold const& src);
+		DataFold& operator= (DataFold const& rhs);
 		~DataFold();
 		void push_back(std::string key, std::string val);
 		void push_back(std::string key, DataFold sub);
@@ -59,7 +59,8 @@ class DataFold : public StringTools
 		std::vector<std::string> get_vector_str(std::string) const;
 		std::vector<std::string> get_vector_str(std::string, std::string) const;
 		void core_check() const;
-		std::string clean_before_parse(std::string &) const;
+		std::string clean_before_parse(std::string&) const;
+		void array_into_inline(std::string&) const;
 
 		template <typename T>
 		T get(std::string key) const
@@ -75,6 +76,6 @@ class DataFold : public StringTools
 		std::string val;
 };
 
-std::ostream & operator<< (std::ostream & o, DataFold const &);
+std::ostream& operator<< (std::ostream& o, DataFold const&);
 
 #endif

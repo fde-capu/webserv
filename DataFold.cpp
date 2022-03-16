@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 15:21:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 18:30:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,22 +287,51 @@ void DataFold::push_back(std::string key, DataFold sub)
 	core.push_back(entry);
 }
 
+void DataFold::array_into_inline(std::string& dst) const
+{
+	size_t p_op;
+	size_t p_cl;
+	std::string blk;
+
+	p_op = find_outside_quotes(dst, "[");
+	p_cl = find_outside_quotes(dst, "]");
+	while (p_op != std::string::npos && p_cl != std::string::npos)
+	{
+		blk = dst.substr(p_op + 1, p_cl - p_op - 1);
+		soft_trim(blk);
+		hard_trim(blk);
+		substitute_all(blk, ",", " ");
+		hard_trim(blk);
+		soft_trim(blk);
+		std::cout << "BLK >" << blk << "<" << std::endl;
+		dst = dst.substr(0, p_op) + " " + blk + dst.substr(p_cl + 1);
+		p_op = find_outside_quotes(dst, "[");
+		p_cl = find_outside_quotes(dst, "]");
+	}
+}
+
 std::string DataFold::clean_before_parse(std::string& dst) const
 {
 	remove_comments(dst);
-	substitute_all(dst, "\n", ";");
-	substitute_all(dst, ";{", "{");
-	substitute_all(dst, "{;", "{");
+	substitute_super(dst, "\n{\n", "{");
+	substitute_super(dst, "\n}\n", "}");
+	substitute_super(dst, "\n", ";");
+	remove_all(dst, "\t");
+	erase_boundaries(dst, ";");
 	hard_trim(dst, ";");
-	substitute_all(dst, "};", "}");
-	hard_trim(dst, "\t");
-	substitute_all(dst, "\t;", ";");
+	substitute_super(dst, "{;", "{");
+	substitute_super(dst, "};", "}");
+	substitute_super(dst, ";{", "{");
+
 	dual_trim(dst, "{}");
-	dual_trim(dst, " ");
-	erase_boundaries(dst, ":,");
-	substitute_all(dst, ",", ";");
-	substitute_all(dst, ":", " ");
+	soft_trim(dst);
+	erase_boundaries(dst, ":[],");
+	substitute_super(dst, ":", " ");
+	array_into_inline(dst);
+	substitute_super(dst, ",", ";");
+	hard_trim(dst, " ");
 	erase_boundaries(dst, "{}");
+
 	return dst;
 }
 
@@ -330,7 +359,7 @@ DataFold DataFold::parse_data(const std::string str)
 		pos[2] = find_outside_quotes_set(ops, ";");
 		pos[3] = find_outside_quotes_set(ops, "\n");
 
-		if (VERBOSE >= 2)
+		if (VERBOSE >= 3)
 			std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
 
 		if (pos[0] < pos[1] && pos[0] != std::string::npos && pos[1] != pos[0] + 1)

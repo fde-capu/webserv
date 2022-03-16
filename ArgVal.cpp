@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 15:11:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 16:05:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,12 @@ bool ArgVal::comply() const
 	std::cout << comply << std::endl;
 	while (comply.loop())
 	{
-		std::cout << comply.key << " : " << comply.val << std::endl;
+		std::cout << " > " << comply.key << " : " << comply.val << std::endl;
+		if (comply.key == "accept_unique_keys")
+		{
+			std::cout << "  > " << comply.get<std::string>("accept_unique_keys") << std::endl;
+		}
+		std::cout << std::endl;
 	}
 //	std::string argvt(_board.get<std::string>("single"));
 //	std::cout << "0 ----->" << argvt << std::endl;
@@ -123,7 +128,7 @@ FileString& ArgVal::getBoard() const
 std::ostream & operator<< (std::ostream & o, ArgVal const & self)
 {
 	o << "::ArgVal::" << std::endl;
-	o << "_board: " << self.getBoard() << "_config: " << self.getConfig();
+	o << "_board: " << self.getBoard() << std::endl << "_config: " << self.getConfig();
 	return o;
 }
 

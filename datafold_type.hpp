@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 15:18:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 15:30:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,6 @@ typedef struct datafold_type
 } datafold_t;
 
 std::ostream & operator<< (std::ostream & o, datafold_type const &);
-std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const &);
+std::ostream & operator<< (std::ostream & o, datavec const &);
 
 #endif
