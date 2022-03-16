@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/15 17:36:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 13:33:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ class StringTools
 		std::string correct_quotes(std::string&) const;
 		std::string correct_quotes(const std::string&) const;
 		std::string escape_char(const std::string, std::string) const;
-		std::string clean_before_parse(std::string &) const;
 		bool isNumber(std::string) const;
 		bool isAllNumber(std::vector<std::string>) const;
 		bool isDigit(char) const;

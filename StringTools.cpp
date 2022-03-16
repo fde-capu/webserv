@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/15 18:20:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 13:34:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,22 +236,6 @@ std::string StringTools::correct_quotes(std::string& dst) const
 		out = std::string(f + 1, l);
 	dst = out;
 	return out;
-}
-
-std::string StringTools::clean_before_parse(std::string& dst) const
-{
-	remove_comments(dst);
-	soft_trim(dst);
-	hard_trim(dst);
-	hard_trim(dst, "\n");
-	substitute_all(dst, "\t", " ");
-	hard_trim(dst, " ");
-	erase_boundaries(dst, ";");
-	erase_boundaries(dst, ",");
-	erase_boundaries(dst, ":");
-	erase_boundaries(dst, "{");
-	erase_boundaries(dst, "}");
-	return dst;
 }
 
 bool StringTools::isDigit(char d) const

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 12:02:11 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 13:12:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 13:38:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,5 @@
 # define DF_ERR_NOT_NUMBER DFK " is not a number."
 # define DF_ERR_IS_OBJECT DFK " is object."
 # define DF_ERR_NO_FILE SERVER_TAG " No file to read."
-
-//class DataFold;
-//typedef struct datafold_type datafold_t;
-//std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const &);
 
 #endif

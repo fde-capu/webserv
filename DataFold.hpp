@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 13:25:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 13:38:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,6 @@
 # include "StringTools.hpp"
 # include "DataFold_defines.hpp"
 # include <cstdlib>
-//# include <iostream>
-//# include <vector>
-//# include <utility>
-//# include "datafold_type.hpp"
 
 class DataFold : public StringTools
 {
@@ -62,6 +58,7 @@ class DataFold : public StringTools
 		std::vector<std::string> get_vector_str(std::string) const;
 		std::vector<std::string> get_vector_str(std::string, std::string) const;
 		void core_check() const;
+		std::string clean_before_parse(std::string &) const;
 
 		template <typename T>
 		T get(std::string key) const
