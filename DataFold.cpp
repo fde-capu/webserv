@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 13:50:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 14:30:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,17 +215,17 @@ int DataFold::key_count(std::string key) const
 	return out;
 }
 
-void DataFold::key_count_exists_check(std::string key) const
+int DataFold::key_count_exists_check(std::string key) const
 {
-	if (!key_count(key))
+	int out = key_count(key);
+	if (!out)
 		throw std::invalid_argument(DF_ERR_NO_KEY);
+	return out;
 }
 
 void DataFold::key_count_single_check(std::string key) const
 {
-	int count = key_count(key);
-	if (count == 0)
-		throw std::invalid_argument(DF_ERR_NO_KEY);
+	int count = key_count_exists_check(key);
 	if (count != 1)
 		throw std::invalid_argument(DF_ERR_IS_ARRAY);
 }
@@ -296,19 +296,12 @@ std::string DataFold::clean_before_parse(std::string& dst) const
 	substitute_all(dst, "};", "}");
 	hard_trim(dst, "\t");
 	substitute_all(dst, "\t;", ";");
-	if (*dst.begin() == '{' && *(dst.end() - 1) == '}')
-		dst = dst.substr(1, dst.size() - 2);
-//	soft_trim(dst);
-//	hard_trim(dst);
-//	hard_trim(dst, "\n");
-//	substitute_all(dst, "\t", " ");
-//	hard_trim(dst, " ");
-//	erase_boundaries(dst, ";");
-//	erase_boundaries(dst, ",");
-//	erase_boundaries(dst, ":");
-//	erase_boundaries(dst, "{");
-//	erase_boundaries(dst, "}");
-//	substitute_all(dst, ":{", "{");
+	dual_trim(dst, "{}");
+	dual_trim(dst, " ");
+	erase_boundaries(dst, ":,");
+	substitute_all(dst, ",", ";");
+	substitute_all(dst, ":", " ");
+	erase_boundaries(dst, "{}");
 	return dst;
 }
 
@@ -324,7 +317,8 @@ DataFold DataFold::parse_data(const std::string str)
 
 	clean_before_parse(ops);
 
-	std::cout << std::endl << "Parsing: " << ops << std::endl;
+	if (VERBOSE)
+		std::cout << std::endl << "Parsing: " << ops << std::endl;
 
 	pass = false;
 	while (!pass)
@@ -334,6 +328,7 @@ DataFold DataFold::parse_data(const std::string str)
 		pos[1] = find_outside_quotes_set(ops, "{");
 		pos[2] = find_outside_quotes_set(ops, ";");
 		pos[3] = find_outside_quotes_set(ops, "\n");
+
 		if (VERBOSE)
 			std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
 
@@ -367,6 +362,9 @@ DataFold DataFold::parse_data(const std::string str)
 			continue ;
 		}
 	}
-	std::cout << "Parsed: " << out << std::endl << std::endl;
+
+	if (VERBOSE)
+		std::cout << "Parsed: " << out << std::endl << std::endl;
+
 	return out;
 }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 13:38:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 14:18:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ class DataFold : public StringTools
 		std::string quoted_val(datafold_t) const;
 		const std::string getValStr(std::string key) const;
 		int key_count(std::string key) const;
-		void key_count_exists_check(std::string key) const;
+		int key_count_exists_check(std::string key) const;
 		void key_count_single_check(std::string key) const;
 		operator datavec() const;
 		operator std::string() const;
