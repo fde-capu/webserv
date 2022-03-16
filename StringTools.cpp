@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 13:34:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 14:06:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,13 @@ void StringTools::erase_boundaries(std::string &dst, std::string center, std::st
 
 void StringTools::soft_trim(std::string& dst) const
 { soft_trim(dst, _soft_trim_set); }
+
+std::string StringTools::dual_trim(std::string& dst, std::string set) const
+{
+	while (*dst.begin() == *set.begin() && *(dst.end() - 1) == *(set.end() - 1))
+		dst = dst.substr(1, dst.size() - 2);
+	return dst;
+}
 
 void StringTools::remove_comments(std::string& dst) const
 {
