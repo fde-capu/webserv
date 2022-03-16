@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 18:07:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 19:34:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,6 +276,8 @@ std::string StringTools::correct_quotes(const std::string& dst) const
 
 std::string StringTools::correct_quotes(std::string& dst) const
 {
+	if (find_outside_quotes(dst, " ") != std::string::npos)
+		return dst;
 	std::string out(dst);
 	std::string::iterator f = dst.begin();
 	std::string::iterator l = dst.end() - 1;
