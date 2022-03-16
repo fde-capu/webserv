@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 14:06:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 14:12:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,11 +77,16 @@ void StringTools::soft_trim(std::string& dst, std::string trim_set) const
 { erase_boundaries(dst, "\n", trim_set); }
 
 void StringTools::erase_boundaries(std::string &dst, std::string center) const
-{ erase_boundaries(dst, center, _soft_trim_set); }
+{
+	for (std::string::iterator i = center.begin(); *i; i++)
+	{
+		erase_boundaries(dst, std::string(i, i + 1), _soft_trim_set);
+	}
+}
 
 void StringTools::erase_boundaries(std::string &dst, std::string center, std::string trim_set) const
 {
-	for(std::string::iterator i = trim_set.begin(); *i; i++)
+	for (std::string::iterator i = trim_set.begin(); *i; i++)
 	{
 		std::string nlpv = std::string(i, i + 1) + center;
 		std::string nlnx = center + std::string(i, i + 1);
