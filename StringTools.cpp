@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 19:34:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 19:53:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,9 +190,6 @@ std::string StringTools::substitute_all(std::string& dst, std::string before, st
 	}
 	return dst;
 }
-
-size_t StringTools::find_outside_quotes(std::string &dst) const
-{ return find_outside_quotes(dst, _quote_set); }
 
 std::string StringTools::apply_quotes(std::string str) const
 { return apply_quotes(str, ST_DEFAULT_QUOTE); }

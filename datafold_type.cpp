@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 15:55:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 19:44:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 		o << DF_ARRAY_INIT;
 		if (self.type & DF_TYPE_STRING)
 		{
-			stool.substitute_all(a_val, " ", "', '");
+			stool.substitute_all(a_val, " ", "' , '");
 			a_val = "'" + a_val + "'";
 		}
 		if (self.type & DF_TYPE_NUMBER)

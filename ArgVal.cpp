@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 16:05:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 19:41:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,18 @@ bool ArgVal::comply() const
 	std::cout << " =============== Comply: ==============" << std::endl;
 	std::cout << *this << std::endl;
 	DataFold comply(_board.get<DataFold>("comply"));
+	DataFold par;
 	std::cout << comply << std::endl;
 	while (comply.loop())
 	{
-		std::cout << " > " << comply.key << " : " << comply.val << std::endl;
+		std::cout << " > " << comply.key << " <1> " << comply.val << std::endl;
 		if (comply.key == "accept_unique_keys")
 		{
-			std::cout << "  > " << comply.get<std::string>("accept_unique_keys") << std::endl;
+			par = comply.get<DataFold>("accept_unique_keys");
+			while (par.loop())
+			{
+				std::cout << "  > " << par.key << " <2> " << par.val << std::endl;
+			}
 		}
 		std::cout << std::endl;
 	}

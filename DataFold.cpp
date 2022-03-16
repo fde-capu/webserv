@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 19:36:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/16 20:23:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,6 +327,9 @@ void DataFold::array_into_inline(std::string& dst) const
 	}
 }
 
+bool DataFold::empty() const
+{ return core.empty(); }
+
 std::string DataFold::clean_before_parse(std::string& dst) const
 {
 	remove_comments(dst);
@@ -340,7 +343,6 @@ std::string DataFold::clean_before_parse(std::string& dst) const
 	substitute_super(dst, "};", "}");
 	substitute_super(dst, ";{", "{");
 
-	dual_trim(dst, "{}");
 	soft_trim(dst);
 	erase_boundaries(dst, ":,{}[]");
 	array_into_inline(dst);
@@ -375,6 +377,12 @@ DataFold DataFold::parse_data(const std::string str)
 		if (VERBOSE >= 3)
 			std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
 
+		if (ops.size() && out.empty() && (pos[2] == std::string::npos || pos[2] == ops.size() - 1))
+		{
+			pass = false;
+			out.push_back("", ops);
+			break ;
+		}
 		if (pos[0] < pos[1] && pos[0] != std::string::npos && pos[1] != pos[0] + 1)
 		{
 			pass = false;
