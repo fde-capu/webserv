@@ -6,17 +6,18 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 12:02:11 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 19:16:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/17 18:36:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DATAFOLD_DEFINES_HPP
 # define DATAFOLD_DEFINES_HPP
 
-# define DF_TYPE_NUMBER 2
-# define DF_TYPE_STRING	4
-# define DF_TYPE_ARRAY	8
-# define DF_TYPE_SUB	16
+# define DF_TYPE_NUMBER		2
+# define DF_TYPE_STRING		4
+# define DF_TYPE_ARRAY		8
+# define DF_TYPE_SUB		16
+# define DF_TYPE_ONLY_VAL	32
 # define DF_QUOTE_SET "\"\'`"
 # define DF_KEY_QUOTE "\'"
 # define DF_NUM_QUOTE ""
@@ -36,5 +37,9 @@
 # define DF_ERR_NOT_NUMBER DFK " is not a number."
 # define DF_ERR_IS_OBJECT DFK " is object."
 # define DF_ERR_NO_FILE SERVER_TAG " No file to read."
+# define DF_ERR_NOT_SINGLE_KEY " Not single key."
+# define DF_ERR_CANT_CONVERT_TO_INT " Cannot convert to int."
+# define DF_ERR_NOT_STRING DFK " is not a string."
+# define DF_ERR_NOT_ARRAY DFK " is not array."
 
 #endif

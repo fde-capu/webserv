@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 20:23:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/17 18:57:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,24 @@ std::vector<int> DataFold::get_vector_int(std::string key, std::string ksub) con
 	return out;
 }
 
+void DataFold::string_check(datafold_t df) const
+{
+	if (!(df.type & DF_TYPE_STRING))
+		throw std::invalid_argument(DF_ERR_NOT_STRING);
+}
+
+void DataFold::array_check(datafold_t df) const
+{
+	if (!(df.type & DF_TYPE_ARRAY))
+		throw std::invalid_argument(DF_ERR_NOT_ARRAY);
+}
+
+void DataFold::not_sub_check(datafold_t df) const
+{
+	if (df.type & DF_TYPE_SUB)
+		throw std::invalid_argument(DF_ERR_IS_OBJECT);
+}
+
 std::vector<std::string> DataFold::get_vector_str(std::string key) const
 {
 	core_check();
@@ -75,8 +93,7 @@ std::vector<std::string> DataFold::get_vector_str(std::string key) const
 	for (int i = 0; i < index; i++)
 		if (core[i].key == key)
 		{
-			if (core[i].type & DF_TYPE_SUB)
-				throw std::invalid_argument(DF_ERR_IS_OBJECT);
+			not_sub_check(core[i]);
 			if (!(core[i].type & DF_TYPE_ARRAY))
 				out.push_back(core[i].val);
 			else
@@ -134,6 +151,14 @@ DataFold::DataFold()
 DataFold::DataFold(std::string df_data)
 {
 	*this = parse_data(df_data);
+}
+
+DataFold::DataFold(datafold_t df)
+{
+	if (df.type & DF_TYPE_ARRAY)
+		*this = only_val(df);
+	else
+		*this = parse_data(df);
 }
 
 DataFold::DataFold(DataFold const & src)
@@ -228,7 +253,7 @@ void DataFold::key_count_single_check(std::string key) const
 {
 	int count = key_count_exists_check(key);
 	if (count != 1)
-		throw std::invalid_argument(DF_ERR_IS_ARRAY);
+		throw std::invalid_argument(DF_ERR_IS_ARRAY DF_ERR_NOT_SINGLE_KEY);
 }
 
 const std::string DataFold::getValStr(std::string key) const
@@ -271,6 +296,8 @@ int DataFold::df_type(std::string val)
 
 void DataFold::push_back(std::string key, std::string val)
 {
+	hard_trim(key);
+	hard_trim(val);
 	datafold_t entry;
 	entry.index = index++;
 	entry.type = df_type(val);
@@ -291,6 +318,14 @@ void DataFold::push_back(std::string key, std::string val)
 		entry.val = correct_quotes(val);
 	}
 	core.push_back(entry);
+}
+
+void DataFold::push_back(datafold_t df)
+{
+	hard_trim(key);
+	hard_trim(val);
+	df.index = index++;
+	core.push_back(df);
 }
 
 void DataFold::push_back(std::string key, DataFold sub)
@@ -347,7 +382,25 @@ std::string DataFold::clean_before_parse(std::string& dst) const
 	erase_boundaries(dst, ":,{}[]");
 	array_into_inline(dst);
 	substitute_super(dst, ":{", "{");
+	dual_trim(dst, "{}");
+	soft_trim(dst);
 	return dst;
+}
+
+DataFold DataFold::only_val(const datafold_t df)
+{
+	DataFold out;
+	datafold_t entry;
+	hard_trim(df.val);
+	entry.type = df_type(df.val) + DF_TYPE_ONLY_VAL;
+	entry.key = "";
+	std::vector<std::string> spl = splitOutsideQuotes(df.val);
+	for (size_t i = 0; i < spl.size(); i++)
+	{
+		entry.val = correct_quotes(spl[i]);
+		out.push_back(entry);
+	}
+	return out;
 }
 
 DataFold DataFold::parse_data(const std::string str)
@@ -377,12 +430,6 @@ DataFold DataFold::parse_data(const std::string str)
 		if (VERBOSE >= 3)
 			std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
 
-		if (ops.size() && out.empty() && (pos[2] == std::string::npos || pos[2] == ops.size() - 1))
-		{
-			pass = false;
-			out.push_back("", ops);
-			break ;
-		}
 		if (pos[0] < pos[1] && pos[0] != std::string::npos && pos[1] != pos[0] + 1)
 		{
 			pass = false;
@@ -394,8 +441,6 @@ DataFold DataFold::parse_data(const std::string str)
 				div_pos = find_outside_quotes(ops, "\n");
 			val = ops.substr(0, div_pos);
 			ops = ops.substr(div_pos + 1);
-			hard_trim(key);
-			hard_trim(val);
 			out.push_back(key, val);
 			continue ;
 		}
@@ -407,8 +452,6 @@ DataFold DataFold::parse_data(const std::string str)
 			div_pos = find_closing_bracket(ops);
 			val = ops.substr(0, div_pos);
 			ops = ops.substr(div_pos + 1);
-			hard_trim(key);
-			hard_trim(val);
 			out.push_back(key, parse_data(val));
 			continue ;
 		}

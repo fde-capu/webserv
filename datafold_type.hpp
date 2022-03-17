@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 15:30:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/17 18:14:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class datavec : public std::vector<datafold_t>
 		operator std::string() const;
 };
 
-std::ostream & operator<< (std::ostream & o, std::vector<datafold_type> const &);
+std::ostream & operator<< (std::ostream & o, datavec const &);
 
 typedef struct datafold_type
 {
