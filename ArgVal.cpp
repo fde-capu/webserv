@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 19:29:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 00:31:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,31 @@ bool ArgVal::comply()
 //				}
 			}
 		}
-		std::cout << std::endl;
+	}
+	bool valid;
+	while (_config.loop())
+	{
+		std::cout << "Is this allowed? " << _config.key << " : " << _config.val << std::endl;
+		valid = false;
+		while (comply.loop())
+		{
+			std::cout << " ook " << comply.key << ":" << comply.val << std::endl;
+			if ((comply.key == "accept_unique_keys" ||
+				comply.key == "accept_many_blocks")
+				&&
+				(find_outside_quotes(comply.val, _config.key) != std::string::npos))
+			{
+				valid = true;
+				comply.loop_reset();
+				break ;
+			}
+		}
+		if (!valid)
+		{
+			if (VERBOSE > 1)
+				std::cout << "- " << _config.key << " not permitted." << std::endl;
+			return false;
+		}
 	}
 //	std::string argvt(_board.get<std::string>("single"));
 //	std::cout << "0 ----->" << argvt << std::endl;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 19:28:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 00:32:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -478,3 +478,6 @@ bool DataFold::loop()
 	loop_index++;
 	return true;
 }
+
+void DataFold::loop_reset()
+{ loop_index = 0; }
