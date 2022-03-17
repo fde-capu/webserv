@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 13:17:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/17 19:15:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,3 +119,14 @@ bool FileString::fail()
 
 bool FileString::success()
 { return _read_ok; }
+
+bool FileString::loop()
+{
+	if (fs_data.loop())
+	{
+		key = fs_data.key;
+		val = fs_data.val;
+		return true;
+	}
+	return false;
+}

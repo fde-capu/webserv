@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 13:23:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/17 19:14:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,9 @@ class FileString : public StringTools
 		std::vector<std::string> get(std::string key, std::string sub) const
 		{ return fs_data.get_vector_str(key, sub); }
 
+		bool loop();
+		std::string key;
+		std::string val;
 };
 
 std::ostream & operator<< (std::ostream & o, FileString const & i);

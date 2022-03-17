@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 17:59:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/17 19:11:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,13 +71,15 @@ ArgVal::ArgVal()
 : _fail(false)
 {}
 
-bool ArgVal::comply() const
+bool ArgVal::comply()
 {
 	std::cout << " =============== Comply: ==============" << std::endl;
-	std::cout << *this << std::endl;
+	if (VERBOSE > 2)
+		std::cout << *this << std::endl;
 	DataFold comply(_board.get<DataFold>("comply"));
 	DataFold par;
-	std::cout << comply << std::endl;
+	if (VERBOSE > 2)
+		std::cout << "Comply: " << comply << std::endl << std::endl;
 	while (comply.loop())
 	{
 		std::cout << " > " << comply.key << " <1> " << comply.val << std::endl;
@@ -86,7 +88,11 @@ bool ArgVal::comply() const
 			par = comply.get<DataFold>("accept_unique_keys");
 			while (par.loop())
 			{
-				std::cout << "  > " << par.key << " <2> " << par.val << std::endl;
+				std::cout << "\t> " << par.val << std::endl;
+				while (_config.loop())
+				{
+					std::cout << "\t\t> " << _config.key << " <2> " << _config.val << std::endl;
+				}
 			}
 		}
 		std::cout << std::endl;
