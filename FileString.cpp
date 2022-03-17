@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 19:15:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/17 19:24:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ char * FileString::getFileName()
 
 std::ostream & operator<< (std::ostream & o, FileString const & self)
 {
-//	o << ">>>" << self.getProcessed() << "<<<" << std::endl;
  	o << self.getDataFold() << std::endl;
 	return o;
 }
@@ -130,3 +129,6 @@ bool FileString::loop()
 	}
 	return false;
 }
+
+int FileString::key_count(std::string key)
+{ return fs_data.key_count(key); }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 18:57:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/17 19:28:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -415,7 +415,7 @@ DataFold DataFold::parse_data(const std::string str)
 
 	clean_before_parse(ops);
 
-	if (VERBOSE >= 2)
+	if (VERBOSE > 2)
 		std::cout << std::endl << "Parsing: " << ops << std::endl;
 
 	pass = false;
@@ -427,7 +427,7 @@ DataFold DataFold::parse_data(const std::string str)
 		pos[2] = find_outside_quotes_set(ops, ";,");
 		pos[3] = find_outside_quotes_set(ops, "\n");
 
-		if (VERBOSE >= 3)
+		if (VERBOSE > 3)
 			std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
 
 		if (pos[0] < pos[1] && pos[0] != std::string::npos && pos[1] != pos[0] + 1)
@@ -457,7 +457,7 @@ DataFold DataFold::parse_data(const std::string str)
 		}
 	}
 
-	if (VERBOSE >= 2)
+	if (VERBOSE > 2)
 		std::cout << "Parsed: " << out << std::endl << std::endl;
 
 	return out;

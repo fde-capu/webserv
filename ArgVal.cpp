@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 19:11:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/17 19:29:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ ArgVal::ArgVal()
 
 bool ArgVal::comply()
 {
-	std::cout << " =============== Comply: ==============" << std::endl;
 	if (VERBOSE > 2)
 		std::cout << *this << std::endl;
 	DataFold comply(_board.get<DataFold>("comply"));
@@ -82,17 +81,25 @@ bool ArgVal::comply()
 		std::cout << "Comply: " << comply << std::endl << std::endl;
 	while (comply.loop())
 	{
-		std::cout << " > " << comply.key << " <1> " << comply.val << std::endl;
+		if (VERBOSE > 1)
+			std::cout << " > " << comply.key << " : " << comply.val << std::endl;
 		if (comply.key == "accept_unique_keys")
 		{
 			par = comply.get<DataFold>("accept_unique_keys");
 			while (par.loop())
 			{
-				std::cout << "\t> " << par.val << std::endl;
-				while (_config.loop())
+				if (VERBOSE > 1)
+					std::cout << "\t> " << par.val << std::endl;
+				if (_config.key_count(par.val) > 1)
 				{
-					std::cout << "\t\t> " << _config.key << " <2> " << _config.val << std::endl;
+					if (VERBOSE > 1)
+						std::cout << "\t> Is not unique." << std::endl;
+					return false;
 				}
+//				while (_config.loop())
+//				{
+//					std::cout << "\t\t> " << _config.key << " <2> " << _config.val << std::endl;
+//				}
 			}
 		}
 		std::cout << std::endl;
