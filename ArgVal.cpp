@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 01:46:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 15:09:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ bool ArgVal::comply()
 	bool valid;
 	while (_config.loop())
 	{
-		std::cout << "Is this allowed? " << _config.key << " : " << _config.val << std::endl;
+		xx << "Is this allowed? " << _config.key << nl;
 		valid = false;
 		while (comply.loop())
 		{

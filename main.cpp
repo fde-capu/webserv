@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/14 17:02:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 14:17:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,7 @@ bool validate_args(int argc, char **argv)
 	char argconf[] = "argval.conf";
 	ArgVal av = ArgVal(argc, argv, argconf);
 	std::cout << "fail: " << av.fail() << std::endl;
-
-	if (argc > 2)
-		return die(ERR_INVALID_ARGS);
-
 	return true || false;
-	(void)argv;
 }
 
 bool essential_configuration(maps & conf)

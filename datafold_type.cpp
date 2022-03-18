@@ -6,42 +6,42 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 02:26:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 16:05:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "datafold_type.hpp"
 
-datafold_t::operator std::string() const
+df_t::operator str_t() const
 {
 	if (type & DF_TYPE_SUB)
 	{
-		std::stringstream o;
+		sstr o;
 		o << this->sub;
 		return o.str();
 	}
 	return val;
 }
 
-datafold_t::operator int() const
+df_t::operator int() const
 {
 	if (type & DF_TYPE_ARRAY)
-		throw std::invalid_argument(DF_ERR_IS_ARRAY DF_ERR_CANT_CONVERT_TO_INT);
+		throw bad_arg(DF_ERR_IS_ARRAY DF_ERR_CANT_CONVERT_TO_INT);
 	if (!(type & DF_TYPE_NUMBER))
-		throw std::invalid_argument(DF_ERR_NOT_NUMBER);
+		throw bad_arg(DF_ERR_NOT_NUMBER);
 	return std::atoi(val.c_str());
 }
 
-void datafold_t::log_self() const
+void df_t::log_self() const
 {
-	std::cout << "index:\t" << index << std::endl;
-	std::cout << "type:\t" << type << std::endl;
-	std::cout << "key:\t" << key << std::endl;
-	std::cout << "val:\t" << val << std::endl;
-	std::cout << "sub:\t" << sub << std::endl;
+	xo << "index:\t" << index << nl;
+	xo << "type:\t" << type << nl;
+	xo << "key:\t" << key << nl;
+	xo << "val:\t" << val << nl;
+	xo << "sub:\t" << sub << nl;
 }
 
-std::ostream & operator<< (std::ostream & o, datafold_t const & self)
+ostr& operator<< (ostr& o, datafold_type const & self)
 {
 	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << DF_KVDIV;
 	if (self.type & DF_TYPE_SUB)
@@ -51,8 +51,7 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 	}
 	if (self.type & DF_TYPE_ARRAY)
 	{
-		std::string a_val = self.val;
-		StringTools stool;
+		str_t a_val = self.val;
 		o << DF_ARRAY_INIT;
 		if (self.type & DF_TYPE_STRING)
 		{
@@ -60,9 +59,7 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 			a_val = "'" + a_val + "'";
 		}
 		if (self.type & DF_TYPE_NUMBER)
-		{
 			stool.substitute_all(a_val, " ", " , ");
-		}
 		o << a_val;
 		o << DF_ARRAY_END;
 		return o;
@@ -71,7 +68,7 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
 	if (self.type & DF_TYPE_STRING)
 	{
-		std::string esc_val = StringTools().escape_char(self.val, DF_VAL_QUOTE);
+		str_t esc_val = stool.escape_char(self.val, DF_VAL_QUOTE);
 		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
 	}
 	return o;
@@ -79,20 +76,22 @@ std::ostream & operator<< (std::ostream & o, datafold_t const & self)
 
 datavec::datavec() : loop_index(0) {};
 
-datavec::operator std::string() const
+datavec::operator str_t() const
 {
-	std::stringstream o;
+	sstr o;
 	o << *this;
 	return o.str();
 }
 
-std::ostream & operator<< (std::ostream & o, datavec const& self)
+ostr& operator<< (ostr& o, datavec const& self)
 {
+	str_t obj;
+
 	if (!self.size())
 		return o;
-	std::string obj;
-	if (VERBOSE > 2)
-		std::cout << " [ type " << self[0].type << " ] ";
+	verbose(2) << " [ type " << self[0].type << " ] ";
+//	if (VERBOSE > 2)
+//		std::cout << " [ type " << self[0].type << " ] ";
 	datavec tmp_self = *const_cast<datavec*>(&self);
 	if (tmp_self[0].type & DF_TYPE_ONLY_VAL)
 	{

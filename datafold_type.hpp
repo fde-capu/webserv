@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 02:22:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 15:03:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 typedef struct datafold_type datafold_t;
 
-class datavec : public std::vector<datafold_t>
+typedef class datavec : public std::vector<datafold_t>
 {
 	private:
 		int loop_index;
@@ -36,17 +36,17 @@ class datavec : public std::vector<datafold_t>
 		bool not_ended();
 		std::string key;
 		std::string val;
-};
+} dvec;
 
-std::ostream & operator<< (std::ostream & o, datavec const&);
+std::ostream & operator<< (std::ostream & o, dvec const&);
 
 typedef struct datafold_type
 {
-	int							index;
-	int							type;
-	std::string					key;
-	std::string					val;
-	datavec			sub;
+	int			index;
+	int			type;
+	std::string	key;
+	std::string	val;
+	datavec		sub;
 
 	operator std::string() const;
 	operator int() const;
@@ -55,7 +55,9 @@ typedef struct datafold_type
 
 } datafold_t;
 
-std::ostream & operator<< (std::ostream & o, datafold_type const &);
-std::ostream & operator<< (std::ostream & o, datavec const &);
+# include "bladefs.hpp"
+
+ostr & operator<< (ostr & o, df_t const &);
+ostr & operator<< (ostr & o, dvec const &);
 
 #endif

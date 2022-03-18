@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 01:47:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 16:32:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,19 +307,20 @@ void DataFold::push_back(std::string key, std::string val)
 	entry.key = correct_quotes(key);
 	if (entry.type & DF_TYPE_ARRAY)
 	{
-		std::vector<std::string> spl = splitOutsideQuotes(val);
+		vstr spl = splitOutsideQuotes(val);
 		entry.val = "";
 		for (size_t i = 0; i < spl.size(); i++)
 		{
-			entry.val += correct_quotes(spl[i]);
+			if (find_outside_quotes(spl[i], " ") == nopos)
+				entry.val += spl[i];
+			else
+				entry.val += "\"" + stool.escape_char(spl[i], "\"") + "\"";
 			if (i + 1 < spl.size())
 				entry.val += " ";
 		}
 	}
 	else
-	{
 		entry.val = correct_quotes(val);
-	}
 	core.push_back(entry);
 }
 
@@ -406,62 +407,60 @@ DataFold DataFold::only_val(const datafold_t df)
 	return out;
 }
 
-DataFold DataFold::parse_data(const std::string str)
+DF DF::parse_data(const str_t jstr)
 {
-	DataFold out;
-	std::string ops = str;
-	size_t div_pos;
+	DF out;
+	str_t ops = jstr;
+	size_t div_p;
 	bool pass;
-	std::string key;
-	std::string val;
-	size_t pos[4];
+	str_t key;
+	str_t val;
+	size_t p[4];
 
 	clean_before_parse(ops);
 
-	if (VERBOSE > 2)
-		std::cout << std::endl << "Parsing: " << ops << std::endl;
+	verbose(2) << nl << "Parsing: " << ops << nl;
 
 	pass = false;
 	while (!pass)
 	{
 		pass = true;
-		pos[0] = find_outside_quotes_set(ops, " :");
-		pos[1] = find_outside_quotes_set(ops, "{");
-		pos[2] = find_outside_quotes_set(ops, ";,");
-		pos[3] = find_outside_quotes_set(ops, "\n");
+		p[0] = find_outside_quotes_set(ops, " :");
+		p[1] = find_outside_quotes_set(ops, "{");
+		p[2] = find_outside_quotes_set(ops, ";,");
+		p[3] = find_outside_quotes_set(ops, "\n");
 
-		if (VERBOSE > 3)
-			std::cout << pos[0] << ", " << pos[1] << ", " << pos[2] << ", " << pos[3] << std::endl;
+		verbose(3)	<< p[0] << ", " << p[1] << ", " \
+					<< p[2] << ", " << p[3] << nl;
 
-		if (pos[0] < pos[1] && pos[0] != std::string::npos && pos[1] != pos[0] + 1)
+		if (p[0] < p[1] && p[0] != nopos && p[1] != p[0] + 1)
 		{
 			pass = false;
-			key = ops.substr(0, pos[0]);
-			ops = ops.substr(pos[0] + 1);
-			if (pos[2] < pos[3])
-				div_pos = find_outside_quotes_set(ops, ";,");
+			key = ops.substr(0, p[0]);
+			ops = ops.substr(p[0] + 1);
+			if (p[2] < p[3])
+				div_p = find_outside_quotes_set(ops, ";,");
 			else
-				div_pos = find_outside_quotes(ops, "\n");
-			val = ops.substr(0, div_pos);
-			ops = ops.substr(div_pos + 1);
+				div_p = find_outside_quotes(ops, "\n");
+			val = ops.substr(0, div_p);
+			ops = ops.substr(div_p + 1);
 			out.push_back(key, val);
 			continue ;
 		}
-		if (pos[1] < pos[0] && pos[1] != std::string::npos)
+		if (p[1] < p[0] && p[1] != nopos)
 		{
 			pass = false;
-			key = ops.substr(0, pos[1]);
-			ops = ops.substr(pos[1] + 1);
-			div_pos = find_closing_bracket(ops);
-			val = ops.substr(0, div_pos);
-			ops = ops.substr(div_pos + 1);
+			key = ops.substr(0, p[1]);
+			ops = ops.substr(p[1] + 1);
+			div_p = find_closing_bracket(ops);
+			val = ops.substr(0, div_p);
+			ops = ops.substr(div_p + 1);
 			out.push_back(key, parse_data(val));
 			continue ;
 		}
 	}
 
-	if (VERBOSE > 2)
-		std::cout << "Parsed: " << out << std::endl << std::endl;
+	verbose(2) << "Parsed: " << out << nl << nl;
 
 	return out;
 }
