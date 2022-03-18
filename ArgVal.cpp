@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 00:31:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 01:46:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,10 +96,6 @@ bool ArgVal::comply()
 						std::cout << "\t> Is not unique." << std::endl;
 					return false;
 				}
-//				while (_config.loop())
-//				{
-//					std::cout << "\t\t> " << _config.key << " <2> " << _config.val << std::endl;
-//				}
 			}
 		}
 	}
@@ -112,7 +108,7 @@ bool ArgVal::comply()
 		{
 			std::cout << " ook " << comply.key << ":" << comply.val << std::endl;
 			if ((comply.key == "accept_unique_keys" ||
-				comply.key == "accept_many_blocks")
+				comply.key == "accept")
 				&&
 				(find_outside_quotes(comply.val, _config.key) != std::string::npos))
 			{
@@ -128,6 +124,16 @@ bool ArgVal::comply()
 			return false;
 		}
 	}
+
+	std::cout << " General testing:" << std::endl;
+	DataFold tp = _config.get<DataFold>("test_port");
+	std::cout << "tp: " << tp << std::endl;
+	while (tp.loop())
+	{
+		std::cout << "\t" << tp.key << " : " << tp.val << std::endl;
+	}
+
+
 //	std::string argvt(_board.get<std::string>("single"));
 //	std::cout << "0 ----->" << argvt << std::endl;
 //	std::cout << "_board: " << _board << std::endl;

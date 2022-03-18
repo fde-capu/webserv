@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 00:32:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 01:47:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,13 +132,16 @@ std::vector<std::string> DataFold::get_vector_str(std::string key, std::string k
 DataFold::operator std::string() const
 {
 	std::stringstream o;
-	o << getCore();
+	datavec tmp_core = getCore();
+	o << *const_cast<datavec*>(&tmp_core);
 	return o.str();
 }
 
-std::ostream & operator<< (std::ostream & o, DataFold const & self)
+std::ostream & operator<< (std::ostream & o, DataFold const& self)
 {
-	o << self.getCore();
+	datavec tmp_core = self.getCore();
+	o << tmp_core;
+//	o << const_cast<datavec*>(&tmp_core);
 	return o;
 }
 
@@ -481,3 +484,6 @@ bool DataFold::loop()
 
 void DataFold::loop_reset()
 { loop_index = 0; }
+
+bool DataFold::not_ended()
+{ return !(loop_index == index); }

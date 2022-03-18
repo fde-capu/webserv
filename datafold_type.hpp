@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 18:14:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 02:22:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,20 @@ typedef struct datafold_type datafold_t;
 
 class datavec : public std::vector<datafold_t>
 {
+	private:
+		int loop_index;
+
 	public:
+		datavec();
 		operator std::string() const;
+		bool loop();
+		void loop_reset();
+		bool not_ended();
+		std::string key;
+		std::string val;
 };
 
-std::ostream & operator<< (std::ostream & o, datavec const &);
+std::ostream & operator<< (std::ostream & o, datavec const&);
 
 typedef struct datafold_type
 {

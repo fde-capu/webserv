@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 00:31:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 01:37:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ class DataFold : public StringTools
 
 		bool loop();
 		void loop_reset();
+		bool not_ended();
 		std::string key;
 		std::string val;
 };
