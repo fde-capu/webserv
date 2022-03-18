@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 19:53:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 16:35:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,14 +264,14 @@ std::string StringTools::escape_char(const std::string dst, std::string esc) con
 }
 
 
-std::string StringTools::correct_quotes(const std::string& dst) const
+std::string StringTools::remove_quotes(const std::string& dst) const
 {
 	std::string out = dst;
-	correct_quotes(*const_cast<std::string*>(&dst));
+	remove_quotes(*const_cast<std::string*>(&dst));
 	return dst;
 }
 
-std::string StringTools::correct_quotes(std::string& dst) const
+std::string StringTools::remove_quotes(std::string& dst) const
 {
 	if (find_outside_quotes(dst, " ") != std::string::npos)
 		return dst;
@@ -294,21 +294,21 @@ bool StringTools::isDigit(char d) const
 std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecstr) const
 {
 	std::vector<std::string> out;
-	std::string spl = correct_quotes(hard_trim(vecstr));
+	std::string spl = remove_quotes(hard_trim(vecstr));
 	size_t pos = find_outside_quotes(spl, " ");
 	if (pos == std::string::npos)
 	{
-		out.push_back(correct_quotes(spl));
+		out.push_back(remove_quotes(spl));
 		return out;
 	}
 	size_t pre = 0;
 	while (pos != std::string::npos)
 	{
-		out.push_back(correct_quotes(spl.substr(pre, pos)));
+		out.push_back(remove_quotes(spl.substr(pre, pos)));
 		spl = spl.substr(pos + 1);
 		pos = find_outside_quotes(spl, " ");
 	}
-	out.push_back(correct_quotes(spl));
+	out.push_back(remove_quotes(spl));
 	return out;
 }
 
@@ -324,7 +324,7 @@ bool StringTools::isNumber(std::string str) const
 {
 	bool dot = false;
 	soft_trim(str);
-	correct_quotes(str);
+	remove_quotes(str);
 	for (size_t i = 0; i < str.size(); i++)
 	{
 		if (i == 0 && str[0] != '-' && str[0] != '+' && !isDigit(str[0]) && str[0] != '.')

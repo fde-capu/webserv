@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 16:32:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 16:35:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,7 +304,7 @@ void DataFold::push_back(std::string key, std::string val)
 	datafold_t entry;
 	entry.index = index++;
 	entry.type = df_type(val);
-	entry.key = correct_quotes(key);
+	entry.key = remove_quotes(key);
 	if (entry.type & DF_TYPE_ARRAY)
 	{
 		vstr spl = splitOutsideQuotes(val);
@@ -320,7 +320,7 @@ void DataFold::push_back(std::string key, std::string val)
 		}
 	}
 	else
-		entry.val = correct_quotes(val);
+		entry.val = remove_quotes(val);
 	core.push_back(entry);
 }
 
@@ -337,7 +337,7 @@ void DataFold::push_back(std::string key, DataFold sub)
 	datafold_t entry;
 	entry.index = index++;
 	entry.type = DF_TYPE_SUB;
-	entry.key = correct_quotes(key);
+	entry.key = remove_quotes(key);
 	entry.sub = sub;
 	core.push_back(entry);
 }
@@ -401,7 +401,7 @@ DataFold DataFold::only_val(const datafold_t df)
 	std::vector<std::string> spl = splitOutsideQuotes(df.val);
 	for (size_t i = 0; i < spl.size(); i++)
 	{
-		entry.val = correct_quotes(spl[i]);
+		entry.val = remove_quotes(spl[i]);
 		out.push_back(entry);
 	}
 	return out;

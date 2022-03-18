@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/16 19:53:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 16:35:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ class StringTools
 		size_t find_closing_bracket(std::string) const;
 		size_t find_outside_quotes_set(std::string& str, std::string set) const;
 		void remove_comments(std::string&) const;
-		std::string correct_quotes(std::string&) const;
-		std::string correct_quotes(const std::string&) const;
+		std::string remove_quotes(std::string&) const;
+		std::string remove_quotes(const std::string&) const;
 		std::string escape_char(const std::string, std::string) const;
 		bool isNumber(std::string) const;
 		bool isAllNumber(std::vector<std::string>) const;
