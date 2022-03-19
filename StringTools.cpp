@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 16:35:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 22:20:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,9 @@ StringTools::~StringTools()
 	return ;
 }
 
+std::string hard_trim(const std::string &dst)
+{ return stool.hard_trim(dst); }
+
 std::string StringTools::hard_trim(const std::string &dst) const
 {
 	std::string out(dst);
@@ -59,8 +62,14 @@ std::string StringTools::hard_trim(const std::string &dst) const
 	return out;
 }
 
+void hard_trim(std::string &dst)
+{ return stool.hard_trim(dst); }
+
 void StringTools::hard_trim(std::string &dst) const
 { hard_trim(dst, _hard_trim_set); }
+
+void hard_trim(std::string& dst, std::string set)
+{ return stool.hard_trim(dst, set); }
 
 void StringTools::hard_trim(std::string& dst, std::string set) const
 {
@@ -70,6 +79,9 @@ void StringTools::hard_trim(std::string& dst, std::string set) const
 		substitute_super(dst, xx, std::string(i, i + 1));
 	}
 }
+
+void soft_trim(std::string& dst, std::string set)
+{ return stool.soft_trim(dst, set); }
 
 void StringTools::soft_trim(std::string& dst, std::string set) const
 {
@@ -94,13 +106,17 @@ void StringTools::soft_trim(std::string& dst, std::string set) const
 	}
 }
 
+void erase_boundaries(std::string &dst, std::string center)
+{ return stool.erase_boundaries(dst, center); }
+
 void StringTools::erase_boundaries(std::string &dst, std::string center) const
 {
 	for (std::string::iterator i = center.begin(); *i; i++)
-	{
 		erase_boundaries(dst, std::string(i, i + 1), _soft_trim_set);
-	}
 }
+
+void erase_boundaries(std::string &dst, std::string center, std::string trim_set)
+{ return stool.erase_boundaries(dst, center, trim_set); }
 
 void StringTools::erase_boundaries(std::string &dst, std::string center, std::string trim_set) const
 {
@@ -113,8 +129,14 @@ void StringTools::erase_boundaries(std::string &dst, std::string center, std::st
 	}
 }
 
+void soft_trim(std::string& dst)
+{ return stool.soft_trim(dst); }
+
 void StringTools::soft_trim(std::string& dst) const
 { soft_trim(dst, _soft_trim_set); }
+
+std::string dual_trim(std::string& dst, std::string set)
+{ return stool.dual_trim(dst, set); }
 
 std::string StringTools::dual_trim(std::string& dst, std::string set) const
 {
@@ -122,6 +144,9 @@ std::string StringTools::dual_trim(std::string& dst, std::string set) const
 		dst = dst.substr(1, dst.size() - 2);
 	return dst;
 }
+
+void remove_comments(std::string& dst)
+{ return stool.remove_comments(dst); }
 
 void StringTools::remove_comments(std::string& dst) const
 {
@@ -138,8 +163,14 @@ void StringTools::remove_comments(std::string& dst) const
 	dst = new_p;
 }
 
+void remove_all(std::string& dst, std::string to_remove)
+{ return stool.remove_all(dst, to_remove); }
+
 void StringTools::remove_all(std::string& dst, std::string to_remove) const
 { substitute_super(dst, to_remove, ""); }
+
+std::string itos(int i)
+{ return stool.itos(i); }
 
 std::string StringTools::itos(int i) const
 {
@@ -148,12 +179,18 @@ std::string StringTools::itos(int i) const
 	return std::string(s.str());
 }
 
+std::string substitute_all_ret(const std::string dst, std::string before, std::string after)
+{ return stool.substitute_all_ret(dst, before, after); }
+
 std::string StringTools::substitute_all_ret(const std::string dst, std::string before, std::string after) const
 {
 	std::string out(static_cast<std::string>(dst));
 	substitute_all(out, before, after);
 	return out;
 }
+
+std::string substitute_super(std::string& dst, std::string before, std::string after)
+{ return stool.substitute_super(dst, before, after); }
 
 std::string StringTools::substitute_super(std::string& dst, std::string before, std::string after) const
 {
@@ -171,6 +208,9 @@ std::string StringTools::substitute_super(std::string& dst, std::string before, 
 	}
 	return dst;
 }
+
+std::string substitute_all(std::string& dst, std::string before, std::string after)
+{ return stool.substitute_all(dst, before, after); }
 
 std::string StringTools::substitute_all(std::string& dst, std::string before, std::string after) const
 {
@@ -191,11 +231,20 @@ std::string StringTools::substitute_all(std::string& dst, std::string before, st
 	return dst;
 }
 
+std::string apply_quotes(std::string str)
+{ return stool.apply_quotes(str); }
+
 std::string StringTools::apply_quotes(std::string str) const
 { return apply_quotes(str, ST_DEFAULT_QUOTE); }
 
+std::string apply_quotes(std::string str, std::string quote)
+{ return stool.apply_quotes(str, quote); }
+
 std::string StringTools::apply_quotes(std::string str, std::string quote) const
 { return std::string(quote + escape_char(str, quote) + quote); }
+
+size_t find_outside_quotes(std::string& str, std::string needle)
+{ return stool.find_outside_quotes(str, needle); }
 
 size_t StringTools::find_outside_quotes(std::string& str, std::string needle) const
 {
@@ -227,6 +276,9 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle) co
 	return std::string::npos;
 }
 
+size_t find_outside_quotes_set(std::string& str, std::string set)
+{ return stool.find_outside_quotes_set(str, set); }
+
 size_t StringTools::find_outside_quotes_set(std::string& str, std::string set) const
 {
 	size_t out = std::string::npos;
@@ -238,6 +290,9 @@ size_t StringTools::find_outside_quotes_set(std::string& str, std::string set) c
 	}
 	return out;
 }
+
+size_t find_closing_bracket(std::string ops)
+{ return stool.find_closing_bracket(ops); }
 
 size_t StringTools::find_closing_bracket(std::string ops) const
 {
@@ -258,11 +313,16 @@ size_t StringTools::find_closing_bracket(std::string ops) const
 	return pos;
 }
 
+std::string escape_char(const std::string dst, std::string esc)
+{ return stool.escape_char(dst, esc); }
+
 std::string StringTools::escape_char(const std::string dst, std::string esc) const
 {
 	return substitute_all_ret(dst, esc, std::string("\\" + esc));
 }
 
+std::string remove_quotes(const std::string& dst)
+{ return stool.remove_quotes(dst); }
 
 std::string StringTools::remove_quotes(const std::string& dst) const
 {
@@ -270,6 +330,9 @@ std::string StringTools::remove_quotes(const std::string& dst) const
 	remove_quotes(*const_cast<std::string*>(&dst));
 	return dst;
 }
+
+std::string remove_quotes(std::string& dst)
+{ return stool.remove_quotes(dst); }
 
 std::string StringTools::remove_quotes(std::string& dst) const
 {
@@ -286,10 +349,16 @@ std::string StringTools::remove_quotes(std::string& dst) const
 	return out;
 }
 
+bool isDigit(char d)
+{ return stool.isDigit(d); }
+
 bool StringTools::isDigit(char d) const
 {
 	return d >= '0' && d <= '9';
 }
+
+std::vector<std::string> splitOutsideQuotes(const std::string vecstr)
+{ return stool.splitOutsideQuotes(vecstr); }
 
 std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecstr) const
 {
@@ -312,6 +381,9 @@ std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecst
 	return out;
 }
 
+bool isAllNumber(std::vector<std::string> vecstring)
+{ return stool.isAllNumber(vecstring); }
+
 bool StringTools::isAllNumber(std::vector<std::string> vecstring) const
 {
 	for (size_t i = 0; i < vecstring.size(); i++)
@@ -319,6 +391,9 @@ bool StringTools::isAllNumber(std::vector<std::string> vecstring) const
 			return false;
 	return true;
 }
+
+bool isNumber(std::string str)
+{ return stool.isNumber(str); }
 
 bool StringTools::isNumber(std::string str) const
 {
@@ -342,6 +417,9 @@ bool StringTools::isNumber(std::string str) const
 	return true;
 }
 
+std::string itoa(int i)
+{ return stool.itoa(i); }
+
 std::string StringTools::itoa(int i) const
 {
 	std::ostringstream ss;
@@ -349,8 +427,14 @@ std::string StringTools::itoa(int i) const
 	return ss.str();
 }
 
+bool valid_file_name(std::string fn)
+{ return stool.valid_file_name(fn); }
+
 bool StringTools::valid_file_name(std::string fn) const
 { return isAllInSet(fn, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_"); }
+
+bool isAllInSet(std::string str, std::string set)
+{ return stool.isAllInSet(str, set); }
 
 bool StringTools::isAllInSet(std::string str, std::string set) const
 {

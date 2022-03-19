@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 15:09:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/18 19:31:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void ArgVal::run()
 
 	vstr vt;
 	int argi = 0;
+
 	while (++argi < argc)
 	{
 		vt = _board.get<vstr>("argv", itoa(argi));
@@ -110,7 +111,7 @@ bool ArgVal::comply()
 			if ((comply.key == "accept_unique_keys" ||
 				comply.key == "accept")
 				&&
-				(find_outside_quotes(comply.val, _config.key) != std::string::npos))
+				(find_outside_quotes(comply.val, _config.key) != nopos))
 			{
 				valid = true;
 				comply.loop_reset();
@@ -119,8 +120,7 @@ bool ArgVal::comply()
 		}
 		if (!valid)
 		{
-			if (VERBOSE > 1)
-				std::cout << "- " << _config.key << " not permitted." << std::endl;
+			verbose(1) << "- " << _config.key << " not permitted." << nl;
 			return false;
 		}
 	}

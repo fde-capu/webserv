@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 16:05:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 22:22:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,11 +55,11 @@ ostr& operator<< (ostr& o, datafold_type const & self)
 		o << DF_ARRAY_INIT;
 		if (self.type & DF_TYPE_STRING)
 		{
-			stool.substitute_all(a_val, " ", "' , '");
+			substitute_all(a_val, " ", "' , '");
 			a_val = "'" + a_val + "'";
 		}
 		if (self.type & DF_TYPE_NUMBER)
-			stool.substitute_all(a_val, " ", " , ");
+			substitute_all(a_val, " ", " , ");
 		o << a_val;
 		o << DF_ARRAY_END;
 		return o;
@@ -68,7 +68,7 @@ ostr& operator<< (ostr& o, datafold_type const & self)
 		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
 	if (self.type & DF_TYPE_STRING)
 	{
-		str_t esc_val = stool.escape_char(self.val, DF_VAL_QUOTE);
+		str_t esc_val = escape_char(self.val, DF_VAL_QUOTE);
 		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
 	}
 	return o;

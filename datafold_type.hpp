@@ -6,20 +6,20 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 15:03:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 22:20:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DATAFOLD_TYPE_HPP
 # define DATAFOLD_TYPE_HPP
 
+# include "StringTools.hpp"
 # include <string>
 # include <vector>
 # include "DataFold_defines.hpp"
 # include <sstream>
 # include <cstdlib>
 # include <iostream>
-# include "StringTools.hpp"
 
 typedef struct datafold_type datafold_t;
 

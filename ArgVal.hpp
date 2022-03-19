@@ -6,14 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 19:11:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 21:45:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ARGVAL_HPP
 # define ARGVAL_HPP
 
-# include "StringTools.hpp"
 # include "FileString.hpp"
 //# include <iostream>
 //# include "DataFold.hpp"
@@ -23,7 +22,7 @@
 //# define AV_FILE_BOARD "argval.conf"
 //# define AV_FILE_CONFIG ""
 
-class ArgVal : public StringTools
+class ArgVal
 {
 	private:
 		FileString _board;

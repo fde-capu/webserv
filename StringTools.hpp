@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 16:35:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 22:12:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,37 @@ class StringTools
 };
 
 std::ostream & operator<< (std::ostream & o, StringTools const & i);
+
+static const StringTools stool = StringTools();
+
+void soft_trim(std::string&);
+void soft_trim(std::string&, std::string);
+void hard_trim(std::string&);
+std::string hard_trim(const std::string&);
+void hard_trim(std::string&, std::string);
+std::string dual_trim(std::string&, std::string);
+void remove_all(std::string&, std::string);
+std::string substitute_all(std::string&, std::string, std::string);
+std::string substitute_super(std::string&, std::string, std::string);
+std::string substitute_all_ret(const std::string, std::string, std::string);
+void erase_boundaries(std::string&, std::string);
+void erase_boundaries(std::string&, std::string, std::string);
+size_t find_outside_quotes(std::string&, std::string);
+size_t find_closing_bracket(std::string);
+size_t find_outside_quotes_set(std::string& str, std::string set);
+void remove_comments(std::string&);
+std::string remove_quotes(std::string&);
+std::string remove_quotes(const std::string&);
+std::string escape_char(const std::string, std::string);
+bool isNumber(std::string);
+bool isAllNumber(std::vector<std::string>);
+bool isDigit(char);
+std::string itos(int);
+std::string apply_quotes(std::string);
+std::string apply_quotes(std::string, std::string);
+std::vector<std::string> splitOutsideQuotes(std::string);
+std::string itoa(int);
+bool valid_file_name(std::string);
+bool isAllInSet(std::string, std::string);
 
 #endif

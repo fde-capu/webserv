@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 16:35:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 22:21:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,6 @@ DataFold::DataFold(datafold_t df)
 }
 
 DataFold::DataFold(DataFold const & src)
-: StringTools()
 {
 	*this = src;
 	return ;
@@ -314,7 +313,7 @@ void DataFold::push_back(std::string key, std::string val)
 			if (find_outside_quotes(spl[i], " ") == nopos)
 				entry.val += spl[i];
 			else
-				entry.val += "\"" + stool.escape_char(spl[i], "\"") + "\"";
+				entry.val += "\"" + escape_char(spl[i], "\"") + "\"";
 			if (i + 1 < spl.size())
 				entry.val += " ";
 		}

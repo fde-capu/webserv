@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 19:19:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 21:45:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 #  define VERBOSE 0
 # endif
 
-class FileString : public StringTools
+class FileString
 {
 	private:
 		char * _file_name;

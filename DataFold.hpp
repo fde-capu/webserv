@@ -6,19 +6,19 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 01:37:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 22:15:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef DATAFOLD_HPP
 # define DATAFOLD_HPP
 
-# include "datafold_type.hpp"
 # include "StringTools.hpp"
+# include "datafold_type.hpp"
 # include "DataFold_defines.hpp"
 # include <cstdlib>
 
-class DataFold : public StringTools
+class DataFold
 {
 	private:
 		datavec	core;
