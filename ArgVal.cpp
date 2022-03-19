@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 19:31:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 23:04:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,27 +74,22 @@ ArgVal::ArgVal()
 
 bool ArgVal::comply()
 {
-	if (VERBOSE > 2)
-		std::cout << *this << std::endl;
+	verbose(2) << std::cout << *this << std::endl;
 	DataFold comply(_board.get<DataFold>("comply"));
 	DataFold par;
-	if (VERBOSE > 2)
-		std::cout << "Comply: " << comply << std::endl << std::endl;
+	verbose(2) << std::cout << "Comply: " << comply << std::endl << std::endl;
 	while (comply.loop())
 	{
-		if (VERBOSE > 1)
-			std::cout << " > " << comply.key << " : " << comply.val << std::endl;
+		verbose(1) << std::cout << " > " << comply.key << " : " << comply.val << std::endl;
 		if (comply.key == "accept_unique_keys")
 		{
 			par = comply.get<DataFold>("accept_unique_keys");
 			while (par.loop())
 			{
-				if (VERBOSE > 1)
-					std::cout << "\t> " << par.val << std::endl;
+				verbose(1) << std::cout << "\t> " << par.val << std::endl;
 				if (_config.key_count(par.val) > 1)
 				{
-					if (VERBOSE > 1)
-						std::cout << "\t> Is not unique." << std::endl;
+					verbose(1) << std::cout << "\t> Is not unique." << std::endl;
 					return false;
 				}
 			}
@@ -103,11 +98,11 @@ bool ArgVal::comply()
 	bool valid;
 	while (_config.loop())
 	{
-		xx << "Is this allowed? " << _config.key << nl;
+		verbose(3) << "Is this allowed? " << _config.key << nl;
 		valid = false;
 		while (comply.loop())
 		{
-			std::cout << " ook " << comply.key << ":" << comply.val << std::endl;
+			verbose(3) << " -- " << comply.key << ":" << comply.val << nl;
 			if ((comply.key == "accept_unique_keys" ||
 				comply.key == "accept")
 				&&
@@ -132,7 +127,6 @@ bool ArgVal::comply()
 	{
 		std::cout << "\t" << tp.key << " : " << tp.val << std::endl;
 	}
-
 
 //	std::string argvt(_board.get<std::string>("single"));
 //	std::cout << "0 ----->" << argvt << std::endl;
