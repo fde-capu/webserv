@@ -6,13 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 23:27:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 00:22:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "datafold_type.hpp"
 
-df_t::operator str_t() const
+datafold_t::operator std::string() const
 {
 	if (type & DF_TYPE_SUB)
 	{
@@ -23,7 +23,14 @@ df_t::operator str_t() const
 	return val;
 }
 
-df_t::operator int() const
+datavec::operator std::string() const
+{
+	sstr o;
+	o << *this;
+	return o.str();
+}
+
+datafold_t::operator int() const
 {
 	if (type & DF_TYPE_ARRAY)
 		throw bad_arg(DF_ERR_IS_ARRAY DF_ERR_CANT_CONVERT_TO_INT);
@@ -32,7 +39,7 @@ df_t::operator int() const
 	return std::atoi(val.c_str());
 }
 
-void df_t::log_self() const
+void datafold_t::log_self() const
 {
 	xo << "index:\t" << index << nl;
 	xo << "type:\t" << type << nl;
@@ -43,20 +50,19 @@ void df_t::log_self() const
 
 ostr& operator<< (ostr& o, datafold_type const & self)
 {
-	verbose(-1) << "datafold_t ";
-	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << DF_KVDIV;
+	if (!(self.type & DF_TYPE_ONLY_VAL))
+		o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << DF_KVDIV;
 	if (self.type & DF_TYPE_SUB)
 	{
 		o << self.sub;
 		return o;
 	}
-	if (self.type & DF_TYPE_ARRAY)
+	if (self.type & DF_TYPE_ARRAY && !(self.type & DF_TYPE_ONLY_VAL))
 	{
-		str_t a_val = self.val;
+		std::string a_val = self.val;
 		o << DF_ARRAY_INIT;
 		if (self.type & DF_TYPE_STRING)
 		{
-			xx << "(" << a_val << ")" << nl;
 			substitute_all(a_val, " ", "' , '");
 			a_val = "'" + a_val + "'";
 		}
@@ -70,7 +76,7 @@ ostr& operator<< (ostr& o, datafold_type const & self)
 		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
 	if (self.type & DF_TYPE_STRING)
 	{
-		str_t esc_val = escape_char(self.val, DF_VAL_QUOTE);
+		std::string esc_val = escape_char(self.val, DF_VAL_QUOTE);
 		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
 	}
 	return o;
@@ -78,17 +84,9 @@ ostr& operator<< (ostr& o, datafold_type const & self)
 
 datavec::datavec() : loop_index(0) {};
 
-datavec::operator str_t() const
-{
-	sstr o;
-	o << *this;
-	return o.str();
-}
-
 ostr& operator<< (ostr& o, datavec const& self)
 {
-	verbose(-1) << "datavec ";
-	str_t obj;
+	std::string obj;
 
 	if (!self.size())
 		return o;
@@ -98,10 +96,13 @@ ostr& operator<< (ostr& o, datavec const& self)
 		o << DF_ARRAY_INIT;
 		while (tmp_self.loop())
 		{
-			size_t has_quotes = find_outside_quotes(tmp_self.val, " ");
-			if (has_quotes != nopos) o << "\"";
-			o << tmp_self.val;
-			if (has_quotes != nopos) o << "\"";
+			if (find_outside_quotes(tmp_self.val, " ") != nopos)
+			{
+				std::string escaped = escape_char(tmp_self.val, "'");
+				o << "'" << escaped << "'";
+			}
+			else
+				o << tmp_self.val;
 			if (tmp_self.not_ended())
 				o << DF_COMMA;
 		}

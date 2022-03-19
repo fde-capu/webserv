@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 23:04:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 00:04:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ bool ArgVal::comply()
 	std::cout << "tp: " << tp << std::endl;
 	while (tp.loop())
 	{
-		std::cout << "\t" << tp.key << " : " << tp.val << std::endl;
+		std::cout << "\t" << tp.key << "||" << tp.val << std::endl;
 	}
 
 //	std::string argvt(_board.get<std::string>("single"));

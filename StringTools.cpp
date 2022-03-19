@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 22:20:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 00:17:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,7 @@ std::string apply_quotes(std::string str, std::string quote)
 std::string StringTools::apply_quotes(std::string str, std::string quote) const
 { return std::string(quote + escape_char(str, quote) + quote); }
 
-size_t find_outside_quotes(std::string& str, std::string needle)
+size_t find_outside_quotes(std::string str, std::string needle)
 { return stool.find_outside_quotes(str, needle); }
 
 size_t StringTools::find_outside_quotes(std::string& str, std::string needle) const

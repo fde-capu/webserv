@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 22:33:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 23:35:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -472,10 +472,11 @@ bool DataFold::loop()
 		return false;
 	}
 	key = core[loop_index].key;
-	if (core[loop_index].type & DF_TYPE_SUB)
-		val = core[loop_index].sub;
-	else
-		val = core[loop_index].val;
+	val = core[loop_index];
+//	if (core[loop_index].type & DF_TYPE_SUB)
+//		val = core[loop_index].sub;
+//	else
+//		val = core[loop_index].val;
 	loop_index++;
 	return true;
 }

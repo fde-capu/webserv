@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 22:12:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 00:17:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ std::string substitute_super(std::string&, std::string, std::string);
 std::string substitute_all_ret(const std::string, std::string, std::string);
 void erase_boundaries(std::string&, std::string);
 void erase_boundaries(std::string&, std::string, std::string);
-size_t find_outside_quotes(std::string&, std::string);
+size_t find_outside_quotes(std::string, std::string);
 size_t find_closing_bracket(std::string);
 size_t find_outside_quotes_set(std::string& str, std::string set);
 void remove_comments(std::string&);
