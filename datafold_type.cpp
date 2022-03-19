@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 22:22:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 23:27:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void df_t::log_self() const
 
 ostr& operator<< (ostr& o, datafold_type const & self)
 {
+	verbose(-1) << "datafold_t ";
 	o << DF_KEY_QUOTE << self.key << DF_KEY_QUOTE << DF_KVDIV;
 	if (self.type & DF_TYPE_SUB)
 	{
@@ -55,6 +56,7 @@ ostr& operator<< (ostr& o, datafold_type const & self)
 		o << DF_ARRAY_INIT;
 		if (self.type & DF_TYPE_STRING)
 		{
+			xx << "(" << a_val << ")" << nl;
 			substitute_all(a_val, " ", "' , '");
 			a_val = "'" + a_val + "'";
 		}
@@ -85,20 +87,21 @@ datavec::operator str_t() const
 
 ostr& operator<< (ostr& o, datavec const& self)
 {
+	verbose(-1) << "datavec ";
 	str_t obj;
 
 	if (!self.size())
 		return o;
-	verbose(2) << " [ type " << self[0].type << " ] ";
-//	if (VERBOSE > 2)
-//		std::cout << " [ type " << self[0].type << " ] ";
 	datavec tmp_self = *const_cast<datavec*>(&self);
 	if (tmp_self[0].type & DF_TYPE_ONLY_VAL)
 	{
 		o << DF_ARRAY_INIT;
 		while (tmp_self.loop())
 		{
+			size_t has_quotes = find_outside_quotes(tmp_self.val, " ");
+			if (has_quotes != nopos) o << "\"";
 			o << tmp_self.val;
+			if (has_quotes != nopos) o << "\"";
 			if (tmp_self.not_ended())
 				o << DF_COMMA;
 		}
