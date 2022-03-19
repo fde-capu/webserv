@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 22:15:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/19 22:27:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class DataFold
 		datavec getCore() const;
 		int getIndex() const;
 		DataFold parse_data(const std::string dst);
-		DataFold only_val(const datafold_t);
+		DataFold parse_only_val(const datafold_t);
 		int df_type(std::string);
 		const std::string getFirstByKey(std::string key) const;
 		std::string eqvals_to_arrstr(std::string key) const;
