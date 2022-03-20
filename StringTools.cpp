@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/20 00:17:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 01:33:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,6 +248,8 @@ size_t find_outside_quotes(std::string str, std::string needle)
 
 size_t StringTools::find_outside_quotes(std::string& str, std::string needle) const
 {
+//	if (std::find(str, "blast", 0) != std::string::npos)
+//		std::cout << needle << " ?> " << str << std::endl;
 	std::string q = "";
 	std::string::iterator e = str.end();
 	for(std::string::iterator s = str.begin(); *s; s++)
@@ -256,10 +258,13 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle) co
 		{
 			if (*i == *s)
 			{
-				if (*(q.end() - 1) == *i)
-					q = q.substr(0, q.length() - 1);
-				else if (q.empty())
-					q = q + *i;
+//				if (*(s - 1) != '\\')
+//				{
+					if (*(q.end() - 1) == *i)
+						q = q.substr(0, q.length() - 1);
+					else if (q.empty())
+						q = q + *i;
+//				}
 			}
 			else
 			{
