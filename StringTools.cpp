@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/20 01:33:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 23:38:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ std::string substitute_all_ret(const std::string dst, std::string before, std::s
 std::string StringTools::substitute_all_ret(const std::string dst, std::string before, std::string after) const
 {
 	std::string out(static_cast<std::string>(dst));
-	substitute_all(out, before, after);
+	out = substitute_all(out, before, after);
 	return out;
 }
 
@@ -248,23 +248,22 @@ size_t find_outside_quotes(std::string str, std::string needle)
 
 size_t StringTools::find_outside_quotes(std::string& str, std::string needle) const
 {
-//	if (std::find(str, "blast", 0) != std::string::npos)
-//		std::cout << needle << " ?> " << str << std::endl;
 	std::string q = "";
 	std::string::iterator e = str.end();
 	for(std::string::iterator s = str.begin(); *s; s++)
 	{
+		if (*s == '\\')
+			s += 2;
+		if (!*s)
+			break ;
 		for(std::string::const_iterator i = _quote_set.begin(); *i; i++)
 		{
 			if (*i == *s)
 			{
-//				if (*(s - 1) != '\\')
-//				{
-					if (*(q.end() - 1) == *i)
-						q = q.substr(0, q.length() - 1);
-					else if (q.empty())
-						q = q + *i;
-//				}
+				if (*(q.end() - 1) == *i)
+					q = q.substr(0, q.length() - 1);
+				else if (q.empty())
+					q = q + *i;
 			}
 			else
 			{
