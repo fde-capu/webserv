@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 23:43:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 00:38:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef class datavec : public std::vector<datafold_t>
 		bool not_ended();
 		std::string key;
 		std::string val;
+		int type;
 } dvec;
 
 std::ostream & operator<< (std::ostream & o, dvec const&);

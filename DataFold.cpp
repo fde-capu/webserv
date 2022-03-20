@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 23:35:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 00:52:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ std::ostream & operator<< (std::ostream & o, DataFold const& self)
 {
 	datavec tmp_core = self.getCore();
 	o << tmp_core;
-//	o << const_cast<datavec*>(&tmp_core);
 	return o;
 }
 
@@ -473,6 +472,7 @@ bool DataFold::loop()
 	}
 	key = core[loop_index].key;
 	val = core[loop_index];
+	type = core[loop_index].type;
 //	if (core[loop_index].type & DF_TYPE_SUB)
 //		val = core[loop_index].sub;
 //	else

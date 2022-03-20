@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 23:31:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 00:41:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ class DataFold
 		bool not_ended();
 		std::string key;
 		datafold_t val;
+		int type;
 };
 
 std::ostream& operator<< (std::ostream& o, DataFold const&);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/20 00:22:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/20 01:00:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,12 @@ ostr& operator<< (ostr& o, datafold_type const & self)
 	{
 		std::string a_val = self.val;
 		o << DF_ARRAY_INIT;
-		if (self.type & DF_TYPE_STRING)
+		substitute_all(a_val, " ", "' , '");
+		if ((self.type & DF_TYPE_STRING)
+			&& (!(isNumber(a_val))))
 		{
-			substitute_all(a_val, " ", "' , '");
-			a_val = "'" + a_val + "'";
+			a_val = "'" + escape_char(a_val, "'") + "'";
 		}
-		if (self.type & DF_TYPE_NUMBER)
-			substitute_all(a_val, " ", " , ");
 		o << a_val;
 		o << DF_ARRAY_END;
 		return o;
@@ -76,8 +75,15 @@ ostr& operator<< (ostr& o, datafold_type const & self)
 		o << DF_NUM_QUOTE << self.val << DF_NUM_QUOTE;
 	if (self.type & DF_TYPE_STRING)
 	{
-		std::string esc_val = escape_char(self.val, DF_VAL_QUOTE);
-		o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
+		if (isNumber(self.val))
+		{
+			o << self.val;
+		}
+		else
+		{
+			std::string esc_val = escape_char(self.val, DF_VAL_QUOTE);
+			o << DF_VAL_QUOTE << esc_val << DF_VAL_QUOTE;
+		}
 	}
 	return o;
 }
@@ -96,7 +102,7 @@ ostr& operator<< (ostr& o, datavec const& self)
 		o << DF_ARRAY_INIT;
 		while (tmp_self.loop())
 		{
-			if (find_outside_quotes(tmp_self.val, " ") != nopos)
+			if (tmp_self.type & DF_TYPE_STRING && !isNumber(tmp_self.val))
 			{
 				std::string escaped = escape_char(tmp_self.val, "'");
 				o << "'" << escaped << "'";
@@ -134,6 +140,7 @@ bool datavec::loop()
 		val = this->at(loop_index).sub;
 	else
 		val = this->at(loop_index).val;
+	type = this->at(loop_index).type;
 	loop_index++;
 	return true;
 }
