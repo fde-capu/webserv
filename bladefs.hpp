@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/18 14:32:59 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 21:49:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/22 20:16:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ typedef std::string str_t;
 typedef std::stringstream sstr;
 typedef std::ostream ostr;
 
-# define verbose(X) if (VERBOSE > X) std::cout
+# define verbose(X) if (VERBOSE >= X) std::cout
 # define bad_arg std::invalid_argument
 # define xo std::cout
 # define xx std::cout
