@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/22 20:30:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/22 23:17:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,7 +303,7 @@ void DataFold::push_back(std::string key, std::string val)
 	entry.index = index++;
 	entry.type = df_type(val);
 	entry.key = key;
-//	entry.key = remove_quotes(key);
+	entry.key = remove_quotes(key);
 	if (entry.type & DF_TYPE_ARRAY)
 	{
 		vstr spl = splitOutsideQuotes(val);
@@ -319,8 +319,7 @@ void DataFold::push_back(std::string key, std::string val)
 		}
 	}
 	else
-		entry.val = val;
-//		entry.val = remove_quotes(val);
+		entry.val = remove_quotes(val);
 	core.push_back(entry);
 }
 
@@ -337,8 +336,7 @@ void DataFold::push_back(std::string key, DataFold sub)
 	datafold_t entry;
 	entry.index = index++;
 	entry.type = DF_TYPE_SUB;
-	entry.key = key;
-//	entry.key = remove_quotes(key);
+	entry.key = remove_quotes(key);
 	entry.sub = sub;
 	core.push_back(entry);
 }
@@ -428,9 +426,9 @@ DF DF::parse_data(const str_t jstr)
 	while (!pass)
 	{
 		pass = true;
-		p[0] = find_outside_quotes_set(ops, " :");
+		p[0] = find_outside_quotes_set(ops, " :,");
 		p[1] = find_outside_quotes_set(ops, "{");
-		p[2] = find_outside_quotes_set(ops, ";,");
+		p[2] = find_outside_quotes_set(ops, ";");
 		p[3] = find_outside_quotes_set(ops, "\n");
 
 		verbose(3)	<< p[0] << ", " << p[1] << ", " \
@@ -442,7 +440,7 @@ DF DF::parse_data(const str_t jstr)
 			key = ops.substr(0, p[0]);
 			ops = ops.substr(p[0] + 1);
 			if (p[2] < p[3])
-				div_p = find_outside_quotes_set(ops, ";,");
+				div_p = find_outside_quotes_set(ops, ";");
 			else
 				div_p = find_outside_quotes(ops, "\n");
 			val = ops.substr(0, div_p);

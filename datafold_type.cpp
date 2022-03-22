@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/20 23:39:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/22 23:20:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,12 @@ ostr& operator<< (ostr& o, datafold_type const & self)
 	{
 		std::string a_val = self.val;
 		o << DF_ARRAY_INIT;
-		substitute_all(a_val, " ", "' , '");
-		if ((self.type & DF_TYPE_STRING)
-			&& (!(isNumber(a_val))))
-		{
-			a_val = "'" + escape_char(a_val, "'") + "'";
-		}
+		substitute_all(a_val, " ", " , ");
+//		if ((self.type & DF_TYPE_STRING)
+//			&& (!(isNumber(a_val))))
+//		{
+//			a_val = "'" + escape_char(a_val, "'") + "'";
+//		}
 		o << a_val;
 		o << DF_ARRAY_END;
 		return o;
@@ -121,7 +121,7 @@ ostr& operator<< (ostr& o, datavec const& self)
 		{
 			o << self[i];
 			if (i + 1 < self.size())
-				o << DF_COMMA;
+				o << DF_DOTCOMMA;
 		}
 		o << DF_OBJ_END;
 	}

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/22 20:20:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/22 23:32:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,12 +80,13 @@ bool ArgVal::comply()
 	verbose(2) << "Comply: " << comply << std::endl << std::endl;
 	while (comply.loop())
 	{
-		verbose(2) << " > " << comply.key << " : " << comply.val << std::endl;
+		verbose(2) << " > " << comply.key << " :: " << comply.val << std::endl;
 		if (comply.key == "accept_unique")
 		{
 			par = comply.get<DataFold>("accept_unique");
 			while (par.loop())
 			{
+				verbose(3) << "   > " << par.val << std::endl;
 				if (_config.key_count(par.val) > 1)
 				{
 					verbose(1) << par.val << " is not unique." << std::endl;
@@ -95,9 +96,12 @@ bool ArgVal::comply()
 		}
 		if (comply.key == "mandatory")
 		{
+			xx << "ENTER MANDATORY" << nl;
 			par = comply.get<DataFold>("mandatory");
+			xx << par << "||||||" << nl;
 			while (par.loop())
 			{
+				verbose(3) << "   > " << par.val << std::endl;
 				if (!(_config.key_count(par.val)))
 				{
 					verbose(1) << par.val << " is not present." << std::endl;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 12:02:11 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/17 18:36:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/22 23:20:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@
 # define DF_VAL_QUOTE "\'"
 # define DF_ARRAY_INIT "[ "
 # define DF_COMMA " , "
+# define DF_DOTCOMMA " ; "
 # define DF_ARRAY_END " ]"
 # define DF_KVDIV " : "
 # define DF_OBJ_INIT "{ "
 # define DF_OBJ_END " }"
-# define DF_ENDVAL_SET ";"
 
 # define SERVER_TAG "(DataFold controled error)"
 # define DFK SERVER_TAG " '" + key + "'" +
