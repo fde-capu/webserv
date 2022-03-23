@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 20:36:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 20:51:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,50 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 		if (board.type & DF_TYPE_SUB)
 			return comply_argval_params(board.get_val(board.key), config.get<DataFold>(board.key));
 	}
+	return true;
+}
 
+bool ArgVal::comply_config_keys(DataFold board, DataFold config)
+{
+	bool valid;
+	DataFold par;
+
+	while (config.loop())
+	{
+		verbose(3) << "Is this allowed? " << config.key << nl;
+		valid = false;
+		while (board.loop())
+		{
+			verbose(3) << " -- " << board.key << ":" << board.val << nl;
+			if ((board.key == "accept_unique" ||
+				board.key == "accept" ||
+				board.key == "mandatory"
+				)&&
+				(find_outside_quotes(board.val, config.key) != nopos))
+			{
+				if (!(config.type & DF_TYPE_SUB))
+				{
+					valid = true;
+					board.loop_reset();
+					break ;
+				}
+				else
+				{
+					par = config.get<DataFold>(config.key);
+					while (par.loop())
+					{
+						xx << "(((" << par.key << " >> " << par.val << ")))" << nl;
+					}
+					xx << config.key << "YUKES";
+				}
+			}
+		}
+		if (!valid)
+		{
+			verbose(1) << "- " << config.key << " not valid." << nl;
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -118,47 +161,9 @@ bool ArgVal::comply()
 {
 	verbose(1) << "Comply:" << std::endl;
 	DataFold comply(_board.get_val("comply"));
-	DataFold par;
-	DataFold con;
-	bool valid;
-	if (!comply_argval_params(comply, _config))
+	if (!comply_argval_params(comply, _config)
+	||  !comply_config_keys(comply, _config))
 		return false;
-	while (_config.loop())
-	{
-//		verbose(3) << "Is this allowed? " << _config.key << nl;
-		valid = false;
-		while (comply.loop())
-		{
-//			verbose(3) << " -- " << comply.key << ":" << comply.val << nl;
-			if ((comply.key == "accept_unique" ||
-				comply.key == "accept" ||
-				comply.key == "mandatory"
-				)&&
-				(find_outside_quotes(comply.val, _config.key) != nopos))
-			{
-				if (!(_config.type & DF_TYPE_SUB))
-				{
-					valid = true;
-					comply.loop_reset();
-					break ;
-				}
-				else
-				{
-					par = _config.get<DataFold>(_config.key);
-					while (par.loop())
-					{
-//						xx << "(((" << par.key << " >> " << par.val << ")))" << nl;
-					}
-//					xx << _config.key << "YUKES";
-				}
-			}
-		}
-		if (!valid)
-		{
-			verbose(1) << "- " << _config.key << " not valid." << nl;
-			return false;
-		}
-	}
 
 	std::cout << " General testing:" << std::endl;
 	DataFold tp = _config.get<DataFold>("test_port");
