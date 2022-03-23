@@ -6,14 +6,16 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 16:31:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 17:18:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FileString.hpp"
 
 FileString::FileString()
-: _read_ok(false), _processed_ok(false) {}
+: _read_ok(false), _processed_ok(false),
+  key(""), val(""), type(0)
+{}
 
 void FileString::load(const char * file_name)
 {
@@ -37,7 +39,8 @@ void FileString::load(const char * file_name)
 
 FileString::FileString(const char * file_name)
 : _content(""), _processed(""),
-  _read_ok(false), _processed_ok(false) 
+  _read_ok(false), _processed_ok(false),
+  key(""), val(""), type(0)
 {
 	load(file_name);
 }
@@ -67,6 +70,7 @@ void FileString::parse(std::string str)
 }
 
 FileString::FileString(FileString & src)
+: key(""), val(""), type(0)
 {
 	*this = src;
 	return ;
@@ -130,6 +134,7 @@ bool FileString::loop()
 	{
 		key = fs_data.key;
 		val = fs_data.val;
+		type = fs_data.type;
 		return true;
 	}
 	return false;

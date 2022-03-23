@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 16:19:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 18:09:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,7 +250,7 @@ std::string DataFold::eqvals_to_arrstr(std::string key) const
 }
 
 DataFold::~DataFold()
-{ return ; }
+{ }
 
 size_t DataFold::size() const
 { return core.size(); }
@@ -421,15 +421,22 @@ std::string DataFold::clean_before_parse(std::string& dst) const
 
 DataFold DataFold::parse_only_val(const datafold_t df)
 {
-	DataFold out;
-	datafold_t entry;
+	if (df.type & DF_TYPE_SUB)
+	{
+		return DataFold(df.sub);
+	}
+	else
+	{
+		DataFold out;
+		datafold_t entry;
 
-	entry.val = df.val;
-	hard_trim(entry.val);
-	entry.type = df_type(entry.val) + DF_TYPE_ONLY_VAL;
-	entry.key = "";
-	out.push_back(entry);
-	return out;
+		entry.val = df.val;
+		hard_trim(entry.val);
+		entry.type = df.type + DF_TYPE_ONLY_VAL;
+		entry.key = "";
+		out.push_back(entry);
+		return out;
+	}
 }
 
 DF DF::parse_data(const str_t jstr)
@@ -492,18 +499,18 @@ DF DF::parse_data(const str_t jstr)
 
 bool DataFold::loop()
 {
+
 	if (loop_index == index)
 	{
 		loop_reset();
 		return false;
 	}
 	key = core[loop_index].key;
-	val = core[loop_index].val;
+	if (core[loop_index].type & DF_TYPE_SUB)
+		val = static_cast<std::string>(core[loop_index].sub);
+	else
+		val = core[loop_index].val;
 	type = core[loop_index].type;
-//	if (core[loop_index].type & DF_TYPE_SUB)
-//		val = core[loop_index].sub;
-//	else
-//		val = core[loop_index].val;
 	loop_index++;
 	return true;
 }

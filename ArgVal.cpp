@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 17:03:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 17:22:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,9 +123,21 @@ bool ArgVal::comply()
 				)&&
 				(find_outside_quotes(comply.val, _config.key) != nopos))
 			{
-				valid = true;
-				comply.loop_reset();
-				break ;
+				if (!(_config.type & DF_TYPE_SUB))
+				{
+					valid = true;
+					comply.loop_reset();
+					break ;
+				}
+				else
+				{
+					par = _config.get<DataFold>(_config.key);
+					while (par.loop())
+					{
+						xx << "(((" << par.key << " >> " << par.val << ")))" << nl;
+					}
+					xx << _config.key << "YUKES";
+				}
 			}
 		}
 		if (!valid)
