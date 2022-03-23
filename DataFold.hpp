@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 16:16:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 19:41:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,10 +83,12 @@ class DataFold
 
 		bool loop();
 		void loop_reset();
+		bool loop_ended();
 		bool not_ended();
 		std::string key;
 		std::string val;
 		int type;
+		bool is_single_array() const;
 };
 
 //std::ostream& operator<< (std::ostream& o, DataFold const&);

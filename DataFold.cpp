@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 18:09:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 20:37:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -497,20 +497,39 @@ DF DF::parse_data(const str_t jstr)
 	return out;
 }
 
+bool DataFold::is_single_array() const
+{
+	return		core.size() == 1 
+			&&	core[0].type && DF_TYPE_ARRAY;
+}
+
 bool DataFold::loop()
 {
-
-	if (loop_index == index)
+	if (loop_ended())
 	{
 		loop_reset();
 		return false;
 	}
-	key = core[loop_index].key;
+
+	if (is_single_array())
+	{
+		key = core[0].key;
+		val = nth_word(core[0].val, loop_index + 1);
+		type = core[0].type;
+		loop_index++;
+		return true;
+	}
+
 	if (core[loop_index].type & DF_TYPE_SUB)
+	{
 		val = static_cast<std::string>(core[loop_index].sub);
+	}
 	else
 		val = core[loop_index].val;
+
+	key = core[loop_index].key;
 	type = core[loop_index].type;
+
 	loop_index++;
 	return true;
 }
@@ -523,5 +542,14 @@ void DataFold::loop_reset()
 	key = "";
 }
 
+bool DataFold::loop_ended()
+{
+	if (is_single_array())
+	{
+		return loop_index >= word_count(core[0].val);
+	}
+	return loop_index == index;
+}
+
 bool DataFold::not_ended()
-{ return !(loop_index == index); }
+{ return !loop_ended(); }

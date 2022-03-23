@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 17:22:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 20:36:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,42 +74,55 @@ ArgVal::ArgVal()
 : _fail(false)
 {}
 
-bool ArgVal::comply()
+bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 {
-	verbose(1) << "Comply:" << std::endl;
-	DataFold comply(_board.get_val("comply"));
 	DataFold par;
-	while (comply.loop())
+
+	while (board.loop())
 	{
-//		verbose(2) << " > " << comply.key << " :: " << comply.val << std::endl;
-		if (comply.key == "accept_unique")
+		verbose(2) << " > " << board.key << " :=: " << board.val << std::endl;
+		if (board.key == "accept_unique")
 		{
-			par = comply.get<DataFold>("accept_unique");
+			par = board.get<DataFold>("accept_unique");
 			while (par.loop())
 			{
-//				verbose(3) << "   > " << par.val << std::endl;
-				if (_config.key_count(par.val) > 1)
+				verbose(3) << "   > " << par.val << std::endl;
+				if (config.key_count(par.val) > 1)
 				{
 					verbose(1) << par.val << " is not unique." << std::endl;
 					return false;
 				}
 			}
 		}
-		if (comply.key == "mandatory")
+		if (board.key == "mandatory")
 		{
-			par = comply.get<DataFold>("mandatory");
+			par = board.get<DataFold>("mandatory");
 			while (par.loop())
 			{
-//				verbose(3) << "   > " << par.val << std::endl;
-				if (!(_config.key_count(par.val)))
+				verbose(3) << "   > " << par.val << std::endl;
+				if (!(config.key_count(par.val)))
 				{
 					verbose(1) << par.val << " is not present." << std::endl;
 					return false;
 				}
 			}
 		}
+		if (board.type & DF_TYPE_SUB)
+			return comply_argval_params(board.get_val(board.key), config.get<DataFold>(board.key));
 	}
+
+	return true;
+}
+
+bool ArgVal::comply()
+{
+	verbose(1) << "Comply:" << std::endl;
+	DataFold comply(_board.get_val("comply"));
+	DataFold par;
+	DataFold con;
 	bool valid;
+	if (!comply_argval_params(comply, _config))
+		return false;
 	while (_config.loop())
 	{
 //		verbose(3) << "Is this allowed? " << _config.key << nl;
@@ -134,9 +147,9 @@ bool ArgVal::comply()
 					par = _config.get<DataFold>(_config.key);
 					while (par.loop())
 					{
-						xx << "(((" << par.key << " >> " << par.val << ")))" << nl;
+//						xx << "(((" << par.key << " >> " << par.val << ")))" << nl;
 					}
-					xx << _config.key << "YUKES";
+//					xx << _config.key << "YUKES";
 				}
 			}
 		}

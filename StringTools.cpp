@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:22:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 20:34:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -454,4 +454,32 @@ bool StringTools::isAllInSet(std::string str, std::string set) const
 			return false;
 	}
 	return true;
+}
+
+std::string nth_word(std::string str, int n)
+{ return stool.nth_word(str, n); }
+
+std::string StringTools::nth_word(std::string str, int n) const
+{
+	int wc = word_count(str);
+	if (n > wc)
+		return "";
+	while (--n >= 1)
+	{
+		str = str.substr(find_outside_quotes_set(str, " \n") + 1);
+	}
+	if (word_count(str) != 1)
+		str = str.substr(0, find_outside_quotes_set(str, " \n"));
+	return str;
+}
+
+int word_count(std::string str)
+{ return stool.word_count(str); }
+
+int StringTools::word_count(std::string str) const
+{
+	int out = str.length() ? 1 : 0;
+	while (find_outside_quotes_set(str, " \n") != std::string::npos && ++out)
+		str = str.substr(find_outside_quotes_set(str, " \n") + 1);
+	return out;
 }

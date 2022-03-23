@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:20:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 19:50:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,8 @@ class StringTools
 		std::string itoa(int) const;
 		bool valid_file_name(std::string) const;
 		bool isAllInSet(std::string, std::string) const;
+		std::string nth_word(std::string, int) const;
+		int word_count(std::string) const;
 };
 
 //std::ostream & operator<< (std::ostream & o, StringTools const & i);
@@ -101,5 +103,7 @@ std::vector<std::string> splitOutsideQuotes(std::string);
 std::string itoa(int);
 bool valid_file_name(std::string);
 bool isAllInSet(std::string, std::string);
+std::string nth_word(std::string, int);
+int word_count(std::string);
 
 #endif

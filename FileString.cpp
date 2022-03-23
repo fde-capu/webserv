@@ -6,11 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 17:18:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 18:52:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "FileString.hpp"
+
+FileString::operator DataFold() const
+{ return getDataFold(); }
 
 FileString::FileString()
 : _read_ok(false), _processed_ok(false),

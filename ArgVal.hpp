@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:20:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 18:47:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ class ArgVal
 		bool fail() const;
 
 		bool comply();
+		bool comply_argval_params(DataFold, DataFold);
 };
 
 //std::ostream & operator<< (std::ostream &, ArgVal const &);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 17:15:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 18:51:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,6 @@
 # include "DataFold.hpp"
 
 # include <fstream>
-//# include <iostream>
-//# include <vector>
-//# include <utility>
 
 # ifndef VERBOSE
 #  define VERBOSE 0
@@ -62,6 +59,8 @@ class FileString
 		FileString(FileString & src);
 		FileString & operator= (FileString & rhs);
 		~FileString();
+
+		operator DataFold() const;
 
 		void load(const char *);
 		void parse();
