@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 20:51:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 21:33:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,20 +131,12 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 				)&&
 				(find_outside_quotes(board.val, config.key) != nopos))
 			{
-				if (!(config.type & DF_TYPE_SUB))
+				if (!(config.type & DF_TYPE_SUB)
+				|| comply_config_keys(board.get_val(config.key), config.get<DataFold>(board.val)))
 				{
 					valid = true;
 					board.loop_reset();
 					break ;
-				}
-				else
-				{
-					par = config.get<DataFold>(config.key);
-					while (par.loop())
-					{
-						xx << "(((" << par.key << " >> " << par.val << ")))" << nl;
-					}
-					xx << config.key << "YUKES";
 				}
 			}
 		}
