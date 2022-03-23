@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 21:45:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 11:20:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,6 @@ class FileString
 		int key_count(std::string);
 };
 
-std::ostream & operator<< (std::ostream & o, FileString const & i);
+//std::ostream & operator<< (std::ostream & o, FileString const & i);
 
 #endif

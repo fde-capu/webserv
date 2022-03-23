@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/22 23:37:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 11:20:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,6 @@ class DataFold
 		int type;
 };
 
-std::ostream& operator<< (std::ostream& o, DataFold const&);
+//std::ostream& operator<< (std::ostream& o, DataFold const&);
 
 #endif

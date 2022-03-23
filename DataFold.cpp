@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/22 23:17:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 11:25:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,16 +133,17 @@ DataFold::operator std::string() const
 {
 	std::stringstream o;
 	datavec tmp_core = getCore();
-	o << *const_cast<datavec*>(&tmp_core);
+//	o << *const_cast<datavec*>(&tmp_core);
+	o << "(str)DataFold;";
 	return o.str();
 }
 
-std::ostream & operator<< (std::ostream & o, DataFold const& self)
-{
-	datavec tmp_core = self.getCore();
-	o << tmp_core;
-	return o;
-}
+//std::ostream & operator<< (std::ostream & o, DataFold const& self)
+//{
+//	datavec tmp_core = self.getCore();
+//	o << tmp_core;
+//	return o;
+//}
 
 DataFold::DataFold()
 : index(0), loop_index(0)
@@ -197,7 +198,8 @@ std::string DataFold::quoted_val(datafold_t dt) const
 	if (dt.type & DF_TYPE_STRING)
 		out << apply_quotes(dt.val, DF_VAL_QUOTE);
 	if (dt.type & DF_TYPE_SUB)
-		out << dt.sub;
+		out << "(str)DataFold.sub;";
+//		out << dt.sub;
 	return out.str();
 }
 
@@ -461,7 +463,7 @@ DF DF::parse_data(const str_t jstr)
 		}
 	}
 
-	verbose(2) << "Parsed: " << out << nl << nl;
+//	verbose(2) << "Parsed: " << out << nl << nl;
 
 	return out;
 }

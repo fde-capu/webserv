@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/20 23:38:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 11:22:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,12 @@ StringTools & StringTools::operator= (StringTools const & rhs)
 	return *this;
 }
 
-std::ostream & operator<< (std::ostream & o, StringTools const & self)
-{
-	o << "::StringTools::" << std::endl;
-	static_cast<void>(self);
-	return o;
-}
+//std::ostream & operator<< (std::ostream & o, StringTools const & self)
+//{
+//	o << "::StringTools::" << std::endl;
+//	static_cast<void>(self);
+//	return o;
+//}
 
 StringTools::~StringTools()
 {

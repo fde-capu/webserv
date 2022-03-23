@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/20 00:38:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 11:19:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,6 @@ typedef class datavec : public std::vector<datafold_t>
 		int type;
 } dvec;
 
-std::ostream & operator<< (std::ostream & o, dvec const&);
-
 typedef struct datafold_type
 {
 	int			index;
@@ -58,7 +56,7 @@ typedef struct datafold_type
 
 # include "bladefs.hpp"
 
-ostr & operator<< (ostr & o, df_t const &);
-ostr & operator<< (ostr & o, dvec const &);
+//ostr & operator<< (ostr & o, df_t const &);
+//ostr & operator<< (ostr & o, dvec const &);
 
 #endif

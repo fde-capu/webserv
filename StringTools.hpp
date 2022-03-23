@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/20 00:17:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 11:20:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ class StringTools
 		bool isAllInSet(std::string, std::string) const;
 };
 
-std::ostream & operator<< (std::ostream & o, StringTools const & i);
+//std::ostream & operator<< (std::ostream & o, StringTools const & i);
 
 static const StringTools stool = StringTools();
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 23:32:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 11:21:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,11 +91,11 @@ bool FileString::isProcessed()
 char * FileString::getFileName()
 { return _file_name; }
 
-std::ostream & operator<< (std::ostream & o, FileString const & self)
-{
- 	o << self.getDataFold() << std::endl;
-	return o;
-}
+//std::ostream & operator<< (std::ostream & o, FileString const & self)
+//{
+// 	o << self.getDataFold() << std::endl;
+//	return o;
+//}
 
 FileString::~FileString()
 { return ; }

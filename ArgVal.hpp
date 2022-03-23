@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/19 21:45:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 11:20:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,6 @@ class ArgVal
 		bool comply();
 };
 
-std::ostream & operator<< (std::ostream &, ArgVal const &);
+//std::ostream & operator<< (std::ostream &, ArgVal const &);
 
 #endif
