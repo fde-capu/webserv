@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:25:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 11:43:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,13 +130,7 @@ std::vector<std::string> DataFold::get_vector_str(std::string key, std::string k
 }
 
 DataFold::operator std::string() const
-{
-	std::stringstream o;
-	datavec tmp_core = getCore();
-//	o << *const_cast<datavec*>(&tmp_core);
-	o << "(str)DataFold;";
-	return o.str();
-}
+{ return getCore(); }
 
 //std::ostream & operator<< (std::ostream & o, DataFold const& self)
 //{
@@ -433,7 +427,7 @@ DF DF::parse_data(const str_t jstr)
 		p[2] = find_outside_quotes_set(ops, ";");
 		p[3] = find_outside_quotes_set(ops, "\n");
 
-		verbose(3)	<< p[0] << ", " << p[1] << ", " \
+		verbose(4)	<< p[0] << ", " << p[1] << ", " \
 					<< p[2] << ", " << p[3] << nl;
 
 		if (p[0] < p[1] && p[0] != nopos && p[1] != p[0] + 1)
@@ -463,7 +457,7 @@ DF DF::parse_data(const str_t jstr)
 		}
 	}
 
-//	verbose(2) << "Parsed: " << out << nl << nl;
+	verbose(2) << "Parsed: " << static_cast<std::string>(out) << nl << nl;
 
 	return out;
 }

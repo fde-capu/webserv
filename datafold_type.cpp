@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:28:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 12:13:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,38 @@
 
 datafold_t::operator std::string() const
 {
+	std::string out = "";
+	std::string tmpval;
+	std::vector<std::string> spl;
+
 	if (type & DF_TYPE_SUB)
+		return key + " : " + static_cast<std::string>(sub);
+	if (type & DF_TYPE_ARRAY)
 	{
-		sstr o;
-//		o << this->sub;
-		o << "(str)datafold_type;";
-		return o.str();
+		spl = splitOutsideQuotes(val);
+		out += key + " : [ ";
+		for (size_t i = 0; i < spl.size(); i++)
+		{
+			out += spl[i];
+			if (i + 1 < spl.size())
+				out += " , ";
+		}
+		out += " ] ";
+		return out;
 	}
-	return val;
+	out += key + " : " + val + " ";
+	return out;
 }
 
 datavec::operator std::string() const
 {
-	sstr o;
-//	o << *this;
-	o << "(str)datavec;";
-	return o.str();
+	std::string out = "{ ";
+	for (size_t i = 0; i < this->size(); i++)
+	{
+		out += static_cast<std::string>((*this)[i]) + "; ";
+	}
+	out += "} ";
+	return out;
 }
 
 datafold_t::operator int() const
