@@ -6,11 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 12:13:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 15:24:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "datafold_type.hpp"
+
+datafold_type::datafold_type()
+: index(0), type(0), key(""), val(""), sub() {}
 
 datafold_t::operator std::string() const
 {
@@ -107,7 +110,7 @@ void datafold_t::log_self() const
 //	return o;
 //}
 
-datavec::datavec() : loop_index(0) {};
+datavec::datavec() : loop_index(0), type(0) {};
 
 //ostr& operator<< (ostr& o, datavec const& self)
 //{

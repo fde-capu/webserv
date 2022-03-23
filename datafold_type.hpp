@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:19:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 15:23:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ typedef struct datafold_type
 	std::string	val;
 	datavec		sub;
 
+	datafold_type();
 	operator std::string() const;
 	operator int() const;
 

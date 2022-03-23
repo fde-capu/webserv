@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:20:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 14:29:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ class FileString
 		std::string getProcessed();
 		std::string getProcessed() const;
 		DataFold getDataFold() const;
+		DataFold get_val(std::string) const;
+		DataFold get_val(std::string, std::string) const;
 
 		std::string const operator[](std::string) const;
 

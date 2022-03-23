@@ -6,11 +6,45 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:43:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 16:19:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "DataFold.hpp"
+
+DataFold::operator int() const
+{
+	if ((core.empty())
+	|| (!(core.type & DF_TYPE_NUMBER)))
+		return 0;
+	return atoi(core[0].val.c_str());
+}
+
+DataFold DataFold::get_val(std::string key) const
+{
+	core_check();
+	for (int i = 0; i < index; i++)
+		if (key == core[i].key)
+		{
+			return DataFold(core[i].sub);
+		}
+	return DataFold();
+}
+
+DataFold DataFold::get_val(std::string key, std::string sub) const
+{
+	DataFold df_sub;
+
+	core_check();
+	key_count_single_check(key);
+	for (int i = 0; i < index; i++)
+		if (key == core[i].key)
+		{
+			df_sub = get_val(key);
+			return df_sub.get_val(sub);
+		}
+	return DataFold();
+}
 
 datafold_t DataFold::get_datafold(std::string key, std::string ksub) const
 {
@@ -140,25 +174,25 @@ DataFold::operator std::string() const
 //}
 
 DataFold::DataFold()
-: index(0), loop_index(0)
+: index(0), loop_index(0), key(""), val(""), type(0)
 {
 	return ;
 }
 
 DataFold::DataFold(std::string df_data)
+: index(0), loop_index(0), key(""), val(""), type(0)
 {
 	*this = parse_data(df_data);
 }
 
 DataFold::DataFold(datafold_t df)
+: index(0), loop_index(0), key(""), val(""), type(0)
 {
-	if (df.type & DF_TYPE_ARRAY)
-		*this = parse_only_val(df);
-	else
-		*this = parse_data(df);
+	*this = parse_only_val(df);
 }
 
 DataFold::DataFold(DataFold const & src)
+: index(0), loop_index(0), key(""), val(""), type(0)
 {
 	*this = src;
 	return ;
@@ -321,8 +355,6 @@ void DataFold::push_back(std::string key, std::string val)
 
 void DataFold::push_back(datafold_t df)
 {
-	hard_trim(key);
-	hard_trim(val);
 	df.index = index++;
 	core.push_back(df);
 }
@@ -391,16 +423,12 @@ DataFold DataFold::parse_only_val(const datafold_t df)
 {
 	DataFold out;
 	datafold_t entry;
-	hard_trim(df.val);
-	entry.type = df_type(df.val) + DF_TYPE_ONLY_VAL;
+
+	entry.val = df.val;
+	hard_trim(entry.val);
+	entry.type = df_type(entry.val) + DF_TYPE_ONLY_VAL;
 	entry.key = "";
-	std::vector<std::string> spl = splitOutsideQuotes(df.val);
-	for (size_t i = 0; i < spl.size(); i++)
-	{
-		entry.val = spl[i];
-//		entry.val = remove_quotes(spl[i]);
-		out.push_back(entry);
-	}
+	out.push_back(entry);
 	return out;
 }
 
@@ -466,11 +494,11 @@ bool DataFold::loop()
 {
 	if (loop_index == index)
 	{
-		loop_index = 0;
+		loop_reset();
 		return false;
 	}
 	key = core[loop_index].key;
-	val = core[loop_index];
+	val = core[loop_index].val;
 	type = core[loop_index].type;
 //	if (core[loop_index].type & DF_TYPE_SUB)
 //		val = core[loop_index].sub;
@@ -481,7 +509,12 @@ bool DataFold::loop()
 }
 
 void DataFold::loop_reset()
-{ loop_index = 0; }
+{
+	loop_index = 0;
+	type = 0;
+	val = "";
+	key = "";
+}
 
 bool DataFold::not_ended()
 { return !(loop_index == index); }

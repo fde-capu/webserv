@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/03/22 23:00:07 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/03/23 16:57:06 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ HEAD	=	Makefile Encapsulator.hpp setup.hpp header.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp
 SHELL	=	/bin/sh
 CC		=	c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(DEBUG)
-CCFLAGS	=	-Wall -Werror -Wextra -g -fno-limit-debug-info -O0
+CCFLAGS	=	-Wall -Werror -Wextra -g -O0 -fno-limit-debug-info
 OBJS	=	$(SRCS:.cpp=.o)
 VAL		=	valgrind
 VALFLAG	=	--tool=memcheck \

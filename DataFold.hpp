@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:20:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 16:16:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ class DataFold
 		DataFold(datafold_t);
 		DataFold& operator= (DataFold const& rhs);
 		~DataFold();
-		void push_back(std::string key, std::string val);
-		void push_back(std::string key, DataFold sub);
+		void push_back(std::string, std::string);
+		void push_back(std::string, DataFold);
 		void push_back(datafold_t);
 		size_t size() const;
 		const std::string operator[] (std::string) const;
@@ -59,6 +59,7 @@ class DataFold
 		void not_sub_check(datafold_t) const;
 		operator datavec() const;
 		operator std::string() const;
+		operator int() const;
 		datafold_t get_datafold(std::string) const;
 		datafold_t get_datafold(std::string, std::string) const;
 		std::vector<int> get_vector_int(std::string) const;
@@ -68,6 +69,8 @@ class DataFold
 		std::string clean_before_parse(std::string&) const;
 		void array_into_inline(std::string&) const;
 		bool empty() const;
+		DataFold get_val(std::string) const;
+		DataFold get_val(std::string, std::string) const;
 
 		template <typename T>
 		T get(std::string key) const
@@ -82,7 +85,7 @@ class DataFold
 		void loop_reset();
 		bool not_ended();
 		std::string key;
-		datafold_t val;
+		std::string val;
 		int type;
 };
 

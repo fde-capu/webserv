@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 11:26:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/23 17:03:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,12 @@ ArgVal::ArgVal(int argc, char ** argv)
 
 void ArgVal::run()
 {
-	try {
-		if (argc != _board.get<int>("argc", "fixed"))
-			_fail = true;
-	} catch(std::exception&){}
+	int bval = _board.get_val("argc", "fixed");
+	if (bval && bval != argc)
+	{
+		verbose(1) << "argc does not match.";
+		_fail = true;
+	}
 
 	try {
 		if (argc > _board.get<int>("argc", "max"))
@@ -74,10 +76,9 @@ ArgVal::ArgVal()
 
 bool ArgVal::comply()
 {
-//	verbose(2) << *this << std::endl;
-	DataFold comply(_board.get<DataFold>("comply"));
+	verbose(1) << "Comply:" << std::endl;
+	DataFold comply(_board.get_val("comply"));
 	DataFold par;
-//	verbose(2) << "Comply: " << comply << std::endl << std::endl;
 	while (comply.loop())
 	{
 //		verbose(2) << " > " << comply.key << " :: " << comply.val << std::endl;
@@ -89,7 +90,7 @@ bool ArgVal::comply()
 //				verbose(3) << "   > " << par.val << std::endl;
 				if (_config.key_count(par.val) > 1)
 				{
-//					verbose(1) << par.val << " is not unique." << std::endl;
+					verbose(1) << par.val << " is not unique." << std::endl;
 					return false;
 				}
 			}
@@ -102,7 +103,7 @@ bool ArgVal::comply()
 //				verbose(3) << "   > " << par.val << std::endl;
 				if (!(_config.key_count(par.val)))
 				{
-//					verbose(1) << par.val << " is not present." << std::endl;
+					verbose(1) << par.val << " is not present." << std::endl;
 					return false;
 				}
 			}
@@ -129,7 +130,7 @@ bool ArgVal::comply()
 		}
 		if (!valid)
 		{
-//			verbose(1) << "- " << _config.key << " not permitted." << nl;
+			verbose(1) << "- " << _config.key << " not valid." << nl;
 			return false;
 		}
 	}
@@ -159,6 +160,7 @@ bool ArgVal::fail() const
 { return _fail; }
 
 ArgVal::ArgVal(ArgVal const & src)
+: _fail(false)
 {
 	*this = src;
 	return ;
