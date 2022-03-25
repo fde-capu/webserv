@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 13:49:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 15:14:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,24 +26,8 @@ DataFold DataFold::get_val(std::string key) const
 	core_check();
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
-			out.push_back(DataFold(core[i].sub));
+			out.push_back(core[i].sub);
 	return out;
-}
-
-void DataFold::push_back(DataFold df)
-{
-	datafold_t entry;
-	while (df.loop())
-	{
-		entry.index = index++;
-		entry.type = df.type;
-		entry.key = df.key;
-		if (!(df.type & DF_TYPE_SUB))
-			entry.val = df.val;
-		else
-			entry.sub = DataFold(df.val);
-		core.push_back(entry);
-	}
 }
 
 DataFold DataFold::get_val(std::string key, std::string sub) const
@@ -340,6 +324,22 @@ int DataFold::df_type(std::string val)
 	return out;
 }
 
+void DataFold::push_back(datavec dv)
+{
+	datafold_t entry;
+	while (dv.loop())
+	{
+		entry.index = index++;
+		entry.type = dv.type;
+		entry.key = dv.key;
+		if (!(dv.type & DF_TYPE_SUB))
+			entry.val = dv.val;
+		else
+			entry.sub = DataFold(dv.val);
+		core.push_back(entry);
+	}
+}
+
 void DataFold::push_back(std::string key, std::string val)
 {
 	hard_trim(key);
@@ -466,7 +466,7 @@ DF DF::parse_data(const str_t jstr)
 
 	clean_before_parse(ops);
 
-	verbose(2) << nl << "Parsing: " << ops << nl;
+	verbose(4) << nl << "Parsing: " << ops << nl;
 
 	pass = false;
 	while (!pass)
@@ -477,7 +477,7 @@ DF DF::parse_data(const str_t jstr)
 		p[2] = find_outside_quotes_set(ops, ";");
 		p[3] = find_outside_quotes_set(ops, "\n");
 
-		verbose(4)	<< p[0] << ", " << p[1] << ", " \
+		verbose(5)	<< p[0] << ", " << p[1] << ", " \
 					<< p[2] << ", " << p[3] << nl;
 
 		if (p[0] < p[1] && p[0] != nopos && p[1] != p[0] + 1)
@@ -507,7 +507,7 @@ DF DF::parse_data(const str_t jstr)
 		}
 	}
 
-	verbose(2) << "Parsed: " << static_cast<std::string>(out) << nl << nl;
+	verbose(4) << "Parsed: " << static_cast<std::string>(out) << nl << nl;
 
 	return out;
 }
