@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 18:54:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 19:12:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 	size_t count;
 
 	verbose(4) << "comply_argval_params" << std::endl;
+
 	while (board.loop())
 	{
 		verbose(4) << " > " << board.key << " :=: " << board.val << std::endl;
@@ -113,12 +114,13 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				}
 			}
 		}
+
 		if (board.key == "mandatory")
 		{
 			par = board.get<DataFold>("mandatory");
 			while (par.loop())
 			{
-				verbose(3) << "   > " << par.val << std::endl;
+				verbose(4) << "   > " << par.val << std::endl;
 				count = 0;
 				while (config.loop())
 				{
@@ -133,16 +135,19 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			}
 		}
 
-//		std::cout << "Board: " << board.key << "__" << board.val << std::endl;
-//		par = config.get<DataFold>(board.key);
-//		if (par.size() && board.val == "int")
-//		{
-//			std::cout << "INT" << std::endl;
-//			std::cout << "Config: " << config.key << "__" << config.val << std::endl;
-//			std::cout << "Par: " << par << std::endl;
-//			std::cout << "config_key_count: " << par.val << " " << config.key_count(par.val) << std::endl;
-//
-//		}
+		std::cout << "Board: " << board.key << "__" << board.val << std::endl;
+		con = config.get<DataFold>(board.key);
+		if (con.size())
+		{
+			if (board.val == "int")
+			{
+				std::cout << "INT" << std::endl;
+				std::cout << "Config: " << config.key << "__" << config.val << std::endl;
+				std::cout << "Par: " << par << std::endl;
+				std::cout << "config_key_count: " << par.val << " " << config.key_count(par.val) << std::endl;
+
+			}
+		}
 
 	}
 	return true;
