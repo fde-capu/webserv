@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 21:33:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 12:32:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,8 +107,9 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				}
 			}
 		}
-		if (board.type & DF_TYPE_SUB)
-			return comply_argval_params(board.get_val(board.key), config.get<DataFold>(board.key));
+		if ((board.type & DF_TYPE_SUB)
+		&& (!comply_argval_params(board.get_val(board.key), config.get<DataFold>(board.key))))
+			return false;
 	}
 	return true;
 }
@@ -120,30 +121,34 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 
 	while (config.loop())
 	{
-		verbose(3) << "Is this allowed? " << config.key << nl;
+		verbose(3) << "Is this allowed? " << config.key << " -- " << config.val << " (" << config.type << ")" << nl;
 		valid = false;
 		while (board.loop())
 		{
 			verbose(3) << " -- " << board.key << ":" << board.val << nl;
-			if ((board.key == "accept_unique" ||
-				board.key == "accept" ||
-				board.key == "mandatory"
-				)&&
-				(find_outside_quotes(board.val, config.key) != nopos))
+			if ((board.key == "accept_unique"
+			|| board.key == "accept"
+			|| board.key == "mandatory")
+			&& (find_outside_quotes(board.val, config.key) != nopos))
 			{
-				if (!(config.type & DF_TYPE_SUB)
-				|| comply_config_keys(board.get_val(config.key), config.get<DataFold>(board.val)))
-				{
+				if (!(config.type & DF_TYPE_SUB))
 					valid = true;
-					board.loop_reset();
-					break ;
+				else
+				{
+					std::cout << config.key << " IS SUB" << std::endl;
+					valid = comply_config_keys(board.get_val(config.key), config.get<DataFold>(config.key));
 				}
 			}
-		}
-		if (!valid)
-		{
-			verbose(1) << "- " << config.key << " not valid." << nl;
-			return false;
+			if (valid)
+			{
+				board.loop_reset();
+				break ;
+			}
+			else
+			{
+				verbose(1) << "- " << config.key << " not valid." << nl;
+				return false;
+			}
 		}
 	}
 	return true;
