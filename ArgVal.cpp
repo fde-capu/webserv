@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 12:32:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 13:01:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 {
 	DataFold par;
 
+	verbose(3) << "comply_argval_params:" << std::endl;
 	while (board.loop())
 	{
 		verbose(2) << " > " << board.key << " :=: " << board.val << std::endl;
@@ -108,7 +109,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			}
 		}
 		if ((board.type & DF_TYPE_SUB)
-		&& (!comply_argval_params(board.get_val(board.key), config.get<DataFold>(board.key))))
+		&& (!comply_argval_params(board.get_val(board.key), config.get_val(board.key))))
 			return false;
 	}
 	return true;
@@ -119,13 +120,14 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 	bool valid;
 	DataFold par;
 
+	verbose(3) << "comply_config_keys:" << std::endl;
 	while (config.loop())
 	{
-		verbose(3) << "Is this allowed? " << config.key << " -- " << config.val << " (" << config.type << ")" << nl;
+		verbose(3) << " > " << config.key << " :=: " << config.val << " (" << config.type << ")" << nl;
 		valid = false;
 		while (board.loop())
 		{
-			verbose(3) << " -- " << board.key << ":" << board.val << nl;
+			verbose(3) << "   > " << board.key << " :=: " << board.val << nl;
 			if ((board.key == "accept_unique"
 			|| board.key == "accept"
 			|| board.key == "mandatory")
@@ -134,20 +136,17 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 				if (!(config.type & DF_TYPE_SUB))
 					valid = true;
 				else
+					valid = comply_config_keys(board.get_val(config.key), config.get_val(config.key));
+				if (valid)
 				{
-					std::cout << config.key << " IS SUB" << std::endl;
-					valid = comply_config_keys(board.get_val(config.key), config.get<DataFold>(config.key));
+					board.loop_reset();
+					break ;
 				}
-			}
-			if (valid)
-			{
-				board.loop_reset();
-				break ;
-			}
-			else
-			{
-				verbose(1) << "- " << config.key << " not valid." << nl;
-				return false;
+				else
+				{
+					verbose(1) << config.key << " is not valid." << nl;
+					return false;
+				}
 			}
 		}
 	}
