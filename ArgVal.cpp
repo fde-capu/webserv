@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 17:22:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 18:54:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,21 +78,34 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 {
 	DataFold par;
 	DataFold con;
+	size_t count;
 
-	verbose(3) << "comply_argval_params" << std::endl;
+	verbose(4) << "comply_argval_params" << std::endl;
 	while (board.loop())
 	{
 		verbose(4) << " > " << board.key << " :=: " << board.val << std::endl;
+
+		if (board.type & DF_TYPE_SUB)
+		{
+			con = config.get<DataFold>(board.key);
+			while (con.loop())
+			{
+				if (!comply_argval_params(board.get_val(board.key), con.val))
+					return false;
+			}
+		}
+
 		if (board.key == "accept_unique")
 		{
 			par = board.get<DataFold>("accept_unique");
 			while (par.loop())
 			{
 				verbose(4) << "   > " << par.val << std::endl;
+				count = 0;
 				for (size_t i = 0; i < config.size(); i++)
 				{
 					con = config[i];
-					if (par.val == config[i].key && con.key_count(par.val) > 1)
+					if (par.val == config[i].key && ++count > 1)
 					{
 						verbose(1) << par.val << " is not unique." << std::endl;
 						return false;
@@ -105,33 +118,32 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			par = board.get<DataFold>("mandatory");
 			while (par.loop())
 			{
-				verbose(4) << "   > " << par.val << std::endl;
-				for (size_t i = 0; i < config.size(); i++)
+				verbose(3) << "   > " << par.val << std::endl;
+				count = 0;
+				while (config.loop())
 				{
-					con = config[i];
-					if (par.val == config[i].key && !con.key_count(par.val))
-					{
-						verbose(1) << par.val << " is not present." << std::endl;
-						return false;
-					}
+					if (par.val == config.key)
+						count++;
+				}
+				if (!count)
+				{
+					verbose(1) << par.val << " is not present." << std::endl;
+					return false;
 				}
 			}
 		}
 
-		std::cout << "Board: " << board.key << "__" << board.val << std::endl;
-		par = config.get<DataFold>(board.key);
-		if (par.size() && board.val == "int")
-		{
-			std::cout << "INT" << std::endl;
-			std::cout << "Config: " << config.key << "__" << config.val << std::endl;
-			std::cout << "Par: " << par << std::endl;
-			std::cout << "config_key_count: " << par.val << " " << config.key_count(par.val) << std::endl;
+//		std::cout << "Board: " << board.key << "__" << board.val << std::endl;
+//		par = config.get<DataFold>(board.key);
+//		if (par.size() && board.val == "int")
+//		{
+//			std::cout << "INT" << std::endl;
+//			std::cout << "Config: " << config.key << "__" << config.val << std::endl;
+//			std::cout << "Par: " << par << std::endl;
+//			std::cout << "config_key_count: " << par.val << " " << config.key_count(par.val) << std::endl;
+//
+//		}
 
-		}
-
-		if ((board.type & DF_TYPE_SUB)
-		&& (!comply_argval_params(board.get_val(board.key), par)))
-			return false;
 	}
 	return true;
 }
@@ -141,7 +153,7 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 	bool valid;
 	DataFold par;
 
-	verbose(3) << "comply_config_keys" << std::endl;
+	verbose(4) << "comply_config_keys" << std::endl;
 	while (config.loop())
 	{
 		verbose(4) << " > " << config.key << " :=: " << config.val << " (" << config.type << ")" << nl;
