@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 15:14:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 17:34:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,18 @@ DataFold::DataFold(datafold_t df)
 	*this = parse_only_val(df);
 }
 
+DataFold& DataFold::operator= (datafold_t df)
+{
+	DataFold out = DataFold(static_cast<std::string>(df));
+	core = out.getCore();
+	index = out.getIndex();
+	loop_index = 0;
+	key = "";
+	val = "";
+	type = 0;
+	return *this;
+}
+
 DataFold::DataFold(DataFold const & src)
 : index(0), loop_index(0), key(""), val(""), type(0)
 {
@@ -206,7 +218,7 @@ DataFold::operator datavec() const
 int DataFold::getIndex() const
 { return index; }
 
-DataFold & DataFold::operator= (DataFold const & rhs)
+DataFold& DataFold::operator= (DataFold const & rhs)
 {
 	if (this != &rhs)
 	{

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 16:37:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 17:22:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,14 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			while (par.loop())
 			{
 				verbose(4) << "   > " << par.val << std::endl;
-				if (config.key_count(par.val) > 1)
+				for (size_t i = 0; i < config.size(); i++)
 				{
-					verbose(1) << par.val << " is not unique." << std::endl;
-					return false;
+					con = config[i];
+					if (par.val == config[i].key && con.key_count(par.val) > 1)
+					{
+						verbose(1) << par.val << " is not unique." << std::endl;
+						return false;
+					}
 				}
 			}
 		}
@@ -104,7 +108,8 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				verbose(4) << "   > " << par.val << std::endl;
 				for (size_t i = 0; i < config.size(); i++)
 				{
-					if (par.val == config[i].key && !config.key_count(par.val))
+					con = config[i];
+					if (par.val == config[i].key && !con.key_count(par.val))
 					{
 						verbose(1) << par.val << " is not present." << std::endl;
 						return false;

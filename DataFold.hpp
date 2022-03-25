@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 15:55:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 17:26:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class DataFold
 		size_t size() const;
 		const std::string operator[] (std::string) const;
 		const datafold_type operator[] (size_t idx) const;
+		DataFold& operator= (datafold_t);
 		datavec getCore() const;
 		int getIndex() const;
 		DataFold parse_data(const std::string dst);
@@ -72,6 +73,7 @@ class DataFold
 		bool empty() const;
 		DataFold get_val(std::string) const;
 		DataFold get_val(std::string, std::string) const;
+		DataFold get_val(datafold_t) const;
 
 		template <typename T>
 		T get(std::string key) const
