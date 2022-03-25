@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 19:41:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 13:40:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ class DataFold
 		void push_back(std::string, std::string);
 		void push_back(std::string, DataFold);
 		void push_back(datafold_t);
+		void push_back(DataFold);
 		size_t size() const;
 		const std::string operator[] (std::string) const;
 		const datafold_type operator[] (size_t idx) const;

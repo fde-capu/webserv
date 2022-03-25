@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 20:37:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/25 13:49:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,28 @@ DataFold::operator int() const
 
 DataFold DataFold::get_val(std::string key) const
 {
+	DataFold out;
 	core_check();
 	for (int i = 0; i < index; i++)
 		if (key == core[i].key)
-		{
-			return DataFold(core[i].sub);
-		}
-	return DataFold();
+			out.push_back(DataFold(core[i].sub));
+	return out;
+}
+
+void DataFold::push_back(DataFold df)
+{
+	datafold_t entry;
+	while (df.loop())
+	{
+		entry.index = index++;
+		entry.type = df.type;
+		entry.key = df.key;
+		if (!(df.type & DF_TYPE_SUB))
+			entry.val = df.val;
+		else
+			entry.sub = DataFold(df.val);
+		core.push_back(entry);
+	}
 }
 
 DataFold DataFold::get_val(std::string key, std::string sub) const
