@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 20:15:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 20:41:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -377,6 +377,12 @@ bool StringTools::isWordInWordSet(std::string w, std::vector<std::string> vstr) 
 	}
 	return false;
 }
+
+bool isBoolStr(std::string w)
+{ return stool.isBoolStr(w); }
+
+bool StringTools::isBoolStr(std::string w) const
+{ return stool.isWordInWordSet(w, splitOutsideQuotes(ST_BOOL_WORDS)); }
 
 std::vector<std::string> splitOutsideQuotes(const std::string vecstr)
 { return stool.splitOutsideQuotes(vecstr); }

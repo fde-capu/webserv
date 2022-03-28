@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 20:26:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 20:37:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 {
 	DataFold par;
 	DataFold con;
+	DataFold foo;
 	size_t count;
 
 	verbose(3) << "comply_argval_params" << std::endl;
@@ -153,13 +154,15 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				set_flags += AGF_WORD;
 			if (par.val == "only")
 				set_flags += AGF_ONLY;
-			if (par.val == "file_name")
-				set_flags += AGF_FILE_NAME;
 			if (isNumber(par.val))
 			{
 				set_flags += AGF_FIXED_LEN;
 				fixed_len = atoi(par.val.c_str());
 			}
+			if (par.val == "file_name")
+				set_flags += AGF_FILE_NAME;
+			if (par.val == "bool")
+				set_flags += AGF_BOOL;
 		}
 
 		while (con.loop())
@@ -192,15 +195,22 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			}
 			if (set_flags & AGF_FILE_NAME)
 			{
-				DataFold kon = splitOutsideQuotes(con.val);
-
-				while (kon.loop())
+				foo = splitOutsideQuotes(con.val);
+				while (foo.loop())
 				{
-					if (!isFileName(kon.val))
+					if (!isFileName(foo.val))
 					{
-						verbose(1) << kon.val << " is not a valid file name." << std::endl;
+						verbose(1) << foo.val << " is not a valid file name." << std::endl;
 						return false;
 					}
+				}
+			}
+			if (set_flags & AGF_BOOL)
+			{
+				if (!isBoolStr(con.val))
+				{
+					verbose(1) << con.key << " must be a boolean." << std::endl;
+					return false;
 				}
 			}
 		}

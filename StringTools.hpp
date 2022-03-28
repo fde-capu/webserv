@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 20:14:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 20:40:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # define ST_DEFAULT_QUOTE "'"
 # define ST_WORD_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789"
 # define ST_FILENAME_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_"
+# define ST_BOOL_WORDS "0 1 off on false true"
 
 class StringTools
 {
@@ -63,6 +64,7 @@ class StringTools
 		bool isDigit(char) const;
 		bool isWord(const std::string) const;
 		bool isWordInWordSet(std::string, std::vector<std::string>) const;
+		bool isBoolStr(std::string) const;
 		std::string itos(int) const;
 		std::string apply_quotes(std::string) const;
 		std::string apply_quotes(std::string, std::string) const;
@@ -102,6 +104,7 @@ bool isAllNumber(std::vector<std::string>);
 bool isDigit(char);
 bool isWord(const std::string);
 bool isWordInWordSet(std::string, std::vector<std::string>);
+bool isBoolStr(std::string);
 std::string itos(int);
 std::string apply_quotes(std::string);
 std::string apply_quotes(std::string, std::string);
