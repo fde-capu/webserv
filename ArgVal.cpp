@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 20:37:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 20:52:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,8 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				set_flags += AGF_FILE_NAME;
 			if (par.val == "bool")
 				set_flags += AGF_BOOL;
+			if (par.val == "number*file_name")
+				set_flags += AGF_NUMBER_TIL_FILE_NAME;
 		}
 
 		while (con.loop())
@@ -211,6 +213,29 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				{
 					verbose(1) << con.key << " must be a boolean." << std::endl;
 					return false;
+				}
+			}
+			if (set_flags & AGF_NUMBER_TIL_FILE_NAME)
+			{
+				foo = splitOutsideQuotes(con.val);
+				while (foo.loop())
+				{
+					if (!foo.loop_ended())
+					{
+						if (!isNumber(foo.val))
+						{
+							verbose(1) << con.key << " " << con.val << " bad syntax." << std::endl;
+							return false;
+						}
+					}
+					else
+					{
+						if (!isFileName(foo.val))
+						{
+							verbose(1) << foo.val << " is not a valid file name." << std::endl;
+							return false;
+						}
+					}
 				}
 			}
 		}
