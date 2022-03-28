@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 20:46:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 21:07:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class ArgVal
 		FileString& getBoard()const;
 		FileString& getConfig()const;
 		bool fail() const;
+		bool success() const;
 
 		bool comply();
 		bool comply_argval_params(DataFold, DataFold);

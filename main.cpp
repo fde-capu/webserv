@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/18 14:17:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 21:07:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,9 @@
 
 bool validate_args(int argc, char **argv)
 {
-	char argconf[] = "argval.conf";
+	char argconf[] = WS_CONFIG_SETUP;
 	ArgVal av = ArgVal(argc, argv, argconf);
-	std::cout << "fail: " << av.fail() << std::endl;
-	return true || false;
+	return av.success();
 }
 
 bool essential_configuration(maps & conf)

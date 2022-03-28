@@ -6,12 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/10 18:24:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 21:06:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HEADER_HPP
 # define HEADER_HPP
+
+# define WS_CONFIG_SETUP "argval.conf"
 
 # include <map>
 # include <string>
