@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 14:21:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 15:48:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,17 +150,27 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				set_flags += AGF_NUMBER;
 			if (par.val == "word")
 				set_flags += AGF_WORD;
+			if (par.val == "only")
+				set_flags += AGF_ONLY;
+		}
 
-			while (con.loop())
+		while (con.loop())
+		{
+			if (set_flags & AGF_NUMBER && !isNumber(con.val))
 			{
-				if (set_flags & AGF_NUMBER && !isNumber(con.val))
+				verbose(1) << con.val << " is not a number." << std::endl;
+				return false;
+			}
+			if (set_flags & AGF_WORD && !isWord(con.val))
+			{
+				verbose(1) << con.val << " is not valid word." << std::endl;
+				return false;
+			}
+			if (set_flags & AGF_ONLY)
+			{
+				if (!isWordInWordSet(con.val, par.get_val().pop()))
 				{
-					verbose(1) << con.val << " is not a number." << std::endl;
-					return false;
-				}
-				if (set_flags & AGF_WORD && !isWord(con.val))
-				{
-					verbose(1) << par.key << " " << con.val << " is not valid word." << std::endl;
+					verbose(1) << con.val << " invalid." << std::endl;
 					return false;
 				}
 			}

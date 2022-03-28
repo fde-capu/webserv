@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 14:16:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 14:46:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ class StringTools
 		bool isAllNumber(std::vector<std::string>) const;
 		bool isDigit(char) const;
 		bool isWord(const std::string) const;
+		bool isWordInWordSet(std::string, std::vector<std::string>) const;
 		std::string itos(int) const;
 		std::string apply_quotes(std::string) const;
 		std::string apply_quotes(std::string, std::string) const;
@@ -100,6 +101,7 @@ bool isNumber(std::string);
 bool isAllNumber(std::vector<std::string>);
 bool isDigit(char);
 bool isWord(const std::string);
+bool isWordInWordSet(std::string, std::vector<std::string>);
 std::string itos(int);
 std::string apply_quotes(std::string);
 std::string apply_quotes(std::string, std::string);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 17:34:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 16:03:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,15 @@ DataFold::operator int() const
 	|| (!(core.type & DF_TYPE_NUMBER)))
 		return 0;
 	return atoi(core[0].val.c_str());
+}
+
+DataFold DataFold::get_val() const
+{
+	DataFold out;
+	DataFold dup(*this);
+	while (dup.loop())
+		out.push_back("", dup.val);
+	return out;
 }
 
 DataFold DataFold::get_val(std::string key) const
@@ -119,6 +128,16 @@ void DataFold::not_sub_check(datafold_t df) const
 		throw std::invalid_argument(DF_ERR_IS_OBJECT);
 }
 
+std::vector<std::string> DataFold::get_vector_str() const
+{
+	std::vector<std::string> out;
+	for (int i = 0; i < index; i++)
+	{
+		out.push_back(core[i].val);
+	}
+	return out;
+}
+
 std::vector<std::string> DataFold::get_vector_str(std::string key) const
 {
 	core_check();
@@ -164,6 +183,9 @@ std::vector<std::string> DataFold::get_vector_str(std::string key, std::string k
 
 DataFold::operator std::string() const
 { return getCore(); }
+
+DataFold::operator std::vector<std::string>() const
+{ return get_vector_str(); }
 
 //std::ostream & operator<< (std::ostream & o, DataFold const& self)
 //{
@@ -350,6 +372,15 @@ void DataFold::push_back(datavec dv)
 			entry.sub = DataFold(dv.val);
 		core.push_back(entry);
 	}
+}
+
+DataFold& DataFold::pop()
+{
+	core.erase(core.begin());
+	for (size_t i = 0; i < core.size(); i++)
+		core[i].index--;
+	index--;
+	return *this;
 }
 
 void DataFold::push_back(std::string key, std::string val)

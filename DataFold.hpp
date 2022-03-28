@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 17:26:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 16:03:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class DataFold
 		void push_back(std::string, DataFold);
 		void push_back(datafold_t);
 		void push_back(datavec);
+		DataFold& pop();
 		size_t size() const;
 		const std::string operator[] (std::string) const;
 		const datafold_type operator[] (size_t idx) const;
@@ -62,15 +63,18 @@ class DataFold
 		operator datavec() const;
 		operator std::string() const;
 		operator int() const;
+		operator std::vector<std::string>() const;
 		datafold_t get_datafold(std::string) const;
 		datafold_t get_datafold(std::string, std::string) const;
 		std::vector<int> get_vector_int(std::string) const;
 		std::vector<int> get_vector_int(std::string, std::string) const;
+		std::vector<std::string> get_vector_str() const;
 		std::vector<std::string> get_vector_str(std::string) const;
 		std::vector<std::string> get_vector_str(std::string, std::string) const;
 		std::string clean_before_parse(std::string&) const;
 		void array_into_inline(std::string&) const;
 		bool empty() const;
+		DataFold get_val() const;
 		DataFold get_val(std::string) const;
 		DataFold get_val(std::string, std::string) const;
 		DataFold get_val(datafold_t) const;
@@ -93,6 +97,18 @@ class DataFold
 					out.push_back(core[i]);
 			return out;
 		}
+
+		template <typename T>
+		T get(std::string key, std::string ksub) const
+		{
+			static_cast<void>(key);
+			static_cast<void>(ksub);
+			return T();
+		}
+
+		template <>
+		std::vector<std::string> get(std::string key, std::string ksub) const
+		{ return get_vector_str(key, ksub); }
 
 		bool loop();
 		void loop_reset();
