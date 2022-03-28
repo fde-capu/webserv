@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 21:09:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 21:34:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,7 +253,7 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 		valid = false;
 		while (board.loop())
 		{
-			verbose(4) << "   > " << board.key << " :=: " << board.val << nl;
+			verbose(1) << "   > " << board.key << " :=: " << board.val << nl;
 			if ((board.key == "accept_unique"
 			|| board.key == "accept"
 			|| board.key == "mandatory")
@@ -276,6 +276,7 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 			}
 		}
 	}
+	verbose(1) << "      > " << config.string() << " is valid." << std::endl;
 	return true;
 }
 

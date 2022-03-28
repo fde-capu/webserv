@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 20:31:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 21:35:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -364,6 +364,11 @@ int DataFold::df_type(std::string val)
 	else
 		out += isNumber(val) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
 	return out;
+}
+
+std::string DataFold::string() const
+{
+	return *this;
 }
 
 void DataFold::push_back(datavec dv)
