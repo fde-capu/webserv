@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 20:34:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 14:20:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -357,9 +357,13 @@ bool isDigit(char d)
 { return stool.isDigit(d); }
 
 bool StringTools::isDigit(char d) const
-{
-	return d >= '0' && d <= '9';
-}
+{ return d >= '0' && d <= '9'; }
+
+bool isWord(const std::string w)
+{ return stool.isWord(w); }
+
+bool StringTools::isWord(const std::string w) const
+{ return isAllInSet(w, ST_WORD_SET); }
 
 std::vector<std::string> splitOutsideQuotes(const std::string vecstr)
 { return stool.splitOutsideQuotes(vecstr); }
@@ -435,7 +439,7 @@ bool valid_file_name(std::string fn)
 { return stool.valid_file_name(fn); }
 
 bool StringTools::valid_file_name(std::string fn) const
-{ return isAllInSet(fn, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_"); }
+{ return isAllInSet(fn, ST_FILENAME_SET); }
 
 bool isAllInSet(std::string str, std::string set)
 { return stool.isAllInSet(str, set); }

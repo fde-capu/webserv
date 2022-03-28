@@ -6,12 +6,15 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 20:49:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 14:19:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ARGVAL_HPP
 # define ARGVAL_HPP
+
+# define AGF_NUMBER 1
+# define AGF_WORD 2
 
 # include "FileString.hpp"
 //# include <iostream>
@@ -55,5 +58,4 @@ class ArgVal
 };
 
 //std::ostream & operator<< (std::ostream &, ArgVal const &);
-
 #endif

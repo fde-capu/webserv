@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 19:50:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 14:16:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # define ST_QUOTE_SET "\"'`"
 # define ST_COMMENT_INLINE "#"
 # define ST_DEFAULT_QUOTE "'"
+# define ST_WORD_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789"
+# define ST_FILENAME_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_"
 
 class StringTools
 {
@@ -51,7 +53,7 @@ class StringTools
 		void erase_boundaries(std::string&, std::string, std::string) const;
 		size_t find_outside_quotes(std::string&, std::string) const;
 		size_t find_closing_bracket(std::string) const;
-		size_t find_outside_quotes_set(std::string& str, std::string set) const;
+		size_t find_outside_quotes_set(std::string&, std::string) const;
 		void remove_comments(std::string&) const;
 		std::string remove_quotes(std::string&) const;
 		std::string remove_quotes(const std::string&) const;
@@ -59,6 +61,7 @@ class StringTools
 		bool isNumber(std::string) const;
 		bool isAllNumber(std::vector<std::string>) const;
 		bool isDigit(char) const;
+		bool isWord(const std::string) const;
 		std::string itos(int) const;
 		std::string apply_quotes(std::string) const;
 		std::string apply_quotes(std::string, std::string) const;
@@ -96,6 +99,7 @@ std::string escape_char(const std::string, std::string);
 bool isNumber(std::string);
 bool isAllNumber(std::vector<std::string>);
 bool isDigit(char);
+bool isWord(const std::string);
 std::string itos(int);
 std::string apply_quotes(std::string);
 std::string apply_quotes(std::string, std::string);

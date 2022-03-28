@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 19:12:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 14:21:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 	DataFold con;
 	size_t count;
 
-	verbose(4) << "comply_argval_params" << std::endl;
+	verbose(3) << "comply_argval_params" << std::endl;
 
 	while (board.loop())
 	{
@@ -135,17 +135,34 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			}
 		}
 
-		std::cout << "Board: " << board.key << "__" << board.val << std::endl;
-		con = config.get<DataFold>(board.key);
-		if (con.size())
-		{
-			if (board.val == "int")
-			{
-				std::cout << "INT" << std::endl;
-				std::cout << "Config: " << config.key << "__" << config.val << std::endl;
-				std::cout << "Par: " << par << std::endl;
-				std::cout << "config_key_count: " << par.val << " " << config.key_count(par.val) << std::endl;
+		std::cout << "Board: " << board.key << " :=: " << board.val << std::endl;
 
+		con = config.get<DataFold>(board.key);
+		if (con.empty())
+			continue;
+
+		par = board.get<DataFold>(board.key);
+		int set_flags = 0;
+
+		while (par.loop())
+		{
+			if (par.val == "number")
+				set_flags += AGF_NUMBER;
+			if (par.val == "word")
+				set_flags += AGF_WORD;
+
+			while (con.loop())
+			{
+				if (set_flags & AGF_NUMBER && !isNumber(con.val))
+				{
+					verbose(1) << con.val << " is not a number." << std::endl;
+					return false;
+				}
+				if (set_flags & AGF_WORD && !isWord(con.val))
+				{
+					verbose(1) << par.key << " " << con.val << " is not valid word." << std::endl;
+					return false;
+				}
 			}
 		}
 
