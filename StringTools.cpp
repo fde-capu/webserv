@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 16:32:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 20:15:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -448,10 +448,10 @@ std::string StringTools::itoa(int i) const
 	return ss.str();
 }
 
-bool valid_file_name(std::string fn)
-{ return stool.valid_file_name(fn); }
+bool isFileName(std::string fn)
+{ return stool.isFileName(fn); }
 
-bool StringTools::valid_file_name(std::string fn) const
+bool StringTools::isFileName(std::string fn) const
 { return isAllInSet(fn, ST_FILENAME_SET); }
 
 bool isAllInSet(std::string str, std::string set)

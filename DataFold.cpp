@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 16:47:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 20:31:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,9 +196,7 @@ DataFold::operator std::vector<std::string>() const
 
 DataFold::DataFold()
 : index(0), loop_index(0), key(""), val(""), type(0)
-{
-	return ;
-}
+{ }
 
 DataFold::DataFold(std::string df_data)
 : index(0), loop_index(0), key(""), val(""), type(0)
@@ -210,6 +208,13 @@ DataFold::DataFold(datafold_t df)
 : index(0), loop_index(0), key(""), val(""), type(0)
 {
 	*this = parse_only_val(df);
+}
+
+DataFold::DataFold(std::vector<std::string> vs)
+: index(0), loop_index(0), key(""), val(""), type(0)
+{
+	for (size_t i = 0; i < vs.size(); i++)
+		push_back("", vs[i]);
 }
 
 DataFold& DataFold::operator= (datafold_t df)
@@ -582,9 +587,7 @@ bool DataFold::loop()
 	}
 
 	if (core[loop_index].type & DF_TYPE_SUB)
-	{
 		val = static_cast<std::string>(core[loop_index].sub);
-	}
 	else
 		val = core[loop_index].val;
 
@@ -606,9 +609,7 @@ void DataFold::loop_reset()
 bool DataFold::loop_ended()
 {
 	if (is_single_array())
-	{
 		return loop_index >= word_count(core[0].val);
-	}
 	return loop_index == index;
 }
 

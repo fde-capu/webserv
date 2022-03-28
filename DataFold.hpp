@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 16:47:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 20:31:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class DataFold
 		DataFold();
 		DataFold(DataFold const& src);
 		DataFold(datafold_t);
+		DataFold(std::vector<std::string>);
 		DataFold& operator= (DataFold const& rhs);
 		~DataFold();
 		void push_back(std::string, std::string);

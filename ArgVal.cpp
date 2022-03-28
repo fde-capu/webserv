@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 16:50:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 20:26:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void ArgVal::run()
 		vt = _board.get<vstr>("argv", itoa(argi));
 		if (vt.size() && vt[0] == "file_name")
 		{
-			if (!valid_file_name(std::string(argv[1])))
+			if (!isFileName(std::string(argv[1])))
 				_fail = true;
 			if (vt.size() > 1 && vt[1] == "comply")
 			{
@@ -153,6 +153,8 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				set_flags += AGF_WORD;
 			if (par.val == "only")
 				set_flags += AGF_ONLY;
+			if (par.val == "file_name")
+				set_flags += AGF_FILE_NAME;
 			if (isNumber(par.val))
 			{
 				set_flags += AGF_FIXED_LEN;
@@ -188,8 +190,20 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					return false;
 				}
 			}
-		}
+			if (set_flags & AGF_FILE_NAME)
+			{
+				DataFold kon = splitOutsideQuotes(con.val);
 
+				while (kon.loop())
+				{
+					if (!isFileName(kon.val))
+					{
+						verbose(1) << kon.val << " is not a valid file name." << std::endl;
+						return false;
+					}
+				}
+			}
+		}
 	}
 	return true;
 }
