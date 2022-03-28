@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 16:03:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 16:47:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@ class DataFold
 {
 	private:
 		datavec	core;
-		int		index;
-		int		loop_index;
+		size_t	index;
+		size_t	loop_index;
 
 	public:
 		typedef std::vector<int>			vint;
@@ -53,6 +53,7 @@ class DataFold
 		std::string eqvals_to_arrstr(std::string key) const;
 		std::string quoted_val(datafold_t) const;
 		const std::string getValStr(std::string key) const;
+		std::string get_val_str() const;
 		int key_count(std::string key) const;
 		int key_count_exists_check(std::string key) const;
 		void key_count_single_check(std::string key) const;
@@ -74,15 +75,15 @@ class DataFold
 		std::string clean_before_parse(std::string&) const;
 		void array_into_inline(std::string&) const;
 		bool empty() const;
-		DataFold get_val() const;
 		DataFold get_val(std::string) const;
 		DataFold get_val(std::string, std::string) const;
 		DataFold get_val(datafold_t) const;
+		DataFold get_val() const;
 
 		template <typename T>
 		T get(std::string key) const
 		{
-			for (int i = 0; i < index; i++)
+			for (size_t i = 0; i < index; i++)
 				if (key == core[i].key)
 					return T(core[i]);
 			return T();
@@ -92,7 +93,7 @@ class DataFold
 		DataFold get(std::string key) const
 		{
 			DataFold out;
-			for (int i = 0; i < index; i++)
+			for (size_t i = 0; i < index; i++)
 				if (key == core[i].key)
 					out.push_back(core[i]);
 			return out;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 15:48:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 16:50:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 
 		par = board.get<DataFold>(board.key);
 		int set_flags = 0;
+		size_t fixed_len = 0;
 
 		while (par.loop())
 		{
@@ -152,6 +153,11 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				set_flags += AGF_WORD;
 			if (par.val == "only")
 				set_flags += AGF_ONLY;
+			if (isNumber(par.val))
+			{
+				set_flags += AGF_FIXED_LEN;
+				fixed_len = atoi(par.val.c_str());
+			}
 		}
 
 		while (con.loop())
@@ -171,6 +177,14 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				if (!isWordInWordSet(con.val, par.get_val().pop()))
 				{
 					verbose(1) << con.val << " invalid." << std::endl;
+					return false;
+				}
+			}
+			if (set_flags & AGF_FIXED_LEN)
+			{
+				if (word_count(con.val) != fixed_len)
+				{
+					verbose(1) << con.key << " (" << con.get_val() << ") has incorrect number of parameters." << std::endl;
 					return false;
 				}
 			}

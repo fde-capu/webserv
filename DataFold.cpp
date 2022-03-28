@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 16:03:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 16:47:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ DataFold DataFold::get_val(std::string key) const
 {
 	DataFold out;
 	core_check();
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 		if (key == core[i].key)
 			out.push_back(core[i].sub);
 	return out;
@@ -45,7 +45,7 @@ DataFold DataFold::get_val(std::string key, std::string sub) const
 
 	core_check();
 	key_count_single_check(key);
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 		if (key == core[i].key)
 		{
 			df_sub = get_val(key);
@@ -58,7 +58,7 @@ datafold_t DataFold::get_datafold(std::string key, std::string ksub) const
 {
 	core_check();
 	key_count_single_check(key);
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 		if (key == core[i].key)
 			for (size_t j = 0; j < core[i].sub.size(); j++)
 				if (ksub == core[i].sub[j].key)
@@ -70,7 +70,7 @@ std::vector<int> DataFold::get_vector_int(std::string key) const
 {
 	core_check();
 	std::vector<int> out;
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 		if (core[i].key == key)
 		{
 			if (!(core[i].type & DF_TYPE_NUMBER))
@@ -91,7 +91,7 @@ std::vector<int> DataFold::get_vector_int(std::string key, std::string ksub) con
 {
 	core_check();
 	std::vector<int> out;
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 		if (key == core[i].key)
 			for (size_t j = 0; j < core[i].sub.size(); j++)
 				if (ksub == core[i].sub[j].key)
@@ -131,7 +131,7 @@ void DataFold::not_sub_check(datafold_t df) const
 std::vector<std::string> DataFold::get_vector_str() const
 {
 	std::vector<std::string> out;
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 	{
 		out.push_back(core[i].val);
 	}
@@ -142,7 +142,7 @@ std::vector<std::string> DataFold::get_vector_str(std::string key) const
 {
 	core_check();
 	std::vector<std::string> out;
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 		if (core[i].key == key)
 		{
 			not_sub_check(core[i]);
@@ -162,7 +162,7 @@ std::vector<std::string> DataFold::get_vector_str(std::string key, std::string k
 {
 	core_check();
 	std::vector<std::string> out;
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 		if (key == core[i].key)
 			for (size_t j = 0; j < core[i].sub.size(); j++)
 				if (ksub == core[i].sub[j].key)
@@ -268,7 +268,7 @@ std::string DataFold::eqvals_to_arrstr(std::string key) const
 {
 	bool put_comma = false;
 	std::string out(DF_ARRAY_INIT);
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 	{
 		if (core[i].key == key)
 		{
@@ -300,7 +300,7 @@ void DataFold::core_check() const
 int DataFold::key_count(std::string key) const
 {
 	int out = 0;
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 		out += core[i].key == key ? 1 : 0;
 	return out;
 }
@@ -320,9 +320,12 @@ void DataFold::key_count_single_check(std::string key) const
 		throw std::invalid_argument(DF_ERR_IS_ARRAY DF_ERR_NOT_SINGLE_KEY);
 }
 
+std::string DataFold::get_val_str() const
+{ return *this; }
+
 const std::string DataFold::getValStr(std::string key) const
 {
-	for (int i = 0; i < index; i++)
+	for (size_t i = 0; i < index; i++)
 		if (key == core[i].key)
 			return core[i].val;
 	return std::string("");

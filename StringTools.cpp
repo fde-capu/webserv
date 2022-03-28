@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 15:02:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/28 16:32:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -370,10 +370,8 @@ bool isWordInWordSet(std::string w, std::vector<std::string> vstr)
 
 bool StringTools::isWordInWordSet(std::string w, std::vector<std::string> vstr) const
 {
-	std::cout << "isWordInWordSet!! " << w << ":" << vstr.size() << std::endl;
 	for (size_t i = 0; i < vstr.size(); i++)
 	{
-		std::cout << "\t\tWW " << w << " x " << vstr[i] << "\n";
 		if (vstr[i] == w)
 			return true;
 	}
@@ -492,10 +490,10 @@ std::string StringTools::nth_word(std::string str, int n) const
 	return str;
 }
 
-int word_count(std::string str)
+size_t word_count(std::string str)
 { return stool.word_count(str); }
 
-int StringTools::word_count(std::string str) const
+size_t StringTools::word_count(std::string str) const
 {
 	int out = str.length() ? 1 : 0;
 	while (find_outside_quotes_set(str, " \n") != std::string::npos && ++out)
