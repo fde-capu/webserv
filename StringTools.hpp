@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 20:40:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/30 14:16:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ class StringTools
 
 static const StringTools stool = StringTools();
 
+std::string trim(std::string&);
 void soft_trim(std::string&);
 void soft_trim(std::string&, std::string);
 void hard_trim(std::string&);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 21:35:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/30 16:17:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -571,13 +571,16 @@ DF DF::parse_data(const str_t jstr)
 bool DataFold::is_single_array() const
 {
 	return		core.size() == 1 
-			&&	core[0].type && DF_TYPE_ARRAY;
+			&&	core[0].type & DF_TYPE_ARRAY
+//			&&	!(core[0].type & DF_TYPE_SUB)
+			;
 }
 
 bool DataFold::loop()
 {
 	if (loop_ended())
 	{
+//		std::cout << " ...loop ret false " << loop_index << ":" << index << nl;
 		loop_reset();
 		return false;
 	}
@@ -613,9 +616,16 @@ void DataFold::loop_reset()
 
 bool DataFold::loop_ended()
 {
+//	std::cout << " ...loop_check " << loop_index << ":" << index << nl;
 	if (is_single_array())
+	{
+//		std::cout << " ...array " << loop_index << ":" << word_count(core[0].val) << nl;
 		return loop_index >= word_count(core[0].val);
-	return loop_index == index;
+	}
+//	if (type & DF_TYPE_SUB)
+//		return loop_index >= sub_size();
+	std::cout << " ...normal " << loop_index << ":" << index << nl;
+	return loop_index >= index;
 }
 
 bool DataFold::not_ended()

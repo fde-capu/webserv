@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/25 16:14:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/30 14:25:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ datafold_t::operator std::string() const
 	return out;
 }
 
+std::string datavec::string() const
+{ return *this; }
+
 datavec::operator std::string() const
 {
 	std::string out = "{ ";
@@ -48,7 +51,7 @@ datavec::operator std::string() const
 		out += static_cast<std::string>((*this)[i]) + "; ";
 	}
 	out += "} ";
-	return out;
+	return trim(out);
 }
 
 datafold_t::operator int() const

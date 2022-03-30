@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 15:23:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/30 14:25:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ typedef class datavec : public std::vector<datafold_t>
 		std::string key;
 		std::string val;
 		int type;
+		std::string string() const;
 } dvec;
 
 typedef struct datafold_type

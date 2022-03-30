@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 20:41:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/30 14:16:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,12 @@ void StringTools::hard_trim(std::string& dst, std::string set) const
 		std::string xx = std::string(i, i + 1) + std::string(i, i + 1);
 		substitute_super(dst, xx, std::string(i, i + 1));
 	}
+}
+
+std::string trim(std::string& dst)
+{
+	stool.soft_trim(dst);
+	return dst;
 }
 
 void soft_trim(std::string& dst, std::string set)
