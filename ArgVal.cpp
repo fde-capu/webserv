@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 15:52:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 16:04:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,6 +243,17 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 	return true;
 }
 
+size_t ArgVal::count_keys(DataFold data, std::string key)
+{
+	size_t out = 0;
+	while (data.loop())
+	{
+		if (data.key == key)
+			out++;
+	}
+	return out;
+}
+
 bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 {
 	bool valid;
@@ -265,7 +276,7 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 			{
 //				std::cout << "Array! " << nl;
 			}
-			if (board.key == "accept" && find_outside_quotes(board.val, config.key) != std::string::npos)
+			if (board.key == "accept" && count_keys(board.val, config.key))
 				valid = true;
 			else if (board.key == "accept_unique" && find_outside_quotes(board.val, config.key) != std::string::npos)
 				valid = true;
