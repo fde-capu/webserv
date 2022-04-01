@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/30 16:17:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/03/30 18:00:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -624,7 +624,7 @@ bool DataFold::loop_ended()
 	}
 //	if (type & DF_TYPE_SUB)
 //		return loop_index >= sub_size();
-	std::cout << " ...normal " << loop_index << ":" << index << nl;
+//	std::cout << " ...normal " << loop_index << ":" << index << nl;
 	return loop_index >= index;
 }
 
