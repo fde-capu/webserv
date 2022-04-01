@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 17:45:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 17:50:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,6 @@ size_t ArgVal::count_keys(DataFold data, std::string key) const
 	size_t out = 0;
 	while (data.loop())
 	{
-		std::cout << data.key << " == " << key << std::endl;
 		if (data.key == key)
 			out++;
 	}
@@ -279,7 +278,6 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 			}
 			DataFold bv = board.get_datafold();
 			size_t count = count_keys(bv, config.key);
-			std::cout << "    c (" << board.val << " > " << config.key << ") " << count << std::endl;
 			if (board.key == "accept" && count)
 				valid = true;
 			else if (board.key == "accept_unique" && count == 1)
