@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 17:50:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 17:56:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,7 @@ size_t ArgVal::count_keys(DataFold data, std::string key) const
 	size_t out = 0;
 	while (data.loop())
 	{
-		if (data.key == key)
+		if (data.val == key)
 			out++;
 	}
 	return out;
@@ -272,10 +272,10 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 				if (!comply_config_keys(board.get_val(board.key), config.val))
 					return false;
 			}
-			if (board.type & DF_TYPE_ARRAY)
-			{
+//			if (board.type & DF_TYPE_ARRAY)
+//			{
 //				std::cout << "Array! " << nl;
-			}
+//			}
 			DataFold bv = board.get_datafold();
 			size_t count = count_keys(bv, config.key);
 			if (board.key == "accept" && count)
