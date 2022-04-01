@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 15:17:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 15:26:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,7 +252,7 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 	while (config.loop())
 	{
 		verbose(3) << "  config > " << config.key << " :=: " << config.val << " (" << config.type << ")" << nl;
-		valid = true;
+		valid = false;
 		while (board.loop())
 		{
 			verbose(3) << "  board > " << board.key << " :=: " << board.val << nl;
@@ -265,11 +265,14 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 			{
 //				std::cout << "Array! " << nl;
 			}
-			if (board.key == "accept") {}
-			else if (board.key == "accept_unique" || board.key == "mandatory")
-				valid = find_outside_quotes(board.val, config.key) != nopos;
-			else if (board.get<DataFold>(config.key).empty())
-				valid = false;
+			if (board.key == "accept" && find_outside_quotes(board.val, config.key) != std::string::npos)
+				valid = true;
+			else if (board.key == "accept_unique" && find_outside_quotes(board.val, config.key) != std::string::npos)
+				valid = true;
+			else if (board.key == "mandatory" && find_outside_quotes(board.val, config.key) != std::string::npos)
+				valid = true;
+			else if (!board.get<DataFold>(config.key).empty())
+				valid = true;
 		}
 		if (valid)
 			board.loop_reset();
