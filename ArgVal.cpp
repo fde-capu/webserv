@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 15:26:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 15:52:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -297,24 +297,6 @@ bool ArgVal::comply()
 	if (!comply_check(comply, _config))
 		return false;
 
-	std::cout << " General testing:" << std::endl;
-	DataFold tp = _config.get<DataFold>("test_port");
-//	std::cout << "tp: " << tp << std::endl;
-	while (tp.loop())
-	{
-		std::cout << "\t" << tp.key << "||" << tp.val << std::endl;
-	}
-
-//	std::string argvt(_board.get<std::string>("single"));
-//	std::cout << "0 ----->" << argvt << std::endl;
-//	std::cout << "_board: " << _board << std::endl;
-//	DataFold cply(_board.get<DataFold>("comply"));
-//	std::cout << "1 ----->" << cply << std::endl;
-//	std::cout << "2 ----->" << cply.get<std::string>("server") << std::endl;
-//	std::string cplystr = _board.get<std::string>("comply");
-//	std::cout << "3 ----->" << cplystr << std::endl;
-//	std::string cplystr2 = cply;
-//	std::cout << "4 ----->" << cplystr2 << std::endl;
 	return true;
 }
 
