@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 20:08:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 20:35:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,14 +261,12 @@ size_t ArgVal::count_keys(DataFold data, std::string key) const
 
 bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 {
-	bool valid;
 	DataFold par;
 
 	verbose(3) << "### cck comply_config_keys > " << board.string() << " >> " << config.string() << std::endl;
 	while (config.loop())
 	{
 		verbose(3) << "  config > " << config.key << " :=: " << config.val << " (" << config.type << ")" << nl;
-		valid = false;
 		while (board.loop())
 		{
 			verbose(3) << "  board > " << board.key << " :=: " << board.val << nl;
@@ -278,24 +276,15 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 				std::cout << "HERE " << std::endl;
 				if (!comply_config_keys(board.get_val(board.key), config.val))
 					return false;
-//				valid = count ? true : comply_argval_params(board.get_val(board.key), config.val) && comply_config_keys(board.get_val(board.key), config.val);
 			}
-
-			DataFold bv = board.get_datafold();
-			size_t count = count_keys(bv, config.key);
-
-			if (count)
+			if (board.key != "accept" && board.key != "accept_unique" && board.key != "mandatory")
 			{
-				if (board.key == "accept" || board.key == "accept_unique" || board.key == "mandatory")
+				if (count_keys(board, config.key) == 0)
 				{
-					valid = true;
+					verbose(1) << config.key << " should not be." << std::endl;
+					return false;
 				}
 			}
-		}
-		if (!valid)
-		{
-			verbose(1) << config.key << " is not valid." << nl;
-			return false;
 		}
 	}
 	verbose(3) << "> " << config.string() << " is valid." << std::endl;
