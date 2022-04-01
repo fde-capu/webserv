@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 17:21:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 17:45:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,6 +248,7 @@ size_t ArgVal::count_keys(DataFold data, std::string key) const
 	size_t out = 0;
 	while (data.loop())
 	{
+		std::cout << data.key << " == " << key << std::endl;
 		if (data.key == key)
 			out++;
 	}
@@ -276,7 +277,8 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 			{
 //				std::cout << "Array! " << nl;
 			}
-			size_t count = count_keys(board.get_val(), config.key);
+			DataFold bv = board.get_datafold();
+			size_t count = count_keys(bv, config.key);
 			std::cout << "    c (" << board.val << " > " << config.key << ") " << count << std::endl;
 			if (board.key == "accept" && count)
 				valid = true;
@@ -284,7 +286,7 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 				valid = true;
 			else if (board.key == "mandatory" && !count)
 				valid = true;
-			else if (!board.get<DataFold>(config.key).empty())
+			else if (count)
 				valid = true;
 			if (valid)
 			{

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/30 18:00:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 17:47:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,16 @@ DataFold DataFold::get_val(std::string key, std::string sub) const
 			return df_sub.get_val(sub);
 		}
 	return DataFold();
+}
+
+datafold_t DataFold::get_datafold() const
+{
+	core_check();
+	key_count_single_check(key);
+	for (size_t i = 0; i < index; i++)
+		if (key == core[i].key)
+			return core[i];
+	return datafold_t();
 }
 
 datafold_t DataFold::get_datafold(std::string key, std::string ksub) const
@@ -504,7 +514,7 @@ DataFold DataFold::parse_only_val(const datafold_t df)
 		entry.val = df.val;
 		hard_trim(entry.val);
 		entry.type = df.type + DF_TYPE_ONLY_VAL;
-		entry.key = "";
+		entry.key = df.val;
 		out.push_back(entry);
 		return out;
 	}

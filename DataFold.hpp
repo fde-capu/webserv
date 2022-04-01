@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/28 21:35:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 17:44:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ class DataFold
 		operator std::string() const;
 		operator int() const;
 		operator std::vector<std::string>() const;
-		datafold_t get_datafold(std::string) const;
+		datafold_t get_datafold() const;
 		datafold_t get_datafold(std::string, std::string) const;
 		std::vector<int> get_vector_int(std::string) const;
 		std::vector<int> get_vector_int(std::string, std::string) const;
