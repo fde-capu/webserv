@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 18:07:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 18:52:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,6 +311,9 @@ void DataFold::core_check() const
 	if (core.empty())
 		throw std::runtime_error(DF_ERR_NO_FILE);
 }
+
+bool DataFold::has_key(std::string key) const
+{ return static_cast<bool>(key_count(key)); }
 
 int DataFold::key_count(std::string key) const
 {
