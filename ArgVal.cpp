@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 18:13:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 18:42:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,7 +239,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			}
 		}
 	}
-	if (board.empty())
+	if (board.empty() && !config.empty())
 	{
 		verbose(3) << "> " << config.string() << " is invalid." << std::endl;
 		return false;
@@ -274,8 +274,8 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 			verbose(3) << "  board > " << board.key << " :=: " << board.val << nl;
 			if (board.type & DF_TYPE_SUB)
 			{
-				if (!comply_config_keys(board.get_val(board.key), config.val))
-					return false;
+				std::cout << "HERE" << std::endl;
+				valid = comply_config_keys(board.get_val(board.key), config.val);
 			}
 //			if (board.type & DF_TYPE_ARRAY)
 //			{
