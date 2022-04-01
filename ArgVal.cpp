@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 20:45:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 21:32:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,8 +262,10 @@ size_t ArgVal::count_keys(DataFold data, std::string key) const
 bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 {
 	DataFold par;
+	bool valid;
 
 	verbose(3) << "### cck comply_config_keys > " << board.string() << " >> " << config.string() << std::endl;
+	valid = false;
 	while (config.loop())
 	{
 		verbose(3) << "  config > " << config.key << " :=: " << config.val << " (" << config.type << ")" << nl;
@@ -273,22 +275,31 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 
 			if (board.type & DF_TYPE_SUB)
 			{
-				std::cout << "HERE " << std::endl;
 				if (!comply_config_keys(board.get_val(board.key), config.val))
 					return false;
 			}
-			if (board.key != "accept" && board.key != "accept_unique" && board.key != "mandatory")
+			if (count_keys(config, board.key))
 			{
-				if (count_keys(board, config.key) == 0)
-				{
-					verbose(1) << config.key << " should not be." << std::endl;
-					return false;
-				}
+				std::cout << "Found " << board.key << " on config." << std::endl;
+				valid = true;
+			}
+			if ((board.key == "accept" || board.key == "accept_unique" || board.key == "mandatory")
+				&& count_keys(board.val, config.key))
+			{
+				std::cout << "Found " << config.key << " on " << board.key << "." << std::endl;
+				valid = true;
 			}
 		}
 	}
-	verbose(3) << "> " << config.string() << " is valid." << std::endl;
-	return true;
+	if (valid)
+	{
+		verbose(3) << "> " << config.string() << " is valid." << std::endl;
+	}
+	else
+	{
+		verbose(3) << "> " << config.string() << " is invalid." << std::endl;
+	}
+	return valid;
 }
 
 bool ArgVal::comply_check(DataFold board, DataFold config)
