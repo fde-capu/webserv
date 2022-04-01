@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 16:01:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 16:06:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class ArgVal
 		bool comply_argval_params(DataFold, DataFold);
 		bool comply_config_keys(DataFold, DataFold);
 
-		size_t count_keys(DataFold, std::string);
+		size_t count_keys(DataFold, std::string) const;
 };
 
 //std::ostream & operator<< (std::ostream &, ArgVal const &);

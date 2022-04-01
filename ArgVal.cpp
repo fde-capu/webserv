@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 16:04:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/01 17:21:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,7 +243,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 	return true;
 }
 
-size_t ArgVal::count_keys(DataFold data, std::string key)
+size_t ArgVal::count_keys(DataFold data, std::string key) const
 {
 	size_t out = 0;
 	while (data.loop())
@@ -276,18 +276,23 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 			{
 //				std::cout << "Array! " << nl;
 			}
-			if (board.key == "accept" && count_keys(board.val, config.key))
+			size_t count = count_keys(board.get_val(), config.key);
+			std::cout << "    c (" << board.val << " > " << config.key << ") " << count << std::endl;
+			if (board.key == "accept" && count)
 				valid = true;
-			else if (board.key == "accept_unique" && find_outside_quotes(board.val, config.key) != std::string::npos)
+			else if (board.key == "accept_unique" && count == 1)
 				valid = true;
-			else if (board.key == "mandatory" && find_outside_quotes(board.val, config.key) != std::string::npos)
+			else if (board.key == "mandatory" && !count)
 				valid = true;
 			else if (!board.get<DataFold>(config.key).empty())
 				valid = true;
+			if (valid)
+			{
+				board.loop_reset();
+				break;
+			}
 		}
-		if (valid)
-			board.loop_reset();
-		else
+		if (!valid)
 		{
 			verbose(1) << config.key << " is not valid." << nl;
 			return false;
