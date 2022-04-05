@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 21:32:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/05 16:06:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,11 +264,14 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 	DataFold par;
 	bool valid;
 
-	verbose(3) << "### cck comply_config_keys > " << board.string() << " >> " << config.string() << std::endl;
-	valid = false;
+	verbose(3) << "### cck comply_config_keys > " << board.string() << " >> " \
+		<< config.string() << std::endl;
 	while (config.loop())
 	{
-		verbose(3) << "  config > " << config.key << " :=: " << config.val << " (" << config.type << ")" << nl;
+		verbose(3) << "  config > " << config.key << " :=: " << config.val << \
+			" (" << config.type << ")" << nl;
+		valid = false;
+		board.loop_reset();
 		while (board.loop())
 		{
 			verbose(3) << "  board > " << board.key << " :=: " << board.val << nl;
@@ -278,18 +281,23 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 				if (!comply_config_keys(board.get_val(board.key), config.val))
 					return false;
 			}
-			if (count_keys(config, board.key))
+			if (count_keys(board, config.key))
 			{
-				std::cout << "Found " << board.key << " on config." << std::endl;
+				std::cout << "Found " << config.key << " on board." << std::endl;
 				valid = true;
+				break;
 			}
-			if ((board.key == "accept" || board.key == "accept_unique" || board.key == "mandatory")
-				&& count_keys(board.val, config.key))
+			if ((board.key == "accept" || board.key == "accept_unique" \
+				|| board.key == "mandatory") && count_keys(board.val, config.key))
 			{
-				std::cout << "Found " << config.key << " on " << board.key << "." << std::endl;
+				std::cout << "Found " << config.key << " on " << board.key << \
+					"." << std::endl;
 				valid = true;
+				break;
 			}
 		}
+		if (!valid)
+			break;
 	}
 	if (valid)
 	{
