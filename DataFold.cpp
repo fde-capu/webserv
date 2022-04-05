@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/05 16:26:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/05 16:57:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -578,8 +578,8 @@ DF DF::parse_data(const str_t jstr)
 		if (p[2] != nopos && p[0] == nopos && p[1] == nopos && p[3] == nopos)
 		{
 			pass = false;
-			key = "";
-			val = ops.substr(0, p[2]);
+			key = ops.substr(0, p[2]);
+			val = "";
 			ops = ops.substr(p[2] + 1);
 			out.push_back(key, val);
 			continue;
