@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 18:52:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/11 21:42:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ class DataFold
 		DataFold get_val(std::string, std::string) const;
 		DataFold get_val(datafold_t) const;
 		DataFold get_val() const;
+		DataFold only_val() const;
+		void set_only_val();
 		std::string string() const;
 
 		template <typename T>

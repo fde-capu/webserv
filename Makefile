@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/04/01 18:17:06 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/04/11 21:52:10 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ VALFLAG	=	--tool=memcheck \
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--show-reachable=yes
+GDBSC	=	gdb.script
 LINE	=	@echo "\n************************\n"
 all:		line $(NAME)
 line:
@@ -56,4 +57,4 @@ v:			all
 pk:
 	-pkill webserv
 g:			all
-	gdb --args ./$(NAME) $(ARGS)
+	gdb -x $(GDBSC) --args ./$(NAME) $(ARGS)

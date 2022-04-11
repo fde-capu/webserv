@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/05 16:09:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/11 21:56:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,12 +276,12 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 		{
 			verbose(3) << "  board > " << board.key << " :=: " << board.val << nl;
 
-			if (board.type & DF_TYPE_SUB)
+			if (board.type & DF_TYPE_SUB && config.type & DF_TYPE_SUB)
 			{
 				if (!comply_config_keys(board.get_val(board.key), config.val))
 					return false;
 			}
-			if (count_keys(board, config.key))
+			if (count_keys(board.get_val(board.key), config.key))
 			{
 				std::cout << "Found " << config.key << " on board." << std::endl;
 				valid = true;
@@ -290,7 +290,7 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 			if ((board.key == "accept" || board.key == "accept_unique" \
 				|| board.key == "mandatory") && count_keys(board.val, config.key))
 			{
-				std::cout << "Found " << config.key << " on " << board.val << \
+				std::cout << "Found " << config.key << " on " << board.key << \
 					"." << std::endl;
 				valid = true;
 				break;
