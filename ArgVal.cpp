@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/11 22:29:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/11 22:52:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,9 +276,9 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 		{
 			verbose(3) << "  board > " << board.key << " :=: " << board.val << nl;
 
-			if (board.type & DF_TYPE_SUB && config.type & DF_TYPE_SUB)
+			if (config.type & DF_TYPE_SUB)
 			{
-				if (!comply_config_keys(board.get_val(board.key), config.val))
+				if (!comply_config_keys(board.get_val(config.key), config.get_val(config.key)))
 					return false;
 			}
 			if (count_keys(board.get_val(board.key), config.key))
