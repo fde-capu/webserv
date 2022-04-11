@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/11 21:56:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/11 22:29:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,7 +253,7 @@ size_t ArgVal::count_keys(DataFold data, std::string key) const
 	size_t out = 0;
 	while (data.loop())
 	{
-		if (data.key == key)
+		if (data.key == key || data.val == key)
 			out++;
 	}
 	return out;
