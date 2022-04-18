@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/11 22:52:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/18 22:06:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,15 +101,11 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			while (par.loop())
 			{
 				verbose(4) << "  par   > " << par.val << std::endl;
-				count = 0;
-				for (size_t i = 0; i < config.size(); i++)
+				count = count_keys(config, par.val);
+				if (count > 1)
 				{
-					con = config[i];
-					if (par.val == config[i].key && ++count > 1)
-					{
-						verbose(1) << par.val << " is not unique." << std::endl;
-						return false;
-					}
+					verbose(1) << par.val << " is not unique." << std::endl;
+					return false;
 				}
 			}
 		}
