@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/30 14:16:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/18 23:11:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -465,6 +465,12 @@ bool isFileName(std::string fn)
 
 bool StringTools::isFileName(std::string fn) const
 { return isAllInSet(fn, ST_FILENAME_SET); }
+
+bool isUri(std::string fn)
+{ return stool.isUri(fn); }
+
+bool StringTools::isUri(std::string fn) const
+{ return isAllInSet(fn, ST_URI_SET); }
 
 bool isAllInSet(std::string str, std::string set)
 { return stool.isAllInSet(str, set); }

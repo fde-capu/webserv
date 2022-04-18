@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/01 16:06:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/18 23:04:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # define AGF_FILE_NAME 16
 # define AGF_BOOL 32
 # define AGF_NUMBER_TIL_FILE_NAME 64
+# define AGF_NUMBER_THEN_URL 128
 
 # include "FileString.hpp"
 //# include <iostream>

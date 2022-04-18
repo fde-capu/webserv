@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/18 22:40:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/18 23:17:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,11 +157,13 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				set_flags += AGF_BOOL;
 			if (par.val == "number*file_name")
 				set_flags += AGF_NUMBER_TIL_FILE_NAME;
+			if (par.val == "number+url")
+				set_flags += AGF_NUMBER_THEN_URL;
 		}
 
 		while (con.loop())
 		{
-			verbose(1) << "con_loop " << con.key << " : " << con.val << " (" << con.type << ")" << std::endl;
+			verbose(4) << "con_loop " << con.key << " : " << con.val << " (" << con.type << ")" << std::endl;
 			if (set_flags & AGF_NUMBER)
 			{
 				if (!(con.type & DF_TYPE_NUMBER))
@@ -234,6 +236,17 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 							return false;
 						}
 					}
+				}
+			}
+			if (set_flags & AGF_NUMBER_THEN_URL)
+			{
+				foo = con.get_val();
+				if (foo.size() != 2
+				|| !isNumber(foo[0].val)
+				|| !isUri(foo[1].val))
+				{
+					verbose(1) << con.key << ": expected number then uri." << std::endl;
+					return false;
 				}
 			}
 		}

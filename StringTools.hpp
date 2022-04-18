@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/30 14:16:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/18 23:12:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # define ST_DEFAULT_QUOTE "'"
 # define ST_WORD_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789"
 # define ST_FILENAME_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_"
+# define ST_URI_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_:"
 # define ST_BOOL_WORDS "0 1 off on false true"
 
 class StringTools
@@ -71,6 +72,7 @@ class StringTools
 		std::vector<std::string> splitOutsideQuotes(std::string) const;
 		std::string itoa(int) const;
 		bool isFileName(std::string) const;
+		bool isUri(std::string) const;
 		bool isAllInSet(std::string, std::string) const;
 		std::string nth_word(std::string, int) const;
 		size_t word_count(std::string) const;
@@ -112,6 +114,7 @@ std::string apply_quotes(std::string, std::string);
 std::vector<std::string> splitOutsideQuotes(std::string);
 std::string itoa(int);
 bool isFileName(std::string);
+bool isUri(std::string);
 bool isAllInSet(std::string, std::string);
 std::string nth_word(std::string, int);
 size_t word_count(std::string);
