@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/18 22:06:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/18 22:40:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,11 +161,14 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 
 		while (con.loop())
 		{
-			verbose(4) << "con_loop " << con.key << " : " << con.val << std::endl;
-			if (set_flags & AGF_NUMBER && !isNumber(con.val))
+			verbose(1) << "con_loop " << con.key << " : " << con.val << " (" << con.type << ")" << std::endl;
+			if (set_flags & AGF_NUMBER)
 			{
-				verbose(1) << con.val << " is not a number." << std::endl;
-				return false;
+				if (!(con.type & DF_TYPE_NUMBER))
+				{
+					verbose(1) << con.val << " is not a number." << std::endl;
+					return false;
+				}
 			}
 			if (set_flags & AGF_WORD && !isWord(con.val))
 			{
