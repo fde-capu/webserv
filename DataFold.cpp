@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/19 23:42:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 01:33:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -518,7 +518,8 @@ std::string DataFold::clean_before_parse(std::string& dst) const
 	substitute_super(dst, "\n{\n", "{");
 	substitute_super(dst, "\n}\n", "}");
 	substitute_super(dst, "\n", ";");
-	remove_all(dst, "\t");
+//	remove_all(dst, "\t");
+	substitute_super(dst, "\t", " ");
 	erase_boundaries(dst, ";");
 	hard_trim(dst, ";");
 	substitute_super(dst, "{;", "{");
