@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/18 23:17:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/19 22:27:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,11 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 		if (board.type & DF_TYPE_SUB)
 		{
 			con = config.get_val(board.key);
-			verbose(4) << "  sub   > " << board.val << " >> " << con.string() << std::endl;
+			count = count_keys(config, board.key);
+			verbose(1) << "  sub   > " << count << ">" << board.val << " >> " << con.string() << std::endl;
 			if (!comply_argval_params(board.get_val(board.key), con))
 				return false;
+			continue ;
 		}
 
 		if (board.key == "accept_unique")
