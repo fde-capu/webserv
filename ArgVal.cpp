@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/19 23:54:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 01:15:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,6 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 	DataFold par;
 	DataFold con;
 	DataFold foo;
-//	size_t count;
 
 	verbose(3) << "### cap comply_argval_params" << std::endl;
 	verbose(3) << "\\-(board)-> " << board.string() << std::endl;
@@ -142,7 +141,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			con = config.filter(board.key);
 			for (size_t i = 0; i < con.size(); i++)
 			{
-				std::cout << "--- " << con[i].key << " : " << con[i].val << std::endl;
+				verbose(5) << "--- " << con[i].key << " : " << con[i].val << std::endl;
 				if (!comply_argval_params(board.get_val(board.key), con[i].val))
 					return false;
 			}
@@ -298,8 +297,10 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 	DataFold par;
 	bool valid;
 
-	verbose(3) << "### cck comply_config_keys > " << board.string() << " >> " \
-		<< config.string() << std::endl;
+	verbose(3) << "### cck comply_config_keys" << std::endl;
+	verbose(3) << "\\-(board)-> " << board.string() << std::endl;
+	verbose(3) << "\\-(config)-> " << config.string() << std::endl;
+
 	while (config.loop())
 	{
 		verbose(3) << "  config > " << config.key << " :=: " << config.val << \
@@ -317,14 +318,14 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 			}
 			if (count_keys(board.get_val(board.key), config.key))
 			{
-				std::cout << "Found " << config.key << " on board." << std::endl;
+				verbose(3) << "Found " << config.key << " on board." << std::endl;
 				valid = true;
 				break;
 			}
 			if ((board.key == "accept" || board.key == "accept_unique" \
 				|| board.key == "mandatory") && count_keys(board.val, config.key))
 			{
-				std::cout << "Found " << config.key << " on " << board.key << \
+				verbose(3) << "Found " << config.key << " on " << board.key << \
 					"." << std::endl;
 				valid = true;
 				break;
@@ -354,7 +355,6 @@ bool ArgVal::comply()
 	DataFold comply(_board.get_val("comply"));
 	if (!comply_check(comply, _config))
 		return false;
-
 	return true;
 }
 
