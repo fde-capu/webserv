@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 01:15:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 01:31:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,12 +105,7 @@ bool ArgVal::validate_by_board_key(DataFold board, DataFold config)
 			while (par.loop())
 			{
 				verbose(4) << "  mandatory   > " << par.val << std::endl;
-				count = 0;
-				while (config.loop())
-				{
-					if (par.val == config.key)
-						count++;
-				}
+				count = count_keys(config, par.val);
 				if (!count)
 				{
 					verbose(1) << par.val << " is not present." << std::endl;
