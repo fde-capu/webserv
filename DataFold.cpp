@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/18 22:38:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/19 23:42:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,20 @@ DataFold::operator int() const
 	|| (!(core.type & DF_TYPE_NUMBER)))
 		return 0;
 	return atoi(core[0].val.c_str());
+}
+
+DataFold DataFold::filter(std::string key) const
+{
+	DataFold out;
+	DataFold dup(*this);
+	while (dup.loop())
+	{
+		if (key == dup.key)
+		{
+			out.push_back(key, dup.val);
+		}
+	}
+	return out;
 }
 
 DataFold DataFold::get_val() const
@@ -384,7 +398,6 @@ int DataFold::df_type(std::string val)
 	hard_trim(val);
 	if (*val.begin() == '{' && *(val.end() - 1) == '}')
 	{
-		std::cout << DF_TYPE_SUB << std::endl;
 		return DF_TYPE_SUB;
 	}
 	int out = 0;

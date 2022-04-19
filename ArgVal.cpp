@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/19 22:27:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/19 23:54:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,29 +74,17 @@ ArgVal::ArgVal()
 : _fail(false)
 {}
 
-bool ArgVal::comply_argval_params(DataFold board, DataFold config)
+bool ArgVal::validate_by_board_key(DataFold board, DataFold config)
 {
 	DataFold par;
-	DataFold con;
-	DataFold foo;
 	size_t count;
 
-	verbose(3) << "### cap comply_argval_params > " << board.string() << " >> " << config.string() << std::endl;
+	verbose(3) << "-###- vbbk validate_by_board_key" << std::endl;
+	verbose(3) << "\\-(board)-> " << board.string() << std::endl;
+	verbose(3) << "\\-(config)-> " << config.string() << std::endl;
 
-	while (board.loop())
+	while(board.loop())
 	{
-		verbose(4) << "  cap > " << board.key << " :=: " << board.val << std::endl;
-
-		if (board.type & DF_TYPE_SUB)
-		{
-			con = config.get_val(board.key);
-			count = count_keys(config, board.key);
-			verbose(1) << "  sub   > " << count << ">" << board.val << " >> " << con.string() << std::endl;
-			if (!comply_argval_params(board.get_val(board.key), con))
-				return false;
-			continue ;
-		}
-
 		if (board.key == "accept_unique")
 		{
 			par = board.get<DataFold>("accept_unique");
@@ -111,7 +99,6 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				}
 			}
 		}
-
 		if (board.key == "mandatory")
 		{
 			par = board.get<DataFold>("mandatory");
@@ -131,6 +118,39 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				}
 			}
 		}
+	}
+	return true;
+}
+
+bool ArgVal::comply_argval_params(DataFold board, DataFold config)
+{
+	DataFold par;
+	DataFold con;
+	DataFold foo;
+//	size_t count;
+
+	verbose(3) << "### cap comply_argval_params" << std::endl;
+	verbose(3) << "\\-(board)-> " << board.string() << std::endl;
+	verbose(3) << "\\-(config)-> " << config.string() << std::endl;
+
+	while (board.loop())
+	{
+		verbose(4) << "  cap > " << board.key << " :=: " << board.val << std::endl;
+
+		if (board.type & DF_TYPE_SUB)
+		{
+			con = config.filter(board.key);
+			for (size_t i = 0; i < con.size(); i++)
+			{
+				std::cout << "--- " << con[i].key << " : " << con[i].val << std::endl;
+				if (!comply_argval_params(board.get_val(board.key), con[i].val))
+					return false;
+			}
+			continue ;
+		}
+
+		if (!validate_by_board_key(board, config))
+			return false;
 
 		con = config.get<DataFold>(board.key);
 		if (con.empty())
