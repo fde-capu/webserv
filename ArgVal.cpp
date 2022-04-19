@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 01:31:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 01:53:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,6 @@ bool ArgVal::validate_by_board_key(DataFold board, DataFold config)
 	size_t count;
 
 	verbose(3) << "-###- vbbk validate_by_board_key" << std::endl;
-	verbose(3) << "\\-(board)-> " << board.string() << std::endl;
-	verbose(3) << "\\-(config)-> " << config.string() << std::endl;
 
 	while(board.loop())
 	{
@@ -142,10 +140,13 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			}
 			continue ;
 		}
+	}
 
-		if (!validate_by_board_key(board, config))
-			return false;
+	if (!validate_by_board_key(board, config))
+		return false;
 
+	while (board.loop())
+	{
 		con = config.get<DataFold>(board.key);
 		if (con.empty())
 			continue;
