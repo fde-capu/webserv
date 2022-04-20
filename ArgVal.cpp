@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 01:58:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 13:39:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,8 +174,12 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				set_flags += AGF_BOOL;
 			if (par.val == "number*file_name")
 				set_flags += AGF_NUMBER_TIL_FILE_NAME;
-			if (par.val == "number+url")
-				set_flags += AGF_NUMBER_THEN_URL;
+			if (par.val == "number+uri")
+				set_flags += AGF_NUMBER_THEN_URI;
+			if (par.val == "word*number")
+				set_flags += AGF_WORD_TIL_NUMBER;
+			if (par.val == "uri")
+				set_flags += AGF_URI;
 		}
 
 		while (con.loop())
@@ -255,7 +259,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					}
 				}
 			}
-			if (set_flags & AGF_NUMBER_THEN_URL)
+			if (set_flags & AGF_NUMBER_THEN_URI)
 			{
 				foo = con.get_val();
 				if (foo.size() != 2
@@ -264,6 +268,41 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				{
 					verbose(1) << con.key << ": expected number then uri." << std::endl;
 					return false;
+				}
+			}
+			if (set_flags & AGF_WORD_TIL_NUMBER)
+			{
+				foo = con.get_val();
+				while (foo.loop())
+				{
+					if (!foo.loop_ended())
+					{
+						if (!isWord(foo.val))
+						{
+							verbose(1) << con.key << " " << foo.val << " should be a trail word." << std::endl;
+							return false;
+						}
+					}
+					else
+					{
+						if (!isNumber(foo.val))
+						{
+							verbose(1) << foo.val << " should be a number for last element." << std::endl;
+							return false;
+						}
+					}
+				}
+			}
+			if (set_flags & AGF_URI)
+			{
+				foo = splitOutsideQuotes(con.val);
+				while (foo.loop())
+				{
+					if (!isUri(foo.val))
+					{
+						verbose(1) << foo.val << " is not a uri." << std::endl;
+						return false;
+					}
 				}
 			}
 		}
