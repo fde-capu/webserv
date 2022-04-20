@@ -6,13 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 15:46:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 16:56:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "header.hpp"
 
-bool validate_args(int argc, char **argv)
+ArgVal load_config_files(int argc, char **argv)
 {
 	char* args[2] = {argv[0], argv[1]};
 	if (argc == 1)
@@ -20,14 +20,25 @@ bool validate_args(int argc, char **argv)
 		args[1] = const_cast<char *>(WS_DEFAULT_CONFIG);
 		argc = 2;
 	}
-	return ArgVal(argc, args, WS_CONFIG_SETUP).success();
+	return ArgVal(argc, args, WS_CONFIG_SETUP);
+}
+
+DataFold load_configuration(int argc, char **argv)
+{
+	ArgVal validator = load_config_files(argc, argv);
+	if (validator.fail())
+		throw std::invalid_argument(BYE);
+	verbose(1) << "Configuration valid." << std::endl;
+	return DataFold(validator.getConfig());
 }
 
 int main(int argc, char **argv)
 {
-	if (!validate_args(argc, argv))
-		return !die(BYE);
-	verbose(1) << "Configuration valid." << std::endl;
+	DataFold config = load_configuration(argc, argv);
+//	std::string server_name = config["server_name"];
+	std::string server_name = config.get("server_name");
+	std::cout << "CONFIG" << std::endl << server_name;
+
 
 //	conf.load(DEFAULT_CONFIG_FILE);
 //	conf.load("test.conf");

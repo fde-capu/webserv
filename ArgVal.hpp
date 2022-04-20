@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 14:19:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 16:04:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,8 @@ class ArgVal
 		char ** argv;
 		void load_conditions(char *);
 		void run();
-		FileString& getBoard()const;
-		FileString& getConfig()const;
+		FileString& getBoard() const;
+		FileString& getConfig() const;
 		bool fail() const;
 		bool success() const;
 

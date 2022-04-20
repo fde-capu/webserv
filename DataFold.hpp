@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/19 23:09:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 17:00:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class DataFold
 		datavec	core;
 		size_t	index;
 		size_t	loop_index;
+//		operator[](long, const char *);
 
 	public:
 		typedef std::vector<int>			vint;
@@ -85,6 +86,8 @@ class DataFold
 		void set_only_val();
 		std::string string() const;
 		DataFold filter(std::string) const;
+
+		std::string get(std::string) const;
 
 		template <typename T>
 		T get(std::string key) const
