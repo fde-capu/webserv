@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 14:39:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 15:46:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,13 @@
 
 bool validate_args(int argc, char **argv)
 {
-	return ArgVal(argc, argv, WS_CONFIG_SETUP).success();
+	char* args[2] = {argv[0], argv[1]};
+	if (argc == 1)
+	{
+		args[1] = const_cast<char *>(WS_DEFAULT_CONFIG);
+		argc = 2;
+	}
+	return ArgVal(argc, args, WS_CONFIG_SETUP).success();
 }
 
 int main(int argc, char **argv)
