@@ -6,14 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 13:39:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:21:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ArgVal.hpp"
 
-ArgVal::ArgVal(int argc, char ** argv, char * u_board_file_name)
-: _fail(false), _board_file_name(u_board_file_name),
+ArgVal::ArgVal(int argc, char ** argv, const char * u_board_file_name)
+: _fail(false), _board_file_name(const_cast<char *>(u_board_file_name)),
   argc(argc), argv(argv)
 {
 	_board.load(_board_file_name);
