@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 01:53:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 01:58:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,14 +127,14 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 
 	while (board.loop())
 	{
-		verbose(4) << "  cap > " << board.key << " :=: " << board.val << std::endl;
+		verbose(2) << "  cap > " << board.key << " :=: " << board.val << std::endl;
 
 		if (board.type & DF_TYPE_SUB)
 		{
 			con = config.filter(board.key);
 			for (size_t i = 0; i < con.size(); i++)
 			{
-				verbose(5) << "--- " << con[i].key << " : " << con[i].val << std::endl;
+				verbose(2) << "--- " << con[i].key << " : " << con[i].val << std::endl;
 				if (!comply_argval_params(board.get_val(board.key), con[i].val))
 					return false;
 			}
