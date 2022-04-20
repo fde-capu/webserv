@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 01:34:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:09:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -582,6 +582,7 @@ DF DF::parse_data(const str_t jstr)
 		verbose(5)	<< p[0] << ", " << p[1] << ", " \
 					<< p[2] << ", " << p[3] << nl;
 
+//		word value && not single word && not subgroup
 		if (p[0] < p[1] && p[0] != nopos && p[1] != p[0] + 1)
 		{
 			pass = false;
@@ -596,6 +597,8 @@ DF DF::parse_data(const str_t jstr)
 			out.push_back(key, val);
 			continue ;
 		}
+
+//		subgroup && not single word
 		if (p[1] < p[0] && p[1] != nopos)
 		{
 			pass = false;
@@ -607,6 +610,8 @@ DF DF::parse_data(const str_t jstr)
 			out.push_back(key, parse_data(val));
 			continue ;
 		}
+
+//		has ; && does not have divisor && is not subgroup && does not break line	
 		if (p[2] != nopos && p[0] == nopos && p[1] == nopos && p[3] == nopos)
 		{
 			pass = false;
@@ -616,6 +621,7 @@ DF DF::parse_data(const str_t jstr)
 			out.push_back(key, val);
 			continue;
 		}
+
 	}
 
 	verbose(4) << "Parsed: " << static_cast<std::string>(out) << nl << nl;

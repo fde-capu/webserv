@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/18 23:12:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:14:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,9 @@
 # define ST_FILENAME_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_"
 # define ST_URI_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_:"
 # define ST_BOOL_WORDS "0 1 off on false true"
+
+# define ST_ID "(StringTools) "
+# define ST_ERR_UNMATCHED_BRACKETS ST_ID " Unmatched bracket."
 
 class StringTools
 {

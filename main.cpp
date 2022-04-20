@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/30 13:13:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:00:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 	if (!validate_args(argc, argv))
 		return !die(BYE);
 
-	std::cout << "Everything valid..?" << std::endl;
+	verbose(1) << "Configuration valid." << std::endl;
 //	conf.load(DEFAULT_CONFIG_FILE);
 //	conf.load("test.conf");
 	
