@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 14:21:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/20 14:45:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,12 +35,18 @@ void ArgVal::run()
 
 	try {
 		if (argc > _board.get<int>("argc", "max"))
+		{
+			verbose(1) << "Too many arguments.";
 			_fail = true;
+		}
 	} catch(std::exception&){}
 
 	try {
 		if (argc < _board.get<int>("argc", "min"))
+		{
+			verbose(1) << "Needs more arguments.";
 			_fail = true;
+		}
 	} catch(std::exception&){}
 
 	vstr vt;
