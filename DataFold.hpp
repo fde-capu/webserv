@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 17:00:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 13:10:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ class DataFold
 		datavec	core;
 		size_t	index;
 		size_t	loop_index;
-//		operator[](long, const char *);
 
 	public:
 		typedef std::vector<int>			vint;

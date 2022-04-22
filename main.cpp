@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 17:02:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 13:11:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ DataFold load_configuration(int argc, char **argv)
 int main(int argc, char **argv)
 {
 	DataFold config = load_configuration(argc, argv);
-	std::string server_name = config["server_name"];
-//	std::string server_name = config.get("server_name");
+	std::string server_name = config.get("server_name");
 	std::cout << "CONFIG" << std::endl << server_name;
 
 
