@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 15:37:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:31:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <fstream>
 # include "FileString.hpp"
 # include "ArgVal.hpp"
+# include "WebServ.hpp"
 
 # ifndef VERBOSE
 #  define VERBOSE 0
