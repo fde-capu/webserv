@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 14:45:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 15:00:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class WebServ
 		WebServ & operator= (WebServ const & rhs);
 		~WebServ();
 		DataFold getConfig() const;
+		void init();
 };
 
 std::ostream & operator<< (std::ostream & o, WebServ const & i);

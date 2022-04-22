@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 14:33:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:59:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,6 @@ int main(int argc, char **argv)
 {
 	DataFold config = load_configuration(argc, argv);
 	WebServ webserv(config);
-
-//	DataFold server = config.filter("server");
-//	while (server.loop())
-//	{
-//		std::cout << "=====" << std::endl;
-//		std::cout << server.key << " : " << server.val << std::endl;
-//	}
+	webserv.init();
 	return 0;
 }
