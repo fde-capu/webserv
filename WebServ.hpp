@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:29:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 22:42:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,12 @@ typedef struct struct_server_instance
 class WebServ
 {
 	private:
-		WebServ();
 		DataFold config;
 		DataFold server;
 		std::vector<server_instance> instance;
+
 		server_instance dftosi(DataFold);
+		WebServ();
 
 	public:
 		WebServ(DataFold&);
@@ -42,6 +43,8 @@ class WebServ
 		WebServ & operator= (WebServ const & rhs);
 		~WebServ();
 		DataFold getConfig() const;
+		DataFold getServer() const;
+		std::vector<server_instance> getInstance() const;
 		void init();
 };
 

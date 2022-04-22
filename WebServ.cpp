@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:34:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 22:43:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,18 @@ void WebServ::init()
 	}
 	for (size_t i = 0; i < instance.size(); i++)
 	{
-		std::cout << "server" << std::endl;
 		for (size_t j = 0; j < instance[i].server_address.size(); j++)
 		{
 			si = instance[i].server_address[j];
+
+//			Safe for bind?:
+//					reinterpret_cast<struct sockaddr *>(&si),
 			bind(	instance[i].server_socket,
 					(struct sockaddr *)&si,
 					sizeof(si)
 				);
-//					static_cast<struct sockaddr *>(&si),
+
+			listen(instance[i].server_socket, 1);
 		}
 	}
 }
@@ -71,11 +74,19 @@ WebServ::WebServ(WebServ const & src)
 DataFold WebServ::getConfig() const
 { return config; }
 
+DataFold WebServ::getServer() const
+{ return server; }
+
+std::vector<server_instance> WebServ::getInstance() const
+{ return instance; }
+
 WebServ & WebServ::operator= (WebServ const & rhs)
 {
 	if (this != &rhs)
 	{
 		config = rhs.getConfig();
+		server = rhs.getServer();
+		instance = rhs.getInstance();
 	}
 	return *this;
 }
