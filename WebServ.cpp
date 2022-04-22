@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 21:58:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 22:22:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ server_instance WebServ::dftosi(DataFold df)
 	si.current_http_header = "";
 	si.current_http_body = "";
 	si.socket = socket(AF_INET, SOCK_STREAM, 0);
-
 	struct sockaddr_in endpoint;
 	DataFold listen(df.get("listen"));
 	while (listen.loop())
@@ -29,7 +28,7 @@ server_instance WebServ::dftosi(DataFold df)
 		endpoint.sin_port = htons(std::atoi(listen.val.c_str()));
 		si.server_address.push_back(endpoint);
 	}
-	
+	si.attribute = df;
 	return si;
 }
 
@@ -38,6 +37,14 @@ void WebServ::init()
 	while (server.loop())
 	{
 		instance.push_back(dftosi(server.val));
+	}
+	for (size_t i = 0; i < instance.size(); i++)
+	{
+		std::cout << "server" << std::endl;
+		for (size_t j = 0; j < instance[i].server_address.size(); j++)
+		{
+			std::cout << ">>>>" << instance[i].server_address[j].sin_port << std::endl;
+		}
 	}
 }
 
