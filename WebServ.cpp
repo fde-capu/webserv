@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:22:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 22:29:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@ server_instance WebServ::dftosi(DataFold df)
 	server_instance si;
 	si.current_http_header = "";
 	si.current_http_body = "";
-	si.socket = socket(AF_INET, SOCK_STREAM, 0);
+	si.server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	struct sockaddr_in endpoint;
-	DataFold listen(df.get("listen"));
-	while (listen.loop())
+	DataFold df_listen(df.get("listen"));
+	while (df_listen.loop())
 	{
 		endpoint.sin_family = AF_INET;
 		endpoint.sin_addr.s_addr = INADDR_ANY;
-		endpoint.sin_port = htons(std::atoi(listen.val.c_str()));
+		endpoint.sin_port = htons(std::atoi(df_listen.val.c_str()));
 		si.server_address.push_back(endpoint);
 	}
 	si.attribute = df;
@@ -34,6 +34,8 @@ server_instance WebServ::dftosi(DataFold df)
 
 void WebServ::init()
 {
+	struct sockaddr_in si;
+
 	while (server.loop())
 	{
 		instance.push_back(dftosi(server.val));
@@ -43,7 +45,7 @@ void WebServ::init()
 		std::cout << "server" << std::endl;
 		for (size_t j = 0; j < instance[i].server_address.size(); j++)
 		{
-			std::cout << ">>>>" << instance[i].server_address[j].sin_port << std::endl;
+			si = instance[i].server_address[j];
 		}
 	}
 }

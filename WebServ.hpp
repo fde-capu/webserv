@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:15:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 22:29:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct struct_server_instance
 {
 	std::string current_http_header;
 	std::string current_http_body;
-	int socket;
+	int server_socket;
 	std::vector<struct sockaddr_in> server_address;
 	DataFold attribute;
 } server_instance;
