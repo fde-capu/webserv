@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 14:31:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:45:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class WebServ
 	private:
 		WebServ();
 		DataFold config;
+		DataFold server;
 
 	public:
 		WebServ(DataFold&);

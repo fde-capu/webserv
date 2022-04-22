@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 14:40:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:47:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 #include <iostream>
 
 WebServ::WebServ(DataFold& u_config)
-: config(u_config)
+: config(u_config), server(config.filter("server"))
 {
 	std::cout << config << std::endl;
+	std::cout << "====" << std::endl;
+	std::cout << server << std::endl;
 	return ;
 }
 
