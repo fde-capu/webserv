@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 13:41:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:03:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 	while (server.loop())
 	{
 		std::cout << "=====" << std::endl;
-		std::cout << server.key << " : " << server.val;
+		std::cout << server.key << " : " << server.val << std::endl;
 	}
 	return 0;
 }

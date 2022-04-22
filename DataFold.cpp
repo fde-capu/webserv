@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 17:00:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:01:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,13 +229,6 @@ DataFold::operator std::string() const
 
 DataFold::operator std::vector<std::string>() const
 { return get_vector_str(); }
-
-//std::ostream & operator<< (std::ostream & o, DataFold const& self)
-//{
-//	datavec tmp_core = self.getCore();
-//	o << tmp_core;
-//	return o;
-//}
 
 DataFold::DataFold()
 : index(0), loop_index(0), key(""), val(""), type(0)
@@ -636,7 +629,6 @@ bool DataFold::is_single_array() const
 {
 	return		core.size() == 1 
 			&&	core[0].type & DF_TYPE_ARRAY
-//			&&	!(core[0].type & DF_TYPE_SUB)
 			;
 }
 
@@ -644,7 +636,6 @@ bool DataFold::loop()
 {
 	if (loop_ended())
 	{
-//		std::cout << " ...loop ret false " << loop_index << ":" << index << nl;
 		loop_reset();
 		return false;
 	}
@@ -658,7 +649,7 @@ bool DataFold::loop()
 		return true;
 	}
 
-	if (core[loop_index].type & DF_TYPE_SUB)
+	if (core[loop_index].val == "" && core[loop_index].type & DF_TYPE_SUB)
 		val = static_cast<std::string>(core[loop_index].sub);
 	else
 		val = core[loop_index].val;
