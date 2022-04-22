@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:47:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 22:54:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void WebServ::bind_ports()
 {
 	struct sockaddr_in si;
 
-	for (size_t i = 0; i < instance.size(); i++)
+	for (size_t i = 0; i < port_count(); i++)
 	{
 		for (size_t j = 0; j < instance[i].server_address.size(); j++)
 		{
@@ -52,9 +52,12 @@ void WebServ::bind_ports()
 	}
 }
 
+size_t WebServ::port_count()
+{ return instance.size(); }
+
 void WebServ::listen_on()
 {
-	for (size_t i = 0; i < instance.size(); i++)
+	for (size_t i = 0; i < port_count(); i++)
 		listen(instance[i].server_socket, 1);
 }
 
@@ -67,11 +70,9 @@ void WebServ::init()
 WebServ::WebServ(DataFold& u_config)
 : config(u_config), server(config.filter("server"))
 {
-	std::cout << "Loading server..." << std::endl;
+	verbose(1) << "Loading server..." << std::endl;
 	while (server.loop())
-	{
 		instance.push_back(dftosi(server.val));
-	}
 	return ;
 }
 
