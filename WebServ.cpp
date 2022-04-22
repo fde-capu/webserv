@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 14:31:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:40:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 WebServ::WebServ(DataFold& u_config)
 : config(u_config)
 {
+	std::cout << config << std::endl;
 	return ;
 }
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 13:10:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:38:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,6 @@ class DataFold
 		bool is_single_array() const;
 };
 
-//std::ostream& operator<< (std::ostream& o, DataFold const&);
+std::ostream& operator<< (std::ostream& o, DataFold const&);
 
 #endif

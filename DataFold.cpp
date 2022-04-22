@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 14:01:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:43:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -685,3 +685,9 @@ bool DataFold::loop_ended()
 
 bool DataFold::not_ended()
 { return !loop_ended(); }
+
+std::ostream& operator<< (std::ostream& o, DataFold const& self)
+{
+	o << self.string();
+	return o;
+}
