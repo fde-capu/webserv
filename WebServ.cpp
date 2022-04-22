@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:43:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 22:47:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,10 @@ server_instance WebServ::dftosi(DataFold df)
 	return si;
 }
 
-void WebServ::init()
+void WebServ::bind_ports()
 {
 	struct sockaddr_in si;
 
-	while (server.loop())
-	{
-		instance.push_back(dftosi(server.val));
-	}
 	for (size_t i = 0; i < instance.size(); i++)
 	{
 		for (size_t j = 0; j < instance[i].server_address.size(); j++)
@@ -52,16 +48,30 @@ void WebServ::init()
 					(struct sockaddr *)&si,
 					sizeof(si)
 				);
-
-			listen(instance[i].server_socket, 1);
 		}
 	}
+}
+
+void WebServ::listen_on()
+{
+	for (size_t i = 0; i < instance.size(); i++)
+		listen(instance[i].server_socket, 1);
+}
+
+void WebServ::init()
+{
+	bind_ports();
+	listen_on();
 }
 
 WebServ::WebServ(DataFold& u_config)
 : config(u_config), server(config.filter("server"))
 {
-	std::cout << config << std::endl;
+	std::cout << "Loading server..." << std::endl;
+	while (server.loop())
+	{
+		instance.push_back(dftosi(server.val));
+	}
 	return ;
 }
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:42:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 22:48:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ class WebServ
 
 		server_instance dftosi(DataFold);
 		WebServ();
+		void bind_ports();
+		void listen_on();
 
 	public:
 		WebServ(DataFold&);
