@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:29:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 22:34:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,11 @@ void WebServ::init()
 		for (size_t j = 0; j < instance[i].server_address.size(); j++)
 		{
 			si = instance[i].server_address[j];
+			bind(	instance[i].server_socket,
+					(struct sockaddr *)&si,
+					sizeof(si)
+				);
+//					static_cast<struct sockaddr *>(&si),
 		}
 	}
 }
