@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 21:37:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 21:58:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,19 @@ server_instance WebServ::dftosi(DataFold df)
 	server_instance si;
 	si.current_http_header = "";
 	si.current_http_body = "";
-	si.socket = 43;
+	si.socket = socket(AF_INET, SOCK_STREAM, 0);
+
+	struct sockaddr_in endpoint;
+	DataFold listen(df.get("listen"));
+	while (listen.loop())
+	{
+		endpoint.sin_family = AF_INET;
+		endpoint.sin_addr.s_addr = INADDR_ANY;
+		endpoint.sin_port = htons(std::atoi(listen.val.c_str()));
+		si.server_address.push_back(endpoint);
+	}
+	
 	return si;
-	(void)df;
 }
 
 void WebServ::init()
@@ -28,8 +38,6 @@ void WebServ::init()
 	while (server.loop())
 	{
 		instance.push_back(dftosi(server.val));
-		std::cout << "====" << server.key << "===" << std::endl;
-		std::cout << instance[instance.size() - 1].socket << std::endl;
 	}
 }
 
