@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/19 23:01:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/22 14:51:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ datafold_t::operator std::string() const
 	std::string tmpval;
 	std::vector<std::string> spl;
 
-	if (type & DF_TYPE_SUB)
+	if (val == "" && type & DF_TYPE_SUB)
 		return key + " : " + static_cast<std::string>(sub);
 	if (type & DF_TYPE_ARRAY)
 	{
