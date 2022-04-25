@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:56:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/25 22:10:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,67 @@ void WebServ::listen_on()
 
 void WebServ::hook_it()
 {
+	struct sockaddr_in *communication_layer;
+	int client_socket;
+	struct addrinfo hints;
+	struct addrinfo *result;
+	struct addrinfo *info;
+	int sign;
+	char netstr[INET6_ADDRSTRLEN];
+	struct sockaddr_in *port_in;
+	struct sockaddr_in6 *port_in6;
+
+	while (1)
+	{
+		for(size_t i = 0; i < instance.size(); i++)
+		{
+			*communication_layer = calloc(1, sizeof(struct sockaddr_in));
+			client_socket = accept(
+				instance[i].server_socket,
+				(struct sockaddr*)&communication_layer,
+				(socklen_t *)&communication_layer->sin_addr.s_addr
+			);
+			memset(&hints, 0, sizeof(struct addrinfo));
+			hints.ai_family = AF_UNSPEC;
+			hints.ai_socktype = SOCK_DGRAM;
+			hints.ai_flags = AI_PASSIVE;
+			hints.ai_protocol = 0;
+			hints.ai_canonname = NULL;
+			hints.ai_addr = NULL;
+			hints.ai_next = NULL;
+			sign = getaddrinfo(NULL, instance[i].server_socket, &hints, &result);
+			if (sign != 0)
+			{
+				verbose(0) << SERVER_SIGN " " ERROR FAILEDADDRINGO << std::endl;
+				continue ;
+			}
+		}
+		for(info = result; info != NULL; info = info->ai_next)
+		{
+			if (info->ai_addr->sa_family == AF_INET)
+			{
+				*port_in = (struct sockaddr_in *)info->ai_addr;
+				verbose(0) << "Connection from: " << inet_ntop(AF_INET, &port_in->sin_addr, netstr, sizeof(netstr)) << std::endl;
+			}
+			else if (info->ai_addr->sa_family == AF_INET6)
+			{
+				*port_in6 = (struct sockaddr_in6 *)info->ai_addr;
+				verbose(0) << "Connection from: " << inet_ntop(AF_INET6, &port_in6->sin6_addr, netstr, sizeof(netstr)) << std::endl;
+			}
+		}
+
+		verbose(0) << SERVER_SIGN << " Family: %d\n" << communication_layer->sin_family;
+		verbose(0) << SERVER_SIGN << " Port: %d\n" << ntohs(communication_layer->sin_port);
+		verbose(0) << SERVER_SIGN << " in_addr: %d\n" << communication_layer->sin_addr.s_addr;
+		verbose(0) << SERVER_SIGN << "--> %s <--\n" << http_header;
+
+		send(client_socket, instance[i].current_http_header, strlen(instance[i].current_http_header), 0);
+		close(client_socket);
+		free(communication_layer);
+		//////////
+//		std::cout << "!!!!" << std::endl;
+//		break ;
+	}
 }
 
 void WebServ::init()
