@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 14:31:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/26 02:24:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ std::string get_value(std::string line);
 # define ERR_INVALID_PARAM ERROR "Invalid parameter."
 # define ERR_INCOMPLETE_SETUP ERROR "Incomplete setup."
 # define ERR_SYNTAX ERROR "Syntax error."
+# define ERR_FAILED_ADDRINFO "Failed addrinfo."
 # define CONFIG_OK "Configuration ok."
 # define CONFIG_CHECKING "Checking configuration file."
 # define BYE "Bye!"

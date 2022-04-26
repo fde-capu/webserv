@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/25 22:10:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/26 02:32:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,15 @@ void WebServ::hook_it()
 	{
 		for(size_t i = 0; i < instance.size(); i++)
 		{
-			*communication_layer = calloc(1, sizeof(struct sockaddr_in));
+			//			communication_layer = calloc(1, sizeof(struct sockaddr_in));
+			communication_layer = new sockaddr_in();
 			client_socket = accept(
-				instance[i].server_socket,
-				(struct sockaddr*)&communication_layer,
-				(socklen_t *)&communication_layer->sin_addr.s_addr
-			);
-			memset(&hints, 0, sizeof(struct addrinfo));
+					instance[i].server_socket,
+					(struct sockaddr*)&communication_layer,
+					(socklen_t *)&communication_layer->sin_addr.s_addr
+					);
+			hints = addrinfo();
+			//			memset(&hints, 0, sizeof(struct addrinfo));
 			hints.ai_family = AF_UNSPEC;
 			hints.ai_socktype = SOCK_DGRAM;
 			hints.ai_flags = AI_PASSIVE;
@@ -91,35 +93,36 @@ void WebServ::hook_it()
 			hints.ai_canonname = NULL;
 			hints.ai_addr = NULL;
 			hints.ai_next = NULL;
-			sign = getaddrinfo(NULL, instance[i].server_socket, &hints, &result);
+			sign = getaddrinfo(NULL, itoa(instance[i].server_socket).c_str(), &hints, &result);
 			if (sign != 0)
 			{
-				verbose(0) << SERVER_SIGN " " ERROR FAILEDADDRINGO << std::endl;
+				verbose(0) << ALERT << " " << ERROR << ERR_FAILED_ADDRINFO << std::endl;
 				continue ;
 			}
-		}
-		for(info = result; info != NULL; info = info->ai_next)
-		{
-			if (info->ai_addr->sa_family == AF_INET)
+			for(info = result; info != NULL; info = info->ai_next)
 			{
-				*port_in = (struct sockaddr_in *)info->ai_addr;
-				verbose(0) << "Connection from: " << inet_ntop(AF_INET, &port_in->sin_addr, netstr, sizeof(netstr)) << std::endl;
+				if (info->ai_addr->sa_family == AF_INET)
+				{
+					port_in = (struct sockaddr_in *)info->ai_addr;
+					verbose(0) << "Connection from: " << inet_ntop(AF_INET, &port_in->sin_addr, netstr, sizeof(netstr)) << std::endl;
+				}
+				else if (info->ai_addr->sa_family == AF_INET6)
+				{
+					port_in6 = (struct sockaddr_in6 *)info->ai_addr;
+					verbose(0) << "Connection from: " << inet_ntop(AF_INET6, &port_in6->sin6_addr, netstr, sizeof(netstr)) << std::endl;
+				}
 			}
-			else if (info->ai_addr->sa_family == AF_INET6)
-			{
-				*port_in6 = (struct sockaddr_in6 *)info->ai_addr;
-				verbose(0) << "Connection from: " << inet_ntop(AF_INET6, &port_in6->sin6_addr, netstr, sizeof(netstr)) << std::endl;
-			}
+
+			verbose(0) << ALERT << " Family: %d\n" << communication_layer->sin_family;
+			verbose(0) << ALERT << " Port: %d\n" << ntohs(communication_layer->sin_port);
+			verbose(0) << ALERT << " in_addr: %d\n" << communication_layer->sin_addr.s_addr;
+			verbose(0) << ALERT << "--> %s <--\n" << instance[i].current_http_header;
+
+			send(client_socket, &instance[i].current_http_header, instance[i].current_http_header.length(), 0);
+
+			close(client_socket);
+			free(communication_layer);
 		}
-
-		verbose(0) << SERVER_SIGN << " Family: %d\n" << communication_layer->sin_family;
-		verbose(0) << SERVER_SIGN << " Port: %d\n" << ntohs(communication_layer->sin_port);
-		verbose(0) << SERVER_SIGN << " in_addr: %d\n" << communication_layer->sin_addr.s_addr;
-		verbose(0) << SERVER_SIGN << "--> %s <--\n" << http_header;
-
-		send(client_socket, instance[i].current_http_header, strlen(instance[i].current_http_header), 0);
-		close(client_socket);
-		free(communication_layer);
 		//////////
 //		std::cout << "!!!!" << std::endl;
 //		break ;

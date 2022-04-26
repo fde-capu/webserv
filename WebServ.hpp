@@ -6,17 +6,22 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 22:56:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/26 02:38:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_HPP
 # define WEBSERV_HPP
 
+# include "header.hpp"
 # include "DataFold.hpp"
 # include <iostream>
 # include <vector>
 # include <arpa/inet.h>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <netdb.h>
+# include <unistd.h>
 
 typedef struct struct_server_instance
 {
