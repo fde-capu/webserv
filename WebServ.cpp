@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/26 02:32:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/26 03:27:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 server_instance WebServ::dftosi(DataFold df)
 {
 	server_instance si;
-	si.current_http_header = "";
-	si.current_http_body = "";
+	si.current_http_header = "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 13\n\n";
+	si.current_http_body = "Hello, world!";
 	si.server_socket = socket(AF_INET, SOCK_STREAM, 0);
 	struct sockaddr_in endpoint;
 	DataFold df_listen(df.get("listen"));
@@ -72,6 +72,9 @@ void WebServ::hook_it()
 	char netstr[INET6_ADDRSTRLEN];
 	struct sockaddr_in *port_in;
 	struct sockaddr_in6 *port_in6;
+	std::string content;
+
+	verbose(0) << "Server is up." << std::endl;
 
 	while (1)
 	{
@@ -113,15 +116,22 @@ void WebServ::hook_it()
 				}
 			}
 
-			verbose(0) << ALERT << " Family: %d\n" << communication_layer->sin_family;
-			verbose(0) << ALERT << " Port: %d\n" << ntohs(communication_layer->sin_port);
-			verbose(0) << ALERT << " in_addr: %d\n" << communication_layer->sin_addr.s_addr;
-			verbose(0) << ALERT << "--> %s <--\n" << instance[i].current_http_header;
+			verbose(0) << ALERT << " Family: " << communication_layer->sin_family << std::endl;
+			verbose(0) << ALERT << " Port: " << ntohs(communication_layer->sin_port) << std::endl;
+			verbose(0) << ALERT << " in_addr: " << communication_layer->sin_addr.s_addr << std::endl;
+			verbose(0) << ALERT << " Header: " << instance[i].current_http_header << std::endl;
+			verbose(0) << ALERT << " Body: " << instance[i].current_http_body << std::endl;
 
-			send(client_socket, &instance[i].current_http_header, instance[i].current_http_header.length(), 0);
+			content = instance[i].current_http_header + instance[i].current_http_body;
+			send(
+				client_socket,
+				&content,
+				content.length(),
+				0
+			);
 
 			close(client_socket);
-			free(communication_layer);
+			delete communication_layer;
 		}
 		//////////
 //		std::cout << "!!!!" << std::endl;
@@ -139,7 +149,6 @@ void WebServ::init()
 WebServ::WebServ(DataFold& u_config)
 : config(u_config), server(config.filter("server"))
 {
-	verbose(1) << "Loading server..." << std::endl;
 	while (server.loop())
 		instance.push_back(dftosi(server.val));
 	return ;

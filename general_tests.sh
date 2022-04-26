@@ -4,28 +4,30 @@ name_server="127.0.0.1";
 
 # On 42SP Workspace, there are opened:
 
+`netstat -tnl`
 #	tcp 	0	0.0.0.0:5901	0.0.0.0:*	LISTEN	-	(VNC server)
 #	tcp6	0	:::5901	:::*	LISTEN	-		
 #	tcp 	0	0.0.0.0:2222	0.0.0.0:*	LISTEN	-	(Invalid SSH)
 #	tcp6	0	:::2222	:::*	LISTEN	-		
 #	tcp 	0	0.0.0.0:8080	0.0.0.0:*	LISTEN	-	(./login)		
 
-# We will open:
+`./webserv`
+# We will open (as webserv-default.conf describes):
 
+#	To run the subject tests:
 #	tcp 	0	0.0.0.0:4242	0.0.0.0:*	LISTEN	67/nginx: master pr	
-#	To run the subject tests.
 
+#	Demonstration of implementations:
 #	tcp 	0	0.0.0.0:3490	0.0.0.0:*	LISTEN	67/nginx: master pr	
-#	Demonstration of implementations.
 
+#	Another server:port pointing to another folder:
 #	tcp 	0	0.0.0.0:3491	0.0.0.0:*	LISTEN	67/nginx: master pr	
-#	Another server:port pointing to another folder.
 
+#	Lack of `location` gives forbidden all:
 #	tcp 	0	0.0.0.0:3492	0.0.0.0:*	LISTEN	67/nginx: master pr	
-#	Lack of `location` gives forbidden all.
 
+#	Redirect 301 to :3490:
 #	tcp 	0	0.0.0.0:3493	0.0.0.0:*	LISTEN	67/nginx: master pr	
-#	Redirect 301 to :3490.
 
 divider()
 {

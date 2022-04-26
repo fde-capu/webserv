@@ -6,16 +6,16 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/04/22 14:25:01 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/04/26 03:30:11 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	webserv
 ARGS	=	webserv-default.conf
 DEBUG	=	1
-SRCS	=	main.cpp Encapsulator.cpp strings.cpp FileString.cpp DataFold.cpp \
+SRCS	=	main.cpp strings.cpp FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp
-HEAD	=	Makefile Encapsulator.hpp setup.hpp header.hpp \
+HEAD	=	Makefile header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp
 SHELL	=	/bin/sh
