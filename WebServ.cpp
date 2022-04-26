@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/26 03:43:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/26 03:55:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void WebServ::hook_it()
 			content = instance[i].current_http_header + instance[i].current_http_body;
 			send(
 				client_socket,
-				&content,
+				content.c_str(),
 				content.length(),
 				0
 			);
