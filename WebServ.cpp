@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/26 03:27:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/26 03:43:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,8 +119,6 @@ void WebServ::hook_it()
 			verbose(0) << ALERT << " Family: " << communication_layer->sin_family << std::endl;
 			verbose(0) << ALERT << " Port: " << ntohs(communication_layer->sin_port) << std::endl;
 			verbose(0) << ALERT << " in_addr: " << communication_layer->sin_addr.s_addr << std::endl;
-			verbose(0) << ALERT << " Header: " << instance[i].current_http_header << std::endl;
-			verbose(0) << ALERT << " Body: " << instance[i].current_http_body << std::endl;
 
 			content = instance[i].current_http_header + instance[i].current_http_body;
 			send(
@@ -129,6 +127,8 @@ void WebServ::hook_it()
 				content.length(),
 				0
 			);
+
+			verbose(0) << ALERT << " sent (" << content.length() << "): ```" << content << "```" << std::endl;
 
 			close(client_socket);
 			delete communication_layer;
