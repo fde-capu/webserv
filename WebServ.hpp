@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/26 02:38:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/27 07:22:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # include <sys/socket.h>
 # include <netdb.h>
 # include <unistd.h>
+
+# define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n";
 
 typedef struct struct_server_instance
 {
@@ -44,8 +46,11 @@ class WebServ
 		WebServ();
 
 		void bind_ports();
-		void listen_on();
 		void hook_it();
+
+		void listen_on(int);
+		int bind_socket_to_local(int);
+		void accept_connection();
 
 	public:
 		WebServ(DataFold&);

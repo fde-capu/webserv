@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/26 03:55:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/27 07:22:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,6 @@ void WebServ::bind_ports()
 size_t WebServ::port_count()
 { return instance.size(); }
 
-void WebServ::listen_on()
-{
-	for (size_t i = 0; i < port_count(); i++)
-		listen(instance[i].server_socket, 1);
-}
-
 void WebServ::hook_it()
 {
 	struct sockaddr_in *communication_layer;
@@ -74,12 +68,13 @@ void WebServ::hook_it()
 	struct sockaddr_in6 *port_in6;
 	std::string content;
 
-	verbose(0) << "Server is up." << std::endl;
+	verbose(0) << "Server is (will be) up." << std::endl;
 
 	while (1)
 	{
 		for(size_t i = 0; i < instance.size(); i++)
 		{
+//			i = 0;
 			//			communication_layer = calloc(1, sizeof(struct sockaddr_in));
 			communication_layer = new sockaddr_in();
 			client_socket = accept(
@@ -139,11 +134,56 @@ void WebServ::hook_it()
 	}
 }
 
+void WebServ::listen_on(int sockfd)
+{
+//	for (size_t i = 0; i < port_count(); i++)
+//		listen(instance[i].server_socket, 1);
+	if (listen(sockfd, SOMAXCONN) != 0)
+		throw std::domain_error("(webserv) Listening problem.");
+}
+
+int WebServ::bind_socket_to_local(int u_port)
+{
+	struct addrinfo hints;
+	struct addrinfo *result, *rp;
+	int sfd, s;
+
+	hints = addrinfo();
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM | SOCK_NONBLOCK;
+	hints.ai_protocol = 0;
+	hints.ai_flags = AI_PASSIVE;
+	hints.ai_canonname = NULL;
+	hints.ai_addr = NULL;
+	hints.ai_next = NULL;
+
+	s = getaddrinfo(NULL, itoa(u_port), &hints, &result);
+	if (s != 0)
+		throw std::domain_error("(webserv) getaddrinfo failed.");
+	for (rp = result; rp != NULL; rp = rp->ai_next)
+	{
+		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		if (sfd == -1)
+			continue;
+		u_bind = bind(sfd, rp->ai_addr, rp->ai_addrlen);
+		if (u_bind == 0)
+			break;
+		close(sfd);
+	}
+	if (rp == NULL)
+		throw std::domain_error("(webserv) Could not connect.");
+	freeaddrinfo(result);
+	return sfd;
+}
+
 void WebServ::init()
 {
-	bind_ports();
-	listen_on();
-	hook_it();
+//	bind_ports();
+//	listen_on();
+//	hook_it();
+	int sockfd = bind_socket_to_local(8888);
+	listen_on(sockfd);
+	accept_connection();
 }
 
 WebServ::WebServ(DataFold& u_config)

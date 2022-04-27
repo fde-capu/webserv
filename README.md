@@ -2,7 +2,7 @@ Webserv
 This is when you finally understand why a URL starts
 with HTTP
 Summary:
-This project is about writing your ow HTTP server.
+This project is about writing your own HTTP server.
 You will be able to test it with an actual browser.
 HTTP is one of the most used protocols on the internet.
 Knowing its arcane will be useful, even if you won’t be working on a website.
@@ -21,7 +21,8 @@ Chapter I
 Introduction
 The Hypertext Transfer Protocol (HTTP) is an application protocol for distributed,
 collaborative, hypermedia information systems.
-HTTP is the foundation of data communication for the World Wide Web, where hypertext documents include hyperlinks to other resources that the user can easily access.
+HTTP is the foundation of data communication for the World Wide Web, where hypertext
+documents include hyperlinks to other resources that the user can easily access.
 For example, by a mouse click or by tapping the screen in a web browser.
 HTTP was developed to facilitate hypertext and the World Wide Web.
 The primary function of a web server is to store, process, and deliver web pages to
@@ -70,7 +71,7 @@ htons, htonl, ntohs, ntohl, select, poll, epoll
 (kqueue, kevent), socket, accept, listen, send,
 recv, bind, connect, inet_addr, setsockopt,
 getsockname, fcntl
-Libft authorized n/a
+Libft authorized: not.
 Description A HTTP server in C++ 98
 You must write a HTTP server in C++ 98.
 Your executable will be run as follows:
@@ -100,7 +101,8 @@ possible to use read/recv or write/send functions with no poll()
 But it would consume more system resources.
 Thus, if you try to read/recv or write/send in any file descriptor
 without using poll() (or equivalent), your grade will be 0.
-• You can use every macro and define like FD_SET, FD_CLR, FD_ISSET, FD_ZERO (understanding what and how they do it is very useful).
+• You can use every macro and define like FD_SET, FD_CLR, FD_ISSET, FD_ZERO
+(understanding what and how they do it is very useful).
 • A request to your server should never hang forever.
 • Your server must be compatible with the web browser of your choice.
 • We will consider that NGINX is HTTP 1.1 compliant and may be used to compare
@@ -156,7 +158,8 @@ from the CGI, EOF will mark the end of the returned data.
 ∗ Your program should call the CGI with the file requested as first argument.
 ∗ The CGI should be run in the correct directory for relative path file access.
 ∗ Your server should work with one CGI (php-CGI, Python, and so forth).
-You must provide some configuration files and default basic files to test and demonstrate every feature works during evaluation.
+You must provide some configuration files and default basic files to test and
+demonstrate every feature works during evaluation.
 If you’ve got a question about one behavior, you should compare your
 program behavior with NGINX’s.
 For example, check how does server_name work.
