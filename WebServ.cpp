@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/28 16:47:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/29 00:23:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,35 +138,34 @@ void WebServ::listen_on(int sockfd)
 {
 //	for (size_t i = 0; i < port_count(); i++)
 //		listen(instance[i].server_socket, 1);
-	if (listen(sockfd, SOMAXCONN) != 0)
-		throw std::domain_error("(webserv) Listening problem.");
+//	if (listen(sockfd, SOMAXCONN) != 0)
+//		throw std::domain_error("(webserv) Listening problem.");
 }
 
 int WebServ::bind_socket_to_local(int u_port)
 {
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
-	int sfd, s, u_bind;
+	int sfd, addrinfo_out;
 
 	hints = addrinfo();
 	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM | SOCK_NONBLOCK;
+	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = 0;
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_canonname = NULL;
 	hints.ai_addr = NULL;
 	hints.ai_next = NULL;
 
-	s = getaddrinfo(NULL, itoa(u_port).c_str(), &hints, &result);
-	if (s != 0)
-		throw std::domain_error("(webserv) getaddrinfo failed.");
+	addrinfo_out = getaddrinfo(NULL, itoa(u_port).c_str(), &hints, &result);
+	if (addrinfo_out != 0)
+		throw std::domain_error("(webserv) getaddrinfo failed: " + std::string(gai_strerror(addrinfo_out)));
 	for (rp = result; rp != NULL; rp = rp->ai_next)
 	{
 		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if (sfd == -1)
 			continue;
-		u_bind = bind(sfd, rp->ai_addr, rp->ai_addrlen);
-		if (u_bind == 0)
+		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 		close(sfd);
 	}
@@ -181,9 +180,20 @@ void WebServ::init()
 //	bind_ports();
 //	listen_on();
 //	hook_it();
-	int sockfd = bind_socket_to_local(8888);
-	listen_on(sockfd);
+//	listen_on(sockfd);
 //	accept_connection();
+
+	int sockfd = bind_socket_to_local(8888);
+	int poll_sock = epoll_create(1); // Argument must only be non-zero for historical reasons.
+
+	struct epoll_event event;
+	event.events = EPOLLIN;
+	events.data.fd = sockfd;
+
+	if (epoll_ctl(poll_sock, EPOLL_CTL_ADD, sockfd, &event) == -1)
+		throw std::domain_error("(webserv) Could not add socket to poll.");
+	
+	epoll_wait(poll_sock, &event, 64, 0);
 }
 
 WebServ::WebServ(DataFold& u_config)
