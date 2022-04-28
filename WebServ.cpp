@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/27 07:22:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/28 16:47:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ int WebServ::bind_socket_to_local(int u_port)
 {
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
-	int sfd, s;
+	int sfd, s, u_bind;
 
 	hints = addrinfo();
 	hints.ai_family = AF_INET;
@@ -157,7 +157,7 @@ int WebServ::bind_socket_to_local(int u_port)
 	hints.ai_addr = NULL;
 	hints.ai_next = NULL;
 
-	s = getaddrinfo(NULL, itoa(u_port), &hints, &result);
+	s = getaddrinfo(NULL, itoa(u_port).c_str(), &hints, &result);
 	if (s != 0)
 		throw std::domain_error("(webserv) getaddrinfo failed.");
 	for (rp = result; rp != NULL; rp = rp->ai_next)
@@ -183,7 +183,7 @@ void WebServ::init()
 //	hook_it();
 	int sockfd = bind_socket_to_local(8888);
 	listen_on(sockfd);
-	accept_connection();
+//	accept_connection();
 }
 
 WebServ::WebServ(DataFold& u_config)
