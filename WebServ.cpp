@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/29 00:23:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/29 12:45:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,85 +57,86 @@ size_t WebServ::port_count()
 
 void WebServ::hook_it()
 {
-	struct sockaddr_in *communication_layer;
-	int client_socket;
-	struct addrinfo hints;
-	struct addrinfo *result;
-	struct addrinfo *info;
-	int sign;
-	char netstr[INET6_ADDRSTRLEN];
-	struct sockaddr_in *port_in;
-	struct sockaddr_in6 *port_in6;
-	std::string content;
-
-	verbose(0) << "Server is (will be) up." << std::endl;
-
-	while (1)
-	{
-		for(size_t i = 0; i < instance.size(); i++)
-		{
-//			i = 0;
-			//			communication_layer = calloc(1, sizeof(struct sockaddr_in));
-			communication_layer = new sockaddr_in();
-			client_socket = accept(
-					instance[i].server_socket,
-					(struct sockaddr*)&communication_layer,
-					(socklen_t *)&communication_layer->sin_addr.s_addr
-					);
-			hints = addrinfo();
-			//			memset(&hints, 0, sizeof(struct addrinfo));
-			hints.ai_family = AF_UNSPEC;
-			hints.ai_socktype = SOCK_DGRAM;
-			hints.ai_flags = AI_PASSIVE;
-			hints.ai_protocol = 0;
-			hints.ai_canonname = NULL;
-			hints.ai_addr = NULL;
-			hints.ai_next = NULL;
-			sign = getaddrinfo(NULL, itoa(instance[i].server_socket).c_str(), &hints, &result);
-			if (sign != 0)
-			{
-				verbose(0) << ALERT << " " << ERROR << ERR_FAILED_ADDRINFO << std::endl;
-				continue ;
-			}
-			for(info = result; info != NULL; info = info->ai_next)
-			{
-				if (info->ai_addr->sa_family == AF_INET)
-				{
-					port_in = (struct sockaddr_in *)info->ai_addr;
-					verbose(0) << "Connection from: " << inet_ntop(AF_INET, &port_in->sin_addr, netstr, sizeof(netstr)) << std::endl;
-				}
-				else if (info->ai_addr->sa_family == AF_INET6)
-				{
-					port_in6 = (struct sockaddr_in6 *)info->ai_addr;
-					verbose(0) << "Connection from: " << inet_ntop(AF_INET6, &port_in6->sin6_addr, netstr, sizeof(netstr)) << std::endl;
-				}
-			}
-
-			verbose(0) << ALERT << " Family: " << communication_layer->sin_family << std::endl;
-			verbose(0) << ALERT << " Port: " << ntohs(communication_layer->sin_port) << std::endl;
-			verbose(0) << ALERT << " in_addr: " << communication_layer->sin_addr.s_addr << std::endl;
-
-			content = instance[i].current_http_header + instance[i].current_http_body;
-			send(
-				client_socket,
-				content.c_str(),
-				content.length(),
-				0
-			);
-
-			verbose(0) << ALERT << " sent (" << content.length() << "): ```" << content << "```" << std::endl;
-
-			close(client_socket);
-			delete communication_layer;
-		}
-		//////////
-//		std::cout << "!!!!" << std::endl;
-//		break ;
-	}
+//	struct sockaddr_in *communication_layer;
+//	int client_socket;
+//	struct addrinfo hints;
+//	struct addrinfo *result;
+//	struct addrinfo *info;
+//	int sign;
+//	char netstr[INET6_ADDRSTRLEN];
+//	struct sockaddr_in *port_in;
+//	struct sockaddr_in6 *port_in6;
+//	std::string content;
+//
+//	verbose(0) << "Server is (will be) up." << std::endl;
+//
+//	while (1)
+//	{
+//		for(size_t i = 0; i < instance.size(); i++)
+//		{
+////			i = 0;
+//			//			communication_layer = calloc(1, sizeof(struct sockaddr_in));
+//			communication_layer = new sockaddr_in();
+//			client_socket = accept(
+//					instance[i].server_socket,
+//					(struct sockaddr*)&communication_layer,
+//					(socklen_t *)&communication_layer->sin_addr.s_addr
+//					);
+//			hints = addrinfo();
+//			//			memset(&hints, 0, sizeof(struct addrinfo));
+//			hints.ai_family = AF_UNSPEC;
+//			hints.ai_socktype = SOCK_DGRAM;
+//			hints.ai_flags = AI_PASSIVE;
+//			hints.ai_protocol = 0;
+//			hints.ai_canonname = NULL;
+//			hints.ai_addr = NULL;
+//			hints.ai_next = NULL;
+//			sign = getaddrinfo(NULL, itoa(instance[i].server_socket).c_str(), &hints, &result);
+//			if (sign != 0)
+//			{
+//				verbose(0) << ALERT << " " << ERROR << ERR_FAILED_ADDRINFO << std::endl;
+//				continue ;
+//			}
+//			for(info = result; info != NULL; info = info->ai_next)
+//			{
+//				if (info->ai_addr->sa_family == AF_INET)
+//				{
+//					port_in = (struct sockaddr_in *)info->ai_addr;
+//					verbose(0) << "Connection from: " << inet_ntop(AF_INET, &port_in->sin_addr, netstr, sizeof(netstr)) << std::endl;
+//				}
+//				else if (info->ai_addr->sa_family == AF_INET6)
+//				{
+//					port_in6 = (struct sockaddr_in6 *)info->ai_addr;
+//					verbose(0) << "Connection from: " << inet_ntop(AF_INET6, &port_in6->sin6_addr, netstr, sizeof(netstr)) << std::endl;
+//				}
+//			}
+//
+//			verbose(0) << ALERT << " Family: " << communication_layer->sin_family << std::endl;
+//			verbose(0) << ALERT << " Port: " << ntohs(communication_layer->sin_port) << std::endl;
+//			verbose(0) << ALERT << " in_addr: " << communication_layer->sin_addr.s_addr << std::endl;
+//
+//			content = instance[i].current_http_header + instance[i].current_http_body;
+//			send(
+//				client_socket,
+//				content.c_str(),
+//				content.length(),
+//				0
+//			);
+//
+//			verbose(0) << ALERT << " sent (" << content.length() << "): ```" << content << "```" << std::endl;
+//
+//			close(client_socket);
+//			delete communication_layer;
+//		}
+//		//////////
+////		std::cout << "!!!!" << std::endl;
+////		break ;
+//	}
 }
 
 void WebServ::listen_on(int sockfd)
 {
+	(void)sockfd;
 //	for (size_t i = 0; i < port_count(); i++)
 //		listen(instance[i].server_socket, 1);
 //	if (listen(sockfd, SOMAXCONN) != 0)
@@ -188,12 +189,15 @@ void WebServ::init()
 
 	struct epoll_event event;
 	event.events = EPOLLIN;
-	events.data.fd = sockfd;
+	event.data.fd = sockfd;
 
 	if (epoll_ctl(poll_sock, EPOLL_CTL_ADD, sockfd, &event) == -1)
 		throw std::domain_error("(webserv) Could not add socket to poll.");
+
+	if (close(poll_sock))
+		throw std::domain_error("(webserv) epoll socket could not be closed.");
 	
-	epoll_wait(poll_sock, &event, 64, 0);
+//	epoll_wait(poll_sock, &event, 64, 0);
 }
 
 WebServ::WebServ(DataFold& u_config)

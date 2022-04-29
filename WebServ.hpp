@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/29 00:01:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/29 12:44:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,12 @@
 # include "DataFold.hpp"
 # include <iostream>
 # include <vector>
-# include <arpa/inet.h>
-# include <sys/types.h>
-# include <sys/socket.h>
+//# include <arpa/inet.h>
+// # include <sys/types.h>
+//# include <sys/socket.h>
 # include <netdb.h>
 # include <unistd.h>
+# include <sys/epoll.h>
 
 # define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n";
 
