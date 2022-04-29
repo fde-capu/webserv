@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/29 12:45:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/29 13:40:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,7 @@ int WebServ::bind_socket_to_local(int u_port)
 	if (rp == NULL)
 		throw std::domain_error("(webserv) Could not connect.");
 	freeaddrinfo(result);
+	verbose(1) << "Got fd " << sfd << " bound to port " << u_port << "." << std::endl;
 	return sfd;
 }
 
@@ -186,14 +187,39 @@ void WebServ::init()
 
 	int sockfd = bind_socket_to_local(8888);
 	int poll_sock = epoll_create(1); // Argument must only be non-zero for historical reasons.
+	verbose(1) << "pool socket: " << poll_sock << "." << std::endl;
+
+	int READ_SIZE = 1;
+	size_t bytes_read;
+	char read_buffer[READ_SIZE + 1];
 
 	struct epoll_event event;
+	struct epoll_event event_list[MAX_EVENTS];
 	event.events = EPOLLIN;
 	event.data.fd = sockfd;
 
 	if (epoll_ctl(poll_sock, EPOLL_CTL_ADD, sockfd, &event) == -1)
+	{
+		close(poll_sock);
 		throw std::domain_error("(webserv) Could not add socket to poll.");
+	}
 
+	int event_count;
+	int lit = 1;
+	while (lit++ < 20)
+	{
+		std::cout << "_";
+		event_count = epoll_wait(poll_sock, event_list, MAX_EVENTS, 30000);
+		std::cout << "e" << event_count << " ";
+		for (int i = 0; i < event_count; i++)
+		{
+			std::cout << "Event from fd " << event_list[i].data.fd << ":";
+			bytes_read = read(event_list[i].data.fd, read_buffer, READ_SIZE);
+			read_buffer[bytes_read] = '\0';
+			std::cout << read_buffer << std::endl;
+		}
+	}
+	
 	if (close(poll_sock))
 		throw std::domain_error("(webserv) epoll socket could not be closed.");
 	

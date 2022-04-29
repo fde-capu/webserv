@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/29 12:44:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/04/29 13:00:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # include <netdb.h>
 # include <unistd.h>
 # include <sys/epoll.h>
+
+# define MAX_EVENTS 64
 
 # define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n";
 
@@ -42,13 +44,14 @@ class WebServ
 		DataFold server;
 		std::vector<server_instance> instance;
 
-		server_instance dftosi(DataFold);
-		size_t port_count();
+
 		WebServ();
 
 		void bind_ports();
 		void hook_it();
 
+		size_t port_count();
+		server_instance dftosi(DataFold);
 		void listen_on(int);
 		int bind_socket_to_local(int);
 		void accept_connection();
