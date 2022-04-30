@@ -6,16 +6,16 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/29 20:42:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/01 00:08:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 #include <iostream>
 
-server_instance WebServ::dftosi(DataFold df)
+ws_serv_instance WebServ::dftosi(DataFold df)
 {
-	server_instance si;
+	ws_serv_instance si;
 	si.current_http_header = "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 13\n\n";
 	si.current_http_body = "Hello, world!";
 	si.server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -43,7 +43,7 @@ void WebServ::bind_ports()
 			si = instance[i].server_address[j];
 
 //			Safe for bind?:
-//					reinterpret_cast<struct sockaddr *>(&si),
+//			bind(	reinterpret_cast<struct sockaddr *>(&si),
 			bind(	instance[i].server_socket,
 					(struct sockaddr *)&si,
 					sizeof(si)
@@ -262,7 +262,7 @@ DataFold WebServ::getConfig() const
 DataFold WebServ::getServer() const
 { return server; }
 
-std::vector<server_instance> WebServ::getInstance() const
+std::vector<ws_serv_instance> WebServ::getInstance() const
 { return instance; }
 
 WebServ & WebServ::operator= (WebServ const & rhs)

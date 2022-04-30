@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/29 20:18:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/01 00:08:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,21 @@
 
 # define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n";
 
-typedef struct struct_server_instance
+typedef struct struct_ws_serv_instance
 {
 	std::string current_http_header;
 	std::string current_http_body;
 	int server_socket;
 	std::vector<struct sockaddr_in> server_address;
 	DataFold attribute;
-} server_instance;
+} ws_serv_instance;
 
 class WebServ
 {
 	private:
 		DataFold config;
 		DataFold server;
-		std::vector<server_instance> instance;
+		std::vector<ws_serv_instance> instance;
 
 
 		WebServ();
@@ -51,7 +51,7 @@ class WebServ
 		void hook_it();
 
 		size_t port_count();
-		server_instance dftosi(DataFold);
+		ws_serv_instance dftosi(DataFold);
 		void listen_on(int);
 		int bind_socket_to_local(int);
 		void accept_connection();
@@ -63,7 +63,7 @@ class WebServ
 		~WebServ();
 		DataFold getConfig() const;
 		DataFold getServer() const;
-		std::vector<server_instance> getInstance() const;
+		std::vector<ws_serv_instance> getInstance() const;
 		void init();
 };
 
