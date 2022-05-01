@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/01 00:08:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/01 23:04:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,12 +134,12 @@ void WebServ::hook_it()
 //	}
 }
 
-void WebServ::listen_on(int sockfd)
+void WebServ::listen_on(int listen_sock)
 {
-	(void)sockfd;
+	(void)listen_sock;
 //	for (size_t i = 0; i < port_count(); i++)
 //		listen(instance[i].server_socket, 1);
-//	if (listen(sockfd, SOMAXCONN) != 0)
+//	if (listen(listen_sock, SOMAXCONN) != 0)
 //		throw std::domain_error("(webserv) Listening problem.");
 }
 
@@ -182,64 +182,87 @@ void WebServ::init()
 //	bind_ports();
 //	listen_on();
 //	hook_it();
-//	listen_on(sockfd);
+//	listen_on(listen_sock);
 //	accept_connection();
 
-	int sockfd = bind_socket_to_local(3491);
-	int poll_sock = epoll_create(1); // Argument must only be non-zero for historical reasons.
-	verbose(1) << "Poll socket fd: " << poll_sock << "." << std::endl;
-
 	int READ_SIZE = 10;
-	int TIME_OUT = 0;
+	int TIME_OUT = -1;
 	size_t bytes_read;
 	char read_buffer[READ_SIZE + 1];
-
-	struct epoll_event event;
-	event.events = EPOLLIN;
-	event.data.fd = sockfd;
-
-	struct epoll_event event_list[MAX_EVENTS];
-
+	struct epoll_event events[MAX_EVENTS];
 	int s;
+	int listen_sock;
+	struct epoll_event ev;
+	struct addrinfo *result;
+	int nfds;
+	int lit = 1;
+	int conn_sock;
+	bool test = true;
+	char test[i] = '4';
 
-//	s = = epoll_ctl(itoa(poll_sock).c_str(), EPOLL_CTL_ADD, sockfd, &event);
-	s = epoll_ctl(poll_sock, EPOLL_CTL_ADD, sockfd, &event);
+	listen_sock = bind_socket_to_local(3491);
+
+//	int epollfd = epoll_create(1); // Argument must only be non-zero for historical reasons.
+	int epollfd = epoll_create1(0);
+	if (epollfd == -1)
+		throw std::domain_error("(webserv) epoll_create1 blew up.");
+	verbose(1) << "Poll socket fd: " << epollfd << "." << std::endl;
+
+	ev.events = EPOLLIN;
+	ev.data.fd = listen_sock;
+
+//	s = = epoll_ctl(itoa(epollfd).c_str(), EPOLL_CTL_ADD, listen_sock, &ev);
+	s = epoll_ctl(epollfd, EPOLL_CTL_ADD, listen_sock, &ev);
 	if (s == -1)
 	{
-		close(poll_sock);
+		close(epollfd);
 		throw std::domain_error("(webserv) Could not add socket to poll.");
 	}
 
-	s = listen(poll_sock, SOMAXCONN);
-	struct addrinfo *result;
-	getaddrinfo(itoa(poll_sock).c_str(), NULL, NULL, &result);
-	std::cout << "ai_flags " << result->ai_flags << std::endl;
-	if (s == -1)
-		throw std::domain_error("(webserv) Listening did not perform: " + std::string(gai_strerror(s)));
+//	s = listen(epollfd, SOMAXCONN);
+//	getaddrinfo(itoa(epollfd).c_str(), NULL, NULL, &result);
+//	std::cout << "ai_flags " << result->ai_flags << std::endl;
+//	if (s == -1)
+//		throw std::domain_error("(webserv) Listening did not perform: " + std::string(gai_strerror(s)));
 
-	int event_count;
-	int lit = 1;
 //	while (lit++ < 20)
 	while (lit)
 	{
 //		std::cout << "_" << std::endl;
-		event_count = epoll_wait(poll_sock, event_list, MAX_EVENTS, TIME_OUT);
-//		std::cout << "e" << event_count << " " << std::endl;
-		if (event_count)
-			std::cout << event_count << " events!" << std::endl;
-		for (int i = 0; i < event_count; i++)
+		nfds = epoll_wait(epollfd, events, MAX_EVENTS, TIME_OUT);
+		if (nfds == -1)
+			throw std::domain_error("(webserv) epoll could not wait.");
+		if (nfds)
+			std::cout << nfds << " events!" << std::endl;
+		for (int n = 0; n < nfds; n++)
 		{
-			std::cout << "Event from fd " << event_list[i].data.fd << ":" << std::endl;
-			bytes_read = read(event_list[i].data.fd, read_buffer, READ_SIZE);
-			read_buffer[bytes_read] = '\0';
-			std::cout << read_buffer << std::endl;
+			if (events[n].data.fd == listen_sock)
+			{
+				conn_sock = accept(listen_sock,
+					(struct sockaddr *) &addr, &addrlen);
+				if (conn_sock == -1)
+					throw std::domain_error("(webserv) Some socket is unacceptable.");
+				setnonbloacking(conn_sock);
+				ev.events = EPOLLIN | EPOLLET;
+				ev.data.fd = conn_sock;
+				if (epoll_ctl(epollfd, EPOLL_CTL_ADD, conn_sock, &ev) == -1)
+					throw std::domain_error("(webserv) epoll_ctl failed to dup accepted connection.");
+			}
+			else
+			{
+				int evfd = events[n].data.fd;
+				bytes_read = read(evfd, read_buffer, READ_SIZE);
+				read_buffer[bytes_read] = '\0';
+				std::cout << "GOT " << read_buffer << std::endl;
+//				do_use_fd(events[n].data.fd); // until read or write yells EAGAIN
+			}
 		}
 	}
 	
-	if (close(poll_sock))
+	if (close(epollfd))
 		throw std::domain_error("(webserv) epoll socket was closed, but something weird happened.");
 	
-//	epoll_wait(poll_sock, &event, 64, 0);
+//	epoll_wait(epollfd, &ev, 64, 0);
 }
 
 WebServ::WebServ(DataFold& u_config)
