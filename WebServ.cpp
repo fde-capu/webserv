@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/01 23:04:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/02 03:16:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,8 +197,8 @@ void WebServ::init()
 	int nfds;
 	int lit = 1;
 	int conn_sock;
-	bool test = true;
-	char test[i] = '4';
+//	bool test = true;
+//	char test[i] = '4';
 
 	listen_sock = bind_socket_to_local(3491);
 
