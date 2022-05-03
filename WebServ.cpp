@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/03 13:46:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/03 16:52:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,31 +147,29 @@ int WebServ::bind_socket_to_local(int u_port)
 {
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
-	int sfd, addrinfo_out;
+	int sfd, s;
 
 	hints = addrinfo();
-	hints.ai_flags = AI_PASSIVE;
-	hints.ai_family = AF_UNSPEC;
-	hints.ai_socktype = SOCK_STREAM;
-//	hints.ai_protocol = 0;
-//	hints.ai_canonname = NULL;
-//	hints.ai_addr = NULL;
-//	hints.ai_next = NULL;
+	hints.ai_flags = AI_PASSIVE; // For bind and accpet to work. (Returns INADDR_ANY to result->ai_addr (?))
+	hints.ai_family = AF_INET; // Only IPv4
+	hints.ai_socktype = SOCK_STREAM; // TCP
 
-	addrinfo_out = getaddrinfo(NULL, itoa(u_port).c_str(), &hints, &result);
-	if (addrinfo_out != 0)
-		throw std::domain_error("(webserv) getaddrinfo failed: " + std::string(gai_strerror(addrinfo_out)));
+	s = getaddrinfo(NULL, itoa(u_port).c_str(), &hints, &result);
+	if (s != 0)
+		throw std::domain_error("(webserv) getaddrinfo failed: " + std::string(gai_strerror(s)));
+
 	for (rp = result; rp != NULL; rp = rp->ai_next)
 	{
-		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		sfd = socket(rp->ai_family, rp->ai_socktype, 0); // 0 for protocol, since its family.
 		if (sfd == -1)
-			continue;
+			throw std::domain_error("(webserv) Socket creation failed.");
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 		close(sfd);
 	}
 	if (rp == NULL)
-		throw std::domain_error("(webserv) Could not find a socket.");
+		throw std::domain_error("(webserv) Socket overflow.");
+
 	freeaddrinfo(result);
 	verbose(1) << "Bound fd " << sfd << " to port " << u_port << "." << std::endl;
 	return sfd;
@@ -186,20 +184,32 @@ void WebServ::init()
 //	accept_connection();
 
 	int READ_SIZE = 10;
-	int TIME_OUT = -1;
+	int TIME_OUT = 0;
 	size_t bytes_read;
 	char read_buffer[READ_SIZE + 1];
 	struct epoll_event events[MAX_EVENTS];
 	int s;
 	int listen_sock;
 	struct epoll_event ev;
-	struct addrinfo *result;
+//	struct addrinfo *result;
 	int nfds;
 	int lit = 1;
 	int conn_sock;
 	struct sockaddr_in *addr;
+	struct sockaddr_in srv_addr;
 
 	listen_sock = bind_socket_to_local(3491);
+
+//	set_sockaddr(&srv_addr);
+	srv_addr = sockaddr_in();
+	srv_addr.sin_family = AF_INET;
+	srv_addr.sin_addr.s_addr = INADDR_ANY;
+	srv_addr.sin_port = htons(3491);
+
+	bind(listen_sock, (struct sockaddr *)&srv_addr, sizeof(srv_addr));
+
+	if (fcntl(listen_sock, F_SETFD, fcntl(listen_sock, F_GETFD, 0) | O_NONBLOCK) == -1)
+		throw std::domain_error("(webserv) Cannot set non blocking listen socket.");
 
 //	int epollfd = epoll_create(1); // Argument must only be non-zero for historical reasons.
 	int epollfd = epoll_create1(0);
@@ -207,10 +217,8 @@ void WebServ::init()
 		throw std::domain_error("(webserv) epoll_create1 blew up.");
 	verbose(1) << "Poll socket fd: " << epollfd << "." << std::endl;
 
-	ev.events = EPOLLIN;
+	ev.events = EPOLLIN | EPOLLET;
 	ev.data.fd = listen_sock;
-
-//	s = = epoll_ctl(itoa(epollfd).c_str(), EPOLL_CTL_ADD, listen_sock, &ev);
 	s = epoll_ctl(epollfd, EPOLL_CTL_ADD, listen_sock, &ev);
 	if (s == -1)
 	{
@@ -237,15 +245,21 @@ void WebServ::init()
 		{
 			if (events[n].data.fd == listen_sock)
 			{
+				addr = new struct sockaddr_in();
 				conn_sock = accept
 					(
 						listen_sock,
 						(struct sockaddr *) &addr,
 						(socklen_t *) &addr->sin_addr.s_addr
 					);
+				delete addr;
 				if (conn_sock == -1)
 					throw std::domain_error("(webserv) Some socket is unacceptable.");
-				setnonbloacking(conn_sock);
+
+				// Set nonblocking(conn_sock):
+				if (fcntl(conn_sock, F_SETFD, fcntl(conn_sock, F_GETFD, 0) | O_NONBLOCK) == -1)
+					throw std::domain_error("(webserv) Cannot set non blocking connection socket.");
+
 				ev.events = EPOLLIN | EPOLLET;
 				ev.data.fd = conn_sock;
 				if (epoll_ctl(epollfd, EPOLL_CTL_ADD, conn_sock, &ev) == -1)
