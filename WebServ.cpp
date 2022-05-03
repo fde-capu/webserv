@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/02 03:16:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/03 13:46:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,8 +197,7 @@ void WebServ::init()
 	int nfds;
 	int lit = 1;
 	int conn_sock;
-//	bool test = true;
-//	char test[i] = '4';
+	struct sockaddr_in *addr;
 
 	listen_sock = bind_socket_to_local(3491);
 
@@ -238,8 +237,12 @@ void WebServ::init()
 		{
 			if (events[n].data.fd == listen_sock)
 			{
-				conn_sock = accept(listen_sock,
-					(struct sockaddr *) &addr, &addrlen);
+				conn_sock = accept
+					(
+						listen_sock,
+						(struct sockaddr *) &addr,
+						(socklen_t *) &addr->sin_addr.s_addr
+					);
 				if (conn_sock == -1)
 					throw std::domain_error("(webserv) Some socket is unacceptable.");
 				setnonbloacking(conn_sock);
