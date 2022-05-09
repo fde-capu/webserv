@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/05 16:10:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/09 22:02:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include "DataFold.hpp"
 # include <iostream>
 # include <vector>
-//# include <arpa/inet.h>
+# include <arpa/inet.h>
 // # include <sys/types.h>
 //# include <sys/socket.h>
 # include <netdb.h>

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/05 17:16:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/09 22:51:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,18 +185,15 @@ void WebServ::init()
 
 	int READ_SIZE = 10;
 	int TIME_OUT = -1;
-	size_t bytes_read;
 	char read_buffer[READ_SIZE + 1];
-	int s;
 	int listen_sock;
-	int nfds;
-	int lit = 1;
-	int conn_sock;
 	struct pollfd ufds;
 	std::vector<struct pollfd> poll_list;
 	struct sockaddr_storage remoteaddr;
-	int addrlen;
+	unsigned int addrlen;
 	int poll_count;
+	int newfd;
+	int nbytes;
 
 	listen_sock = bind_socket_to_local(3491);
 
@@ -205,16 +202,19 @@ void WebServ::init()
 	ufds.events = POLLIN;
 	poll_list.push_back(ufds);
 
+	if (listen(listen_sock, SOMAXCONN) != 0)
+		throw std::domain_error("(webserv) Listening problem.");
+
 	while (1)
 	{
-		poll_count = poll(&ufds, poll_list.size(), -1);
+		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
 		if (poll_count == -1)
 			throw std::domain_error("(webserv) poll error.");
-		for (int i = 0; i < poll_list.size(), i++)
+		for (size_t i = 0; i < poll_list.size(); i++)
 		{
 			if (poll_list[i].revents & POLLIN)
 			{
-				if (pool_list[i].fd == listen_sock)
+				if (poll_list[i].fd == listen_sock)
 				{
 					addrlen = sizeof remoteaddr;
 					newfd = accept(listen_sock, (struct sockaddr *)&remoteaddr, &addrlen);
@@ -231,7 +231,7 @@ void WebServ::init()
 				}
 				else
 				{
-					nbytes = recv(poll_list[i].fd, buf, sizeof buf, 0);
+					nbytes = recv(poll_list[i].fd, read_buffer, sizeof read_buffer, 0);
 					if (nbytes == -1)
 						throw std::domain_error("(webserv) Something went wrong receiving data.");
 					if (nbytes == 0)
