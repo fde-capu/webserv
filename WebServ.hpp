@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/09 22:02:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/10 13:49:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ class WebServ
 		DataFold server;
 		std::vector<ws_serv_instance> instance;
 
-
 		WebServ();
 
 		void bind_ports();
@@ -55,6 +54,7 @@ class WebServ
 		void listen_on(int);
 		int bind_socket_to_local(int);
 		void accept_connection();
+		std::string gnl(int);
 
 	public:
 		WebServ(DataFold&);

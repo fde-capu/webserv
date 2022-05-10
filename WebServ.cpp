@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/09 22:51:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/10 14:11:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,7 @@ int WebServ::bind_socket_to_local(int u_port)
 	struct addrinfo hints;
 	struct addrinfo *result, *rp;
 	int sfd, s;
+	int yes = 1;
 
 	hints = addrinfo();
 	hints.ai_flags = AI_PASSIVE;
@@ -164,12 +165,14 @@ int WebServ::bind_socket_to_local(int u_port)
 			throw std::domain_error("(webserv) Socket creation failed.");
 		if (fcntl(sfd, F_SETFD, O_NONBLOCK) == -1)
 			throw std::domain_error("(webserv) Failed to set non-blocking flag.");
+		if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+			throw std::domain_error("(webserv) Can not reuse socket.");
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 		close(sfd);
 	}
 	if (rp == NULL)
-		throw std::domain_error("(webserv) Socket overflow.");
+		throw std::domain_error("(webserv) Socket locked.");
 	freeaddrinfo(result);
 	verbose(1) << "Bound fd " << sfd << " to port " << u_port << "." << std::endl;
 	return sfd;
@@ -183,9 +186,7 @@ void WebServ::init()
 //	listen_on(listen_sock);
 //	accept_connection();
 
-	int READ_SIZE = 10;
 	int TIME_OUT = -1;
-	char read_buffer[READ_SIZE + 1];
 	int listen_sock;
 	struct pollfd ufds;
 	std::vector<struct pollfd> poll_list;
@@ -193,7 +194,7 @@ void WebServ::init()
 	unsigned int addrlen;
 	int poll_count;
 	int newfd;
-	int nbytes;
+	std::string new_line;
 
 	listen_sock = bind_socket_to_local(3491);
 
@@ -231,10 +232,8 @@ void WebServ::init()
 				}
 				else
 				{
-					nbytes = recv(poll_list[i].fd, read_buffer, sizeof read_buffer, 0);
-					if (nbytes == -1)
-						throw std::domain_error("(webserv) Something went wrong receiving data.");
-					if (nbytes == 0)
+					new_line = gnl(poll_list[i].fd);
+					if (new_line == "")
 					{
 						verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
 						close(poll_list[i].fd);
@@ -243,11 +242,32 @@ void WebServ::init()
 					else
 					{
 						verbose(1) << "(webser) Got data from " << poll_list[i].fd << "." << std::endl;
+						verbose(1) << new_line << std::endl;
 					}
 				}
 			}
 		}
 	}
+}
+
+std::string WebServ::gnl(int fd)
+{
+	int READ_SIZE = 10;
+	char read_buffer[READ_SIZE + 1];
+	int nbytes, nlbytes;
+
+	read_buffer[READ_SIZE] = '\0';
+	nbytes = recv(fd, read_buffer, READ_SIZE, 0);
+	if (nbytes == -1)
+		throw std::domain_error("(webserv) Something went wrong receiving data.");
+	if (nbytes == 0)
+		return "";
+	for (nlbytes = 0; nlbytes < nbytes; nlbytes++)
+		if (read_buffer[nlbytes] == '\n' || read_buffer[nlbytes] == '\r')
+			break;
+	if (nlbytes == READ_SIZE)
+		return std::string(read_buffer) + gnl(fd);
+	return std::string(read_buffer);
 }
 
 WebServ::WebServ(DataFold& u_config)
