@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/10 14:11:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/10 15:32:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,6 +255,8 @@ std::string WebServ::gnl(int fd)
 	int READ_SIZE = 10;
 	char read_buffer[READ_SIZE + 1];
 	int nbytes, nlbytes;
+	std::string out;
+	static std::string save = "";
 
 	read_buffer[READ_SIZE] = '\0';
 	nbytes = recv(fd, read_buffer, READ_SIZE, 0);
@@ -263,11 +265,17 @@ std::string WebServ::gnl(int fd)
 	if (nbytes == 0)
 		return "";
 	for (nlbytes = 0; nlbytes < nbytes; nlbytes++)
-		if (read_buffer[nlbytes] == '\n' || read_buffer[nlbytes] == '\r')
+		if (read_buffer[nlbytes] == '\n')
 			break;
-	if (nlbytes == READ_SIZE)
-		return std::string(read_buffer) + gnl(fd);
-	return std::string(read_buffer);
+	if (nlbytes == nbytes)
+	{
+		save += std::string(read_buffer);
+		return gnl(fd);
+	}
+	out = save + std::string(read_buffer);
+	save = out.substr(out.find('\n') + 1);
+	out = out.substr(0, out.find('\n'));
+	return out;
 }
 
 WebServ::WebServ(DataFold& u_config)
