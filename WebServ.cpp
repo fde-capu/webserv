@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/10 15:32:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/10 16:54:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,45 +18,16 @@ ws_serv_instance WebServ::dftosi(DataFold df)
 	ws_serv_instance si;
 	si.current_http_header = "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 13\n\n";
 	si.current_http_body = "Hello, world!";
-	si.server_socket = socket(AF_INET, SOCK_STREAM, 0);
-	struct sockaddr_in endpoint;
 	DataFold df_listen(df.get("listen"));
 	while (df_listen.loop())
 	{
-		endpoint.sin_family = AF_INET;
-		endpoint.sin_addr.s_addr = INADDR_ANY;
-		endpoint.sin_port = htons(std::atoi(df_listen.val.c_str()));
-		si.server_address.push_back(endpoint);
+		si.port.push_back(std::atoi(df_listen.val.c_str())); // htons?
 	}
-	si.attribute = df;
 	return si;
 }
 
-void WebServ::bind_ports()
-{
-	struct sockaddr_in si;
-
-	for (size_t i = 0; i < port_count(); i++)
-	{
-		for (size_t j = 0; j < instance[i].server_address.size(); j++)
-		{
-			si = instance[i].server_address[j];
-
-//			Safe for bind?:
-//			bind(	reinterpret_cast<struct sockaddr *>(&si),
-			bind(	instance[i].server_socket,
-					(struct sockaddr *)&si,
-					sizeof(si)
-				);
-		}
-	}
-}
-
-size_t WebServ::port_count()
-{ return instance.size(); }
-
-void WebServ::hook_it()
-{
+//void WebServ::hook_it()
+//{
 //	struct sockaddr_in *communication_layer;
 //	int client_socket;
 //	struct addrinfo hints;
@@ -78,7 +49,7 @@ void WebServ::hook_it()
 //			//			communication_layer = calloc(1, sizeof(struct sockaddr_in));
 //			communication_layer = new sockaddr_in();
 //			client_socket = accept(
-//					instance[i].server_socket,
+//					instance[i].listen_sock,
 //					(struct sockaddr*)&communication_layer,
 //					(socklen_t *)&communication_layer->sin_addr.s_addr
 //					);
@@ -91,7 +62,7 @@ void WebServ::hook_it()
 //			hints.ai_canonname = NULL;
 //			hints.ai_addr = NULL;
 //			hints.ai_next = NULL;
-//			sign = getaddrinfo(NULL, itoa(instance[i].server_socket).c_str(), &hints, &result);
+//			sign = getaddrinfo(NULL, itoa(instance[i].listen_sock).c_str(), &hints, &result);
 //			if (sign != 0)
 //			{
 //				verbose(0) << ALERT << " " << ERROR << ERR_FAILED_ADDRINFO << std::endl;
@@ -132,16 +103,7 @@ void WebServ::hook_it()
 ////		std::cout << "!!!!" << std::endl;
 ////		break ;
 //	}
-}
-
-void WebServ::listen_on(int listen_sock)
-{
-	(void)listen_sock;
-//	for (size_t i = 0; i < port_count(); i++)
-//		listen(instance[i].server_socket, 1);
-//	if (listen(listen_sock, SOMAXCONN) != 0)
-//		throw std::domain_error("(webserv) Listening problem.");
-}
+//}
 
 int WebServ::bind_socket_to_local(int u_port)
 {
@@ -154,10 +116,10 @@ int WebServ::bind_socket_to_local(int u_port)
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
-
 	s = getaddrinfo(NULL, itoa(u_port).c_str(), &hints, &result);
 	if (s != 0)
 		throw std::domain_error("(webserv) getaddrinfo failed: " + std::string(gai_strerror(s)));
+
 	for (rp = result; rp != NULL; rp = rp->ai_next)
 	{
 		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
@@ -173,38 +135,49 @@ int WebServ::bind_socket_to_local(int u_port)
 	}
 	if (rp == NULL)
 		throw std::domain_error("(webserv) Socket locked.");
+
 	freeaddrinfo(result);
 	verbose(1) << "Bound fd " << sfd << " to port " << u_port << "." << std::endl;
 	return sfd;
 }
 
+std::vector<struct pollfd> WebServ::hook_it()
+{
+	std::vector<struct pollfd> poll_list;
+	struct pollfd ufds;
+//	struct sockaddr_in si;
+
+//	for (size_t i = 0; i < port_count(); i++)
+//	{
+//		for (size_t j = 0; j < instance[i].server_address.size(); j++)
+//		{
+//			si = instance[i].server_address[j];
+
+	instance[0].listen_sock.push_back(bind_socket_to_local(3491));
+	ufds = pollfd();
+	ufds.fd = instance[0].listen_sock[0];
+	ufds.events = POLLIN;
+	poll_list.push_back(ufds);
+	if (listen(instance[0].listen_sock[0], SOMAXCONN) != 0)
+		throw std::domain_error("(webserv) Listening problem.");
+
+//		}
+//	}
+	return poll_list;
+}
+
 void WebServ::init()
 {
-//	bind_ports();
-//	listen_on();
-//	hook_it();
-//	listen_on(listen_sock);
-//	accept_connection();
-
 	int TIME_OUT = -1;
-	int listen_sock;
-	struct pollfd ufds;
 	std::vector<struct pollfd> poll_list;
 	struct sockaddr_storage remoteaddr;
 	unsigned int addrlen;
 	int poll_count;
 	int newfd;
 	std::string new_line;
+	struct pollfd ufds;
 
-	listen_sock = bind_socket_to_local(3491);
-
-	ufds = pollfd();
-	ufds.fd = listen_sock;
-	ufds.events = POLLIN;
-	poll_list.push_back(ufds);
-
-	if (listen(listen_sock, SOMAXCONN) != 0)
-		throw std::domain_error("(webserv) Listening problem.");
+	poll_list = hook_it();
 
 	while (1)
 	{
@@ -215,10 +188,10 @@ void WebServ::init()
 		{
 			if (poll_list[i].revents & POLLIN)
 			{
-				if (poll_list[i].fd == listen_sock)
+				if (poll_list[i].fd == instance[0].listen_sock[0])
 				{
 					addrlen = sizeof remoteaddr;
-					newfd = accept(listen_sock, (struct sockaddr *)&remoteaddr, &addrlen);
+					newfd = accept(instance[0].listen_sock[0], (struct sockaddr *)&remoteaddr, &addrlen);
 					if (newfd == -1)
 						throw std::domain_error("(webserv) Unnaceptable connection.");
 					else

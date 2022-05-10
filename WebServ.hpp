@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/10 13:49:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/10 16:42:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,8 @@ typedef struct struct_ws_serv_instance
 {
 	std::string current_http_header;
 	std::string current_http_body;
-	int server_socket;
-	std::vector<struct sockaddr_in> server_address;
-	DataFold attribute;
+	std::vector<int> port;
+	std::vector<int> listen_sock;
 } ws_serv_instance;
 
 class WebServ
@@ -46,14 +45,10 @@ class WebServ
 
 		WebServ();
 
-		void bind_ports();
-		void hook_it();
+		std::vector<struct pollfd> hook_it();
 
-		size_t port_count();
 		ws_serv_instance dftosi(DataFold);
-		void listen_on(int);
 		int bind_socket_to_local(int);
-		void accept_connection();
 		std::string gnl(int);
 
 	public:
