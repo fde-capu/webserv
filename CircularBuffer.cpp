@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/11 14:56:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/11 15:08:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void CircularBuffer::resetMemory()
 {
 	memset(const_cast<char *>(memory), 0, size);
 	head = const_cast<char *>(memory);
-	value = std::string();
+	output = std::string();
 }
 
 void CircularBuffer::receive()
@@ -36,7 +36,7 @@ void CircularBuffer::receive()
 	if (bytes == 0)
 		return resetMemory();
 	if (static_cast<size_t>(bytes) <= size)
-		value += std::string(memory).substr(0, bytes);
+		output += std::string(memory).substr(0, bytes);
 	return receive();
 }
 

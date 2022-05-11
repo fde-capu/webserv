@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/11 14:45:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/11 17:12:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,14 +194,14 @@ void WebServ::init()
 						addrlen = sizeof remoteaddr;
 						newfd = accept(instance[0].listen_sock[j], (struct sockaddr *)&remoteaddr, &addrlen);
 						if (newfd == -1)
-							throw std::domain_error("(webserv) Unnaceptable connection.");
+							throw std::domain_error("(webserv) Unacceptable connection.");
 						else
 						{
 							ufds = pollfd();
 							ufds.fd = newfd;
 							ufds.events = POLLIN;
 							poll_list.push_back(ufds);
-							verbose(1) << "(webserv) New connection on socket: " << newfd << std::endl;
+							verbose(1) << "(webserv) New connection on fd: " << newfd << std::endl;
 						}
 					}
 					else
