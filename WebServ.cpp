@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/10 16:54:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/11 14:45:37 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,26 +149,25 @@ std::vector<struct pollfd> WebServ::hook_it()
 
 //	for (size_t i = 0; i < port_count(); i++)
 //	{
-//		for (size_t j = 0; j < instance[i].server_address.size(); j++)
-//		{
-//			si = instance[i].server_address[j];
+		for (size_t j = 0; j < instance[0].port.size(); j++)
+		{
 
-	instance[0].listen_sock.push_back(bind_socket_to_local(3491));
+	instance[0].listen_sock.push_back(bind_socket_to_local(instance[0].port[j]));
 	ufds = pollfd();
-	ufds.fd = instance[0].listen_sock[0];
+	ufds.fd = instance[0].listen_sock[j];
 	ufds.events = POLLIN;
 	poll_list.push_back(ufds);
-	if (listen(instance[0].listen_sock[0], SOMAXCONN) != 0)
+	if (listen(instance[0].listen_sock[j], SOMAXCONN) != 0)
 		throw std::domain_error("(webserv) Listening problem.");
 
-//		}
+		}
 //	}
 	return poll_list;
 }
 
 void WebServ::init()
 {
-	int TIME_OUT = -1;
+	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
 	std::vector<struct pollfd> poll_list;
 	struct sockaddr_storage remoteaddr;
 	unsigned int addrlen;
@@ -188,34 +187,37 @@ void WebServ::init()
 		{
 			if (poll_list[i].revents & POLLIN)
 			{
-				if (poll_list[i].fd == instance[0].listen_sock[0])
+				for (size_t j = 0; j < instance[0].listen_sock.size(); j++)
 				{
-					addrlen = sizeof remoteaddr;
-					newfd = accept(instance[0].listen_sock[0], (struct sockaddr *)&remoteaddr, &addrlen);
-					if (newfd == -1)
-						throw std::domain_error("(webserv) Unnaceptable connection.");
-					else
+					if (poll_list[i].fd == instance[0].listen_sock[j])
 					{
-						ufds = pollfd();
-						ufds.fd = newfd;
-						ufds.events = POLLIN;
-						poll_list.push_back(ufds);
-						verbose(1) << "(webserv) New connection on socket: " << newfd << std::endl;
-					}
-				}
-				else
-				{
-					new_line = gnl(poll_list[i].fd);
-					if (new_line == "")
-					{
-						verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
-						close(poll_list[i].fd);
-						poll_list.erase(poll_list.begin() + i);
+						addrlen = sizeof remoteaddr;
+						newfd = accept(instance[0].listen_sock[j], (struct sockaddr *)&remoteaddr, &addrlen);
+						if (newfd == -1)
+							throw std::domain_error("(webserv) Unnaceptable connection.");
+						else
+						{
+							ufds = pollfd();
+							ufds.fd = newfd;
+							ufds.events = POLLIN;
+							poll_list.push_back(ufds);
+							verbose(1) << "(webserv) New connection on socket: " << newfd << std::endl;
+						}
 					}
 					else
 					{
-						verbose(1) << "(webser) Got data from " << poll_list[i].fd << "." << std::endl;
-						verbose(1) << new_line << std::endl;
+						new_line = gnl(poll_list[i].fd);
+						if (new_line == "")
+						{
+							verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
+							close(poll_list[i].fd);
+							poll_list.erase(poll_list.begin() + i);
+						}
+						else
+						{
+							verbose(1) << "(webser) Got data from " << poll_list[i].fd << "." << std::endl;
+							verbose(1) << new_line << std::endl;
+						}
 					}
 				}
 			}
@@ -225,30 +227,9 @@ void WebServ::init()
 
 std::string WebServ::gnl(int fd)
 {
-	int READ_SIZE = 10;
-	char read_buffer[READ_SIZE + 1];
-	int nbytes, nlbytes;
-	std::string out;
-	static std::string save = "";
-
-	read_buffer[READ_SIZE] = '\0';
-	nbytes = recv(fd, read_buffer, READ_SIZE, 0);
-	if (nbytes == -1)
-		throw std::domain_error("(webserv) Something went wrong receiving data.");
-	if (nbytes == 0)
-		return "";
-	for (nlbytes = 0; nlbytes < nbytes; nlbytes++)
-		if (read_buffer[nlbytes] == '\n')
-			break;
-	if (nlbytes == nbytes)
-	{
-		save += std::string(read_buffer);
-		return gnl(fd);
-	}
-	out = save + std::string(read_buffer);
-	save = out.substr(out.find('\n') + 1);
-	out = out.substr(0, out.find('\n'));
-	return out;
+	CircularBuffer buffer(fd);
+	(void)buffer;
+	return "";
 }
 
 WebServ::WebServ(DataFold& u_config)

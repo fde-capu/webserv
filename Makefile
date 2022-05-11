@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/04/29 13:54:17 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/05/11 14:44:10 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,10 +14,12 @@ NAME	=	webserv
 ARGS	=	webserv-default.conf
 DEBUG	=	1
 SRCS	=	main.cpp strings.cpp FileString.cpp DataFold.cpp \
-			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp
+			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp \
+			CircularBuffer.cpp
 HEAD	=	Makefile header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
-			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp
+			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
+			CircularBuffer.hpp
 SHELL	=	/bin/sh
 CC		=	c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(DEBUG)
 CCFLAGS	=	-Wall -Werror -Wextra -g -O0 -fno-limit-debug-info
