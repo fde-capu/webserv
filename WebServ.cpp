@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 14:28:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 15:17:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,12 @@ struct pollfd WebServ::stdin_to_pollfd()
 	return ufds;
 }
 
+void WebServ::exit_gracefully()
+{
+	verbose(1) << "Exit gracefully. Thanks!" << std::endl;
+	return ;
+}
+
 void WebServ::init()
 {
 	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
@@ -145,7 +151,7 @@ void WebServ::init()
 							close(poll_list[i].fd);
 							poll_list.erase(poll_list.begin() + i);
 							if (poll_list[i].fd == 0) // stdin
-								exit(0);
+								return exit_gracefully();
 						}
 						else
 						{

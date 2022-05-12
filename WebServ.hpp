@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 14:23:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 14:58:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class WebServ
 		int bind_socket_to_local(int);
 		std::string gnl(int);
 		struct pollfd stdin_to_pollfd();
+		void exit_gracefully();
 
 	public:
 		WebServ(DataFold&);
