@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 14:45:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 13:10:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void ArgVal::run()
 	try {
 		if (argc < _board.get<int>("argc", "min"))
 		{
-			verbose(1) << "Needs more arguments.";
+			verbose(1) << "Need more arguments.";
 			_fail = true;
 		}
 	} catch(std::exception&){}
@@ -62,8 +62,22 @@ void ArgVal::run()
 			if (vt.size() > 1 && vt[1] == "comply")
 			{
 				_config.load(argv[argi]);
-				if (!comply())
-					_fail = true;
+				if (AGV_SKIP_CHECK == 0)
+				{
+					verbose(1) << "Validating..." << std::endl;
+					if (comply())
+					{
+						verbose(1) << "Configuration valid." << std::endl;
+					}
+					else
+					{
+						_fail = true;
+					}
+				}
+				else
+				{
+					verbose(1) << "Skept validation." << std::endl;
+				}
 			}
 		}
 	}

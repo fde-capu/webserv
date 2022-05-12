@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 16:04:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 13:07:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@
 # define AGF_NUMBER_THEN_URI 128
 # define AGF_WORD_TIL_NUMBER 256
 # define AGF_URI 512
+
+# ifndef AGV_SKIP_CHECK
+#  define AGV_SKIP_CHECK 0
+# endif
 
 # include "FileString.hpp"
 //# include <iostream>

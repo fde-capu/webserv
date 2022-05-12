@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/25 21:48:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 13:09:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 DataFold load_configuration(int argc, char **argv)
 {
-	verbose(1) << "Validating configuration..." << std::endl;
+	verbose(1) << "Loading configuration..." << std::endl;
 	char* args[2] = {argv[0], argv[1]};
 	if (argc == 1)
 	{
@@ -24,7 +24,6 @@ DataFold load_configuration(int argc, char **argv)
 	ArgVal validator(argc, args, WS_CONFIG_SETUP);
 	if (validator.fail())
 		throw std::invalid_argument(BYE);
-	verbose(1) << "Configuration valid." << std::endl;
 	return DataFold(validator.getConfig());
 }
 

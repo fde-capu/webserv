@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/11 17:12:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 12:38:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,8 +228,7 @@ void WebServ::init()
 std::string WebServ::gnl(int fd)
 {
 	CircularBuffer buffer(fd);
-	(void)buffer;
-	return "";
+	return buffer.output;
 }
 
 WebServ::WebServ(DataFold& u_config)
