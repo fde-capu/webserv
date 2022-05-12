@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 16:32:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 16:52:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void WebServ::init()
 					else
 					{
 						CircularBuffer buffer(poll_list[i].fd);
-						buffer.receive_all();
+						buffer.receive_until_eof();
 						if (!buffer.ended())
 						{
 							verbose(1) << "(webserv) Got data from " << poll_list[i].fd << "." << std::endl;
