@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 12:38:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 14:28:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,85 +25,6 @@ ws_serv_instance WebServ::dftosi(DataFold df)
 	}
 	return si;
 }
-
-//void WebServ::hook_it()
-//{
-//	struct sockaddr_in *communication_layer;
-//	int client_socket;
-//	struct addrinfo hints;
-//	struct addrinfo *result;
-//	struct addrinfo *info;
-//	int sign;
-//	char netstr[INET6_ADDRSTRLEN];
-//	struct sockaddr_in *port_in;
-//	struct sockaddr_in6 *port_in6;
-//	std::string content;
-//
-//	verbose(0) << "Server is (will be) up." << std::endl;
-//
-//	while (1)
-//	{
-//		for(size_t i = 0; i < instance.size(); i++)
-//		{
-////			i = 0;
-//			//			communication_layer = calloc(1, sizeof(struct sockaddr_in));
-//			communication_layer = new sockaddr_in();
-//			client_socket = accept(
-//					instance[i].listen_sock,
-//					(struct sockaddr*)&communication_layer,
-//					(socklen_t *)&communication_layer->sin_addr.s_addr
-//					);
-//			hints = addrinfo();
-//			//			memset(&hints, 0, sizeof(struct addrinfo));
-//			hints.ai_family = AF_UNSPEC;
-//			hints.ai_socktype = SOCK_DGRAM;
-//			hints.ai_flags = AI_PASSIVE;
-//			hints.ai_protocol = 0;
-//			hints.ai_canonname = NULL;
-//			hints.ai_addr = NULL;
-//			hints.ai_next = NULL;
-//			sign = getaddrinfo(NULL, itoa(instance[i].listen_sock).c_str(), &hints, &result);
-//			if (sign != 0)
-//			{
-//				verbose(0) << ALERT << " " << ERROR << ERR_FAILED_ADDRINFO << std::endl;
-//				continue ;
-//			}
-//			for(info = result; info != NULL; info = info->ai_next)
-//			{
-//				if (info->ai_addr->sa_family == AF_INET)
-//				{
-//					port_in = (struct sockaddr_in *)info->ai_addr;
-//					verbose(0) << "Connection from: " << inet_ntop(AF_INET, &port_in->sin_addr, netstr, sizeof(netstr)) << std::endl;
-//				}
-//				else if (info->ai_addr->sa_family == AF_INET6)
-//				{
-//					port_in6 = (struct sockaddr_in6 *)info->ai_addr;
-//					verbose(0) << "Connection from: " << inet_ntop(AF_INET6, &port_in6->sin6_addr, netstr, sizeof(netstr)) << std::endl;
-//				}
-//			}
-//
-//			verbose(0) << ALERT << " Family: " << communication_layer->sin_family << std::endl;
-//			verbose(0) << ALERT << " Port: " << ntohs(communication_layer->sin_port) << std::endl;
-//			verbose(0) << ALERT << " in_addr: " << communication_layer->sin_addr.s_addr << std::endl;
-//
-//			content = instance[i].current_http_header + instance[i].current_http_body;
-//			send(
-//				client_socket,
-//				content.c_str(),
-//				content.length(),
-//				0
-//			);
-//
-//			verbose(0) << ALERT << " sent (" << content.length() << "): ```" << content << "```" << std::endl;
-//
-//			close(client_socket);
-//			delete communication_layer;
-//		}
-//		//////////
-////		std::cout << "!!!!" << std::endl;
-////		break ;
-//	}
-//}
 
 int WebServ::bind_socket_to_local(int u_port)
 {
@@ -165,6 +86,16 @@ std::vector<struct pollfd> WebServ::hook_it()
 	return poll_list;
 }
 
+struct pollfd WebServ::stdin_to_pollfd()
+{
+	struct pollfd ufds;
+
+	ufds = pollfd();
+	ufds.fd = 0;
+	ufds.events = POLLIN;
+	return ufds;
+}
+
 void WebServ::init()
 {
 	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
@@ -177,6 +108,7 @@ void WebServ::init()
 	struct pollfd ufds;
 
 	poll_list = hook_it();
+	poll_list.push_back(stdin_to_pollfd());
 
 	while (1)
 	{
@@ -201,7 +133,7 @@ void WebServ::init()
 							ufds.fd = newfd;
 							ufds.events = POLLIN;
 							poll_list.push_back(ufds);
-							verbose(1) << "(webserv) New connection on fd: " << newfd << std::endl;
+							verbose(1) << "(webserv) New connection on fd (" << poll_list[i].fd << ")-> " << newfd << std::endl;
 						}
 					}
 					else
@@ -212,6 +144,8 @@ void WebServ::init()
 							verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
 							close(poll_list[i].fd);
 							poll_list.erase(poll_list.begin() + i);
+							if (poll_list[i].fd == 0) // stdin
+								exit(0);
 						}
 						else
 						{
