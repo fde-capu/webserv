@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 15:17:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 16:25:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ void WebServ::init()
 	unsigned int addrlen;
 	int poll_count;
 	int newfd;
-	std::string new_line;
 	struct pollfd ufds;
 
 	poll_list = hook_it();
@@ -139,36 +138,31 @@ void WebServ::init()
 							ufds.fd = newfd;
 							ufds.events = POLLIN;
 							poll_list.push_back(ufds);
-							verbose(1) << "(webserv) New connection on fd (" << poll_list[i].fd << ")-> " << newfd << std::endl;
+							verbose(1) << "(webserv) New connection on fd (" << poll_list[i].fd << ")->" << newfd << std::endl;
 						}
 					}
 					else
 					{
-						new_line = gnl(poll_list[i].fd);
-						if (new_line == "")
+						CircularBuffer buffer(poll_list[i].fd);
+						buffer.receive_all();
+						if (!buffer.ended())
 						{
-							verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
+							verbose(1) << "(webser) Got data from " << poll_list[i].fd << "." << std::endl;
+							verbose(1) << "-->" << buffer.output << "<--" << std::endl;
+						}
+						else
+						{
 							close(poll_list[i].fd);
 							poll_list.erase(poll_list.begin() + i);
 							if (poll_list[i].fd == 0) // stdin
 								return exit_gracefully();
-						}
-						else
-						{
-							verbose(1) << "(webser) Got data from " << poll_list[i].fd << "." << std::endl;
-							verbose(1) << new_line << std::endl;
+							verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
 						}
 					}
 				}
 			}
 		}
 	}
-}
-
-std::string WebServ::gnl(int fd)
-{
-	CircularBuffer buffer(fd);
-	return buffer.output;
 }
 
 WebServ::WebServ(DataFold& u_config)

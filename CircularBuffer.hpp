@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/11 15:08:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 16:15:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,12 @@ class CircularBuffer
 		const size_t size;
 		const char* memory;
 		char* head;
+		bool eof;
 
 		CircularBuffer();
 		void mountMemory();
 		void resetMemory();
+		void set_eof();
 
 	public:
 		CircularBuffer(int);
@@ -40,7 +42,8 @@ class CircularBuffer
 		int getFd() const;
 
 		std::string output;
-		void receive();
+		void receive_all();
+		bool ended() const;
 };
 
 std::ostream & operator<< (std::ostream &, CircularBuffer const &);
