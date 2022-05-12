@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 14:38:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 13:48:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,28 +31,30 @@ class DataFold
 
 		DataFold(std::string);
 		DataFold();
-		DataFold(DataFold const& src);
+		DataFold(DataFold const&);
 		DataFold(datafold_t);
-		DataFold(std::vector<std::string>);
-		DataFold& operator= (DataFold const& rhs);
+		DataFold(const std::vector<std::string> &);
+		DataFold& operator= (DataFold const&);
+		DataFold& operator= (const datafold_t &);
 		~DataFold();
 		void push_back(std::string, std::string);
-		void push_back(std::string, DataFold);
-		void push_back(datafold_t);
-		void push_back(datavec);
+		void push_back(std::string, const DataFold &);
+		void push_back(datafold_t &);
+		void push_back(const datafold_t &);
+		void push_back(datavec &);
+		void push_back(const datavec &);
 		DataFold& pop();
 		size_t size() const;
 		const std::string operator[] (std::string) const;
 		const datafold_type operator[] (size_t idx) const;
-		DataFold& operator= (datafold_t);
 		datavec getCore() const;
 		int getIndex() const;
 		DataFold parse_data(const std::string dst);
-		DataFold parse_only_val(const datafold_t);
+		DataFold parse_only_val(const datafold_t &);
 		int df_type(std::string);
 		const std::string getFirstByKey(std::string key) const;
 		std::string eqvals_to_arrstr(std::string key) const;
-		std::string quoted_val(datafold_t) const;
+		std::string quoted_val(const datafold_t &) const;
 		const std::string getValStr(std::string key) const;
 		std::string get_val_str() const;
 		bool has_key(std::string) const;
@@ -60,9 +62,9 @@ class DataFold
 		int key_count_exists_check(std::string key) const;
 		void key_count_single_check(std::string key) const;
 		void core_check() const;
-		void string_check(datafold_t) const;
-		void array_check(datafold_t) const;
-		void not_sub_check(datafold_t) const;
+		void string_check(const datafold_t &) const;
+		void array_check(const datafold_t &) const;
+		void not_sub_check(const datafold_t &) const;
 		operator datavec() const;
 		operator std::string() const;
 		operator int() const;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/22 14:51:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 13:51:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,19 +153,19 @@ std::vector<int> DataFold::get_vector_int(std::string key, std::string ksub) con
 	return out;
 }
 
-void DataFold::string_check(datafold_t df) const
+void DataFold::string_check(const datafold_t &df) const
 {
 	if (!(df.type & DF_TYPE_STRING))
 		throw std::invalid_argument(DF_ERR_NOT_STRING);
 }
 
-void DataFold::array_check(datafold_t df) const
+void DataFold::array_check(const datafold_t &df) const
 {
 	if (!(df.type & DF_TYPE_ARRAY))
 		throw std::invalid_argument(DF_ERR_NOT_ARRAY);
 }
 
-void DataFold::not_sub_check(datafold_t df) const
+void DataFold::not_sub_check(const datafold_t &df) const
 {
 	if (df.type & DF_TYPE_SUB)
 		throw std::invalid_argument(DF_ERR_IS_OBJECT);
@@ -246,14 +246,14 @@ DataFold::DataFold(datafold_t df)
 	*this = parse_only_val(df);
 }
 
-DataFold::DataFold(std::vector<std::string> vs)
+DataFold::DataFold(const std::vector<std::string> &vs)
 : index(0), loop_index(0), key(""), val(""), type(0)
 {
 	for (size_t i = 0; i < vs.size(); i++)
 		push_back("", vs[i]);
 }
 
-DataFold& DataFold::operator= (datafold_t df)
+DataFold& DataFold::operator= (const datafold_t &df)
 {
 	DataFold out = DataFold(static_cast<std::string>(df));
 	core = out.getCore();
@@ -292,7 +292,7 @@ DataFold& DataFold::operator= (DataFold const & rhs)
 	return *this;
 }
 
-std::string DataFold::quoted_val(datafold_t dt) const
+std::string DataFold::quoted_val(const datafold_t &dt) const
 {
 	std::stringstream out;
 	if (dt.type & DF_TYPE_NUMBER)
@@ -412,7 +412,10 @@ std::string DataFold::string() const
 	return *this;
 }
 
-void DataFold::push_back(datavec dv)
+void DataFold::push_back(const datavec &dv)
+{ push_back(const_cast<datavec&>(dv)); }
+
+void DataFold::push_back(datavec &dv)
 {
 	datafold_t entry;
 	while (dv.loop())
@@ -465,13 +468,16 @@ void DataFold::push_back(std::string key, std::string val)
 	core.push_back(entry);
 }
 
-void DataFold::push_back(datafold_t df)
+void DataFold::push_back(datafold_t &df)
 {
 	df.index = index++;
 	core.push_back(df);
 }
 
-void DataFold::push_back(std::string key, DataFold sub)
+void DataFold::push_back(const datafold_t &df)
+{ push_back(const_cast<datafold_t&>(df)); }
+
+void DataFold::push_back(std::string key, const DataFold &sub)
 {
 	datafold_t entry;
 	entry.index = index++;
@@ -531,7 +537,7 @@ std::string DataFold::clean_before_parse(std::string& dst) const
 	return dst;
 }
 
-DataFold DataFold::parse_only_val(const datafold_t df)
+DataFold DataFold::parse_only_val(const datafold_t &df)
 {
 	if (df.type & DF_TYPE_SUB)
 	{
@@ -563,7 +569,6 @@ DF DF::parse_data(const str_t jstr)
 	size_t p[4];
 
 	clean_before_parse(ops);
-
 	verbose(4) << nl << "Parsing: " << ops << nl;
 
 	pass = false;
@@ -621,7 +626,6 @@ DF DF::parse_data(const str_t jstr)
 	}
 
 	verbose(4) << "Parsed: " << static_cast<std::string>(out) << nl << nl;
-
 	return out;
 }
 
