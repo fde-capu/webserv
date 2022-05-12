@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 16:25:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 16:32:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,16 @@ struct pollfd WebServ::stdin_to_pollfd()
 	return ufds;
 }
 
+struct pollfd WebServ::make_pollin_fd(int newfd)
+{
+	struct pollfd ufds;
+
+	ufds = pollfd();
+	ufds.fd = newfd;
+	ufds.events = POLLIN;
+	return ufds;
+}
+
 void WebServ::exit_gracefully()
 {
 	verbose(1) << "Exit gracefully. Thanks!" << std::endl;
@@ -110,7 +120,6 @@ void WebServ::init()
 	unsigned int addrlen;
 	int poll_count;
 	int newfd;
-	struct pollfd ufds;
 
 	poll_list = hook_it();
 	poll_list.push_back(stdin_to_pollfd());
@@ -134,10 +143,7 @@ void WebServ::init()
 							throw std::domain_error("(webserv) Unacceptable connection.");
 						else
 						{
-							ufds = pollfd();
-							ufds.fd = newfd;
-							ufds.events = POLLIN;
-							poll_list.push_back(ufds);
+							poll_list.push_back(make_pollin_fd(newfd));
 							verbose(1) << "(webserv) New connection on fd (" << poll_list[i].fd << ")->" << newfd << std::endl;
 						}
 					}
@@ -147,7 +153,7 @@ void WebServ::init()
 						buffer.receive_all();
 						if (!buffer.ended())
 						{
-							verbose(1) << "(webser) Got data from " << poll_list[i].fd << "." << std::endl;
+							verbose(1) << "(webserv) Got data from " << poll_list[i].fd << "." << std::endl;
 							verbose(1) << "-->" << buffer.output << "<--" << std::endl;
 						}
 						else

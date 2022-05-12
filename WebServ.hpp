@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 16:08:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/12 16:31:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ class WebServ
 		ws_serv_instance dftosi(DataFold);
 		int bind_socket_to_local(int);
 		struct pollfd stdin_to_pollfd();
+		struct pollfd make_pollin_fd(int);
 		void exit_gracefully();
 
 	public:
