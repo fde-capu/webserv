@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/05/12 13:56:09 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/05/12 15:21:58 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,9 +51,7 @@ vf:			all
 tserver:	all pk
 	./$(NAME) $(ARGS)
 t:			all
-	netstat -tnl
 	./$(NAME) $(ARGS)
-	netstat -tnl
 tg:			all pk
 	./$(NAME) $(ARGS) &
 	-./general_tests.sh
