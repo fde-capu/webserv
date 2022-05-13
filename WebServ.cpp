@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 16:52:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/13 13:10:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,9 +62,8 @@ int WebServ::bind_socket_to_local(int u_port)
 	return sfd;
 }
 
-std::vector<struct pollfd> WebServ::hook_it()
+void WebServ::hook_it()
 {
-	std::vector<struct pollfd> poll_list;
 	struct pollfd ufds;
 //	struct sockaddr_in si;
 
@@ -83,7 +82,6 @@ std::vector<struct pollfd> WebServ::hook_it()
 
 		}
 //	}
-	return poll_list;
 }
 
 struct pollfd WebServ::stdin_to_pollfd()
@@ -115,13 +113,12 @@ void WebServ::exit_gracefully()
 void WebServ::init()
 {
 	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
-	std::vector<struct pollfd> poll_list;
 	struct sockaddr_storage remoteaddr;
 	unsigned int addrlen;
 	int poll_count;
 	int newfd;
 
-	poll_list = hook_it();
+	hook_it();
 	poll_list.push_back(stdin_to_pollfd());
 
 	while (1)

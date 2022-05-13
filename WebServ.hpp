@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 16:31:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/13 13:08:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,11 @@ class WebServ
 		DataFold config;
 		DataFold server;
 		std::vector<ws_serv_instance> instance;
+		std::vector<struct pollfd> poll_list;
 
 		WebServ();
 
-		std::vector<struct pollfd> hook_it();
+		void hook_it();
 
 		ws_serv_instance dftosi(DataFold);
 		int bind_socket_to_local(int);
