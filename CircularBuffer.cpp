@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/13 13:14:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/14 23:27:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,13 @@ CircularBuffer::CircularBuffer(CircularBuffer const & src)
 
 void CircularBuffer::mountMemory()
 {
-	memory = static_cast<char *>(std::malloc(size * sizeof(char)));
+	memory = static_cast<char *>(std::malloc(size * sizeof(char) + 1));
 	resetMemory();
 }
 
 void CircularBuffer::resetMemory()
 {
-	memset(const_cast<char *>(memory), 0, size);
+	memset(const_cast<char *>(memory), 0, size + 1);
 	head = const_cast<char *>(memory);
 }
 

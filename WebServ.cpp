@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/13 13:10:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/14 23:22:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,7 @@ ws_serv_instance WebServ::dftosi(DataFold df)
 	si.current_http_body = "Hello, world!";
 	DataFold df_listen(df.get("listen"));
 	while (df_listen.loop())
-	{
 		si.port.push_back(std::atoi(df_listen.val.c_str())); // htons?
-	}
 	return si;
 }
 
@@ -148,19 +146,19 @@ void WebServ::init()
 					{
 						CircularBuffer buffer(poll_list[i].fd);
 						buffer.receive_until_eof();
-						if (!buffer.ended())
-						{
+//						if (!buffer.ended())
+//						{
 							verbose(1) << "(webserv) Got data from " << poll_list[i].fd << "." << std::endl;
 							verbose(1) << "-->" << buffer.output << "<--" << std::endl;
-						}
-						else
-						{
+//						}
+//						else
+//						{
 							close(poll_list[i].fd);
 							poll_list.erase(poll_list.begin() + i);
 							if (poll_list[i].fd == 0) // stdin
 								return exit_gracefully();
-							verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
-						}
+//							verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
+//						}
 					}
 				}
 			}
