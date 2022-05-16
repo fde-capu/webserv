@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/16 15:12:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/16 22:54:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@
 
 # define MAX_EVENTS 64
 # define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n";
+
+typedef struct struct_ws_event
+{
+} ws_event;
 
 typedef struct struct_ws_serv_instance
 {
@@ -65,6 +69,8 @@ class WebServ
 		std::vector<ws_serv_instance> getInstance() const;
 		void init();
 		void light_up();
+
+		int catch_connection() const;
 };
 
 std::ostream & operator<< (std::ostream & o, WebServ const & i);

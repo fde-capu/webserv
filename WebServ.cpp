@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/16 15:16:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/16 22:56:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,23 +63,17 @@ int WebServ::bind_socket_to_local(int u_port)
 void WebServ::hook_it()
 {
 	struct pollfd ufds;
-//	struct sockaddr_in si;
+	for (size_t j = 0; j < instance[0].port.size(); j++)
+	{
 
-//	for (size_t i = 0; i < port_count(); i++)
-//	{
-		for (size_t j = 0; j < instance[0].port.size(); j++)
-		{
-
-	instance[0].listen_sock.push_back(bind_socket_to_local(instance[0].port[j]));
-	ufds = pollfd();
-	ufds.fd = instance[0].listen_sock[j];
-	ufds.events = POLLIN;
-	poll_list.push_back(ufds);
-	if (listen(instance[0].listen_sock[j], SOMAXCONN) != 0)
-		throw std::domain_error("(webserv) Listening problem.");
-
-		}
-//	}
+		instance[0].listen_sock.push_back(bind_socket_to_local(instance[0].port[j]));
+		ufds = pollfd();
+		ufds.fd = instance[0].listen_sock[j];
+		ufds.events = POLLIN;
+		poll_list.push_back(ufds);
+		if (listen(instance[0].listen_sock[j], SOMAXCONN) != 0)
+			throw std::domain_error("(webserv) Listening problem.");
+	}
 }
 
 struct pollfd WebServ::stdin_to_pollfd()
@@ -108,6 +102,7 @@ void WebServ::exit_gracefully()
 	return ;
 }
 
+// Set stdin.
 // {%}
 //  Get POLLIN, set pollin_fd.
 //  If pollin_fd is any listen_sock of any instance,
@@ -120,8 +115,29 @@ void WebServ::exit_gracefully()
 //   send response,
 //   close pollin_fd.
 
+int WebServ::catch_connection() const
+{
+	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
+	int poll_count;
+	DataFold event;
+
+	while (1)
+	{
+		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+		if (poll_count == -1)
+			throw std::domain_error("(webserv) poll error.");
+		for (size_t i = 0; i < poll_list.size(); i++)
+			if (poll_list[i].revents & POLLIN)
+				return poll_list[i].fd;
+	}
+}
+
 void WebServ::light_up()
 {
+	int event;
+
+	event = catch_connection();
+
 	while (1)
 	{
 		// ...
