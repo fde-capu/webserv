@@ -6,11 +6,12 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/14 23:27:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/16 14:28:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CircularBuffer.hpp"
+#include "bladefs.hpp"
 #include <iostream>
 
 CircularBuffer::CircularBuffer(int u_fd)
@@ -50,6 +51,7 @@ void CircularBuffer::receive_until_eof()
 {
 	int bytes;
 
+	verbose(1) << "(CircularBuffer) Receiving from fd " << fd << "." << std::endl;
 	bytes = recv(fd, const_cast<char *>(memory), size, 0);
 	if (bytes == -1 && fd == 0) // stdin
 		return set_eof();

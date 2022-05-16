@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/14 23:22:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/16 15:16:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int WebServ::bind_socket_to_local(int u_port)
 		throw std::domain_error("(webserv) Socket locked.");
 
 	freeaddrinfo(result);
-	verbose(1) << "Bound fd " << sfd << " to port " << u_port << "." << std::endl;
+	verbose(1) << "(webserv) Bound fd " << sfd << " to port " << u_port << "." << std::endl;
 	return sfd;
 }
 
@@ -108,6 +108,26 @@ void WebServ::exit_gracefully()
 	return ;
 }
 
+// {%}
+//  Get POLLIN, set pollin_fd.
+//  If pollin_fd is any listen_sock of any instance,
+//   generate newfd,
+//   put newfd to poll,
+//   close pollin_fd. // ?
+//  If not, it sends data and  awaits response, then
+//   receive,
+//   analise and route (will generate response),
+//   send response,
+//   close pollin_fd.
+
+void WebServ::light_up()
+{
+	while (1)
+	{
+		// ...
+	}
+}
+
 void WebServ::init()
 {
 	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
@@ -128,10 +148,14 @@ void WebServ::init()
 		{
 			if (poll_list[i].revents & POLLIN)
 			{
+				verbose(1) << "(webserv) Got POLLIN from (i = " << i << "), fd " << poll_list[i].fd << "." << std::endl;
+
 				for (size_t j = 0; j < instance[0].listen_sock.size(); j++)
 				{
+					verbose(1) << "j " << j << " < " << instance[0].listen_sock.size() << std::endl;
 					if (poll_list[i].fd == instance[0].listen_sock[j])
 					{
+						verbose(1) << "(" << poll_list[i].fd << " == " << instance[0].listen_sock[j] << ")" << std::endl;
 						addrlen = sizeof remoteaddr;
 						newfd = accept(instance[0].listen_sock[j], (struct sockaddr *)&remoteaddr, &addrlen);
 						if (newfd == -1)
@@ -144,6 +168,7 @@ void WebServ::init()
 					}
 					else
 					{
+						verbose(1) << "(webserv) Constructing buffer for fd " << poll_list[i].fd << "." << std::endl;
 						CircularBuffer buffer(poll_list[i].fd);
 						buffer.receive_until_eof();
 //						if (!buffer.ended())

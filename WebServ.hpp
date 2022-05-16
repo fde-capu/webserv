@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/13 13:08:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/16 15:12:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ class WebServ
 		DataFold getServer() const;
 		std::vector<ws_serv_instance> getInstance() const;
 		void init();
+		void light_up();
 };
 
 std::ostream & operator<< (std::ostream & o, WebServ const & i);

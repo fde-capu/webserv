@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/18 14:32:59 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/22 20:16:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/16 13:49:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define BLADEFS_HPP
 
 # include <iostream>
+# include "DataFold.hpp"
 
 typedef datafold_t df_t;
 typedef std::string str_t;
