@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/16 22:54:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/16 23:58:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "header.hpp"
 # include "DataFold.hpp"
 # include "CircularBuffer.hpp"
+# include <algorithm>
 # include <iostream>
 # include <vector>
 # include <arpa/inet.h>
@@ -70,7 +71,11 @@ class WebServ
 		void init();
 		void light_up();
 
-		int catch_connection() const;
+		int catch_connection();
+		bool there_is_an_instance(int) const;
+		void add_to_poll(int);
+		void remove_from_poll(int);
+		void respond_connection_from(int);
 };
 
 std::ostream & operator<< (std::ostream & o, WebServ const & i);

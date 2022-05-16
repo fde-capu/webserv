@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/16 22:56:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 00:02:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void WebServ::exit_gracefully()
 //   send response,
 //   close pollin_fd.
 
-int WebServ::catch_connection() const
+int WebServ::catch_connection()
 {
 	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
 	int poll_count;
@@ -132,79 +132,82 @@ int WebServ::catch_connection() const
 	}
 }
 
+bool WebServ::there_is_an_instance(int fd) const
+{
+	for (size_t i = 0; i < instance.size(); i++)
+		for (size_t j = 0; j < instance[i].listen_sock.size(); j++)
+			if (instance[i].listen_sock[j] == fd)
+				return true;
+	return false;
+}
+
+void WebServ::add_to_poll(int oldfd)
+{
+	struct sockaddr_storage remoteaddr;
+	unsigned int addrlen = sizeof remoteaddr;
+	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
+	if (newfd == -1)
+		throw std::domain_error("(webserv) Unacceptable connection.");
+	else
+	{
+		poll_list.push_back(make_pollin_fd(newfd));
+		verbose(1) << "(webserv) New connection on fd (" << oldfd << ")->" << newfd << std::endl;
+		// Close oldfd?
+	}
+}
+
+void WebServ::remove_from_poll(int fd)
+{
+	for (size_t i = 0; i < poll_list.size(); i++)
+	{
+		if (poll_list[i].fd == fd)
+		{
+			std::vector<struct pollfd>::iterator position(&poll_list[i]);
+			poll_list.erase(position);
+			return ;
+		}
+	}
+	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
+}
+
+void WebServ::respond_connection_from(int fd)
+{
+						verbose(1) << "(webserv) Constructing buffer for fd " << fd << "." << std::endl;
+						CircularBuffer buffer(fd);
+						buffer.receive_until_eof();
+//						if (!buffer.ended())
+//						{
+							verbose(1) << "(webserv) Got data from " << fd << "." << std::endl;
+							verbose(1) << "-->" << buffer.output << "<--" << std::endl;
+//						}
+//						else
+//						{
+							close(fd);
+							remove_from_poll(fd);
+							if (fd == 0) // stdin
+								return exit_gracefully();
+//							verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
+}
+
 void WebServ::light_up()
 {
 	int event;
 
-	event = catch_connection();
-
 	while (1)
 	{
-		// ...
+		event = catch_connection();
+		if (there_is_an_instance(event))
+			add_to_poll(event);
+		else
+			respond_connection_from(event);
 	}
 }
 
 void WebServ::init()
 {
-	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
-	struct sockaddr_storage remoteaddr;
-	unsigned int addrlen;
-	int poll_count;
-	int newfd;
-
-	hook_it();
 	poll_list.push_back(stdin_to_pollfd());
-
-	while (1)
-	{
-		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
-		if (poll_count == -1)
-			throw std::domain_error("(webserv) poll error.");
-		for (size_t i = 0; i < poll_list.size(); i++)
-		{
-			if (poll_list[i].revents & POLLIN)
-			{
-				verbose(1) << "(webserv) Got POLLIN from (i = " << i << "), fd " << poll_list[i].fd << "." << std::endl;
-
-				for (size_t j = 0; j < instance[0].listen_sock.size(); j++)
-				{
-					verbose(1) << "j " << j << " < " << instance[0].listen_sock.size() << std::endl;
-					if (poll_list[i].fd == instance[0].listen_sock[j])
-					{
-						verbose(1) << "(" << poll_list[i].fd << " == " << instance[0].listen_sock[j] << ")" << std::endl;
-						addrlen = sizeof remoteaddr;
-						newfd = accept(instance[0].listen_sock[j], (struct sockaddr *)&remoteaddr, &addrlen);
-						if (newfd == -1)
-							throw std::domain_error("(webserv) Unacceptable connection.");
-						else
-						{
-							poll_list.push_back(make_pollin_fd(newfd));
-							verbose(1) << "(webserv) New connection on fd (" << poll_list[i].fd << ")->" << newfd << std::endl;
-						}
-					}
-					else
-					{
-						verbose(1) << "(webserv) Constructing buffer for fd " << poll_list[i].fd << "." << std::endl;
-						CircularBuffer buffer(poll_list[i].fd);
-						buffer.receive_until_eof();
-//						if (!buffer.ended())
-//						{
-							verbose(1) << "(webserv) Got data from " << poll_list[i].fd << "." << std::endl;
-							verbose(1) << "-->" << buffer.output << "<--" << std::endl;
-//						}
-//						else
-//						{
-							close(poll_list[i].fd);
-							poll_list.erase(poll_list.begin() + i);
-							if (poll_list[i].fd == 0) // stdin
-								return exit_gracefully();
-//							verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
-//						}
-					}
-				}
-			}
-		}
-	}
+	hook_it();
+	light_up();
 }
 
 WebServ::WebServ(DataFold& u_config)
