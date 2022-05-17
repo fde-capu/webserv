@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 16:11:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 16:38:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,9 @@ ws_header WebServ::get_header(const std::string& full_file)
 	line = split_trim(h_block, "\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
+		std::cout << "LINE>" << line[i] << "<" << std::endl;
+		if (line[i].length() == 0)
+			continue ;
 		if (i == 0)
 		{
 			carrier = split_trim(line[i], "/");
@@ -222,16 +225,23 @@ std::string WebServ::get_body(const std::string& full_file)
 {
 	std::string raw_data(full_file);
 	remove_all(raw_data, "\r");
-	return split_trim(raw_data, "\n\n")[1];
+	size_t body_p = raw_data.find("\n\n") + 1;
+	return body_p == std::string::npos ? raw_data : raw_data.substr(body_p);
+}
+
+std::string WebServ::get_raw_data(int fd)
+{
+	CircularBuffer buffer(fd);
+	buffer.receive_until_eof();
+	std::string raw_data = buffer.output;
+	verbose(2) << "-->" << raw_data << "<--" << std::endl;
+	return raw_data;
 }
 
 void WebServ::respond_connection_from(int fd)
 {
-	verbose(1) << "(webserv) Got connection from " << fd << "." << std::endl;
-	CircularBuffer buffer(fd);
-	buffer.receive_until_eof();
-	std::string raw_data = buffer.output;
-	verbose(1) << "-->" << raw_data << "<--" << std::endl;
+	verbose(1) << "(webserv) Got connection from fd " << fd << "." << std::endl;
+	std::string raw_data = get_raw_data(fd);
 	ws_header in_header = get_header(raw_data);
 	std::string body = get_body(raw_data);
 	verbose(1) << "BODY >" << body << "<";
@@ -239,8 +249,6 @@ void WebServ::respond_connection_from(int fd)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 	close(fd);
 	remove_from_poll(fd);
-	if (fd == 0) // stdin
-		return exit_gracefully();
 }
 
 void WebServ::light_up()
@@ -251,8 +259,8 @@ void WebServ::light_up()
 	while (lit)
 	{
 		event = catch_connection();
-		if (!lit)
-			break;
+		if (event == 0) // stdin
+			return exit_gracefully();
 		if (there_is_an_instance(event))
 			add_to_poll(event);
 		else

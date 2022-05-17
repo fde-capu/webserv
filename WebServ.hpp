@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 16:11:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 16:15:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ class WebServ
 		void exit_gracefully();
 		ws_header get_header(const std::string&);
 		std::string get_body(const std::string&);
+		std::string get_raw_data(int);
 
 	public:
 		WebServ(DataFold&);
