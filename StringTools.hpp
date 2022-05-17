@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 14:14:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 15:37:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,53 +38,59 @@ class StringTools
 		StringTools(StringTools const & src);
 		StringTools & operator= (StringTools const & rhs);
 
-		std::string _soft_trim_set;
-		std::string _hard_trim_set;
-		std::string _quote_set;
-		std::string _comment_open;
-		std::string _comment_close;
-		std::string _comment_inline;
-		void soft_trim(std::string&) const;
-		void soft_trim(std::string&, std::string) const;
-		void hard_trim(std::string&) const;
-		std::string hard_trim(const std::string&) const;
-		void hard_trim(std::string&, std::string) const;
-		std::string dual_trim(std::string&, std::string) const;
-		void remove_all(std::string&, std::string) const;
-		std::string substitute_all(std::string&, std::string, std::string) const;
-		std::string substitute_super(std::string&, std::string, std::string) const;
-		std::string substitute_all_ret(const std::string, std::string, std::string) const;
-		void erase_boundaries(std::string&, std::string) const;
-		void erase_boundaries(std::string&, std::string, std::string) const;
-		size_t find_outside_quotes(std::string&, std::string) const;
-		size_t find_closing_bracket(std::string) const;
-		size_t find_outside_quotes_set(std::string&, std::string) const;
-		void remove_comments(std::string&) const;
-		std::string remove_quotes(std::string&) const;
-		std::string remove_quotes(const std::string&) const;
-		std::string escape_char(const std::string, std::string) const;
-		bool isNumber(std::string) const;
-		bool isAllNumber(std::vector<std::string>) const;
-		bool isDigit(char) const;
-		bool isWord(const std::string) const;
-		bool isWordInWordSet(std::string, std::vector<std::string>) const;
-		bool isBoolStr(std::string) const;
-		std::string itos(int) const;
-		std::string apply_quotes(std::string) const;
-		std::string apply_quotes(std::string, std::string) const;
-		std::vector<std::string> splitOutsideQuotes(std::string) const;
-		std::string itoa(int) const;
-		bool isFileName(std::string) const;
-		bool isUri(std::string) const;
-		bool isAllInSet(std::string, std::string) const;
-		std::string nth_word(std::string, int) const;
-		size_t word_count(std::string) const;
+		std::string					_soft_trim_set;
+		std::string					_hard_trim_set;
+		std::string					_quote_set;
+		std::string					_comment_open;
+		std::string					_comment_close;
+		std::string					_comment_inline;
+		void						soft_trim(std::string&) const;
+		void						soft_trim(std::string&, std::string) const;
+		void						hard_trim(std::string&) const;
+		std::string					hard_trim(const std::string&) const;
+		void						hard_trim(std::string&, std::string) const;
+		std::string					dual_trim(std::string&, std::string) const;
+		void						remove_all(std::string&, std::string) const;
+		std::string					substitute_all(std::string&, std::string, std::string) const;
+		std::string					substitute_super(std::string&, std::string, std::string) const;
+		std::string					substitute_all_ret(const std::string, std::string, std::string) const;
+		void						erase_boundaries(std::string&, std::string) const;
+		void						erase_boundaries(std::string&, std::string, std::string) const;
+		size_t						find_outside_quotes(std::string&, std::string) const;
+		size_t						find_closing_bracket(std::string) const;
+		size_t						find_outside_quotes_set(std::string&, std::string) const;
+		void						remove_comments(std::string&) const;
+		std::string					remove_quotes(std::string&) const;
+		std::string					remove_quotes(const std::string&) const;
+		std::string					escape_char(const std::string, std::string) const;
+		bool						isNumber(std::string) const;
+		bool						isAllNumber(std::vector<std::string>) const;
+		bool						isDigit(char) const;
+		bool						isWord(const std::string) const;
+		bool						isWordInWordSet(std::string, std::vector<std::string>) const;
+		bool						isBoolStr(std::string) const;
+		std::string					itos(int) const;
+		std::string					apply_quotes(std::string) const;
+		std::string					apply_quotes(std::string, std::string) const;
+		std::vector<std::string>	split(const std::string, const std::string) const;
+		std::vector<std::string>	split_trim(const std::string, const std::string) const;
+		std::vector<std::string>	splitOutsideQuotes(std::string) const;
+		std::string					itoa(int) const;
+		bool						isFileName(std::string) const;
+		bool						isUri(std::string) const;
+		bool						isAllInSet(std::string, std::string) const;
+		std::string					nth_word(std::string, int) const;
+		size_t						word_count(std::string) const;
+		bool						is_equal_insensitive(const std::string, const std::string) const;
+		std::string					to_lower(std::string) const;
 };
 
 //std::ostream & operator<< (std::ostream & o, StringTools const & i);
 
 static const StringTools stool = StringTools();
 
+std::string to_lower(std::string);
+bool is_equal_insensitive(const std::string, const std::string);
 std::string trim(std::string&);
 void soft_trim(std::string&);
 void soft_trim(std::string&, std::string);
@@ -114,6 +120,8 @@ bool isBoolStr(std::string);
 std::string itos(int);
 std::string apply_quotes(std::string);
 std::string apply_quotes(std::string, std::string);
+std::vector<std::string> split(const std::string, const std::string);
+std::vector<std::string> split_trim(const std::string, const std::string);
 std::vector<std::string> splitOutsideQuotes(std::string);
 std::string itoa(int);
 bool isFileName(std::string);

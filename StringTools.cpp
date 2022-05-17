@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/20 14:12:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 15:38:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -392,6 +392,37 @@ bool isBoolStr(std::string w)
 bool StringTools::isBoolStr(std::string w) const
 { return stool.isWordInWordSet(w, splitOutsideQuotes(ST_BOOL_WORDS)); }
 
+std::vector<std::string> split(const std::string str, const std::string sep)
+{ return stool.split(str, sep); }
+
+std::vector<std::string> StringTools::split(const std::string str, const std::string sep) const
+{
+	std::vector<std::string> out;
+	std::string crop = str;
+	size_t mark;
+
+	mark = find_outside_quotes(crop, sep);
+	while (mark != std::string::npos)
+	{
+		out.push_back(crop.substr(0, mark));
+		crop = crop.substr(mark + sep.length());
+		mark = find_outside_quotes(crop, sep);
+	}
+	out.push_back(crop);
+	return out;
+}
+
+std::vector<std::string> split_trim(const std::string str, const std::string sep)
+{ return stool.split_trim(str, sep); }
+
+std::vector<std::string> StringTools::split_trim(const std::string str, const std::string sep) const
+{
+	std::vector<std::string> out = split(str, sep);
+	for (size_t i = 0; i < out.size(); i++)
+		trim(out[i]);
+	return out;
+}
+
 std::vector<std::string> splitOutsideQuotes(const std::string vecstr)
 { return stool.splitOutsideQuotes(vecstr); }
 
@@ -519,4 +550,20 @@ size_t StringTools::word_count(std::string str) const
 	while (find_outside_quotes_set(str, " \n") != std::string::npos && ++out)
 		str = str.substr(find_outside_quotes_set(str, " \n") + 1);
 	return out;
+}
+
+bool is_equal_insensitive(const std::string a, const std::string b)
+{ return stool.is_equal_insensitive(a, b); }
+
+bool StringTools::is_equal_insensitive(const std::string a, const std::string b) const
+{ return to_lower(a) == to_lower(b); }
+
+std::string to_lower(std::string a)
+{ return stool.to_lower(a); }
+
+std::string StringTools::to_lower(std::string str) const
+{
+	for (size_t i = 0; i < str.length(); i++)
+		str[i] = tolower(str[i]);
+	return str;
 }
