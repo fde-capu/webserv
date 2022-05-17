@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 16:53:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 20:52:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct struct_ws_header
 	std::string port;
 	std::string user_agent;
 	std::string accept;
-	bool		valid_header;
+	bool		is_valid;
 } ws_header;
 
 typedef struct struct_ws_serv_instance

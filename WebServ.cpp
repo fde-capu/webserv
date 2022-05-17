@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 16:59:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 21:42:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ void WebServ::exit_gracefully()
 {
 	verbose(1) << "(webserv) Exit gracefully. Thanks!" << std::endl;
 	lit = false;
+	while (recv(0, 0, 1, 0) > 0)
+		;
 	return ;
 }
 
@@ -171,12 +173,10 @@ void WebServ::remove_from_poll(int fd)
 	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
-bool WebServ::validate_header_entry(std::vector<std::string>& test, size_t expected_size, bool& valid_header) const
+bool WebServ::validate_header_entry(std::vector<std::string>& test, size_t expected_size, bool& is_valid) const
 {
-	if (!valid_header)
-		return false;
-	valid_header = (test.size() == expected_size);
-	return valid_header;
+	is_valid = is_valid && test.size() == expected_size;
+	return is_valid;
 }
 
 ws_header WebServ::get_header(const std::string& full_file)
@@ -185,8 +185,8 @@ ws_header WebServ::get_header(const std::string& full_file)
 	ws_header header;
 	std::vector<std::string> line;
 	std::vector<std::string> carrier;
-	bool* valid_header;
-	*valid_header = true;
+	bool is_valid;
+	is_valid = false;
 
 	remove_all(raw_data, "\r");
 	std::string h_block = split_trim(raw_data, "\n\n")[0];
@@ -195,12 +195,15 @@ ws_header WebServ::get_header(const std::string& full_file)
 	for (size_t i = 0; i < line.size(); i++)
 	{
 		std::cout << "LINE>" << line[i] << "<" << std::endl;
+
 		if (line[i].length() == 0)
 			continue ;
+
 		if (i == 0)
 		{
 			carrier = split_trim(line[i], "/");
-			if (!validate_header_entry(carrier, 3, &valid_header))
+			is_valid = true;
+			if (!validate_header_entry(carrier, 3, is_valid))
 				break ;
 			header.method = carrier[0];
 			header.protocol = carrier[1];
@@ -210,7 +213,7 @@ ws_header WebServ::get_header(const std::string& full_file)
 		carrier = split_trim(line[i], ":");
 		if (is_equal_insensitive(carrier[0], "host"))
 		{
-			if (!validate_header_entry(carrier, 3, &valid_header))
+			if (!validate_header_entry(carrier, 3, is_valid))
 				break ;
 			header.host = carrier[1];
 			header.port = carrier[2];
@@ -218,19 +221,19 @@ ws_header WebServ::get_header(const std::string& full_file)
 
 		if (is_equal_insensitive(carrier[0], "user-agent"))
 		{
-			if (!validate_header_entry(carrier, 2, &valid_header))
+			if (!validate_header_entry(carrier, 2, is_valid))
 				break ;
 			header.user_agent = carrier[1];
 		}
 
 		if (is_equal_insensitive(carrier[0], "accept"))
 		{
-			if (!validate_header_entry(carrier, 2, &valid_header))
+			if (!validate_header_entry(carrier, 2, is_valid))
 				break ;
 			header.accept = carrier[1];
 		}
 	}
-	header.valid_header = *valid_header;
+	header.is_valid = is_valid;
 
 	verbose(1) << "method >" << header.method << "<" << std::endl;
 	verbose(1) << "protocol >" << header.protocol << "<" << std::endl;
@@ -239,7 +242,7 @@ ws_header WebServ::get_header(const std::string& full_file)
 	verbose(1) << "port >" << header.port << "<" << std::endl;
 	verbose(1) << "user_agent >" << header.user_agent << "<" << std::endl;
 	verbose(1) << "accept >" << header.accept << "<" << std::endl;
-	verbose(1) << "valid_header >" << header.valid_header << "<" << std::endl;
+	verbose(1) << "is_valid >" << header.is_valid << "<" << std::endl;
 
 	return header;
 }
@@ -263,14 +266,18 @@ std::string WebServ::get_raw_data(int fd)
 
 void WebServ::respond_connection_from(int fd)
 {
+	if (fd == 0) // stdin
+		return exit_gracefully();
 	verbose(1) << "(webserv) Got connection from fd " << fd << "." << std::endl;
 	std::string raw_data = get_raw_data(fd);
 	ws_header in_header = get_header(raw_data);
+	if (!in_header.is_valid)
+		return remove_from_poll(fd);
 	std::string body = get_body(raw_data);
-	verbose(1) << "BODY >" << body << "<";
+	verbose(1) << "BODY >" << body << "<" << std::endl;
 	if (send(fd, HELLO_WORLD, std::string(HELLO_WORLD).length(), 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
-	close(fd);
+//	close(fd);
 	remove_from_poll(fd);
 }
 
@@ -282,8 +289,6 @@ void WebServ::light_up()
 	while (lit)
 	{
 		event = catch_connection();
-//		if (event == 0) // stdin
-//			return exit_gracefully();
 		if (there_is_an_instance(event))
 			add_to_poll(event);
 		else
