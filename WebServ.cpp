@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 00:02:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 12:16:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ struct pollfd WebServ::make_pollin_fd(int newfd)
 void WebServ::exit_gracefully()
 {
 	verbose(1) << "Exit gracefully. Thanks!" << std::endl;
+	lit = false;
 	return ;
 }
 
@@ -121,7 +122,7 @@ int WebServ::catch_connection()
 	int poll_count;
 	DataFold event;
 
-	while (1)
+	while (lit)
 	{
 		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
 		if (poll_count == -1)
@@ -130,6 +131,7 @@ int WebServ::catch_connection()
 			if (poll_list[i].revents & POLLIN)
 				return poll_list[i].fd;
 	}
+	return 0;
 }
 
 bool WebServ::there_is_an_instance(int fd) const
@@ -193,9 +195,12 @@ void WebServ::light_up()
 {
 	int event;
 
-	while (1)
+	lit = true;
+	while (lit)
 	{
 		event = catch_connection();
+		if (!lit)
+			break;
 		if (there_is_an_instance(event))
 			add_to_poll(event);
 		else
@@ -211,7 +216,7 @@ void WebServ::init()
 }
 
 WebServ::WebServ(DataFold& u_config)
-: config(u_config), server(config.filter("server"))
+: config(u_config), server(config.filter("server")), lit(false)
 {
 	while (server.loop())
 		instance.push_back(dftosi(server.val));

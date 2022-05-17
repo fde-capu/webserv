@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/16 23:58:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 12:11:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class WebServ
 		DataFold server;
 		std::vector<ws_serv_instance> instance;
 		std::vector<struct pollfd> poll_list;
+		bool lit;
 
 		WebServ();
 
