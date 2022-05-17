@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 12:16:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 16:03:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,23 +172,72 @@ void WebServ::remove_from_poll(int fd)
 	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
+ws_header WebServ::get_header(const std::string& full_file)
+{
+	std::string raw_data(full_file);
+	ws_header header;
+	std::vector<std::string> line;
+	std::vector<std::string> carrier;
+
+	remove_all(raw_data, "\r");
+	std::string h_block = split_trim(raw_data, "\n\n")[0];
+	verbose(2) << "get_header ==>" << h_block << "<==" << std::endl;
+
+	line = split_trim(h_block, "\n");
+	for (size_t i = 0; i < line.size(); i++)
+	{
+		if (i == 0)
+		{
+			carrier = split_trim(line[i], "/");
+			header.method = carrier[0];
+			header.protocol = carrier[1];
+			header.protocol_version = carrier[2];
+			continue ;
+		}
+		carrier = split_trim(line[i], ":");
+		if (is_equal_insensitive(carrier[0], "host"))
+		{
+			header.host = carrier[1];
+			header.port = carrier[2];
+		}
+
+		if (is_equal_insensitive(carrier[0], "user-agent"))
+			header.user_agent = carrier[1];
+
+		if (is_equal_insensitive(carrier[0], "accept"))
+			header.accept = carrier[1];
+	}
+
+	verbose(2) << "method >" << header.method << "<" << std::endl;
+	verbose(2) << "protocol >" << header.protocol << "<" << std::endl;
+	verbose(2) << "protocol_version >" << header.protocol_version << "<" << std::endl;
+	verbose(2) << "host >" << header.host << "<" << std::endl;
+	verbose(2) << "port >" << header.port << "<" << std::endl;
+	verbose(2) << "user_agent >" << header.user_agent << "<" << std::endl;
+	verbose(2) << "accept >" << header.accept << "<" << std::endl;
+	return header;
+}
+
+std::string WebServ::get_body(const std::string& full_file)
+{
+	(void)full_file;
+	return "foo";
+}
+
 void WebServ::respond_connection_from(int fd)
 {
-						verbose(1) << "(webserv) Constructing buffer for fd " << fd << "." << std::endl;
-						CircularBuffer buffer(fd);
-						buffer.receive_until_eof();
-//						if (!buffer.ended())
-//						{
-							verbose(1) << "(webserv) Got data from " << fd << "." << std::endl;
-							verbose(1) << "-->" << buffer.output << "<--" << std::endl;
-//						}
-//						else
-//						{
-							close(fd);
-							remove_from_poll(fd);
-							if (fd == 0) // stdin
-								return exit_gracefully();
-//							verbose(1) << "(webserv) fd " << poll_list[i].fd << " hung up." << std::endl;
+	verbose(1) << "(webserv) Constructing buffer for fd " << fd << "." << std::endl;
+	CircularBuffer buffer(fd);
+	buffer.receive_until_eof();
+	std::string raw_data = buffer.output;
+	ws_header in_header = get_header(raw_data);
+
+	verbose(1) << "(webserv) Got data from " << fd << "." << std::endl;
+	verbose(1) << "-->" << raw_data << "<--" << std::endl;
+	close(fd);
+	remove_from_poll(fd);
+	if (fd == 0) // stdin
+		return exit_gracefully();
 }
 
 void WebServ::light_up()

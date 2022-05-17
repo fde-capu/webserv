@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 12:11:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 14:46:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,16 @@
 # define MAX_EVENTS 64
 # define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n";
 
-typedef struct struct_ws_event
+typedef struct struct_ws_header
 {
-} ws_event;
+	std::string method;
+	std::string protocol;
+	std::string protocol_version;
+	std::string host;
+	std::string port;
+	std::string user_agent;
+	std::string accept;
+} ws_header;
 
 typedef struct struct_ws_serv_instance
 {
@@ -60,6 +67,8 @@ class WebServ
 		struct pollfd stdin_to_pollfd();
 		struct pollfd make_pollin_fd(int);
 		void exit_gracefully();
+		ws_header get_header(const std::string&);
+		std::string get_body(const std::string&);
 
 	public:
 		WebServ(DataFold&);
