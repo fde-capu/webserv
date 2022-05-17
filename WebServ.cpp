@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 16:38:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 16:59:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ struct pollfd WebServ::make_pollin_fd(int newfd)
 
 void WebServ::exit_gracefully()
 {
-	verbose(1) << "Exit gracefully. Thanks!" << std::endl;
+	verbose(1) << "(webserv) Exit gracefully. Thanks!" << std::endl;
 	lit = false;
 	return ;
 }
@@ -154,7 +154,6 @@ void WebServ::add_to_poll(int oldfd)
 	{
 		poll_list.push_back(make_pollin_fd(newfd));
 		verbose(1) << "(webserv) New connection on fd (" << oldfd << ")->" << newfd << std::endl;
-		// Close oldfd?
 	}
 }
 
@@ -172,17 +171,26 @@ void WebServ::remove_from_poll(int fd)
 	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
+bool WebServ::validate_header_entry(std::vector<std::string>& test, size_t expected_size, bool& valid_header) const
+{
+	if (!valid_header)
+		return false;
+	valid_header = (test.size() == expected_size);
+	return valid_header;
+}
+
 ws_header WebServ::get_header(const std::string& full_file)
 {
 	std::string raw_data(full_file);
 	ws_header header;
 	std::vector<std::string> line;
 	std::vector<std::string> carrier;
+	bool* valid_header;
+	*valid_header = true;
 
 	remove_all(raw_data, "\r");
 	std::string h_block = split_trim(raw_data, "\n\n")[0];
 	verbose(2) << "get_header ==>" << h_block << "<==" << std::endl;
-
 	line = split_trim(h_block, "\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
@@ -192,6 +200,8 @@ ws_header WebServ::get_header(const std::string& full_file)
 		if (i == 0)
 		{
 			carrier = split_trim(line[i], "/");
+			if (!validate_header_entry(carrier, 3, &valid_header))
+				break ;
 			header.method = carrier[0];
 			header.protocol = carrier[1];
 			header.protocol_version = carrier[2];
@@ -200,24 +210,37 @@ ws_header WebServ::get_header(const std::string& full_file)
 		carrier = split_trim(line[i], ":");
 		if (is_equal_insensitive(carrier[0], "host"))
 		{
+			if (!validate_header_entry(carrier, 3, &valid_header))
+				break ;
 			header.host = carrier[1];
 			header.port = carrier[2];
 		}
 
 		if (is_equal_insensitive(carrier[0], "user-agent"))
+		{
+			if (!validate_header_entry(carrier, 2, &valid_header))
+				break ;
 			header.user_agent = carrier[1];
+		}
 
 		if (is_equal_insensitive(carrier[0], "accept"))
+		{
+			if (!validate_header_entry(carrier, 2, &valid_header))
+				break ;
 			header.accept = carrier[1];
+		}
 	}
+	header.valid_header = *valid_header;
 
-	verbose(2) << "method >" << header.method << "<" << std::endl;
-	verbose(2) << "protocol >" << header.protocol << "<" << std::endl;
-	verbose(2) << "protocol_version >" << header.protocol_version << "<" << std::endl;
-	verbose(2) << "host >" << header.host << "<" << std::endl;
-	verbose(2) << "port >" << header.port << "<" << std::endl;
-	verbose(2) << "user_agent >" << header.user_agent << "<" << std::endl;
-	verbose(2) << "accept >" << header.accept << "<" << std::endl;
+	verbose(1) << "method >" << header.method << "<" << std::endl;
+	verbose(1) << "protocol >" << header.protocol << "<" << std::endl;
+	verbose(1) << "protocol_version >" << header.protocol_version << "<" << std::endl;
+	verbose(1) << "host >" << header.host << "<" << std::endl;
+	verbose(1) << "port >" << header.port << "<" << std::endl;
+	verbose(1) << "user_agent >" << header.user_agent << "<" << std::endl;
+	verbose(1) << "accept >" << header.accept << "<" << std::endl;
+	verbose(1) << "valid_header >" << header.valid_header << "<" << std::endl;
+
 	return header;
 }
 
@@ -259,8 +282,8 @@ void WebServ::light_up()
 	while (lit)
 	{
 		event = catch_connection();
-		if (event == 0) // stdin
-			return exit_gracefully();
+//		if (event == 0) // stdin
+//			return exit_gracefully();
 		if (there_is_an_instance(event))
 			add_to_poll(event);
 		else
