@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 16:03:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 16:11:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,20 +220,23 @@ ws_header WebServ::get_header(const std::string& full_file)
 
 std::string WebServ::get_body(const std::string& full_file)
 {
-	(void)full_file;
-	return "foo";
+	std::string raw_data(full_file);
+	remove_all(raw_data, "\r");
+	return split_trim(raw_data, "\n\n")[1];
 }
 
 void WebServ::respond_connection_from(int fd)
 {
-	verbose(1) << "(webserv) Constructing buffer for fd " << fd << "." << std::endl;
+	verbose(1) << "(webserv) Got connection from " << fd << "." << std::endl;
 	CircularBuffer buffer(fd);
 	buffer.receive_until_eof();
 	std::string raw_data = buffer.output;
-	ws_header in_header = get_header(raw_data);
-
-	verbose(1) << "(webserv) Got data from " << fd << "." << std::endl;
 	verbose(1) << "-->" << raw_data << "<--" << std::endl;
+	ws_header in_header = get_header(raw_data);
+	std::string body = get_body(raw_data);
+	verbose(1) << "BODY >" << body << "<";
+	if (send(fd, HELLO_WORLD, std::string(HELLO_WORLD).length(), 0) == -1)
+		throw std::domain_error("(webserv) Sending response went wrong.");
 	close(fd);
 	remove_from_poll(fd);
 	if (fd == 0) // stdin

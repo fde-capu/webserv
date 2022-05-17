@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 14:46:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/17 16:11:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # include <fcntl.h>
 
 # define MAX_EVENTS 64
-# define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n";
+# define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n"
 
 typedef struct struct_ws_header
 {
