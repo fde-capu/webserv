@@ -6,12 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 21:42:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/18 02:22:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 #include <iostream>
+#include <cstdio>
 
 ws_serv_instance WebServ::dftosi(DataFold df)
 {
@@ -77,14 +78,7 @@ void WebServ::hook_it()
 }
 
 struct pollfd WebServ::stdin_to_pollfd()
-{
-	struct pollfd ufds;
-
-	ufds = pollfd();
-	ufds.fd = 0;
-	ufds.events = POLLIN;
-	return ufds;
-}
+{ return make_pollin_fd(0); }
 
 struct pollfd WebServ::make_pollin_fd(int newfd)
 {
@@ -100,8 +94,6 @@ void WebServ::exit_gracefully()
 {
 	verbose(1) << "(webserv) Exit gracefully. Thanks!" << std::endl;
 	lit = false;
-	while (recv(0, 0, 1, 0) > 0)
-		;
 	return ;
 }
 
@@ -266,8 +258,6 @@ std::string WebServ::get_raw_data(int fd)
 
 void WebServ::respond_connection_from(int fd)
 {
-	if (fd == 0) // stdin
-		return exit_gracefully();
 	verbose(1) << "(webserv) Got connection from fd " << fd << "." << std::endl;
 	std::string raw_data = get_raw_data(fd);
 	ws_header in_header = get_header(raw_data);
@@ -277,7 +267,6 @@ void WebServ::respond_connection_from(int fd)
 	verbose(1) << "BODY >" << body << "<" << std::endl;
 	if (send(fd, HELLO_WORLD, std::string(HELLO_WORLD).length(), 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
-//	close(fd);
 	remove_from_poll(fd);
 }
 
@@ -289,6 +278,8 @@ void WebServ::light_up()
 	while (lit)
 	{
 		event = catch_connection();
+		if (event == 0)
+			return exit_gracefully();
 		if (there_is_an_instance(event))
 			add_to_poll(event);
 		else
@@ -301,6 +292,10 @@ void WebServ::init()
 	poll_list.push_back(stdin_to_pollfd());
 	hook_it();
 	light_up();
+
+	std::string line;
+	std::getline(std::cin, line);
+	static_cast<void>(line);
 }
 
 WebServ::WebServ(DataFold& u_config)
