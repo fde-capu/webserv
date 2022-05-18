@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 20:52:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/18 13:29:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 # include <poll.h>
 # include <fcntl.h>
 
-# define MAX_EVENTS 64
 # define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n"
 
 typedef struct struct_ws_header
@@ -49,6 +48,17 @@ typedef struct struct_ws_serv_instance
 	std::vector<int> port;
 	std::vector<int> listen_sock;
 } ws_serv_instance;
+
+typedef struct s_ws_reply_instance
+{
+	ws_header out_header;
+	std::string out_body;
+	ws_serv_instance* config;
+	int fd;
+	std::string encapsulate();
+	size_t cap_length;
+	s_ws_reply_instance(ws_header&, std::string&, int fd);
+} ws_reply_instance;
 
 class WebServ
 {

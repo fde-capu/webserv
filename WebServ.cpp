@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/18 12:58:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/18 13:31:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,6 +257,13 @@ std::string WebServ::get_raw_data(int fd)
 	return raw_data;
 }
 
+ws_reply_instance::s_ws_reply_instance(ws_header& wsh, std::string& wsb, int fd)
+{
+	(void)wsh;
+	(void)wsb;
+	std::cout << "ws_reply_instance fd " << fd << std::endl;
+}
+
 void WebServ::respond_connection_from(int fd)
 {
 	verbose(1) << "(webserv) Got connection from fd " << fd << "." << std::endl;
@@ -264,8 +271,9 @@ void WebServ::respond_connection_from(int fd)
 	ws_header in_header = get_header(raw_data);
 	if (!in_header.is_valid)
 		return remove_from_poll(fd);
-	std::string body = get_body(raw_data);
-	verbose(1) << "BODY >" << body << "<" << std::endl;
+	std::string in_body = get_body(raw_data);
+	verbose(1) << "BODY >" << in_body << "<" << std::endl;
+	ws_reply_instance reply(in_header, in_body, fd);
 	if (send(fd, HELLO_WORLD, std::string(HELLO_WORLD).length(), 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 	remove_from_poll(fd);
