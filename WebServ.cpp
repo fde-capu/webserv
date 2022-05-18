@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/18 15:29:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/18 16:46:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ int WebServ::bind_socket_to_local(int u_port)
 		throw std::domain_error("(webserv) Socket locked.");
 
 	freeaddrinfo(result);
+	to_port[sfd] = server_by_port(u_port);
 	verbose(1) << "(webserv) Bound fd " << sfd << " to port " << u_port << "." << std::endl;
 	return sfd;
 }
@@ -105,7 +106,6 @@ void WebServ::add_to_poll(int oldfd)
 	else
 	{
 		poll_list.push_back(make_pollin_fd(newfd));
-		fd_to_instance[newfd] = same_instance_as(oldfd);
 		verbose(1) << "(webserv) New connection on fd (" << oldfd << ")->" << newfd << std::endl;
 	}
 }
@@ -124,7 +124,7 @@ void WebServ::remove_from_poll(int fd)
 	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
-ws_reply_instance::ws_reply_instance(ws_header& wsh, std::string& wsb, int fd, const ws_server_instance* config)
+ws_reply_instance::ws_reply_instance(ws_header& wsh, std::string& wsb, int fd, DataFold& config)
 {
 	(void)wsh;
 	(void)wsb;
@@ -142,7 +142,7 @@ void WebServ::respond_connection_from(int fd)
 	std::string in_body = get_body(raw_data);
 	verbose(1) << "BODY >" << in_body << "<" << std::endl;
 
-	ws_reply_instance reply(in_header, in_body, fd, fd_to_instance[fd]);
+	ws_reply_instance respond(in_header, in_body, fd, to_port[fd]);
 
 	if (send(fd, HELLO_WORLD, std::string(HELLO_WORLD).length(), 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");

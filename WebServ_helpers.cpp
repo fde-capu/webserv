@@ -6,11 +6,28 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/18 15:28:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/18 16:51:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+
+DataFold WebServ::server_by_port(int port) const
+{
+	DataFold* svr = const_cast<DataFold*>(&server);
+	DataFold is_out; 
+	DataFold portlist;
+
+	while (svr->loop())
+	{
+		is_out = svr->val;
+		portlist = is_out.get("listen");
+		while (portlist.loop())
+			if (atoi(portlist.val.c_str()) == port)
+				return is_out;
+	}
+	throw std::domain_error("(webserv) Something is very wrong with port detection!");
+}
 
 ws_server_instance WebServ::dftosi(DataFold df)
 {

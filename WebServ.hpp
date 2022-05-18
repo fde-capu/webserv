@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/18 15:04:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/18 16:46:37 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ struct ws_reply_instance
 	int fd;
 	std::string encapsulate();
 	size_t cap_length;
-	ws_reply_instance(ws_header&, std::string&, int, const ws_server_instance*);
+	ws_reply_instance(ws_header&, std::string&, int, DataFold&);
 };
 
 class WebServ
@@ -68,7 +68,7 @@ class WebServ
 		DataFold server;
 		std::vector<ws_server_instance> instance;
 		std::vector<struct pollfd> poll_list;
-		std::map<int, const ws_server_instance*> fd_to_instance;
+		std::map<int, DataFold> to_port;
 		bool lit;
 
 		WebServ();
@@ -85,6 +85,7 @@ class WebServ
 		std::string get_raw_data(int);
 		bool validate_header_entry(std::vector<std::string>&, size_t, bool&) const;
 		const ws_server_instance* same_instance_as(int) const;
+		DataFold server_by_port(int) const;
 
 	public:
 		WebServ(DataFold&);
