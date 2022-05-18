@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/18 02:23:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/18 12:58:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ void WebServ::hook_it()
 		if (listen(instance[0].listen_sock[j], SOMAXCONN) != 0)
 			throw std::domain_error("(webserv) Listening problem.");
 	}
+	verbose(1) << "(webserv) I'm hooked." << std::endl;
 }
 
 struct pollfd WebServ::stdin_to_pollfd()
@@ -181,7 +182,7 @@ ws_header WebServ::get_header(const std::string& full_file)
 	is_valid = false;
 
 	remove_all(raw_data, "\r");
-	std::string h_block = split_trim(raw_data, "\n\n")[0];
+	std::string h_block = raw_data.substr(0, raw_data.find("\n\n"));
 	verbose(2) << "get_header ==>" << h_block << "<==" << std::endl;
 	line = split_trim(h_block, "\n");
 	for (size_t i = 0; i < line.size(); i++)
@@ -243,7 +244,7 @@ std::string WebServ::get_body(const std::string& full_file)
 {
 	std::string raw_data(full_file);
 	remove_all(raw_data, "\r");
-	size_t body_p = raw_data.find("\n\n") + 1;
+	size_t body_p = raw_data.find("\n\n") + 2;
 	return body_p == std::string::npos ? raw_data : raw_data.substr(body_p);
 }
 
