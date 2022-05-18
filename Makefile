@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/05/12 15:21:58 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/05/18 15:24:56 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ DEBUG	=	1
 ENVS	=	-DAGV_SKIP_CHECK=1
 SRCS	=	main.cpp strings.cpp FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp \
-			CircularBuffer.cpp
+			CircularBuffer.cpp WebServ_helpers.cpp
 HEAD	=	Makefile header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
