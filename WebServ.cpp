@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/18 02:22:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/18 02:23:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -295,7 +295,6 @@ void WebServ::init()
 
 	std::string line;
 	std::getline(std::cin, line);
-	static_cast<void>(line);
 }
 
 WebServ::WebServ(DataFold& u_config)
