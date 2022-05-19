@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/19 14:37:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/19 15:23:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,27 +95,51 @@ void WebServ::remove_from_poll(int fd)
 	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
-ws_reply_instance::ws_reply_instance(ws_header& wsh, std::string& wsb, ws_server_instance& si)
+ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
-	(void)wsh;
-	(void)wsb;
-	std::cout << "ws_reply_instance fd " << fd << std::endl;
+	std::cout << "ws_reply_instance()" << std::endl;
+	out_header.method = "";
+	out_header.protocol = "HTTP";
+	out_header.protocol_version = "1.1";
+	out_header.status = 200;
+	out_header.status_msg = "OK";
+	out_header.connection = "close";
+	out_body = "Hello, world!\n";
 	std::cout << si.config << std::endl;
+}
+
+std::string ws_reply_instance::encapsulate()
+{
+	std::string out = "";
+
+	out += out_header.protocol + "/" + out_header.protocol_version + " ";
+	out += itoa(out_header.status) + " " + out_header.status_msg + "\n";
+	if (out_header.connection != "")
+		out += "Connection: " + out_header.connection + "\n";
+	out += "Content-Length: " + itoa(out_body.length()) + "\n";
+	out += "\n";
+	out += out_body;
+	package_length = out.length();
+	return out;
 }
 
 void WebServ::respond_connection_from(int fd)
 {
+	ws_server_instance si;
+	std::string raw_data;
+
 	verbose(1) << "(webserv) Got connection from fd " << fd << "." << std::endl;
-	std::string raw_data = get_raw_data(fd);
-	ws_header in_header = get_header(raw_data);
-	if (!in_header.is_valid)
+	raw_data = get_raw_data(fd);
+	si = *fd_to_instance[fd];
+	si.in_header = get_header(raw_data);
+	if (!si.in_header.is_valid)
 		return remove_from_poll(fd);
-	std::string in_body = get_body(raw_data);
-	verbose(1) << "BODY >" << in_body << "<" << std::endl;
+	si.in_body = get_body(raw_data);
+	verbose(1) << "BODY >" << si.in_body << "<" << std::endl;
 
-	ws_reply_instance respond(in_header, in_body, *fd_to_instance[fd]);
+	ws_reply_instance respond(si);
 
-	if (send(fd, HELLO_WORLD, std::string(HELLO_WORLD).length(), 0) == -1)
+	if (send(fd, respond.encapsulate().c_str(), respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 	remove_from_poll(fd);
 }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/19 14:34:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/19 15:21:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,16 @@ struct ws_header
 	std::string user_agent;
 	std::string accept;
 	bool		is_valid;
+	int			status;
+	std::string status_msg;
+	std::string connection;
+	size_t		content_length;
 };
 
 struct ws_server_instance
 {
-	std::string current_http_header;
-	std::string current_http_body;
+	ws_header in_header;
+	std::string in_body;
 	std::vector<int> port;
 	std::vector<int> listen_sock;
 	DataFold config;
@@ -54,11 +58,9 @@ struct ws_reply_instance
 {
 	ws_header out_header;
 	std::string out_body;
-	ws_server_instance* in_instance;
-	int fd;
+	size_t package_length;
+	ws_reply_instance(ws_server_instance&);
 	std::string encapsulate();
-	size_t cap_length;
-	ws_reply_instance(ws_header&, std::string&, ws_server_instance&);
 };
 
 class WebServ
@@ -69,7 +71,6 @@ class WebServ
 		std::vector<ws_server_instance> instance;
 		std::vector<struct pollfd> poll_list;
 		std::map<int, ws_server_instance*> fd_to_instance;
-//		std::map<int, ws_server_instance*> port_to_instance;
 		bool lit;
 
 		WebServ();
