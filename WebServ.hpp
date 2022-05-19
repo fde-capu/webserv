@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/18 16:46:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/19 14:34:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ struct ws_reply_instance
 {
 	ws_header out_header;
 	std::string out_body;
-	ws_server_instance* config;
+	ws_server_instance* in_instance;
 	int fd;
 	std::string encapsulate();
 	size_t cap_length;
-	ws_reply_instance(ws_header&, std::string&, int, DataFold&);
+	ws_reply_instance(ws_header&, std::string&, ws_server_instance&);
 };
 
 class WebServ
@@ -68,7 +68,8 @@ class WebServ
 		DataFold server;
 		std::vector<ws_server_instance> instance;
 		std::vector<struct pollfd> poll_list;
-		std::map<int, DataFold> to_port;
+		std::map<int, ws_server_instance*> fd_to_instance;
+//		std::map<int, ws_server_instance*> port_to_instance;
 		bool lit;
 
 		WebServ();
@@ -84,8 +85,7 @@ class WebServ
 		std::string get_body(const std::string&);
 		std::string get_raw_data(int);
 		bool validate_header_entry(std::vector<std::string>&, size_t, bool&) const;
-		const ws_server_instance* same_instance_as(int) const;
-		DataFold server_by_port(int) const;
+		void flush_stdin();
 
 	public:
 		WebServ(DataFold&);

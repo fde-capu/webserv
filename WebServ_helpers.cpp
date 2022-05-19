@@ -6,37 +6,26 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/18 16:51:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/19 14:35:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-DataFold WebServ::server_by_port(int port) const
-{
-	DataFold* svr = const_cast<DataFold*>(&server);
-	DataFold is_out; 
-	DataFold portlist;
-
-	while (svr->loop())
-	{
-		is_out = svr->val;
-		portlist = is_out.get("listen");
-		while (portlist.loop())
-			if (atoi(portlist.val.c_str()) == port)
-				return is_out;
-	}
-	throw std::domain_error("(webserv) Something is very wrong with port detection!");
-}
-
 ws_server_instance WebServ::dftosi(DataFold df)
 {
 	ws_server_instance si;
-	si.current_http_header = "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 13\n\n";
-	si.current_http_body = "Hello, world!";
+	int port;
+//	si.current_http_header = "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 13\n\n";
+//	si.current_http_body = "Hello, world!";
 	DataFold df_listen(df.get("listen"));
 	while (df_listen.loop())
-		si.port.push_back(std::atoi(df_listen.val.c_str())); // htons?
+	{
+		port = std::atoi(df_listen.val.c_str());
+		si.port.push_back(port); // htons?
+		si.config = df;
+//		port_to_instance[port] = si;
+	}
 	return si;
 }
 
@@ -67,15 +56,6 @@ bool WebServ::there_is_an_instance(int fd) const
 			if (instance[i].listen_sock[j] == fd)
 				return true;
 	return false;
-}
-
-const ws_server_instance* WebServ::same_instance_as(int fd) const
-{
-	for (size_t i = 0; i < instance.size(); i++)
-		for (size_t j = 0; j < instance[i].listen_sock.size(); j++)
-			if (instance[i].listen_sock[j] == fd)
-				return &instance[i];
-	return 0;
 }
 
 bool WebServ::validate_header_entry(std::vector<std::string>& test, size_t expected_size, bool& is_valid) const
@@ -205,4 +185,10 @@ std::ostream & operator<< (std::ostream & o, WebServ const & self)
 WebServ::~WebServ()
 {
 	return ;
+}
+
+void WebServ::flush_stdin()
+{
+	std::string line;
+	std::getline(std::cin, line);
 }
