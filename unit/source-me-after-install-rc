@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/12 17:04:34 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/22 12:22:19 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/05/19 17:46:45 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,3 +24,4 @@ alias lynx=$PWD/lynx-standalone/lynx
 
 # Chain of instruction:
 echo 'Sourcing ok. Remember to turn the server up if not already.';
+echo 'Run: ./check-n-ginx.sh';
