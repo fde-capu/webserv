@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/19 15:21:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/19 16:20:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ class WebServ
 		std::vector<ws_server_instance> instance;
 		std::vector<struct pollfd> poll_list;
 		std::map<int, ws_server_instance*> fd_to_instance;
+		std::vector<int> taken_ports;
 		bool lit;
 
 		WebServ();
@@ -87,6 +88,7 @@ class WebServ
 		std::string get_raw_data(int);
 		bool validate_header_entry(std::vector<std::string>&, size_t, bool&) const;
 		void flush_stdin();
+		bool is_port_taken(int) const;
 
 	public:
 		WebServ(DataFold&);

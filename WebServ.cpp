@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/19 15:23:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/19 16:19:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int WebServ::bind_socket_to_local(int u_port)
 		if (fcntl(sfd, F_SETFD, O_NONBLOCK) == -1)
 			throw std::domain_error("(webserv) Failed to set non-blocking flag.");
 		if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
-			throw std::domain_error("(webserv) Cannot reuse, socket is locked.");
+			throw std::domain_error("(webserv) Could not unlock the socket.");
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 		close(sfd);
@@ -60,23 +60,29 @@ int WebServ::bind_socket_to_local(int u_port)
 	return sfd;
 }
 
-// for instance i
-//  for every port
-//   to_conf[port] = instance[i].config
-
 void WebServ::hook_it()
 {
 	struct pollfd ufds;
-	for (size_t j = 0; j < instance[0].port.size(); j++)
+
+	for (size_t i = 0; i < instance.size(); i++)
 	{
-		instance[0].listen_sock.push_back(bind_socket_to_local(instance[0].port[j]));
-		ufds = pollfd();
-		ufds.fd = instance[0].listen_sock[j];
-		ufds.events = POLLIN;
-		poll_list.push_back(ufds);
-		fd_to_instance[ufds.fd] = &instance[0];
-		if (listen(instance[0].listen_sock[j], SOMAXCONN) != 0)
-			throw std::domain_error("(webserv) Listening problem.");
+		for (size_t j = 0; j < instance[i].port.size(); j++)
+		{
+			if (!is_port_taken(instance[i].port[j]))
+			{
+				instance[i].listen_sock.push_back(bind_socket_to_local(instance[i].port[j]));
+				ufds = pollfd();
+				ufds.fd = instance[i].listen_sock[j];
+				ufds.events = POLLIN;
+				poll_list.push_back(ufds);
+				fd_to_instance[ufds.fd] = &instance[i];
+				if (listen(instance[i].listen_sock[j], SOMAXCONN) != 0)
+					throw std::domain_error("(webserv) Listening problem.");
+				taken_ports.push_back(instance[i].port[j]);
+			}
+			else
+				verbose(1) << "(webserv) Warning: multiple servers configured on same port. Only the first will be used." << std::endl;
+		}
 	}
 	verbose(1) << "(webserv) I'm hooked." << std::endl;
 }

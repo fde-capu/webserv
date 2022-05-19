@@ -6,11 +6,19 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/19 14:54:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/19 16:20:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+
+bool WebServ::is_port_taken(int port) const
+{
+	for (size_t i = 0; i < taken_ports.size(); i++)
+		if (taken_ports[i] == port)
+			return true;
+	return false;
+}
 
 ws_server_instance WebServ::dftosi(DataFold df)
 {
