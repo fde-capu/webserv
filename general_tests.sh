@@ -87,7 +87,7 @@ curl -v http://$name_server:3490/somesub/
 
 { anounce D \
 \
-	'Send Host header as an existend server_name. \n
+	'Send Host header as an existent server_name. \n
 	Rooted on ./unit/confs/html-custom-server-name.' \
 \
 ; } 2> /dev/null
@@ -98,7 +98,7 @@ curl -v http://$name_server:3490 -H 'Host: krazything'
 
 { anounce E \
 \
-	'Unexistent servername must default to :3490 (first conf declaration).' \
+	'Unexistent servername defaults to :3490 first declaration.' \
 \
 ; } 2> /dev/null
 
@@ -114,13 +114,13 @@ curl -v http://$name_server:3490 -H 'Host: unexistent_servername'
 ; } 2> /dev/null
 
 curl -v http://$name_server:3491
-exit
 
 # G ################################################################
 
 { anounce G \
 \
-	':3492, no location at all.' \
+	':3492 is solenly a `server { listen 3492; }`,
+	this is an open port, but forbidden serverside.' \
 \
 ; } 2> /dev/null
 
@@ -140,7 +140,7 @@ curl -v http://$name_server:3493 -L
 
 { anounce I \
 \
-	' - client NOT redirecting:' \
+	' - client NOT redirecting (gets 301):' \
 \
 ; } 2> /dev/null
 
