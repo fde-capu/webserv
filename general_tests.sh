@@ -1,21 +1,17 @@
 #!/bin/sh
 
+#`./webserv`
 name_server="127.0.0.1";
 
 # On 42SP Workspace, there are opened:
 
-`netstat -tnl`
 #	tcp 	0	0.0.0.0:5901	0.0.0.0:*	LISTEN	-	(VNC server)
 #	tcp6	0	:::5901	:::*	LISTEN	-		
-#	tcp 	0	0.0.0.0:2222	0.0.0.0:*	LISTEN	-	(Invalid SSH)
+#	tcp 	0	0.0.0.0:2222	0.0.0.0:*	LISTEN	-	(SSH)
 #	tcp6	0	:::2222	:::*	LISTEN	-		
 #	tcp 	0	0.0.0.0:8080	0.0.0.0:*	LISTEN	-	(./login)		
 
-`./webserv`
-# We will open (as webserv-default.conf describes):
-
-#	To run the subject tests:
-#	tcp 	0	0.0.0.0:4242	0.0.0.0:*	LISTEN	67/nginx: master pr	
+# We will open as webserv-default.conf describes:
 
 #	Demonstration of implementations:
 #	tcp 	0	0.0.0.0:3490	0.0.0.0:*	LISTEN	67/nginx: master pr	
@@ -29,136 +25,140 @@ name_server="127.0.0.1";
 #	Redirect 301 to :3490:
 #	tcp 	0	0.0.0.0:3493	0.0.0.0:*	LISTEN	67/nginx: master pr	
 
+#	To run the subject tests:
+#	tcp 	0	0.0.0.0:4242	0.0.0.0:*	LISTEN	67/nginx: master pr	
+
+# (helpers) #######################################################
+
 divider()
 {
 	{ set +x; } 2> /dev/null
-	echo '\n\n--------------------------\n\n'
+	echo "\n\n######### $1 #####################################"
 	set -x
 }
 
 anounce()
 {
-	{ divider; } 2> /dev/null
-	echo $1
-	{ divider; } 2> /dev/null
+	{ divider $1; } 2> /dev/null
+	echo $2
+	{ echo '-------------------------------------------------'; } 2> /dev/null
 }
 
-{ anounce \
-\
-	'Hello, have fun!' \
-\
-; } 2> /dev/null
-
-{ divider; } 2> /dev/null
-{ divider; } 2> /dev/null
-{ divider; } 2> /dev/null
-{ divider; } 2> /dev/null
-{ divider; } 2> /dev/null
-{ divider; } 2> /dev/null
+for i in 1 2 3 4 5 6 7 8 9 10
+do
+	{ divider "#"; } 2> /dev/null
+done
 
 # A ################################################################
 
-{ anounce \
+{ anounce A \
 \
-	':3490 will demonstrate the implementations.' \
+	':3490 will demonstrate the implementations. \n
+	It is bound to directory ./unit/confs/html.	\n
+	Must receive 200 OK and some html body from index.html.' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3490
+curl -v http://$name_server:3490
 
 # B ################################################################
 
-{ anounce \
+{ anounce B \
 \
-	'Accepts subdirectory calls.' \
+	'Accepts subdirectory calls. \n
+	-L tells curl to follow redirect.' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3490/somesub
+curl -vL http://$name_server:3490/somesub
 
 # C ################################################################
 
-{ anounce \
+{ anounce C \
 \
-	"Subdirectory ending with '/'." \
+	"Subdirectory ending with '/' has the same effect. \n
+	This time, curl -L is not required." \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3490/somesub/
+curl -v http://$name_server:3490/somesub/
 
 # D ################################################################
 
-{ anounce \
+{ anounce D \
 \
-	'Send Host header as another server_name (existent).' \
+	'Send Host header as an existend server_name. \n
+	Rooted on ./unit/confs/html-custom-server-name.' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3490 -H 'Host: krazything'
+curl -v http://$name_server:3490 -H 'Host: krazything'
 
 # E ################################################################
 
-{ anounce \
+{ anounce E \
 \
 	'Unexistent servername must default to :3490 (first conf declaration).' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3490 -H 'Host: unexistent_servername'
+curl -v http://$name_server:3490 -H 'Host: unexistent_servername'
 
 # F ################################################################
 
-{ anounce \
+{ anounce F \
 \
-	':3491, another port, another server, another folder:' \
+	':3491, another port, another server, another folder: \n
+	root ./unit/confs/htmlB3491.' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3491
+curl -v http://$name_server:3491
+exit
 
 # G ################################################################
 
-{ anounce \
+{ anounce G \
 \
 	':3492, no location at all.' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3492
+curl -v http://$name_server:3492
 
 # H ################################################################
 
-{ anounce \
+{ anounce H \
 \
 	':3493 redirects 301 to :3490. \n 	  - client redirecting:' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3493 -L
+curl -v http://$name_server:3493 -L
 
 # I ################################################################
 
-{ anounce \
+{ anounce I \
 \
 	' - client NOT redirecting:' \
 \
 ; } 2> /dev/null
 
-curl -vD- http://$name_server:3493
+curl -v http://$name_server:3493
 
 # J ################################################################
 
 { divider; } 2> /dev/null
 
-#curl -vD- http://$name_server:4242/directory/
+#curl -v http://$name_server:4242/directory/
 #curl -vLD- http://$name_server:4242/directory/youpi.bla
 
 #curl -vLD- http://$name_server:3490/.php
 
-#curl -vD- http://$name_server:4242/directory/unexistent_file
+#curl -v http://$name_server:4242/directory/unexistent_file
 
-#curl http://$name_server:3490/test.php -vD-
-#curl http://$name_server:3490/cgi-bin/test.php -vD-
+#curl http://$name_server:3490/test.php -v
+#curl http://$name_server:3490/cgi-bin/test.php -v
 
 #curl -vLD- http://127.0.0.1:4242/directory/oulalala
 #curl -vLD- http://$name_server:4242/directory/Yeah
