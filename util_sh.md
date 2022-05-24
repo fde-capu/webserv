@@ -39,3 +39,6 @@
 
 ## nginx reload (uses the same configuration file previous given by -c)
 # `nginx -s reload`
+
+## generate random file
+# `head -c 1MB /dev/urandom > file`
