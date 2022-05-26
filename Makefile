@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/05/26 14:22:18 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/05/26 14:29:54 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,8 +39,9 @@ VALFLAG	=	--tool=memcheck \
 GDBSC	=	gdb.script
 LINE	=	@echo "\n************************\n"
 all:		line $(NAME) $(NAME2)
-webserv:	line $(NAME)
+ws:			line $(NAME)
 cgi:		line $(NAME2)
+1:			ws
 2:			cgi
 line:
 	$(LINE)
@@ -50,6 +51,8 @@ $(NAME2):	$(OBJS2)
 	$(CC) $(CCFLAGS) $(OBJS2) -o $(NAME2)
 $(OBJS):	%.o : %.cpp $(HEAD)
 	$(CC) $(CCFLAGS) -o $@ -c $<
+#$(OBJS2):	%.o : %.cpp $(HEAD)
+#	$(CC) $(CCFLAGS) -o $@ -c $<
 clean:
 	-rm -f $(OBJS)
 	-rm -f $(OBJS2)
@@ -60,27 +63,27 @@ re:			fclean all
 rt:			re t
 tserver:	all pk
 	./$(NAME) $(ARGS)
-t:			webserv
+t:			1
 	./$(NAME) $(ARGS)
-t2:			cgi
+t2:			2
 	./$(NAME2) $(ARGS)
-tg:			webserv pk
+tg:			1 pk
 	./$(NAME) $(ARGS) &
 	-./general_tests.sh
-tg2:		cgi pk
+tg2:		2 pk
 	./$(NAME2) $(ARGS) &
 	-./cgi_test.sh
-v:			webserv
+v:			1
 	$(VAL) ./$(NAME) $(ARGS)
-v2:			cgi
+v2:			2
 	$(VAL) ./$(NAME2) $(ARGS)
-vf:			webserv
+vf:			1
 	$(VAL) $(VALFLAG) ./$(NAME) $(ARGS)
-vf2:		cgi
+vf2:		2
 	$(VAL) $(VALFLAG) ./$(NAME2) $(ARGS2)
-g:			webserv
+g:			1
 	gdb -x $(GDBSC) --args ./$(NAME) $(ARGS)
-g2:			cgi
+g2:			2
 	gdb -x $(GDBSC) --args ./$(NAME2) $(ARGS2)
 pk:
 	-pkill webserv
