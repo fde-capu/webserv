@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/07 20:55:24 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/12 17:13:22 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/05/26 02:27:12 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,9 @@ all:	$(DIRS) $(BIN)
 
 $(BIN):
 	cd nginx-src && \
-	./configure --prefix=$(PWD)/sandbox --with-pcre=$(PWD)/pcre && \
+	./configure --prefix=$(PWD)/sandbox --with-pcre=$(PWD)/pcre \
+		--with-http_dav_module \
+	&& \
 	make && \
 	make install
 
