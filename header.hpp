@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/04/26 02:24:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/26 16:23:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # define WS_DEFAULT_CONFIG "webserv-default.conf"
 # define WS_CONFIG_SETUP "argval.conf"
+# define WSCGI_CONFIG_SETUP "argval_cgi.conf"
 
 # include <map>
 # include <string>
@@ -24,6 +25,7 @@
 # include "FileString.hpp"
 # include "ArgVal.hpp"
 # include "WebServ.hpp"
+# include "CgiWrapper.hpp"
 
 # ifndef VERBOSE
 #  define VERBOSE 0

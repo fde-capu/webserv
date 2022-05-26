@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 13:10:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/26 16:52:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,27 @@ ArgVal::ArgVal(int argc, char ** argv, const char * u_board_file_name)
 {
 	_board.load(_board_file_name);
 	run();
+}
+
+std::string ArgVal::enumerate(size_t c, std::string argt)
+{
+	std::string out("");
+	char** word = StringTools::split_words(argt);
+
+	for (size_t i = 0; i < c; i++)
+	{
+		out += i + " " + word[i] + ";";
+		if (i + 1 < c)
+			out += "\n";
+	}
+	return out;
+}
+
+ArgVal::ArgVal(int argc, size_t fixed_c, char** argv, std::string arg_test)
+: _fail(false), _board_file_name(""), argc(argc), argv(argv)
+{
+	std::string board_str("argc { fixed " + fixed_c + " } argv { " + enumerate(argc, arg_test) + " }");
+	std::cout << "board_str: " << board_str << std::endl;
 }
 
 ArgVal::ArgVal(int argc, char ** argv)

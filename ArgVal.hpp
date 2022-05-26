@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 13:07:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/26 16:36:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ class ArgVal
 
 	public:
 		ArgVal(int, char **, const char *);
+		ArgVal(int, size_t, char**, std::string);
 		ArgVal(int, char **);
 		ArgVal();
 		ArgVal(ArgVal const & src);
