@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/26 16:36:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/27 13:19:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ class ArgVal
 		bool validate_by_board_key(DataFold, DataFold);
 
 		size_t count_keys(DataFold, std::string) const;
+		std::string enumerate(size_t, std::string);
 };
 
 //std::ostream & operator<< (std::ostream &, ArgVal const &);

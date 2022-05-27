@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/26 16:52:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/27 13:26:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,21 +23,21 @@ ArgVal::ArgVal(int argc, char ** argv, const char * u_board_file_name)
 std::string ArgVal::enumerate(size_t c, std::string argt)
 {
 	std::string out("");
-	char** word = StringTools::split_words(argt);
+	std::vector<std::string> word = split(argt, " ");
 
-	for (size_t i = 0; i < c; i++)
+	for (size_t i = 0; i < word.size(); i++)
 	{
-		out += i + " " + word[i] + ";";
-		if (i + 1 < c)
-			out += "\n";
+		out += itoa(i) + " " + word[i] + ";";
+		if (i < c)
+			out += " ";
 	}
 	return out;
 }
 
 ArgVal::ArgVal(int argc, size_t fixed_c, char** argv, std::string arg_test)
-: _fail(false), _board_file_name(""), argc(argc), argv(argv)
+: _fail(false), _board_file_name(), argc(argc), argv(argv)
 {
-	std::string board_str("argc { fixed " + fixed_c + " } argv { " + enumerate(argc, arg_test) + " }");
+	std::string board_str("argc { fixed " + itoa(fixed_c) + "; } argv { " + enumerate(argc, arg_test) + " }");
 	std::cout << "board_str: " << board_str << std::endl;
 }
 
