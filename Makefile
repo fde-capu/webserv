@@ -6,14 +6,14 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/05/26 16:10:19 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/05/27 13:47:54 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME1	=	webserv
 ARGS1	=	webserv-default.conf
 NAME2	=	cgi_webserv
-ARGS2	=	executable
+ARGS2	=	executable 123
 DEBUG	=	1
 ENVS	=	-DAGV_SKIP_CHECK=1
 SRCS	=	strings.cpp FileString.cpp DataFold.cpp \
@@ -49,11 +49,11 @@ $(NAME1):	$(OBJS1)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS1) -o $(NAME1)
 $(NAME2):	$(OBJS2)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS2) -o $(NAME2)
-$(OBJS):	%.o : %.cpp $(HEAD) $(SRCS)
+$(OBJS):	%.o : %.cpp $(HEAD)
 	$(CC) $(CCFLAGS) -o $@ -c $<
-$(OBJS1):	$(OBJS) $(SRCS1)
+$(OBJS1):	$(OBJS)
 	$(CC) $(CCFLAGS) -o $(OBJS1) -c $(SRCS1)
-$(OBJS2):	$(OBJS) $(SRCS2)
+$(OBJS2):	$(OBJS)
 	$(CC) $(CCFLAGS) -o $(OBJS2) -c $(SRCS2)
 clean:
 	-rm -f $(OBJS1)
@@ -63,7 +63,7 @@ fclean:		clean
 	-rm -f $(NAME2)
 re:			fclean all
 rt:			re t
-t:			1
+t1:			1
 	./$(NAME1) $(ARGS1)
 t2:			2
 	./$(NAME2) $(ARGS2)
