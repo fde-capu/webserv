@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 18:51:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/27 20:55:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,14 @@ class FileString
 		FileString();
 		FileString(const char *);
 		FileString(FileString & src);
-		FileString & operator= (FileString & rhs);
+		FileString& operator= (FileString&);
+		FileString& operator= (const std::string&);
 		~FileString();
 
 		operator DataFold() const;
 
 		void load(const char *);
+		void load(const std::string &);
 		void parse();
 		void parse(std::string);
 		bool fail();

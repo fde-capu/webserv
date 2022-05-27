@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/26 16:23:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/27 21:04:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 # define HEADER_HPP
 
 # define WS_DEFAULT_CONFIG "webserv-default.conf"
-# define WS_CONFIG_SETUP "argval.conf"
+# define WS_ARGVAL "argval.conf"
+# define WSCGI_ARGVAL "argval_cgi.conf"
 # define WSCGI_CONFIG_SETUP "argval_cgi.conf"
 
 # include <map>

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/27 13:19:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/27 21:21:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,7 @@ class ArgVal
 		char * _board_file_name;
 
 	public:
-		ArgVal(int, char **, const char *);
-		ArgVal(int, size_t, char**, std::string);
+		ArgVal(int, char **, const char * u_board_file_name);
 		ArgVal(int, char **);
 		ArgVal();
 		ArgVal(ArgVal const & src);
@@ -73,7 +72,6 @@ class ArgVal
 		bool validate_by_board_key(DataFold, DataFold);
 
 		size_t count_keys(DataFold, std::string) const;
-		std::string enumerate(size_t, std::string);
 };
 
 //std::ostream & operator<< (std::ostream &, ArgVal const &);

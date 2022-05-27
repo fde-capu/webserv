@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/05/27 13:47:54 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/05/27 21:18:49 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,11 +49,11 @@ $(NAME1):	$(OBJS1)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS1) -o $(NAME1)
 $(NAME2):	$(OBJS2)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS2) -o $(NAME2)
-$(OBJS):	%.o : %.cpp $(HEAD)
+$(OBJS):	%.o : %.cpp $(HEAD) $(SRCS)
 	$(CC) $(CCFLAGS) -o $@ -c $<
-$(OBJS1):	$(OBJS)
+$(OBJS1):	$(OBJS) $(SRCS1)
 	$(CC) $(CCFLAGS) -o $(OBJS1) -c $(SRCS1)
-$(OBJS2):	$(OBJS)
+$(OBJS2):	$(OBJS) $(SRCS2)
 	$(CC) $(CCFLAGS) -o $(OBJS2) -c $(SRCS2)
 clean:
 	-rm -f $(OBJS1)

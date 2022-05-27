@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/27 13:39:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/27 21:38:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,34 +20,13 @@ ArgVal::ArgVal(int argc, char ** argv, const char * u_board_file_name)
 	run();
 }
 
-std::string ArgVal::enumerate(size_t c, std::string argt)
-{
-	std::string out("");
-	std::vector<std::string> word = split(argt, " ");
-
-	for (size_t i = 0; i < word.size(); i++)
-	{
-		out += itoa(i) + " " + word[i] + ";";
-		if (i < c)
-			out += " ";
-	}
-	return out;
-}
-
-ArgVal::ArgVal(int argc, size_t fixed_c, char** argv, std::string arg_test)
-: _fail(false), _board_file_name(), argc(argc), argv(argv)
-{
-	std::string board_str("argc { fixed " + itoa(fixed_c) + "; } argv { " + enumerate(argc, arg_test) + " }");
-	std::cout << "board_str: " << board_str << std::endl;
-}
-
 ArgVal::ArgVal(int argc, char ** argv)
 : _fail(false), argc(argc), argv(argv)
 {}
 
 void ArgVal::run()
 {
-	int bval = _board.get_val("argc", "fixed");
+	int bval = _board.get<int>("argc", "fixed");
 	if (bval && bval != argc)
 	{
 		verbose(1) << "argc does not match.";

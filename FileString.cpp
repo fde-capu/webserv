@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/23 18:52:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/27 20:55:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,12 @@ FileString::FileString()
 : _read_ok(false), _processed_ok(false),
   key(""), val(""), type(0)
 {}
+
+void FileString::load(const std::string & str)
+{
+	_content = str;
+	parse();
+}
 
 void FileString::load(const char * file_name)
 {
@@ -37,7 +43,6 @@ void FileString::load(const char * file_name)
 	while (std::getline(file_read, line))
 		_content += line + "\n";
 	parse();
-	_processed_ok = true;
 }
 
 FileString::FileString(const char * file_name)
@@ -64,12 +69,7 @@ void FileString::parse()
 void FileString::parse(std::string str)
 {
 	_content = str;
-	_processed = _content;
-	remove_comments(_processed);
-	soft_trim(_processed);
-	hard_trim(_processed);
-	_processed_ok = true;
-	this->fs_data = DataFold(_processed); // Future: implement +=
+	parse();
 }
 
 FileString::FileString(FileString & src)
@@ -79,7 +79,7 @@ FileString::FileString(FileString & src)
 	return ;
 }
 
-FileString & FileString::operator= (FileString & rhs)
+FileString& FileString::operator= (FileString & rhs)
 {
 	if (this != &rhs)
 	{
@@ -89,6 +89,15 @@ FileString & FileString::operator= (FileString & rhs)
 		this->_processed_ok = rhs.isProcessed();
 		this->_processed = rhs.getProcessed();
 	}
+	return *this;
+}
+
+FileString& FileString::operator= (const std::string& rhs)
+{ 
+	this->_file_name = const_cast<char*>(std::string("").c_str());
+	this->_content = rhs;
+	this->_read_ok = true;
+	parse(rhs); // Puts _processed and _processed_ok.
 	return *this;
 }
 
