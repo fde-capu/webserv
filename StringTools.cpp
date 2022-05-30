@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 15:38:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/30 15:26:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -447,6 +447,12 @@ std::vector<std::string> StringTools::splitOutsideQuotes(const std::string vecst
 	return out;
 }
 
+bool isAllNumber(std::string ustr)
+{ return stool.isAllNumber(ustr); }
+
+bool StringTools::isAllNumber(std::string ustr) const
+{ return isNumber(ustr); }
+
 bool isAllNumber(std::vector<std::string> vecstring)
 { return stool.isAllNumber(vecstring); }
 
@@ -491,6 +497,18 @@ std::string StringTools::itoa(int i) const
 	std::ostringstream ss;
 	ss << i;
 	return ss.str();
+}
+
+bool is_size_t(std::string fn)
+{ return stool.is_size_t(fn); }
+
+bool StringTools::is_size_t(std::string sts) const
+{
+	// Currently accepting arbitrarly large overflewd string input.
+	size_t st_test = 0;
+	if (isAllNumber(sts) && 1 == std::sscanf(sts.c_str(), "%zu", &st_test))
+		return true;
+	return false;
 }
 
 bool isFileName(std::string fn)

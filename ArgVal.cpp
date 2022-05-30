@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 15:04:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/30 15:08:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,15 @@ void ArgVal::run()
 	try {
 		if (_board.get<int>("argc", "fixed") != argc)
 		{
-			verbose(1) << "argc does not match." << std::endl;
+			verbose(1) << "(ArgVal) argc does not match." << std::endl;
 			_fail = true;
 		}
 	} catch(std::exception&){}
 
-
 	try {
 		if (argc > _board.get<int>("argc", "max"))
 		{
-			verbose(1) << "Too many arguments." << std::endl;
+			verbose(1) << "(ArgVal) Too many arguments." << std::endl;
 			_fail = true;
 		}
 	} catch(std::exception&){}
@@ -46,7 +45,7 @@ void ArgVal::run()
 	try {
 		if (argc < _board.get<int>("argc", "min"))
 		{
-			verbose(1) << "Need more arguments." << std::endl;
+			verbose(1) << "(ArgVal) Needs more arguments." << std::endl;
 			_fail = true;
 		}
 	} catch(std::exception&){}
@@ -62,6 +61,8 @@ void ArgVal::run()
 			if (vt[i] == "file_name" && !isFileName(std::string(argv[argi])))
 				_fail = true;
 			if (vt[i] == "comply" && !comply(argv[argi]))
+				_fail = true;
+			if (vt[i] == "size_t" && !is_size_t(std::string(argv[argi])))
 				_fail = true;
 		}
 	}

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 15:37:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/30 15:26:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <iostream>
 # include <sstream>
 # include <vector>
+# include <cstdio>
 
 # define ST_SOFT_TRIM " \t\n"
 # define ST_HARD_TRIM " \t"
@@ -64,6 +65,7 @@ class StringTools
 		std::string					remove_quotes(const std::string&) const;
 		std::string					escape_char(const std::string, std::string) const;
 		bool						isNumber(std::string) const;
+		bool						isAllNumber(std::string) const;
 		bool						isAllNumber(std::vector<std::string>) const;
 		bool						isDigit(char) const;
 		bool						isWord(const std::string) const;
@@ -77,6 +79,7 @@ class StringTools
 		std::vector<std::string>	splitOutsideQuotes(std::string) const;
 		std::string					itoa(int) const;
 		bool						isFileName(std::string) const;
+		bool						is_size_t(std::string) const;
 		bool						isUri(std::string) const;
 		bool						isAllInSet(std::string, std::string) const;
 		std::string					nth_word(std::string, int) const;
@@ -113,6 +116,7 @@ std::string remove_quotes(const std::string&);
 std::string escape_char(const std::string, std::string);
 bool isNumber(std::string);
 bool isAllNumber(std::vector<std::string>);
+bool isAllNumber(std::string);
 bool isDigit(char);
 bool isWord(const std::string);
 bool isWordInWordSet(std::string, std::vector<std::string>);
@@ -125,6 +129,7 @@ std::vector<std::string> split_trim(const std::string, const std::string);
 std::vector<std::string> splitOutsideQuotes(std::string);
 std::string itoa(int);
 bool isFileName(std::string);
+bool is_size_t(std::string);
 bool isUri(std::string);
 bool isAllInSet(std::string, std::string);
 std::string nth_word(std::string, int);
