@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 16:22:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/30 17:00:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ class WebServ
 
 		ws_server_instance dftosi(DataFold);
 		struct pollfd stdin_to_pollfd();
-		struct pollfd make_pollin_fd(int);
 		void exit_gracefully();
 		ws_header get_header(const std::string&);
 		std::string get_body(const std::string&);
@@ -108,6 +107,7 @@ class WebServ
 
 	public: // Usefull services for CgiWrapper.
 		static int bind_socket_to_local(int);
+		struct pollfd make_pollin_fd(int) const;
 };
 
 std::ostream & operator<< (std::ostream & o, WebServ const & i);

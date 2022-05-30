@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/19 16:20:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/30 16:59:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ ws_server_instance WebServ::dftosi(DataFold df)
 struct pollfd WebServ::stdin_to_pollfd()
 { return make_pollin_fd(0); }
 
-struct pollfd WebServ::make_pollin_fd(int newfd)
+struct pollfd WebServ::make_pollin_fd(int newfd) const
 {
 	struct pollfd ufds;
 

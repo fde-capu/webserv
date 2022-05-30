@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:08:00 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 16:18:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/30 16:40:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ class CgiWrapper
 		std::string executable;
 		int port;
 		int listen_sock;
+		std::vector<struct pollfd> poll_list;
+//		std::map<int, ws_server_instance*> fd_to_instance;
+
 		CgiWrapper();
 		CgiWrapper& operator= (CgiWrapper const &);
 		CgiWrapper(CgiWrapper const &);
