@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/27 21:38:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/30 15:04:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,19 @@ ArgVal::ArgVal(int argc, char ** argv)
 
 void ArgVal::run()
 {
-	int bval = _board.get<int>("argc", "fixed");
-	if (bval && bval != argc)
-	{
-		verbose(1) << "argc does not match.";
-		_fail = true;
-	}
+	try {
+		if (_board.get<int>("argc", "fixed") != argc)
+		{
+			verbose(1) << "argc does not match." << std::endl;
+			_fail = true;
+		}
+	} catch(std::exception&){}
+
 
 	try {
 		if (argc > _board.get<int>("argc", "max"))
 		{
-			verbose(1) << "Too many arguments.";
+			verbose(1) << "Too many arguments." << std::endl;
 			_fail = true;
 		}
 	} catch(std::exception&){}
@@ -44,7 +46,7 @@ void ArgVal::run()
 	try {
 		if (argc < _board.get<int>("argc", "min"))
 		{
-			verbose(1) << "Need more arguments.";
+			verbose(1) << "Need more arguments." << std::endl;
 			_fail = true;
 		}
 	} catch(std::exception&){}
@@ -52,33 +54,15 @@ void ArgVal::run()
 	vstr vt;
 	int argi = 0;
 
-	while (++argi < argc)
+	while (++argi < argc && !_fail)
 	{
 		vt = _board.get<vstr>("argv", itoa(argi));
-		if (vt.size() && vt[0] == "file_name")
+		for (size_t i = 0; i < vt.size() && !_fail; i++)
 		{
-			if (!isFileName(std::string(argv[1])))
+			if (vt[i] == "file_name" && !isFileName(std::string(argv[argi])))
 				_fail = true;
-			if (vt.size() > 1 && vt[1] == "comply")
-			{
-				_config.load(argv[argi]);
-				if (AGV_SKIP_CHECK == 0)
-				{
-					verbose(1) << "Validating..." << std::endl;
-					if (comply())
-					{
-						verbose(1) << "Configuration valid." << std::endl;
-					}
-					else
-					{
-						_fail = true;
-					}
-				}
-				else
-				{
-					verbose(1) << "Skept validation." << std::endl;
-				}
-			}
+			if (vt[i] == "comply" && !comply(argv[argi]))
+				_fail = true;
 		}
 	}
 }
@@ -405,8 +389,17 @@ bool ArgVal::comply_check(DataFold board, DataFold config)
 	return comply_argval_params(board, config) && comply_config_keys(board, config);
 }
 
-bool ArgVal::comply()
+bool ArgVal::comply(char *u_board_file)
 {
+	_config.load(u_board_file);
+
+	if (AGV_SKIP_CHECK == 1)
+	{
+		verbose(1) << "Skept validation." << std::endl;
+		return true;
+	}
+
+	verbose(1) << "Validating..." << std::endl;
 	DataFold comply(_board.get_val("comply"));
 	if (!comply_check(comply, _config))
 		return false;
