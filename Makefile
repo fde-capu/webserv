@@ -6,14 +6,16 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/05/27 21:18:49 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/05/30 14:46:54 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME1	=	webserv
 ARGS1	=	webserv-default.conf
+
 NAME2	=	cgi_webserv
 ARGS2	=	executable 123
+
 DEBUG	=	1
 ENVS	=	-DAGV_SKIP_CHECK=1
 SRCS	=	strings.cpp FileString.cpp DataFold.cpp \
@@ -63,27 +65,27 @@ fclean:		clean
 	-rm -f $(NAME2)
 re:			fclean all
 rt:			re t
+v1:			1
+	$(VAL) ./$(NAME1) $(ARGS1)
+v2:			2
+	$(VAL) ./$(NAME2) $(ARGS2)
+vf1:		1
+	$(VAL) $(VALFLAG) ./$(NAME1) $(ARGS1)
+vf2:		2
+	$(VAL) $(VALFLAG) ./$(NAME2) $(ARGS2)
 t1:			1
 	./$(NAME1) $(ARGS1)
 t2:			2
 	./$(NAME2) $(ARGS2)
-tg:			1 pk
+g1:			1
+	gdb -x $(GDBSC) --args ./$(NAME1) $(ARGS1)
+g2:			2
+	gdb -x $(GDBSC) --args ./$(NAME2) $(ARGS2)
+tg1:		1 pk
 	./$(NAME1) $(ARGS1) &
 	-./general_tests.sh
 tg2:		2 pk
 	./$(NAME2) $(ARGS2) &
 	-./cgi_test.sh
-v:			1
-	$(VAL) ./$(NAME1) $(ARGS1)
-v2:			2
-	$(VAL) ./$(NAME2) $(ARGS2)
-vf:			1
-	$(VAL) $(VALFLAG) ./$(NAME1) $(ARGS1)
-vf2:		2
-	$(VAL) $(VALFLAG) ./$(NAME2) $(ARGS2)
-g:			1
-	gdb -x $(GDBSC) --args ./$(NAME1) $(ARGS1)
-g2:			2
-	gdb -x $(GDBSC) --args ./$(NAME2) $(ARGS2)
 pk:
 	-pkill webserv
