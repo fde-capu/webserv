@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 15:08:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/30 16:09:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ void ArgVal::run()
 			if (vt[i] == "file_name" && !isFileName(std::string(argv[argi])))
 				_fail = true;
 			if (vt[i] == "comply" && !comply(argv[argi]))
+				_fail = true;
+			if (vt[i] == "int" && !is_int(std::string(argv[argi])))
 				_fail = true;
 			if (vt[i] == "size_t" && !is_size_t(std::string(argv[argi])))
 				_fail = true;

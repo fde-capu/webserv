@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 15:26:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/30 16:19:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -497,6 +497,18 @@ std::string StringTools::itoa(int i) const
 	std::ostringstream ss;
 	ss << i;
 	return ss.str();
+}
+
+bool is_int(std::string isi)
+{ return stool.is_int(isi); }
+
+bool StringTools::is_int(std::string isi) const
+{
+	// Currently accepting arbitrarly large overflewd string input.
+	int i_test = 0;
+	if (isAllNumber(isi) && 1 == std::sscanf(isi.c_str(), "%i", &i_test))
+		return true;
+	return false;
 }
 
 bool is_size_t(std::string fn)
