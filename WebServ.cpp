@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 16:28:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 17:00:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,12 +112,13 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si, std::string& exec_c
 	out_header.connection = "close";
 //	out_body = exec_cgi; // Mock! Must be exec() or eval() - using fork?
 
-	pid_t child_pid, wait_pid;
+	pid_t child_pid;
+	pid_t wait_pid;
 	int child_status;
 	char* args[2] = {0, 0};
 	std::string sys_out = "[empty]";
 	int pipefd[2];
-	char buf;
+//	char buf;
 
 	out_body = "[:(]\t";
 
@@ -139,13 +140,16 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si, std::string& exec_c
 		wait_pid = wait(&child_status);
 		if (wait_pid < 0)
 			throw std::domain_error("(webserv) Coudn't wait.");
+
 		close(0);
 		dup(pipefd[0]);
 		close(pipefd[1]);
-		// out_body = read buffer stdin
-		out_body = "{8)}\t";
-		while (read(pipefd[0], &buf, 1) > 0)
-			out_body += buf;
+
+		out_body = CircularBuffer(pipefd[0]);
+
+//		out_body = "{8)}\t";
+//		while (read(pipefd[0], &buf, 1) > 0)
+//			out_body += buf;
 		std::cout << "Exit: " << WIFEXITED(child_status) << "\t" << std::endl;
 	}
 
