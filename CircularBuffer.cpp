@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 11:58:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 16:52:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,3 +100,6 @@ int CircularBuffer::getFd() const
 
 bool CircularBuffer::ended() const
 { return eof; }
+
+CircularBuffer::operator std::string()
+{ return reof_out(); }

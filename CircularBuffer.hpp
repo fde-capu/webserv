@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 11:58:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 16:52:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ class CircularBuffer
 		void receive_until_eof();
 		std::string output;
 		std::string reof_out();
+
+		operator std::string();
 };
 
 std::ostream & operator<< (std::ostream &, CircularBuffer const &);
