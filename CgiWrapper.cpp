@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 17:08:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 11:59:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
 	while (1)
 	{
 		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
-		if (poo_count == -1)
+		if (poll_count == -1)
 			throw std::domain_error("(CgiWrapper) Poll crashed.");
 		for (size_t i = 0; i < poll_list.size(); i++)
 		{
@@ -67,7 +67,7 @@ CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
 		throw std::domain_error("(CgiWrapper) Could not accept call.");
 	verbose(1) << "(CgiWrapper) Received call (" << event << ")->" << newfd << "." << std::endl;
 
-	raw_data = CircularBuffer::CircularBuffer(newfd).receive_until_eof().output;
+	raw_data = CircularBuffer(newfd).reof_out();
 	std::cout << "RAW>>" << raw_data << "<<" << std::endl;
 
 	return ;

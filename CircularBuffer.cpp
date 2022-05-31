@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/17 20:55:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 11:58:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,12 @@ void CircularBuffer::set_eof()
 {
 	resetMemory();
 	eof = true;
+}
+
+std::string CircularBuffer::reof_out()
+{
+	receive_until_eof();
+	return output;
 }
 
 void CircularBuffer::receive_until_eof()
