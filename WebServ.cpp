@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 12:19:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 14:56:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,19 @@ void WebServ::remove_from_poll(int fd)
 	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
+ws_reply_instance::ws_reply_instance(ws_server_instance& si, std::string& exec_cgi)
+{
+	std::cout << "ws_reply_instance()" << std::endl;
+	out_header.method = "";
+	out_header.protocol = "HTTP";
+	out_header.protocol_version = "1.1";
+	out_header.status = 200;
+	out_header.status_msg = "OK";
+	out_header.connection = "close";
+	out_body = exec_cgi; // Mock!
+	(void)si;
+}
+
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
 	std::cout << "ws_reply_instance()" << std::endl;
@@ -111,7 +124,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	out_header.status_msg = "OK";
 	out_header.connection = "close";
 	out_body = "Hello, world!\n";
-	std::cout << si.config << std::endl;
+	(void)si;
 }
 
 std::string ws_reply_instance::encapsulate()

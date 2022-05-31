@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 12:53:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 13:06:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
 	si.in_body = WebServ::get_body(raw_data);
 
 	// Make up some response.
-	ws_reply_instance respond(si);
+	ws_reply_instance respond(si, executable);
 	if (send(newfd, respond.encapsulate().c_str(), respond.package_length, 0) == -1)
 		throw std::domain_error("(CgiWrapper) Could not respond.");
 

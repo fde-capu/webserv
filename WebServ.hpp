@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 12:47:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 13:08:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ struct ws_reply_instance
 	std::string out_body;
 	size_t package_length;
 	ws_reply_instance(ws_server_instance&);
+	ws_reply_instance(ws_server_instance&, std::string&);
 	std::string encapsulate();
 };
 
