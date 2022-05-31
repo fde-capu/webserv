@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 16:59:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 12:48:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,13 +65,13 @@ bool WebServ::there_is_an_instance(int fd) const
 	return false;
 }
 
-bool WebServ::validate_header_entry(std::vector<std::string>& test, size_t expected_size, bool& is_valid) const
+bool WebServ::validate_header_entry(std::vector<std::string>& test, size_t expected_size, bool& is_valid)
 {
 	is_valid = is_valid && test.size() == expected_size;
 	return is_valid;
 }
 
-ws_header WebServ::get_header(const std::string& full_file)
+struct ws_header WebServ::get_header(const std::string& full_file)
 {
 	std::string raw_data(full_file);
 	ws_header header;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:08:00 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 16:40:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 12:38:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,12 @@ class CgiWrapper
 		CgiWrapper();
 		CgiWrapper& operator= (CgiWrapper const &);
 		CgiWrapper(CgiWrapper const &);
+		void remove_from_poll(int);
+
 	public:
 		CgiWrapper(std::string, int);
 		~CgiWrapper();
+		bool fail;
 };
 
 std::ostream & operator<< (std::ostream &, CgiWrapper const &);

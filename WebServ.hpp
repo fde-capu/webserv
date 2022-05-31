@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 17:00:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 12:47:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,12 +81,15 @@ class WebServ
 		ws_server_instance dftosi(DataFold);
 		struct pollfd stdin_to_pollfd();
 		void exit_gracefully();
-		ws_header get_header(const std::string&);
-		std::string get_body(const std::string&);
 		std::string get_raw_data(int);
-		bool validate_header_entry(std::vector<std::string>&, size_t, bool&) const;
+		static bool validate_header_entry(std::vector<std::string>&, size_t, bool&);
 		void flush_stdin();
 		bool is_port_taken(int) const;
+		int catch_connection();
+		bool there_is_an_instance(int) const;
+		void add_to_poll(int);
+		void remove_from_poll(int);
+		void respond_connection_from(int);
 
 	public:
 		WebServ(DataFold&);
@@ -99,15 +102,11 @@ class WebServ
 		void init();
 		void light_up();
 
-		int catch_connection();
-		bool there_is_an_instance(int) const;
-		void add_to_poll(int);
-		void remove_from_poll(int);
-		void respond_connection_from(int);
-
 	public: // Usefull services for CgiWrapper.
 		static int bind_socket_to_local(int);
 		struct pollfd make_pollin_fd(int) const;
+		static struct ws_header get_header(const std::string&);
+		static std::string get_body(const std::string&);
 };
 
 std::ostream & operator<< (std::ostream & o, WebServ const & i);
