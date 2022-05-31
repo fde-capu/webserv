@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 14:56:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/05/31 16:28:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,45 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si, std::string& exec_c
 	out_header.status = 200;
 	out_header.status_msg = "OK";
 	out_header.connection = "close";
-	out_body = exec_cgi; // Mock!
+//	out_body = exec_cgi; // Mock! Must be exec() or eval() - using fork?
+
+	pid_t child_pid, wait_pid;
+	int child_status;
+	char* args[2] = {0, 0};
+	std::string sys_out = "[empty]";
+	int pipefd[2];
+	char buf;
+
+	out_body = "[:(]\t";
+
+	if (pipe(pipefd) == -1)
+		throw std::domain_error("(webserv) Cannot pipe for cgi.");
+	child_pid = fork();
+	if (child_pid < 0)
+		throw std::domain_error("(webserv) Forking went wrong.");
+	if (child_pid == 0) // Child.
+	{
+		close(1);
+		dup(pipefd[1]);
+		close(pipefd[0]);
+		execvp(exec_cgi.c_str(), args);
+		_exit(502);
+	}
+	else // Parent.
+	{
+		wait_pid = wait(&child_status);
+		if (wait_pid < 0)
+			throw std::domain_error("(webserv) Coudn't wait.");
+		close(0);
+		dup(pipefd[0]);
+		close(pipefd[1]);
+		// out_body = read buffer stdin
+		out_body = "{8)}\t";
+		while (read(pipefd[0], &buf, 1) > 0)
+			out_body += buf;
+		std::cout << "Exit: " << WIFEXITED(child_status) << "\t" << std::endl;
+	}
+
 	(void)si;
 }
 
