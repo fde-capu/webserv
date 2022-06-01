@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/02 00:47:11 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/02 00:54:33 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -81,11 +81,11 @@ g1:			1
 	gdb -x $(GDBSC) --args ./$(NAME1) $(ARGS1)
 g2:			2
 	gdb -x $(GDBSC) --args ./$(NAME2) $(ARGS2)
-gt1:		1 pk
-	./$(NAME1) $(ARGS1) &
-	-./general_tests.sh
-gt2:		2 pk
-	./$(NAME2) $(ARGS2) &
-	-./cgi_test.sh
+gt1:
+	./general_tests.sh
+gt2:
+	./cgi_test.sh
 pk:
 	-pkill webserv
+ft:
+	unit/ubuntu_tester https://0.0.0.0:4242

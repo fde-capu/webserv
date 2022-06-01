@@ -6,11 +6,12 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/05/24 01:20:56 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/02 01:46:36 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SERVER	=	127.0.0.1
+FTPORT	=	4242
 NAME	=	webserv
 SRCS	=	
 HEAD	=	Makefile
@@ -88,3 +89,11 @@ lynx-re:
 lynx-nginx: lynx nginx
 lynx-nginx-t: lynx nginx-t
 g:	nginx-log
+ft:
+	./ubuntu_tester http://$(SERVER):$(FTPORT)
+ftcgi:
+	export REQUEST_METHOD=POST && \
+	export SERVER_PROTOCOL="HTTP/1.1" && \
+	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
+	cd .. && ./cgi_webserv /home/coder/webserv/unit/confs/html4242/ubuntu_cgi_tester 9000
+
