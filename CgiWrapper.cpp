@@ -6,14 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 16:31:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 16:42:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CgiWrapper.hpp"
 
 CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
-: executable(u_executable), port(u_port), fail(true)
+: executable(u_executable), port(u_port)
 {
 	verbose(1) << "Executable: " << executable << std::endl;
 	verbose(1) << "Port: " << port << std::endl;
@@ -44,6 +44,7 @@ CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
 		throw std::domain_error("(CgiWrapper) Listening went wrong.");
 	verbose(1) << "^> (CgiWrapper) I'm listening." << std::endl;
 
+do_it_again:
 	// Catch connection.
 	event = 0;
 	while (!event)
@@ -91,9 +92,9 @@ CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
 	ws_cgi_reply body_from (executable);
 	if (send(newfd, body_from.encapsulate().c_str(), body_from.package_length, 0) == -1)
 		throw std::domain_error("(CgiWrapper) Could not respond.");
-
 	remove_from_poll(newfd);
-	fail = false;
+
+	goto do_it_again;
 }
 
 ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi)
