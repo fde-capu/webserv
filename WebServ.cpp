@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 14:32:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 14:59:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,28 +130,20 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si, std::string& exec_c
 	{
 		close(0);
 		close(pipefd[0]);
-
 		dup2(pipefd[1], 1);
 		execvp(exec_cgi.c_str(), args);
 		exit(502);
 	}
 	else // Parent.
 	{
-
+		close(pipefd[1]);
 		wait_pid = wait(&child_status);
 		if (wait_pid < 0)
 			throw std::domain_error("(webserv) Coudn't wait.");
-
 		out_body = "{8)}\t";
-
-		close(1);
-		close(pipefd[1]);
-		dup2(pipefd[0], 0);
-
-//		out_body += CircularBuffer(0);
+//		out_body += CircularBuffer(pipefd[0]);
 		while (read(pipefd[0], &buf, 1) > 0)
 			out_body += buf;
-
 		std::cout << "Exit: " << WIFEXITED(child_status) << "\t" << std::endl;
 	}
 
