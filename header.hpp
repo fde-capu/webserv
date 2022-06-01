@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/27 21:04:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 16:31:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,26 @@
 # define WS_DEFAULT_CONFIG "webserv-default.conf"
 # define WS_ARGVAL "argval.conf"
 # define WSCGI_ARGVAL "argval_cgi.conf"
-# define WSCGI_CONFIG_SETUP "argval_cgi.conf"
 
 # include <map>
 # include <string>
 # include <iostream>
 # include <cstdlib>
 # include <fstream>
+# include "bladefs.hpp"
 # include "FileString.hpp"
 # include "ArgVal.hpp"
-# include "WebServ.hpp"
-# include "CgiWrapper.hpp"
+# include "DataFold.hpp"
+# include "CircularBuffer.hpp"
+# include <algorithm>
+# include <iostream>
+# include <vector>
+# include <arpa/inet.h>
+# include <netdb.h>
+# include <unistd.h>
+# include <poll.h>
+# include <fcntl.h>
+# include <sys/wait.h>
 
 # ifndef VERBOSE
 #  define VERBOSE 0

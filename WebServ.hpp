@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 15:41:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 16:30:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,6 @@
 # define WEBSERV_HPP
 
 # include "header.hpp"
-# include "DataFold.hpp"
-# include "CircularBuffer.hpp"
-# include <algorithm>
-# include <iostream>
-# include <vector>
-# include <arpa/inet.h>
-// # include <sys/types.h>
-//# include <sys/socket.h>
-# include <netdb.h>
-# include <unistd.h>
-# include <poll.h>
-# include <fcntl.h>
-# include <sys/wait.h>
 
 # define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n"
 
@@ -61,8 +48,10 @@ struct ws_reply_instance
 	std::string out_body;
 	size_t package_length;
 	ws_reply_instance(ws_server_instance&);
-	ws_reply_instance(ws_server_instance&, std::string&);
+	ws_reply_instance();
 	std::string encapsulate();
+	private:
+		ws_reply_instance(std::string&);
 };
 
 class WebServ

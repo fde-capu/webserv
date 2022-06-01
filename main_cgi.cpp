@@ -6,11 +6,11 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:21:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/27 21:37:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 16:32:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "header.hpp"
+#include "CgiWrapper.hpp"
 
 DataFold load_configuration(int argc, char **argv, std::string conf_file)
 {

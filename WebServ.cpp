@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 15:11:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 16:29:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void WebServ::remove_from_poll(int fd)
 	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
-ws_reply_instance::ws_reply_instance(ws_server_instance& si, std::string& exec_cgi)
+ws_reply_instance::ws_reply_instance()
 {
 	std::cout << "ws_reply_instance()" << std::endl;
 	out_header.method = "";
@@ -110,56 +110,15 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si, std::string& exec_c
 	out_header.status = 200;
 	out_header.status_msg = "OK";
 	out_header.connection = "close";
-//	out_body = exec_cgi; // Mock! Must be exec() or eval() - using fork?
-
-	pid_t child_pid = -1;
-	pid_t wait_pid = -1;
-	int child_status = -1;
-	char* args[2] = {0, 0};
-	int pipefd[2] = {0, 0};
-	char buf;
-
-	out_body = "[:(]\t";
-
-	if (pipe(pipefd) == -1)
-		throw std::domain_error("(webserv) Cannot pipe for cgi.");
-	child_pid = fork();
-	if (child_pid < 0)
-		throw std::domain_error("(webserv) Forking went wrong.");
-	if (child_pid == 0) // Child.
-	{
-		close(0);
-		close(pipefd[0]);
-		dup2(pipefd[1], 1);
-		execvp(exec_cgi.c_str(), args);
-		exit(502);
-	}
-	else // Parent.
-	{
-		close(pipefd[1]);
-		wait_pid = wait(&child_status);
-		if (wait_pid < 0)
-			throw std::domain_error("(webserv) Coudn't wait.");
-		out_body = "{8)}\t";
-		out_body += CircularBuffer(pipefd[0]);
-//		while (read(pipefd[0], &buf, 1) > 0)
-//			out_body += buf;
-		std::cout << "Exit: " << WIFEXITED(child_status) << "\t" << std::endl;
-	}
-
-	(void)si;
-	(void)buf;
 }
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
-	std::cout << "ws_reply_instance()" << std::endl;
-	out_header.method = "";
-	out_header.protocol = "HTTP";
-	out_header.protocol_version = "1.1";
-	out_header.status = 200;
-	out_header.status_msg = "OK";
-	out_header.connection = "close";
+	/*
+	**
+	**									reply
+	*/
+
 	out_body = "Hello, world!\n";
 	(void)si;
 }

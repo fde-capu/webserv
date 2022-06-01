@@ -6,16 +6,20 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:08:00 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 12:38:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 16:33:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CGIWRAPPER_HPP
 # define CGIWRAPPER_HPP
 
-# include <iostream>
+# include "header.hpp"
 # include "WebServ.hpp"
-# include "bladefs.hpp"
+
+struct ws_cgi_reply : ws_reply_instance
+{
+	ws_cgi_reply(std::string&);
+};
 
 class CgiWrapper
 {
@@ -24,7 +28,6 @@ class CgiWrapper
 		int port;
 		int listen_sock;
 		std::vector<struct pollfd> poll_list;
-//		std::map<int, ws_server_instance*> fd_to_instance;
 
 		CgiWrapper();
 		CgiWrapper& operator= (CgiWrapper const &);
