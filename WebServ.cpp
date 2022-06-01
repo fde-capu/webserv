@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 16:29:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/02 00:44:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,11 +114,7 @@ ws_reply_instance::ws_reply_instance()
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
-	/*
-	**
-	**									reply
-	*/
-
+	*this = ws_reply_instance();
 	out_body = "Hello, world!\n";
 	(void)si;
 }
