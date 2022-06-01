@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 16:42:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 17:00:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
 	verbose(1) << "^> (CgiWrapper) I'm listening." << std::endl;
 
 do_it_again:
+
 	// Catch connection.
 	event = 0;
 	while (!event)
@@ -56,7 +57,6 @@ do_it_again:
 		{
 			if (poll_list[i].revents & POLLIN)
 			{
-				std::cout << "e: " << event << ", pl[i]fd: " << poll_list[i].fd << std::endl;
 				event = poll_list[i].fd;
 				break ;
 			}
@@ -81,19 +81,19 @@ do_it_again:
 	if (!si.in_header.is_valid)
 	{
 		remove_from_poll(newfd);
-		return ;
+		goto do_it_again;
 	}
 	si.in_body = WebServ::get_body(raw_data);
 
-	// Check incomming content for validity..? Sure thing.
-	// (void); // Why did it parse, then? Why did it even read?
+	// Check content for validity..? Sure thing.
+//	(void)void*foo; // Why did it parse, then? Why did it even read?
 
 	// Make up some response.
 	ws_cgi_reply body_from (executable);
 	if (send(newfd, body_from.encapsulate().c_str(), body_from.package_length, 0) == -1)
-		throw std::domain_error("(CgiWrapper) Could not respond.");
-	remove_from_poll(newfd);
+		throw std::domain_error("(CgiWrapper) Could not send response.");
 
+	remove_from_poll(newfd);
 	goto do_it_again;
 }
 
