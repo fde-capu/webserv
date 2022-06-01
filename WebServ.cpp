@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 17:00:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 14:32:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,13 +112,12 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si, std::string& exec_c
 	out_header.connection = "close";
 //	out_body = exec_cgi; // Mock! Must be exec() or eval() - using fork?
 
-	pid_t child_pid;
-	pid_t wait_pid;
-	int child_status;
+	pid_t child_pid = -1;
+	pid_t wait_pid = -1;
+	int child_status = -1;
 	char* args[2] = {0, 0};
-	std::string sys_out = "[empty]";
-	int pipefd[2];
-//	char buf;
+	int pipefd[2] = {0, 0};
+	char buf;
 
 	out_body = "[:(]\t";
 
@@ -129,31 +128,35 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si, std::string& exec_c
 		throw std::domain_error("(webserv) Forking went wrong.");
 	if (child_pid == 0) // Child.
 	{
-		close(1);
-		dup(pipefd[1]);
+		close(0);
 		close(pipefd[0]);
+
+		dup2(pipefd[1], 1);
 		execvp(exec_cgi.c_str(), args);
-		_exit(502);
+		exit(502);
 	}
 	else // Parent.
 	{
+
 		wait_pid = wait(&child_status);
 		if (wait_pid < 0)
 			throw std::domain_error("(webserv) Coudn't wait.");
 
-		close(0);
-		dup(pipefd[0]);
+		out_body = "{8)}\t";
+
+		close(1);
 		close(pipefd[1]);
+		dup2(pipefd[0], 0);
 
-		out_body = CircularBuffer(pipefd[0]);
+//		out_body += CircularBuffer(0);
+		while (read(pipefd[0], &buf, 1) > 0)
+			out_body += buf;
 
-//		out_body = "{8)}\t";
-//		while (read(pipefd[0], &buf, 1) > 0)
-//			out_body += buf;
 		std::cout << "Exit: " << WIFEXITED(child_status) << "\t" << std::endl;
 	}
 
 	(void)si;
+	(void)buf;
 }
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
