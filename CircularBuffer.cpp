@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 14:55:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 15:15:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void CircularBuffer::receive_until_eof()
 	int bytes = 0;
 
 	verbose(5) << "(CircularBuffer) Receiving from fd " << fd << "." << std::endl;
-	bytes = recv(fd, const_cast<char *>(memory), size, 0);
+	bytes = read(fd, const_cast<char *>(memory), size);
 	if (bytes == -1 && fd == 0) // stdin
 	{
 		std::cout << "stdin: Oooops!" << std::endl;

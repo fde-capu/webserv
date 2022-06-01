@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 16:51:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/01 15:00:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
 	verbose(1) << "(CgiWrapper) Received call (" << event << ")->" << newfd << "." << std::endl;
 
 	// Read data.
-	raw_data = CircularBuffer(newfd).reof_out();
+	raw_data = CircularBuffer(newfd);
 	std::cout << "[RAW>>" << raw_data << "<<RAW]" << std::endl;
 
 	// Parse content.
