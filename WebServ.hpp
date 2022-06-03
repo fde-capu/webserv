@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 16:30:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/03 21:46:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ class WebServ
 		void init();
 		void light_up();
 
-	public: // Usefull services for CgiWrapper.
+	public: // Usefull services that needs sharing with CgiWrapper.
 		static int bind_socket_to_local(int);
 		struct pollfd make_pollin_fd(int) const;
 		static struct ws_header get_header(const std::string&);

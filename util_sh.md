@@ -43,7 +43,8 @@
 ## generate random file
 # `head -c 1MB /dev/urandom > file`
 
-  export REQUEST_METHOD="POST" && export SERVER_PROTOCOL="HTTP/1.1" && export PATH_INFO="/home/coder/webserv/unit/confs/html4242" && ./confs/html4242/ubuntu_cgi_tester 
-  make nginx-relog && make nginx-r && curl -vL -X POST -F 'file=@1MiB.noise' http://127.0.0.1:4242/directory/youpi.bla && make nginx-catlog
-  make nginx-relog && make nginx-r && curl -vL -X POST --output cgi_returned_file -F "a=@100MB.noise" http://127.0.0.1:4242/directory/youpi.bla && make nginx-catlog
+## curl POST
+#  `export REQUEST_METHOD="POST" && export SERVER_PROTOCOL="HTTP/1.1" && export PATH_INFO="/home/coder/webserv/unit/confs/html4242" && ./confs/html4242/ubuntu_cgi_tester` 
+#  `make nginx-relog && make nginx-r && curl -vL -X POST -F 'file=@1MiB.noise' http://127.0.0.1:4242/directory/youpi.bla && make nginx-catlog`
+#  `make nginx-relog && make nginx-r && curl -vL -X POST --output cgi_returned_file -F "a=@100MB.noise" http://127.0.0.1:4242/directory/youpi.bla && make nginx-catlog`
 

@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/03 13:18:33 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/03 21:43:43 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -96,4 +96,9 @@ ftcgi:
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
 	cd .. && ./cgi_webserv /home/coder/webserv/unit/confs/html4242/ubuntu_cgi_tester 9000
+xcgi:
+	export REQUEST_METHOD=GET && \
+	export SERVER_PROTOCOL="HTTP/1.1" && \
+	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
+	cat -A ./cgi_call.txt | /home/coder/webserv/unit/confs/html4242/ubuntu_cgi_tester
 

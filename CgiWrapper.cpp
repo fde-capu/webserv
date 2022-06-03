@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 17:00:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/03 21:49:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,15 +75,21 @@ do_it_again:
 	raw_data = CircularBuffer(newfd);
 	std::cout << "[RAW>>" << raw_data << "<<RAW]" << std::endl;
 
+	std::string raw_data2 = CircularBuffer(newfd);
+	std::cout << "[RAW2>>" << raw_data << "<<RAW2]" << std::endl;
+
+	std::string raw_data3 = CircularBuffer(newfd);
+	std::cout << "[RAW3>>" << raw_data << "<<RAW3]" << std::endl;
+
 	// Parse content.
-	ws_server_instance si;
-	si.in_header = WebServ::get_header(raw_data);
-	if (!si.in_header.is_valid)
-	{
-		remove_from_poll(newfd);
-		goto do_it_again;
-	}
-	si.in_body = WebServ::get_body(raw_data);
+//	ws_server_instance si;
+//	si.in_header = WebServ::get_header(raw_data);
+//	if (!si.in_header.is_valid)
+//	{
+//		remove_from_poll(newfd);
+//		goto do_it_again;
+//	}
+//	si.in_body = WebServ::get_body(raw_data);
 
 	// Check content for validity..? Sure thing.
 //	(void)void*foo; // Why did it parse, then? Why did it even read?
