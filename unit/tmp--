@@ -1,0 +1,20 @@
+export REQUEST_METHOD=POST && \
+export SERVER_PROTOCOL="HTTP/1.1" && \
+export PATH_INFO="/home/coder/webserv/unit/confs/" && \
+cd .. && ./cgi_webserv /home/coder/webserv/unit/confs/html4242/ubuntu_cgi_tester 9000
+(wscgi) Loading configuration...
+Executable: /home/coder/webserv/unit/confs/html4242/ubuntu_cgi_tester
+Port: 9000
+(webserv) Bound fd 3 to port 9000.
+^> (CgiWrapper) I'm listening.
+(CgiWrapper) Received call (3)->4.
+[RAW>>_HOSTlocalhost:4242HTTP_USER_AGENTGo-http-client/1.1	HTTP_CONTENT_TYPEtest/file)HTTP_REFERERhttp://127.0.0.1:4242/directory/youpi.blaHTTP_ACCEPT_ENCODINGgzip<<RAW]
+LINE>_HOSTlocalhost:4242HTTP_USER_AGENTGo-http-client/1.1	HTTP_CONTENT_TYPEtest/file)HTTP_REFERERhttp://127.0.0.1:4242/directory/youpi.blaHTTP_ACCEPT_ENCODINGgzip<
+method ><
+protocol ><
+protocol_version ><
+host ><
+port ><
+user_agent ><
+accept ><
+is_valid >0<

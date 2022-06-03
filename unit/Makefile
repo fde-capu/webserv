@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/02 01:46:36 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/03 13:18:33 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -89,7 +89,7 @@ lynx-re:
 lynx-nginx: lynx nginx
 lynx-nginx-t: lynx nginx-t
 g:	nginx-log
-ft:
+ft: nginx
 	./ubuntu_tester http://$(SERVER):$(FTPORT)
 ftcgi:
 	export REQUEST_METHOD=POST && \

@@ -1,0 +1,1 @@
+_HOSTlocalhost:4242HTTP_USER_AGENTGo-http-client/1.1	HTTP_CONTENT_TYPEtest/file)HTTP_REFERERhttp://127.0.0.1:4242/directory/youpi.blaHTTP_ACCEPT_ENCODINGgzip
