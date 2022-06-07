@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/07 04:05:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/07 12:52:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,20 +76,20 @@ do_it_again:
 	std::cout << "[RAW>>" << raw_data << "<<RAW]" << std::endl;
 
 	// Parse content.
-//	ws_server_instance si;
-//	si.in_header = WebServ::get_header(raw_data);
-//	if (!si.in_header.is_valid)
-//	{
-//		remove_from_poll(newfd);
-//		goto do_it_again;
-//	}
-//	si.in_body = WebServ::get_body(raw_data);
+	ws_server_instance si;
+	si.in_header = WebServ::get_header(raw_data);
+	if (!si.in_header.is_valid)
+	{
+		remove_from_poll(newfd);
+		goto do_it_again;
+	}
+	si.in_body = WebServ::get_body(raw_data);
 
-	// Check content for validity..? Sure thing.
+//	// Check content for validity..? Sure thing.
 //	(void)void*foo; // Why did it parse, then? Why did it even read?
 
-	// Make up some response.
-	ws_cgi_reply body_from (executable);
+//	// Make up some response.
+	ws_cgi_reply body_from (executable, si.in_body);
 //	if (send(newfd, body_from.out_body.c_str(), body_from.out_body.length(), 0) == -1)
 	if (send(newfd, body_from.encapsulate().c_str(), body_from.package_length, 0) == -1)
 		throw std::domain_error("(CgiWrapper) Could not send response.");
@@ -98,7 +98,7 @@ do_it_again:
 	goto do_it_again;
 }
 
-ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi)
+ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 {
 	out_header.method = "";
 	out_header.protocol = "HTTP";
@@ -131,7 +131,11 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi)
 	}
 	else // Parent.
 	{
-		close(pipefd[1]);
+//		close(pipefd[1]);
+//		write(pipefd[0], raw_data.c_str(), raw_data.length());
+(void)raw_data;
+		write(1, "HEYA------", 10);
+		write(pipefd[1], "HEYA------", 10);
 		wait_pid = wait(&child_status);
 		std::cout << "PARENT got back." << std::endl;
 		if (wait_pid < 0)

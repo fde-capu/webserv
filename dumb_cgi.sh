@@ -1,14 +1,17 @@
 #!/bin/bash
 echo 'DUMB_CGI!'
-#echo '@'
-#echo $@;
-#echo 'ARGV'
+
+echo "---->FULL ARGS: $@"
+
+#echo '---->ARGS:'
 # for i; do
 #    echo $i
 # done
-#echo 'ENV:'
+
+#echo '---->ENV'
 #env
-echo 'RAW:'
-while IFS= read -r line ; do
-    printf "%s\n" "$line"
-done < /dev/stdin
+
+#echo '---->READ:'
+#while IFS= read -r line ; do
+#	echo ">> $line"
+#done < /dev/stdin

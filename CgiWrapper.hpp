@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:08:00 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 16:39:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/07 12:40:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 struct ws_cgi_reply : ws_reply_instance
 {
-	ws_cgi_reply(std::string&);
+	ws_cgi_reply(std::string&, std::string&);
 };
 
 class CgiWrapper
