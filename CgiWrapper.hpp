@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:08:00 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/07 12:40:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/07 17:00:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "header.hpp"
 # include "WebServ.hpp"
+# include <stdio.h>
 
 struct ws_cgi_reply : ws_reply_instance
 {
