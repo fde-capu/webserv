@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/02 00:54:33 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/07 00:34:46 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME1	=	webserv
 ARGS1	=	webserv-default.conf
 
 NAME2	=	cgi_webserv
-ARGS2	=	./dumb_cgi.sh 4321
+ARGS2	=	./unit/ubuntu_cgi_tester 4321
 
 DEBUG	=	1
 ENVS	=	-DAGV_SKIP_CHECK=1

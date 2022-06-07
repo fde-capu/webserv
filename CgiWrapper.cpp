@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/03 21:49:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/07 04:05:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,6 @@ do_it_again:
 	raw_data = CircularBuffer(newfd);
 	std::cout << "[RAW>>" << raw_data << "<<RAW]" << std::endl;
 
-	std::string raw_data2 = CircularBuffer(newfd);
-	std::cout << "[RAW2>>" << raw_data << "<<RAW2]" << std::endl;
-
-	std::string raw_data3 = CircularBuffer(newfd);
-	std::cout << "[RAW3>>" << raw_data << "<<RAW3]" << std::endl;
-
 	// Parse content.
 //	ws_server_instance si;
 //	si.in_header = WebServ::get_header(raw_data);
@@ -96,6 +90,7 @@ do_it_again:
 
 	// Make up some response.
 	ws_cgi_reply body_from (executable);
+//	if (send(newfd, body_from.out_body.c_str(), body_from.out_body.length(), 0) == -1)
 	if (send(newfd, body_from.encapsulate().c_str(), body_from.package_length, 0) == -1)
 		throw std::domain_error("(CgiWrapper) Could not send response.");
 
@@ -127,9 +122,10 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi)
 		throw std::domain_error("(webserv) Forking went wrong.");
 	if (child_pid == 0) // Child.
 	{
-		close(0);
-		close(pipefd[0]);
+		std::cout << "CHILD will execute: " << exec_cgi << std::endl;
+//		dup2(pipefd[0], 0);
 		dup2(pipefd[1], 1);
+		args[0] = (char *)exec_cgi.c_str();
 		execvp(exec_cgi.c_str(), args);
 		exit(502);
 	}
@@ -137,9 +133,12 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi)
 	{
 		close(pipefd[1]);
 		wait_pid = wait(&child_status);
+		std::cout << "PARENT got back." << std::endl;
 		if (wait_pid < 0)
 			throw std::domain_error("(webserv) Coudn't wait.");
+//		std::cout << "will read" << std::endl;
 		out_body = CircularBuffer(pipefd[0]);
+		std::cout << ">>>" << out_body << "<<<" << std::endl;
 		std::cout << "Exit: " << WIFEXITED(child_status) << "\t" << std::endl;
 	}
 }

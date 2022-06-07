@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/03 21:43:43 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/07 00:43:40 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -89,16 +89,19 @@ lynx-re:
 lynx-nginx: lynx nginx
 lynx-nginx-t: lynx nginx-t
 g:	nginx-log
-ft: nginx
+ft: nginx ws_and_cgi
+	@echo "Please run \`make ftcgi\` on another terminal.";
+	@echo "";
 	./ubuntu_tester http://$(SERVER):$(FTPORT)
-ftcgi:
+ftcgi: ws_and_cgi
 	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
 	cd .. && ./cgi_webserv /home/coder/webserv/unit/confs/html4242/ubuntu_cgi_tester 9000
-xcgi:
+xcgi: ws_and_cgi
 	export REQUEST_METHOD=GET && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
 	cat -A ./cgi_call.txt | /home/coder/webserv/unit/confs/html4242/ubuntu_cgi_tester
-
+ws_and_cgi:
+	cd .. && make
