@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/07 12:52:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/07 16:31:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,19 +123,27 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 	if (child_pid == 0) // Child.
 	{
 		std::cout << "CHILD will execute: " << exec_cgi << std::endl;
-//		dup2(pipefd[0], 0);
+		dup2(pipefd[0], 0);
 		dup2(pipefd[1], 1);
+//		close(pipefd[0]);
+//		close(pipefd[1]);
 		args[0] = (char *)exec_cgi.c_str();
 		execvp(exec_cgi.c_str(), args);
 		exit(502);
 	}
 	else // Parent.
 	{
-//		close(pipefd[1]);
-//		write(pipefd[0], raw_data.c_str(), raw_data.length());
+
+		write(pipefd[1], raw_data.c_str(), raw_data.length());
 (void)raw_data;
-		write(1, "HEYA------", 10);
-		write(pipefd[1], "HEYA------", 10);
+
+		write(pipefd[1], "-----HEYA------", 15);
+
+//		close(0);
+//		close(1);
+//		close(pipefd[0]);
+//		close(pipefd[1]);
+
 		wait_pid = wait(&child_status);
 		std::cout << "PARENT got back." << std::endl;
 		if (wait_pid < 0)

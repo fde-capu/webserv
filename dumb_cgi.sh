@@ -1,6 +1,6 @@
 #!/bin/bash
-echo 'DUMB_CGI!'
-
+echo "first-line";
+echo "DUMB_CGI!"
 echo "---->FULL ARGS: $@"
 
 #echo '---->ARGS:'
@@ -11,7 +11,10 @@ echo "---->FULL ARGS: $@"
 #echo '---->ENV'
 #env
 
-#echo '---->READ:'
-#while IFS= read -r line ; do
-#	echo ">> $line"
+echo '---->READ:'
+#while
+
+IFS= read -r line;
+echo "$line";
+
 #done < /dev/stdin

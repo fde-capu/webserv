@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/01 15:16:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/07 15:10:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <cstring>
 # include <unistd.h>
 # include <cstdlib>
+# include <sys/socket.h>
 
 class CircularBuffer
 {
