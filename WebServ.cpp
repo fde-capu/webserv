@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/02 00:44:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/08 14:26:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ void WebServ::remove_from_poll(int fd)
 
 ws_reply_instance::ws_reply_instance()
 {
-	std::cout << "ws_reply_instance()" << std::endl;
 	out_header.method = "";
 	out_header.protocol = "HTTP";
 	out_header.protocol_version = "1.1";

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/08 14:08:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/08 15:07:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,10 @@ do_it_again:
 
 	// Read data.
 	raw_data = CircularBuffer(newfd);
-	std::cout << "[RAW>>" << raw_data << "<<RAW]" << std::endl;
+	verbose(5) << "[RAW>>" << raw_data << "<<RAW]" << std::endl;
 
 	body = WebServ::get_body(raw_data);
-	std::cout << "[BODY>>" << body << "<<BODY]" << std::endl;
+	verbose(5) << "[BODY>>" << body << "<<BODY]" << std::endl;
 
 //	// Parse content.
 //	ws_server_instance si;
@@ -94,10 +94,12 @@ do_it_again:
 
 //	// Make up some response.
 	ws_cgi_reply body_from (executable, body);
-//	if (send(newfd, body_from.encapsulate().c_str(), body_from.package_length, 0) == -1)
-	if (send(newfd, body_from.out_body.c_str(), body_from.out_body.length(), 0) == -1)
+	verbose(5) << "[CGI>>" << body_from.out_body << "<<CGI]" << std::endl;
+//	if (send(newfd, body_from.out_body.c_str(), body_from.out_body.length(), 0) == -1)
+	if (send(newfd, body_from.encapsulate().c_str(), body_from.package_length, 0) == -1)
 		throw std::domain_error("(CgiWrapper) Could not send response.");
 	close(newfd);
+	verbose(1) << "(CgiWrapper) Closed call " << newfd << "." << std::endl;
 	remove_from_poll(newfd);
 	goto do_it_again;
 }
@@ -130,7 +132,6 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 		throw std::domain_error("(webserv) Forking went wrong.");
 	if (child_pid == 0) // Child.
 	{
-		std::cout << "CHILD will execute: " << exec_cgi << std::endl;
 		dup2(pipe_pc[0], STDIN_FILENO);
 		dup2(pipe_cp[1], STDOUT_FILENO);
 		close(pipe_pc[0]);
@@ -144,7 +145,6 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 	else // Parent.
 	{
 		write(pipe_pc[1], raw_data.c_str(), raw_data.length());
-		write(pipe_pc[1], "-----HEYA------", 15);
 
 //(void)raw_data;
 //		fflush(stdout);
@@ -154,13 +154,11 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 		close(pipe_cp[1]);
 
 		wait_pid = wait(&child_status);
-		std::cout << "PARENT got back." << std::endl;
 		if (wait_pid < 0)
 			throw std::domain_error("(webserv) Coudn't wait.");
-//		std::cout << "will read" << std::endl;
 		out_body = CircularBuffer(pipe_cp[0]);
-		std::cout << ">>>" << out_body << "<<<" << std::endl;
-		std::cout << "Exit: " << WIFEXITED(child_status) << "\t" << std::endl;
+		verbose(5) << ">>>" << out_body << "<<<" << std::endl;
+		static_cast<void>(WIFEXITED(child_status));
 	}
 }
 

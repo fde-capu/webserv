@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/08 14:01:09 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/08 15:03:08 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,9 +44,11 @@ nginx-build:
 	@echo 'nginx: '
 	-@cd nginx-standalone && \
 	make
-nginx:		nginx-build $(CONF)
-	-pkill nginx
+nginx:		kill nginx-build $(CONF)
 	cd confs && $(NGINX) -c $(CONF)
+	netstat -tnl || ss -tnl
+kill:
+	-pkill nginx
 	netstat -tnl || ss -tnl
 $(CONF):	nginx-r
 t:			nginx-t
@@ -93,25 +95,25 @@ ft: nginx ws_and_cgi
 	@echo "Please run \`make ftcgi\` on another terminal.";
 	@echo "";
 	./ubuntu_tester http://$(SERVER):$(FTPORT)
-ftcgi: ws_and_cgi
+ftcgi: ws_and_cgi nginx
 	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
-	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
+	export PATH_INFO="/home/coder/webserv/unit/" && \
 	cd .. && ./cgi_webserv /home/coder/webserv/unit/ubuntu_cgi_tester 9000
 ftcgig: ws_and_cgi
 	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
-	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
+	export PATH_INFO="/home/coder/webserv/unit/" && \
 	cd .. && gdb --args ./cgi_webserv /home/coder/webserv/unit/ubuntu_cgi_tester 9000
 xcgi: ws_and_cgi
-	export REQUEST_METHOD=GET && \
+	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
-	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
-	cat -A ./cgi_call.txt | /home/coder/webserv/unit/ubuntu_cgi_tester
+	export PATH_INFO="/home/coder/webserv/unit/" && \
+	cd .. && ./cgi_webserv /home/coder/webserv/unit/ubuntu_cgi_tester 4242
 dumbcgi: ws_and_cgi
 	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
-	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
+	export PATH_INFO="/home/coder/webserv/unit/" && \
 	cd .. && ./cgi_webserv /home/coder/webserv/dumb_cgi.sh 9000
 ws_and_cgi:
 	cd .. && make

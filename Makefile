@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/07 00:34:46 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/08 15:05:32 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME1	=	webserv
 ARGS1	=	webserv-default.conf
 
 NAME2	=	cgi_webserv
-ARGS2	=	./unit/ubuntu_cgi_tester 4321
+ARGS2	=	./unit/ubuntu_cgi_tester 9000
 
 DEBUG	=	1
 ENVS	=	-DAGV_SKIP_CHECK=1
@@ -77,6 +77,7 @@ t1:			1
 	./$(NAME1) $(ARGS1)
 t2:			2
 	./$(NAME2) $(ARGS2)
+ftcgi:		t2
 g1:			1
 	gdb -x $(GDBSC) --args ./$(NAME1) $(ARGS1)
 g2:			2
@@ -88,4 +89,6 @@ gt2:
 pk:
 	-pkill webserv
 ft:
-	unit/ubuntu_tester https://0.0.0.0:4242
+	@echo "Please run \`make ftcgi\` on another terminal.";
+	@echo "";
+	unit/ubuntu_tester http://0.0.0.0:4242
