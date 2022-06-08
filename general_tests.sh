@@ -11,7 +11,7 @@ name_server="127.0.0.1";
 #	tcp6	0	:::2222	:::*	LISTEN	-		
 #	tcp 	0	0.0.0.0:8080	0.0.0.0:*	LISTEN	-	(./login)		
 
-# We will open as webserv-default.conf describes:
+# We will open the following ports:
 
 #	Demonstration of implementations:
 #	tcp 	0	0.0.0.0:3490	0.0.0.0:*	LISTEN	67/nginx: master pr	

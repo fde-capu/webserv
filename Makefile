@@ -6,12 +6,12 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/08 16:23:03 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/08 16:44:32 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME1	=	webserv
-ARGS1	=	webserv-default.conf
+ARGS1	=	webserv-non-default.conf
 
 NAME2	=	cgi_webserv
 ARGS2	=	./unit/ubuntu_cgi_tester 9000
