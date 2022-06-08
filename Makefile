@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/08 15:05:32 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/08 16:23:03 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ ARGS2	=	./unit/ubuntu_cgi_tester 9000
 
 DEBUG	=	1
 ENVS	=	-DAGV_SKIP_CHECK=1
-SRCS	=	strings.cpp FileString.cpp DataFold.cpp \
+SRCS	=	FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp \
 			CircularBuffer.cpp WebServ_helpers.cpp CgiWrapper.cpp
 SRCS1	=	main.cpp
@@ -39,7 +39,6 @@ VALFLAG	=	--tool=memcheck \
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--show-reachable=yes
-GDBSC	=	gdb.script
 all:		line $(NAME1) $(NAME2)
 ws:			line $(NAME1)
 cgi:		line $(NAME2)
@@ -58,6 +57,7 @@ $(OBJS1):	$(OBJS)
 $(OBJS2):	$(OBJS)
 	$(CC) $(CCFLAGS) -o $(OBJS2) -c $(SRCS2)
 clean:
+	-rm -f $(OBJS)
 	-rm -f $(OBJS1)
 	-rm -f $(OBJS2)
 fclean:		clean
@@ -79,9 +79,9 @@ t2:			2
 	./$(NAME2) $(ARGS2)
 ftcgi:		t2
 g1:			1
-	gdb -x $(GDBSC) --args ./$(NAME1) $(ARGS1)
+	gdb --args ./$(NAME1) $(ARGS1)
 g2:			2
-	gdb -x $(GDBSC) --args ./$(NAME2) $(ARGS2)
+	gdb --args ./$(NAME2) $(ARGS2)
 gt1:
 	./general_tests.sh
 gt2:

@@ -6,13 +6,15 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/08 15:03:08 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/08 16:27:32 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SERVER	=	127.0.0.1
 FTPORT	=	4242
 NAME	=	webserv
+NAME_C	=	
+NGINX_C	=	nginx-as-webserv.conf
 SRCS	=	
 HEAD	=	Makefile
 SHELL	=	/bin/bash
@@ -26,7 +28,6 @@ VALFLAG	=	--tool=memcheck \
 			--track-origins=yes \
 			--show-reachable=yes
 NGINX	=	$(PWD)/nginx-standalone/sandbox/sbin/nginx
-CONF	=	nginx-as-webserv.conf
 SRCME	=	@echo 'Please run: `source ./source-me-after-install-rc`.';
 MAKEFLAGS =	--no-print-directory
 all:		nginx-build lynx
@@ -40,24 +41,25 @@ clean:		nginx-clean lynx-clean
 fclean:		clean nginx-fclean lynx-fclean
 	-rm -f $(NAME)
 re:			fclean all
+
 nginx-build:
 	@echo 'nginx: '
 	-@cd nginx-standalone && \
 	make
-nginx:		kill nginx-build $(CONF)
-	cd confs && $(NGINX) -c $(CONF)
+nginx:		kill nginx-build $(NGINX_C)
+	cd confs && $(NGINX) -c $(NGINX_C)
 	netstat -tnl || ss -tnl
 kill:
 	-pkill nginx
 	netstat -tnl || ss -tnl
-$(CONF):	nginx-r
+$(NGINX_C):	nginx-r
 t:			nginx-t
 nginx-t:	nginx
 	../general_tests.sh
 nginx-r:	nginx
 nginx-rt:	nginx-r nginx-t
-nginx-tc:	$(CONF)
-	$(NGINX) -c $(CONF) -t
+nginx-tc:	$(NGINX_C)
+	$(NGINX) -c $(NGINX_C) -t
 nginx-clean:
 	cd nginx-standalone && \
 	make clean
@@ -75,6 +77,7 @@ nginx-catlog:
 	cd nginx-standalone/sandbox/logs && \
 	cat access.log && cat error.log
 nginx-tlog: nginx-relog nginx-t nginx-catlog
+
 lynx:
 	@echo 'lynx: '
 	@-cd lynx-standalone && \
@@ -91,6 +94,7 @@ lynx-re:
 lynx-nginx: lynx nginx
 lynx-nginx-t: lynx nginx-t
 g:	nginx-log
+
 ft: nginx ws_and_cgi
 	@echo "Please run \`make ftcgi\` on another terminal.";
 	@echo "";
@@ -114,6 +118,6 @@ dumbcgi: ws_and_cgi
 	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/" && \
-	cd .. && ./cgi_webserv /home/coder/webserv/dumb_cgi.sh 9000
+	cd .. && ./cgi_webserv /home/coder/webserv/unit/dumb_cgi.sh 9000
 ws_and_cgi:
 	cd .. && make

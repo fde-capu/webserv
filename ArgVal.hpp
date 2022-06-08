@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 14:42:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/08 16:16:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,6 @@
 # endif
 
 # include "FileString.hpp"
-//# include <iostream>
-//# include "DataFold.hpp"
-//# include <stdlib.h> // no itoa in <cstdlib>
-//# include <vector>
-
-//# define AV_FILE_BOARD "argval.conf"
-//# define AV_FILE_CONFIG ""
 
 class ArgVal
 {
