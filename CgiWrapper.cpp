@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/08 07:50:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/08 13:11:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ do_it_again:
 
 ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 {
+	out_body = "[:(] ";
+
 	out_header.method = "";
 	out_header.protocol = "HTTP";
 	out_header.protocol_version = "1.1";
@@ -114,10 +116,11 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 	int pipe_pc[2] = {0, 0};
 	int pipe_cp[2] = {0, 0};
 
-	out_body = "[:(]\t";
-
 	if (pipe(pipe_pc) == -1)
-		throw std::domain_error("(webserv) Cannot pipe for cgi.");
+		throw std::domain_error("(webserv) Cannot pipe for cgi (parent->child).");
+	if (pipe(pipe_cp) == -1)
+		throw std::domain_error("(webserv) Cannot pipe for cgi (child->parent).");
+
 	child_pid = fork();
 	if (child_pid < 0)
 		throw std::domain_error("(webserv) Forking went wrong.");
@@ -125,8 +128,11 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 	{
 		std::cout << "CHILD will execute: " << exec_cgi << std::endl;
 		dup2(pipe_pc[0], STDIN_FILENO);
-		dup2(pipe_pc[1], STDOUT_FILENO);
+		dup2(pipe_cp[1], STDOUT_FILENO);
+		close(pipe_pc[0]);
 		close(pipe_pc[1]);
+		close(pipe_cp[0]);
+		close(pipe_cp[1]);
 		args[0] = (char *)exec_cgi.c_str();
 		execvp(exec_cgi.c_str(), args);
 		exit(502);
@@ -134,17 +140,21 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 	else // Parent.
 	{
 		write(pipe_pc[1], raw_data.c_str(), raw_data.length());
-(void)raw_data;
 		write(pipe_pc[1], "-----HEYA------", 15);
-		fflush(stdout);
 
+//(void)raw_data;
+//		fflush(stdout);
+
+		close(pipe_pc[0]);
+		close(pipe_pc[1]);
+		close(pipe_cp[1]);
 
 		wait_pid = wait(&child_status);
 		std::cout << "PARENT got back." << std::endl;
 		if (wait_pid < 0)
 			throw std::domain_error("(webserv) Coudn't wait.");
 //		std::cout << "will read" << std::endl;
-		out_body = CircularBuffer(pipe_pc[0]);
+		out_body = CircularBuffer(pipe_cp[0]);
 		std::cout << ">>>" << out_body << "<<<" << std::endl;
 		std::cout << "Exit: " << WIFEXITED(child_status) << "\t" << std::endl;
 	}
