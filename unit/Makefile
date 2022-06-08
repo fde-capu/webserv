@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/08 13:49:36 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/08 14:01:09 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -98,6 +98,11 @@ ftcgi: ws_and_cgi
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
 	cd .. && ./cgi_webserv /home/coder/webserv/unit/ubuntu_cgi_tester 9000
+ftcgig: ws_and_cgi
+	export REQUEST_METHOD=POST && \
+	export SERVER_PROTOCOL="HTTP/1.1" && \
+	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
+	cd .. && gdb --args ./cgi_webserv /home/coder/webserv/unit/ubuntu_cgi_tester 9000
 xcgi: ws_and_cgi
 	export REQUEST_METHOD=GET && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \

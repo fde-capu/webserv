@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/08 13:11:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/08 14:08:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
 	unsigned int addrlen = sizeof remoteaddr;
 	int newfd;
 	std::string raw_data;
+	std::string body;
 
 	// Bind
 	try {
@@ -75,25 +76,28 @@ do_it_again:
 	raw_data = CircularBuffer(newfd);
 	std::cout << "[RAW>>" << raw_data << "<<RAW]" << std::endl;
 
-	// Parse content.
-	ws_server_instance si;
-	si.in_header = WebServ::get_header(raw_data);
-	if (!si.in_header.is_valid)
-	{
-		remove_from_poll(newfd);
-		goto do_it_again;
-	}
-	si.in_body = WebServ::get_body(raw_data);
+	body = WebServ::get_body(raw_data);
+	std::cout << "[BODY>>" << body << "<<BODY]" << std::endl;
+
+//	// Parse content.
+//	ws_server_instance si;
+//	si.in_header = WebServ::get_header(raw_data);
+//	if (!si.in_header.is_valid)
+//	{
+//		remove_from_poll(newfd);
+//		goto do_it_again;
+//	}
+//	si.in_body = WebServ::get_body(raw_data);
 
 //	// Check content for validity..? Sure thing.
 //	(void)void*foo; // Why did it parse, then? Why did it even read?
 
 //	// Make up some response.
-	ws_cgi_reply body_from (executable, si.in_body);
-//	if (send(newfd, body_from.out_body.c_str(), body_from.out_body.length(), 0) == -1)
-	if (send(newfd, body_from.encapsulate().c_str(), body_from.package_length, 0) == -1)
+	ws_cgi_reply body_from (executable, body);
+//	if (send(newfd, body_from.encapsulate().c_str(), body_from.package_length, 0) == -1)
+	if (send(newfd, body_from.out_body.c_str(), body_from.out_body.length(), 0) == -1)
 		throw std::domain_error("(CgiWrapper) Could not send response.");
-
+	close(newfd);
 	remove_from_poll(newfd);
 	goto do_it_again;
 }
