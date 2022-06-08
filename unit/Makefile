@@ -6,21 +6,21 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/08 16:27:32 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/08 16:59:01 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SERVER	=	127.0.0.1
 FTPORT	=	4242
-NAME	=	webserv
-NAME_C	=	
+
+WEBSERV_C =	webserv-unit.conf
 NGINX_C	=	nginx-as-webserv.conf
+
 SRCS	=	
 HEAD	=	Makefile
 SHELL	=	/bin/bash
 CC		=	clang++ -std=c++98
 CCFLAGS	=	-Wall -Werror -Wextra -g
-OBJS	=	$(SRCS:.cpp=.o)
 VAL		=	valgrind
 VALFLAG	=	--tool=memcheck \
 			--leak-check=full \
@@ -29,31 +29,68 @@ VALFLAG	=	--tool=memcheck \
 			--show-reachable=yes
 NGINX	=	$(PWD)/nginx-standalone/sandbox/sbin/nginx
 SRCME	=	@echo 'Please run: `source ./source-me-after-install-rc`.';
+RUNCGI	=	@echo "Please \`make ftcgi\` on another terminal.";
+SS		=	netstat -tnlp || ss -tnlp
 MAKEFLAGS =	--no-print-directory
-all:		nginx-build lynx
+
+all:		nginx lynx
 	$(SRCME)
-$(NAME):	$(OBJS)
-	$(CC) $(CCFLAGS) $(OBJS) -o $(NAME)
-$(OBJS):	%.o : %.cpp $(HEAD)
-	$(CC) $(CCFLAGS) -o $@ -c $<
 clean:		nginx-clean lynx-clean
-	-rm -f $(OBJS)
 fclean:		clean nginx-fclean lynx-fclean
-	-rm -f $(NAME)
 re:			fclean all
+t:			nginx-t
+
+
+####### ::::::::::::: #######
+####### :: webserv :: #######
+####### ::::::::::::: #######
+
+webserv-build:
+	@echo 'webserv: '
+	-@cd .. && \
+	make
+webserv:	webserv-k webserv-build $(WEBSERV_C)
+	../webserv $(WEBSERV_C)
+	$(SS)
+webserv-k:
+	-pkill webserv
+	$(SS)
+$(WEBSERV_C): webserv-r
+webserv-t:	webserv
+webserv-rt:	webserv-r webserv-t
+webserv-tc:	$(WEBSERV_C)
+	@echo 'Test only (like -t option) not implemented.';
+webserv-clean:
+	cd .. && \
+	make clean
+webserv-fclean:
+	cd .. && \
+	make fclean
+webserv-re:
+	cd .. && \
+	make re
+webserv-relog:
+	@echo 'webserv log system not implemented.';
+webserv-catlog:
+	@echo 'webserv log system not implemented.';
+webserv-tlog: webserv-relog webserv-t webserv-catlog
+
+
+####### ::::::::::: #######
+####### :: nginx :: #######
+####### ::::::::::: #######
 
 nginx-build:
 	@echo 'nginx: '
 	-@cd nginx-standalone && \
 	make
-nginx:		kill nginx-build $(NGINX_C)
-	cd confs && $(NGINX) -c $(NGINX_C)
-	netstat -tnl || ss -tnl
-kill:
+nginx:		nginx-k nginx-build $(NGINX_C)
+	$(NGINX) -c $(NGINX_C)
+	$(SS)
+nginx-k:
 	-pkill nginx
-	netstat -tnl || ss -tnl
+	$(SS)
 $(NGINX_C):	nginx-r
-t:			nginx-t
 nginx-t:	nginx
 	../general_tests.sh
 nginx-r:	nginx
@@ -78,6 +115,11 @@ nginx-catlog:
 	cat access.log && cat error.log
 nginx-tlog: nginx-relog nginx-t nginx-catlog
 
+
+####### :::::::::: #######
+####### :: lynx :: #######
+####### :::::::::: #######
+
 lynx:
 	@echo 'lynx: '
 	@-cd lynx-standalone && \
@@ -93,31 +135,34 @@ lynx-re:
 	make re
 lynx-nginx: lynx nginx
 lynx-nginx-t: lynx nginx-t
-g:	nginx-log
 
-ft: nginx ws_and_cgi
-	@echo "Please run \`make ftcgi\` on another terminal.";
-	@echo "";
+
+####### :::::::: #######
+####### :: ft :: #######
+####### :::::::: #######
+
+ft: nginx use_ws_cgi
+	$(RUNCGI)
 	./ubuntu_tester http://$(SERVER):$(FTPORT)
-ftcgi: ws_and_cgi nginx
+ftcgi: use_ws_cgi nginx
 	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/" && \
 	cd .. && ./cgi_webserv /home/coder/webserv/unit/ubuntu_cgi_tester 9000
-ftcgig: ws_and_cgi
+ftcgig: use_ws_cgi
 	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/" && \
 	cd .. && gdb --args ./cgi_webserv /home/coder/webserv/unit/ubuntu_cgi_tester 9000
-xcgi: ws_and_cgi
+xcgi: use_ws_cgi
 	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/" && \
 	cd .. && ./cgi_webserv /home/coder/webserv/unit/ubuntu_cgi_tester 4242
-dumbcgi: ws_and_cgi
+dumbcgi: use_ws_cgi
 	export REQUEST_METHOD=POST && \
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/" && \
 	cd .. && ./cgi_webserv /home/coder/webserv/unit/dumb_cgi.sh 9000
-ws_and_cgi:
-	cd .. && make
+use_ws_cgi:
+	cd .. && make cgi
