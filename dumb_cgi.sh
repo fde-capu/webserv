@@ -12,6 +12,6 @@ echo "---->FULL ARGS: $@"
 #echo '---->ENV'
 #env
 
-echo '---->READ:'
-IFS= read -r line;
-echo "$line";
+#echo '---->READ:'
+#IFS= read -r line;
+#echo "$line";
