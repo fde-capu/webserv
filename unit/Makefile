@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/07 00:43:40 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/08 01:32:11 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -103,5 +103,10 @@ xcgi: ws_and_cgi
 	export SERVER_PROTOCOL="HTTP/1.1" && \
 	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
 	cat -A ./cgi_call.txt | /home/coder/webserv/unit/confs/html4242/ubuntu_cgi_tester
+dumbcgi: ws_and_cgi
+	export REQUEST_METHOD=POST && \
+	export SERVER_PROTOCOL="HTTP/1.1" && \
+	export PATH_INFO="/home/coder/webserv/unit/confs/" && \
+	cd .. && ./cgi_webserv /home/coder/webserv/dumb_cgi.sh 9000
 ws_and_cgi:
 	cd .. && make
