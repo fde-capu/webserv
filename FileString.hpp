@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/27 20:55:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/09 15:12:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@
 ** std::vector<std::string> value = conf.get<std::vector<std::string> >(key);
 ** std::vector<int> value = conf.get<std::vector<int> >(key);
 
-** To get json or treat it as stream:
+** To get json it used to be like treating as stream:
 ** std::cout << conf[key] << std::endl;
+** ...but this feature currently disabled (commented out).
 
 */
 

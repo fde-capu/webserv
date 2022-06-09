@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 16:10:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/09 15:55:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ class StringTools
 		std::vector<std::string>	splitOutsideQuotes(std::string) const;
 		std::string					itoa(int) const;
 		bool						isFileName(std::string) const;
+		std::string					remove_filename_from_path(std::string) const;
 		bool						is_size_t(std::string) const;
 		bool						is_int(std::string) const;
 		bool						isUri(std::string) const;
@@ -93,6 +94,7 @@ class StringTools
 
 static const StringTools stool = StringTools();
 
+std::string remove_filename_from_path(std::string);
 std::string to_lower(std::string);
 bool is_equal_insensitive(const std::string, const std::string);
 std::string trim(std::string&);

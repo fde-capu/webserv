@@ -6,18 +6,27 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 16:09:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/09 16:47:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ArgVal.hpp"
 
 ArgVal::ArgVal(int argc, char ** argv, const char * u_board_file_name)
-: _fail(false), _board_file_name(const_cast<char *>(u_board_file_name)),
-  argc(argc), argv(argv)
+: _fail(false), argc(argc), argv(argv)
 {
+	std::string path = relative_path(u_board_file_name);
+	_board_file_name = const_cast<char*>(path.c_str());
+	verbose(3) << "(ArgVal) Reading: " << _board_file_name << std::endl;
 	_board.load(_board_file_name);
 	run();
+}
+
+std::string ArgVal::relative_path(const char * fn) const
+{
+//	std::cout << "]]" << argv[0] << std::endl;
+//	std::cout << "]]" << argv[1] << std::endl;
+	return std::string(remove_filename_from_path(argv[0])) + std::string(fn);
 }
 
 ArgVal::ArgVal(int argc, char ** argv)
@@ -72,7 +81,9 @@ void ArgVal::run()
 
 void ArgVal::load_conditions(char * u_condition_file)
 {
-	_board_file_name = u_condition_file;
+	std::string path = relative_path(u_condition_file);
+	_board_file_name = const_cast<char*>(path.c_str());
+	verbose(3) << "(ArgVal) Reading: " << _board_file_name << std::endl;
 	_board.load(_board_file_name);
 	run();
 }
@@ -394,7 +405,9 @@ bool ArgVal::comply_check(DataFold board, DataFold config)
 
 bool ArgVal::comply(char *u_board_file)
 {
-	_config.load(u_board_file);
+	const char * _board_file = u_board_file;
+	verbose(3) << "(ArgVal) Reading: " << _board_file << std::endl;
+	_config.load(_board_file);
 
 	if (AGV_SKIP_CHECK == 1)
 	{

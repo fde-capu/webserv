@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/08 16:59:01 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/09 14:32:27 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,8 +50,9 @@ webserv-build:
 	-@cd .. && \
 	make
 webserv:	webserv-k webserv-build $(WEBSERV_C)
-	../webserv $(WEBSERV_C)
+	../webserv $(PWD)/$(WEBSERV_C)
 	$(SS)
+webserv-r:	webserv
 webserv-k:
 	-pkill webserv
 	$(SS)

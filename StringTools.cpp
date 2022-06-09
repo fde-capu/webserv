@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/30 16:19:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/09 16:33:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -528,6 +528,18 @@ bool isFileName(std::string fn)
 
 bool StringTools::isFileName(std::string fn) const
 { return isAllInSet(fn, ST_FILENAME_SET); }
+
+std::string remove_filename_from_path(std::string fpath)
+{ return stool.remove_filename_from_path(fpath); }
+
+std::string StringTools::remove_filename_from_path(std::string fpath) const
+{
+	std::vector<std::string> path = split(fpath, "/");
+	std::string bpath("");
+	for (size_t i = 0; i < path.size() - 1; i++)
+		bpath += path[i] + "/";
+	return bpath;
+}
 
 bool isUri(std::string fn)
 { return stool.isUri(fn); }
