@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/08 15:07:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/13 16:19:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,8 @@ ws_cgi_reply::ws_cgi_reply(std::string& exec_cgi, std::string& raw_data)
 	out_body = "[:(] ";
 
 	out_header.method = "";
-	out_header.protocol = "HTTP";
-	out_header.protocol_version = "1.1";
+	out_header.directory = "/";
+	out_header.protocol = "HTTP/1.1";
 	out_header.status = 200;
 	out_header.status_msg = "OK";
 	out_header.connection = "close";

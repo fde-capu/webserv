@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/08 14:26:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/13 16:23:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,8 @@ void WebServ::remove_from_poll(int fd)
 ws_reply_instance::ws_reply_instance()
 {
 	out_header.method = "";
-	out_header.protocol = "HTTP";
-	out_header.protocol_version = "1.1";
+	out_header.directory = "/";
+	out_header.protocol = "HTTP/1.1";
 	out_header.status = 200;
 	out_header.status_msg = "OK";
 	out_header.connection = "close";
@@ -122,7 +122,7 @@ std::string ws_reply_instance::encapsulate()
 {
 	std::string out = "";
 
-	out += out_header.protocol + "/" + out_header.protocol_version + " ";
+	out += out_header.protocol + " ";
 	out += itoa(out_header.status) + " " + out_header.status_msg + "\n";
 	if (out_header.connection != "")
 		out += "Connection: " + out_header.connection + "\n";
@@ -204,6 +204,8 @@ void WebServ::light_up()
 void WebServ::init()
 {
 	poll_list.push_back(stdin_to_pollfd());
+	if (instance.empty())
+		throw std::invalid_argument("(webserv) Configuration is empty.");
 	hook_it();
 	light_up();
 	flush_stdin();

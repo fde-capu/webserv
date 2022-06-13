@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/31 12:48:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/13 16:19:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,13 +93,13 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 
 		if (i == 0)
 		{
-			carrier = split_trim(line[i], "/");
+			carrier = split_trim(line[i], " ");
 			is_valid = true;
 			if (!validate_header_entry(carrier, 3, is_valid))
 				break ;
 			header.method = carrier[0];
-			header.protocol = carrier[1];
-			header.protocol_version = carrier[2];
+			header.directory = carrier[1];
+			header.protocol = carrier[2];
 			continue ;
 		}
 		carrier = split_trim(line[i], ":");
@@ -128,8 +128,8 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 	header.is_valid = is_valid;
 
 	verbose(1) << "method >" << header.method << "<" << std::endl;
+	verbose(1) << "directory >" << header.directory << "<" << std::endl;
 	verbose(1) << "protocol >" << header.protocol << "<" << std::endl;
-	verbose(1) << "protocol_version >" << header.protocol_version << "<" << std::endl;
 	verbose(1) << "host >" << header.host << "<" << std::endl;
 	verbose(1) << "port >" << header.port << "<" << std::endl;
 	verbose(1) << "user_agent >" << header.user_agent << "<" << std::endl;

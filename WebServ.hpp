@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/03 21:46:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/13 16:16:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 struct ws_header
 {
 	std::string method;
+	std::string directory;
 	std::string protocol;
-	std::string protocol_version;
 	std::string host;
 	std::string port;
 	std::string user_agent;
