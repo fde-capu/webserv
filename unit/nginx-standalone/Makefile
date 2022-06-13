@@ -6,15 +6,15 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/07 20:55:24 by fde-capu          #+#    #+#              #
-#    Updated: 2022/05/26 02:27:12 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/13 15:11:18 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SHELL	=	/bin/bash
-DIRS	=	sandbox pcre
 BIN		=	$(PWD)/sandbox/sbin/nginx
+DIRS	=	nginx-src pcre
 
-all:	$(DIRS) $(BIN)
+all:	$(BIN)
 
 $(BIN):
 	cd nginx-src && \
@@ -22,9 +22,11 @@ $(BIN):
 		--with-http_dav_module \
 	&& \
 	make && \
-	make install
+	make install \
+	|| echo 'Run `make unpack` before making all.'
 
 $(DIRS):
+unpack: $(DIRS)
 	mkdir -p $(PWD)/sandbox
 	mkdir -p $(PWD)/pcre
 	tar -xzvf pcre-8.45.tar.gz -C pcre --strip 1

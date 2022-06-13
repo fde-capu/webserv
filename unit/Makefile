@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/09 14:32:27 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/13 15:10:06 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,13 +28,11 @@ VALFLAG	=	--tool=memcheck \
 			--track-origins=yes \
 			--show-reachable=yes
 NGINX	=	$(PWD)/nginx-standalone/sandbox/sbin/nginx
-SRCME	=	@echo 'Please run: `source ./source-me-after-install-rc`.';
 RUNCGI	=	@echo "Please \`make ftcgi\` on another terminal.";
 SS		=	netstat -tnlp || ss -tnlp
 MAKEFLAGS =	--no-print-directory
 
 all:		nginx lynx
-	$(SRCME)
 clean:		nginx-clean lynx-clean
 fclean:		clean nginx-fclean lynx-fclean
 re:			fclean all
@@ -81,13 +79,19 @@ webserv-tlog: webserv-relog webserv-t webserv-catlog
 ####### :: nginx :: #######
 ####### ::::::::::: #######
 
-nginx-build:
+NGXUNPCKME	=	echo 'You need to `make nginx-pre-build` before actually building.'
+NGXSRCME	=	echo '=========> Please run: `source ./source-me-after-install-rc`. <============'
+
+$(NGINX):
+nginx-pre-build: $(NGINX)
+	-@cd nginx-standalone && \
+	make unpack
+nginx-build:	nginx-pre-build
 	@echo 'nginx: '
 	-@cd nginx-standalone && \
 	make
-nginx:		nginx-k nginx-build $(NGINX_C)
+nginx:		nginx-k nginx-build $(NGINX_C) nginx-tc
 	$(NGINX) -c $(NGINX_C)
-	$(SS)
 nginx-k:
 	-pkill nginx
 	$(SS)
@@ -97,7 +101,7 @@ nginx-t:	nginx
 nginx-r:	nginx
 nginx-rt:	nginx-r nginx-t
 nginx-tc:	$(NGINX_C)
-	$(NGINX) -c $(NGINX_C) -t
+	@-$(NGINX) -c $(NGINX_C) -t || $(NGXSRCME)
 nginx-clean:
 	cd nginx-standalone && \
 	make clean
