@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/13 15:50:11 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/13 15:54:30 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,13 +43,16 @@ t:			nginx-t
 ####### :: webserv :: #######
 ####### ::::::::::::: #######
 
+WSNOTDAEMON	=	echo 'Webserv does not run as daemon. Please open another terminal to run the tests.';
+
 webserv-build:
 	@echo 'webserv: '
 	-@cd .. && \
 	make
+webserv-up:	webserv
 webserv:	webserv-k webserv-build $(WEBSERV_C)
+	@$(WSNOTDAEMON)
 	../webserv $(PWD)/$(WEBSERV_C)
-	$(SS)
 webserv-r:	webserv
 webserv-k:
 	-pkill webserv
