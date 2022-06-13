@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/13 15:10:06 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/13 15:50:11 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,7 +55,8 @@ webserv-k:
 	-pkill webserv
 	$(SS)
 $(WEBSERV_C): webserv-r
-webserv-t:	webserv
+webserv-t:
+	../general_tests.sh
 webserv-rt:	webserv-r webserv-t
 webserv-tc:	$(WEBSERV_C)
 	@echo 'Test only (like -t option) not implemented.';
@@ -90,8 +91,10 @@ nginx-build:	nginx-pre-build
 	@echo 'nginx: '
 	-@cd nginx-standalone && \
 	make
+nginx-up:	nginx
 nginx:		nginx-k nginx-build $(NGINX_C) nginx-tc
 	$(NGINX) -c $(NGINX_C)
+	$(SS)
 nginx-k:
 	-pkill nginx
 	$(SS)

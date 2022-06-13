@@ -59,7 +59,10 @@ done
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3490
+if ! curl -v http://$name_server:3490; then
+	 { anounce ERROR  'Make sure the server is running!'; } 2> /dev/null;
+	 exit 1;
+fi
 
 # B ################################################################
 
