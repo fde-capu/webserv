@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/14 12:22:56 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/14 13:22:08 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -83,6 +83,7 @@ webserv-relog:
 webserv-catlog:
 	@echo 'webserv log system not implemented.';
 webserv-tlog: webserv-relog webserv-t webserv-catlog
+wst:	webserv-t
 
 
 ####### ::::::::::: #######
