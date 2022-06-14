@@ -6,12 +6,12 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/14 12:32:02 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/14 13:18:07 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME1	=	webserv
-ARGS1	=	webserv-non-default.conf
+ARGS1	=	unit/webserv-unit.conf
 
 NAME2	=	cgi_webserv
 ARGS2	=	./unit/ubuntu_cgi_tester 9000
@@ -40,9 +40,6 @@ VALFLAG	=	--tool=memcheck \
 			--track-origins=yes \
 			--show-reachable=yes
 all:		line $(NAME1) $(NAME2)
-webserv:	ws
-webserv-up:	ws
-gws:		g1
 ws:			line $(NAME1)
 cgi:		line $(NAME2)
 1:			ws
@@ -77,6 +74,7 @@ vf1:		1
 vf2:		2
 	$(VAL) $(VALFLAG) ./$(NAME2) $(ARGS2)
 t1:			1
+	@echo '=======> Please run general_tests.sh on another terminal <======='
 	./$(NAME1) $(ARGS1)
 t2:			2
 	./$(NAME2) $(ARGS2)
@@ -95,3 +93,10 @@ ft:
 	@echo "Please run \`make ftcgi\` on another terminal.";
 	@echo "";
 	unit/ubuntu_tester http://0.0.0.0:4242
+
+.PHONY: webserv
+webserv:	ws
+webserv-up:	ws
+gws:		g1
+ws-t:		t1
+wst:		t1
