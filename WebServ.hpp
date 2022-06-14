@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/14 15:13:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/14 17:02:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ struct ws_server_instance
 	std::vector<int> port;
 	std::vector<int> listen_sock;
 	DataFold config;
+
+	const DataFold operator[] (std::string) const;
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 

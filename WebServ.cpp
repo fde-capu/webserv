@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/14 15:21:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/14 17:08:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,10 +144,31 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 	return o;
 }
 
+const DataFold ws_server_instance::operator[] (std::string df_query) const
+{
+	DataFold out;
+	out = this->config.get_val(df_query);
+	std::cout << "OP[] " << out << std::endl;
+	return out;
+}
+
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
+	DataFold loops;
+	std::string root;
+
 	*this = ws_reply_instance();
-	verbose(1) << "[THINK] " << std::endl << si << std::endl;
+	verbose(1) << "[THINK] " << std::endl;
+	verbose(1) << si << std::endl;
+	loops = si["index"];
+	while (loops.loop())
+	{
+		std::cout << "loops.val " << loops.val << std::endl;
+		root = si["root"].string();
+		FileString from_file(std::string(root + si.in_header.directory + loops.val).c_str());
+		std::cout << "from_file (name): " << from_file.getFileName() << std::endl;
+		std::cout << "from_file: " << from_file << std::endl;
+	}
 	out_body = "Hello, world!\n";
 }
 
