@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/13 16:23:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/14 15:18:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void WebServ::hook_it()
 				verbose(1) << "(webserv) Warning: multiple servers configured on same port. Only the first will be used." << std::endl;
 		}
 	}
-	verbose(1) << "(webserv) I'm hooked." << std::endl;
+	verbose(1) << "(webserv) I'm hooked." << std::endl << std::endl;
 }
 
 void WebServ::remove_from_poll(int fd)
@@ -111,11 +111,44 @@ ws_reply_instance::ws_reply_instance()
 	out_header.connection = "close";
 }
 
+std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
+{
+	o << "ws_header | method | " << wsh.method << std::endl;
+	o << "ws_header | directory | " << wsh.directory << std::endl;
+	o << "ws_header | protocol | " << wsh.protocol << std::endl;
+	o << "ws_header | host | " << wsh.host << std::endl;
+	o << "ws_header | port | " << wsh.port << std::endl;
+	o << "ws_header | user_agent | " << wsh.user_agent << std::endl;
+	o << "ws_header | accept | " << wsh.accept << std::endl;
+	o << "ws_header | is_valid | " << wsh.is_valid << std::endl;
+	o << "ws_header | status | " << wsh.status << std::endl;
+	o << "ws_header | status_msg | " << wsh.status_msg << std::endl;
+	o << "ws_header | connection | " << wsh.connection << std::endl;
+	o << "ws_header | content_length | " << wsh.content_length << std::endl;
+	return o;
+}
+
+std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
+{
+	o << "ws_server_instance | in_header | " << wssi.in_header << std::endl;
+//	o << "ws_server_instance | in_body | " << wssi.in_body.c_str() << std::endl;
+//	o << "ws_server_instance | port | ";
+//	for (size_t i = 0; i < wssi.port.size(); i++)
+//	{ o << wssi.port[i] << " "; }
+//	o << std::endl;
+//	o << "ws_server_instance | listen_sock | ";
+//	for (size_t i = 0; i < wssi.listen_sock.size(); i++)
+//	{ o << wssi.listen_sock[i] << " "; }
+//	o << std::endl;
+//	o << "ws_server_instance | config | " << wssi.config << std::endl;
+	return o;
+}
+
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
 	*this = ws_reply_instance();
+	verbose(1) << "[THINK] " std::endl << si << std::endl;
 	out_body = "Hello, world!\n";
-	(void)si;
 }
 
 std::string ws_reply_instance::encapsulate()
@@ -145,7 +178,7 @@ void WebServ::respond_connection_from(int fd)
 	if (!si.in_header.is_valid)
 		return remove_from_poll(fd);
 	si.in_body = get_body(raw_data);
-	verbose(1) << "BODY >" << si.in_body << "<" << std::endl;
+	verbose(3) << "(webserv) BODY >" << si.in_body << "<" << std::endl;
 
 	ws_reply_instance respond(si);
 

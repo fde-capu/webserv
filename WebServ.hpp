@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/13 16:16:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/14 15:13:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ struct ws_header
 	std::string connection;
 	size_t		content_length;
 };
+std::ostream & operator<< (std::ostream & o, ws_header const &);
 
 struct ws_server_instance
 {
@@ -41,17 +42,19 @@ struct ws_server_instance
 	std::vector<int> listen_sock;
 	DataFold config;
 };
+std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 
 struct ws_reply_instance
 {
 	ws_header out_header;
 	std::string out_body;
 	size_t package_length;
-	ws_reply_instance(ws_server_instance&);
 	ws_reply_instance();
 	std::string encapsulate();
-	private:
-		ws_reply_instance(std::string&);
+
+	ws_reply_instance(ws_server_instance&); // Arg  may be std::string&
+	private:								// and auto-convert
+		ws_reply_instance(std::string&);	// to ws_server_instance&.
 };
 
 class WebServ

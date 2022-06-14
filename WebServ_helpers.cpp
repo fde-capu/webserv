@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/13 16:19:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/14 14:47:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,11 +82,11 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 
 	remove_all(raw_data, "\r");
 	std::string h_block = raw_data.substr(0, raw_data.find("\n\n"));
-	verbose(2) << "get_header ==>" << h_block << "<==" << std::endl;
+	verbose(3) << "get_header ==>" << h_block << "<==" << std::endl;
 	line = split_trim(h_block, "\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
-		std::cout << "LINE>" << line[i] << "<" << std::endl;
+		verbose(3) << "(webserv) LINE>" << line[i] << "<" << std::endl;
 
 		if (line[i].length() == 0)
 			continue ;
@@ -127,14 +127,14 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 	}
 	header.is_valid = is_valid;
 
-	verbose(1) << "method >" << header.method << "<" << std::endl;
-	verbose(1) << "directory >" << header.directory << "<" << std::endl;
-	verbose(1) << "protocol >" << header.protocol << "<" << std::endl;
-	verbose(1) << "host >" << header.host << "<" << std::endl;
-	verbose(1) << "port >" << header.port << "<" << std::endl;
-	verbose(1) << "user_agent >" << header.user_agent << "<" << std::endl;
-	verbose(1) << "accept >" << header.accept << "<" << std::endl;
-	verbose(1) << "is_valid >" << header.is_valid << "<" << std::endl;
+	verbose(2) << "(webserv) method >" << header.method << "<" << std::endl;
+	verbose(2) << "(webserv) directory >" << header.directory << "<" << std::endl;
+	verbose(2) << "(webserv) protocol >" << header.protocol << "<" << std::endl;
+	verbose(2) << "(webserv) host >" << header.host << "<" << std::endl;
+	verbose(2) << "(webserv) port >" << header.port << "<" << std::endl;
+	verbose(2) << "(webserv) user_agent >" << header.user_agent << "<" << std::endl;
+	verbose(2) << "(webserv) accept >" << header.accept << "<" << std::endl;
+	verbose(2) << "(webserv) is_valid >" << header.is_valid << "<" << std::endl;
 
 	return header;
 }
