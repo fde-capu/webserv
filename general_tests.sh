@@ -60,9 +60,11 @@ done
 ; } 2> /dev/null
 
 if ! curl -v http://$name_server:3490; then
-	 { anounce ERROR  'Make sure the server is running!'; } 2> /dev/null;
+	 { anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
 	 exit 1;
 fi
+
+exit;
 
 # B ################################################################
 

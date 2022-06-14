@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/14 15:18:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/14 15:21:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,24 +130,24 @@ std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
 
 std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 {
-	o << "ws_server_instance | in_header | " << wssi.in_header << std::endl;
-//	o << "ws_server_instance | in_body | " << wssi.in_body.c_str() << std::endl;
-//	o << "ws_server_instance | port | ";
-//	for (size_t i = 0; i < wssi.port.size(); i++)
-//	{ o << wssi.port[i] << " "; }
-//	o << std::endl;
-//	o << "ws_server_instance | listen_sock | ";
-//	for (size_t i = 0; i < wssi.listen_sock.size(); i++)
-//	{ o << wssi.listen_sock[i] << " "; }
-//	o << std::endl;
-//	o << "ws_server_instance | config | " << wssi.config << std::endl;
+	o << "ws_server_instance | in_header:" << std::endl << wssi.in_header << std::endl;
+	o << "ws_server_instance | in_body:" << std::endl << wssi.in_body.c_str() << std::endl;
+	o << "ws_server_instance | port | ";
+	for (size_t i = 0; i < wssi.port.size(); i++)
+	{ o << wssi.port[i] << " "; }
+	o << std::endl;
+	o << "ws_server_instance | listen_sock | ";
+	for (size_t i = 0; i < wssi.listen_sock.size(); i++)
+	{ o << wssi.listen_sock[i] << " "; }
+	o << std::endl;
+	o << "ws_server_instance | config | " << wssi.config << std::endl;
 	return o;
 }
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
 	*this = ws_reply_instance();
-	verbose(1) << "[THINK] " std::endl << si << std::endl;
+	verbose(1) << "[THINK] " << std::endl << si << std::endl;
 	out_body = "Hello, world!\n";
 }
 
