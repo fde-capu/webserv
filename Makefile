@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/08 16:44:32 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/14 12:32:02 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,6 +40,9 @@ VALFLAG	=	--tool=memcheck \
 			--track-origins=yes \
 			--show-reachable=yes
 all:		line $(NAME1) $(NAME2)
+webserv:	ws
+webserv-up:	ws
+gws:		g1
 ws:			line $(NAME1)
 cgi:		line $(NAME2)
 1:			ws
