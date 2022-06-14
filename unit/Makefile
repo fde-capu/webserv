@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/13 16:12:52 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/14 12:22:56 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,14 +48,14 @@ t:			nginx-t
 ####### :: webserv :: #######
 ####### ::::::::::::: #######
 
-WSNOTDAEMON	=	echo 'Webserv does not run as daemon. Please open another terminal to run the tests.';
+WSNOTDAEMON	=	echo '==========> Webserv does not run as daemon. On another terminal, please run `make webserv-gt`. <=========';
 
 webserv-build:
 	@echo 'webserv: '
 	-@cd .. && \
 	make
 webserv-up:	webserv
-webserv:	webserv-k webserv-build $(WEBSERV_C)
+webserv:	webserv-k webserv-build $(WEBSERV_C) nginx-k
 	@$(WSNOTDAEMON)
 	../webserv $(PWD)/$(WEBSERV_C)
 webserv-r:	webserv
@@ -63,11 +63,12 @@ webserv-k:
 	-pkill webserv
 	$(SS)
 $(WEBSERV_C): webserv-r
-webserv-t:
+webserv-t:	webserv
+webserv-gt:
 	../general_tests.sh
 webserv-rt:	webserv-r webserv-t
 webserv-tc:	$(WEBSERV_C)
-	@echo 'Test only (like -t option) not implemented.';
+	@echo 'Test without running (like -t option on nginx) not implemented.';
 webserv-clean:
 	cd .. && \
 	make clean
@@ -88,7 +89,7 @@ webserv-tlog: webserv-relog webserv-t webserv-catlog
 ####### :: nginx :: #######
 ####### ::::::::::: #######
 
-NGXUNPCKME	=	echo 'You need to `make nginx-pre-build` before actually building.'
+NGXUNPCKME	=	echo '=========> You need to `make nginx-pre-build` before actually building. <=========='
 NGXSRCME	=	echo '=========> Please run: `source ./source-me-after-install-rc`. <============'
 
 $(NGINX):
@@ -100,7 +101,7 @@ nginx-build:	nginx-pre-build
 	-@cd nginx-standalone && \
 	make
 nginx-up:	nginx
-nginx:		nginx-k nginx-build $(NGINX_C) nginx-tc
+nginx:		nginx-k nginx-build $(NGINX_C) nginx-tc webserv-k
 	$(NGINX) -c $(NGINX_C)
 	$(SS)
 nginx-k:
