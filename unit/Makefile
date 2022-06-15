@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/14 13:22:08 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/15 16:33:59 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -90,14 +90,15 @@ wst:	webserv-t
 ####### :: nginx :: #######
 ####### ::::::::::: #######
 
-NGXUNPCKME	=	echo '=========> You need to `make nginx-pre-build` before actually building. <=========='
+NGXUNPCKME	=	echo '=========> You need to `make nginx-pre-build` before actually building. (Do it if not already.) <=========='
 NGXSRCME	=	echo '=========> Please run: `source ./source-me-after-install-rc`. <============'
 
 $(NGINX):
 nginx-pre-build: $(NGINX)
 	-@cd nginx-standalone && \
 	make unpack
-nginx-build:	nginx-pre-build
+nginx-build:
+	@$(NGXUNPCKME)
 	@echo 'nginx: '
 	-@cd nginx-standalone && \
 	make
