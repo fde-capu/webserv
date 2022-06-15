@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/27 20:55:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/15 16:17:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,24 @@ FileString::FileString()
   key(""), val(""), type(0)
 {}
 
+void FileString::load()
+{ load(getFileName()); }
+
 void FileString::load(const std::string & str)
 {
 	_content = str;
 	parse();
 }
 
-void FileString::load(const char * file_name)
+void FileString::load(const char * u_fn)
 {
-	_file_name = const_cast<char *>(file_name);
 	std::fstream file_read;
-	file_read.open(_file_name, std::ios::in);
+	file_read.open(u_fn, std::ios::in);
 	if (!file_read)
 	{
 		_read_ok = false;
 		file_read.close();
+		verbose(1) << "(FileString) Failed to load or empty string for file " << u_fn << "." << std::endl;
 		return ;
 	}
 	else
@@ -45,12 +48,13 @@ void FileString::load(const char * file_name)
 	parse();
 }
 
-FileString::FileString(const char * file_name)
+FileString::FileString(const char * u_file_name)
 : _content(""), _processed(""),
   _read_ok(false), _processed_ok(false),
   key(""), val(""), type(0)
 {
-	load(file_name);
+	_file_name = const_cast<char *>(u_file_name);
+	load();
 }
 
 std::string const FileString::operator[](std::string key) const
@@ -101,17 +105,17 @@ FileString& FileString::operator= (const std::string& rhs)
 	return *this;
 }
 
-bool FileString::isProcessed()
+bool FileString::isProcessed() const
 { return _processed_ok; }
 
-char * FileString::getFileName()
+char * FileString::getFileName() const
 { return _file_name; }
 
-//std::ostream & operator<< (std::ostream & o, FileString const & self)
-//{
-// 	o << self.getDataFold() << std::endl;
-//	return o;
-//}
+std::ostream & operator<< (std::ostream & o, FileString & self)
+{
+ 	o << "[CONTENTS FROM FILE]" << self.getContent() << "[]" << std::endl;
+	return o;
+}
 
 FileString::~FileString()
 { return ; }
@@ -125,19 +129,16 @@ DataFold FileString::get_val(std::string key, std::string sub) const
 DataFold FileString::getDataFold() const
 { return fs_data; }
 
-std::string FileString::getProcessed()
-{ return _processed_ok ? _processed : 0; }
-
 std::string FileString::getProcessed() const
 { return _processed_ok ? _processed : 0; }
 
-std::string FileString::getContent()
+std::string FileString::getContent() const
 { return _content; }
 
-bool FileString::fail()
+bool FileString::fail() const
 { return !_read_ok; }
 
-bool FileString::success()
+bool FileString::success() const
 { return _read_ok; }
 
 bool FileString::loop()

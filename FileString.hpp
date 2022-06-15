@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/09 15:12:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/15 15:38:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,17 +64,17 @@ class FileString
 
 		operator DataFold() const;
 
+		void load();
 		void load(const char *);
 		void load(const std::string &);
 		void parse();
 		void parse(std::string);
-		bool fail();
-		bool success();
-		bool isProcessed();
+		bool fail() const;
+		bool success() const;
+		bool isProcessed() const;
 
-		char * getFileName();
-		std::string getContent();
-		std::string getProcessed();
+		char * getFileName() const;
+		std::string getContent() const;
 		std::string getProcessed() const;
 		DataFold getDataFold() const;
 		DataFold get_val(std::string) const;
@@ -113,6 +113,6 @@ class FileString
 		int key_count(std::string);
 };
 
-//std::ostream & operator<< (std::ostream & o, FileString const & i);
+std::ostream & operator<< (std::ostream & o, FileString & i);
 
 #endif
