@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/09 16:47:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/15 17:06:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ void ArgVal::run()
 				_fail = true;
 			if (vt[i] == "size_t" && !is_size_t(std::string(argv[argi])))
 				_fail = true;
+			if (_fail)
+				verbose(1) << "(ArgVal) " << std::string(argv[argi]) << " failed as " << std::string(vt[i]) << "." << std::endl;
 		}
 	}
 }
@@ -154,14 +156,20 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			{
 				verbose(2) << "--- " << con[i].key << " : " << con[i].val << std::endl;
 				if (!comply_argval_params(board.get_val(board.key), con[i].val))
+				{
+					verbose(1) << "(ArgVal) Error: " << con[i].key << " : " << con[i].val << std::endl;
 					return false;
+				}
 			}
 			continue ;
 		}
 	}
 
 	if (!validate_by_board_key(board, config))
+	{
+		verbose(1) << "(ArgVal) Error: validation by board key failed." << std::endl;
 		return false;
+	}
 
 	while (board.loop())
 	{
@@ -327,7 +335,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 	}
 	if (board.empty() && !config.empty())
 	{
-		verbose(3) << "> " << config.string() << " is invalid." << std::endl;
+		verbose(1) << "(ArgVal) " << config.string() << " is invalid." << std::endl;
 		return false;
 	}
 	verbose(3) << "> " << config.string() << " is valid." << std::endl;

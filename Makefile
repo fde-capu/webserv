@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/14 13:18:07 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/15 16:53:45 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ NAME2	=	cgi_webserv
 ARGS2	=	./unit/ubuntu_cgi_tester 9000
 
 DEBUG	=	1
-ENVS	=	-DAGV_SKIP_CHECK=1
+ENVS	=	-DAGV_SKIP_CHECK=0
 SRCS	=	FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp \
 			CircularBuffer.cpp WebServ_helpers.cpp CgiWrapper.cpp
