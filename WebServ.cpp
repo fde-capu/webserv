@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/15 16:17:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 13:16:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,6 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	loops = si["index"];
 	while (loops.loop())
 	{
-		std::cout << "loops.val " << loops.val << std::endl;
 		root = "./unit/confs/" + si.val("root");
 		file_name = root + si.in_header.directory + loops.val;
 		std::cout << "file_name >" << file_name << "<" << std::endl;
@@ -243,6 +242,7 @@ void WebServ::light_up()
 {
 	int event;
 
+	verbose(1) << "Lit server: " << config.get_val("server_name") << std::endl;
 	lit = true;
 	while (lit)
 	{
