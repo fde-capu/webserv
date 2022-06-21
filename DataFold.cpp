@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/12 13:51:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 15:02:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,16 @@ DataFold DataFold::filter(std::string key) const
 		}
 	}
 	return out;
+}
+
+void DataFold::set(const char* key, const char* val)
+{
+	return set(std::string(key), std::string(val));
+}
+
+void DataFold::set(std::string key, std::string u_val)
+{
+	this->push_back(key, u_val);
 }
 
 DataFold DataFold::get_val() const

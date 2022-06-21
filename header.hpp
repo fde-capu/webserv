@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/08 16:22:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 15:04:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,11 @@ std::string get_value(std::string line);
 
 # define SERVER_UP "Server is up."
 # define SERVER_DN "Server is dn."
-# define DEFAULT_SERVER_NAME ""
+
+# define DEFAULT_SERVER_NAME "fde-capu's webserv"
+# define DEFAULT_WELCOME_MESSAGE "Welcome!"
+# define DEFAULT_BYE "Bye!"
+
 # define NL << std::endl;
 
 # define CONF_DELIMITERS " \t"

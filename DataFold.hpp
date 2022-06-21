@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/05/26 15:14:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 14:55:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ class DataFold
 		void set_only_val();
 		std::string string() const;
 		DataFold filter(std::string) const;
+		void set(std::string, std::string);
+		void set(const char*, const char*);
 
 		std::string get(std::string) const;
 

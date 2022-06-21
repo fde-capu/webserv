@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 13:07:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 14:45:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ class WebServ
 		void add_to_poll(int);
 		void remove_from_poll(int);
 		void respond_connection_from(int);
+		void load_defaults();
 
 	public:
 		WebServ(DataFold&);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 13:16:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 15:05:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,27 +187,6 @@ std::string ws_reply_instance::encapsulate()
 	return out;
 }
 
-void WebServ::respond_connection_from(int fd)
-{
-	ws_server_instance si;
-	std::string raw_data;
-
-	verbose(1) << "(webserv) Got connection from fd " << fd << "." << std::endl;
-	raw_data = get_raw_data(fd);
-	si = *fd_to_instance[fd];
-	si.in_header = get_header(raw_data);
-	if (!si.in_header.is_valid)
-		return remove_from_poll(fd);
-	si.in_body = get_body(raw_data);
-	verbose(3) << "(webserv) BODY >" << si.in_body << "<" << std::endl;
-
-	ws_reply_instance respond(si);
-
-	if (send(fd, respond.encapsulate().c_str(), respond.package_length, 0) == -1)
-		throw std::domain_error("(webserv) Sending response went wrong.");
-	remove_from_poll(fd);
-}
-
 void WebServ::add_to_poll(int oldfd)
 {
 	struct sockaddr_storage remoteaddr;
@@ -238,11 +217,34 @@ int WebServ::catch_connection()
 	return 0;
 }
 
+void WebServ::respond_connection_from(int fd)
+{
+	ws_server_instance si;
+	std::string raw_data;
+
+	verbose(1) << "(webserv) Got connection from fd " << fd << "." << std::endl;
+	raw_data = get_raw_data(fd);
+	si = *fd_to_instance[fd];
+	si.in_header = get_header(raw_data);
+	if (!si.in_header.is_valid)
+		return remove_from_poll(fd);
+	si.in_body = get_body(raw_data);
+	verbose(3) << "(webserv) BODY >" << si.in_body << "<" << std::endl;
+
+	ws_reply_instance respond(si);
+
+	if (send(fd, respond.encapsulate().c_str(), respond.package_length, 0) == -1)
+		throw std::domain_error("(webserv) Sending response went wrong.");
+	remove_from_poll(fd);
+}
+
 void WebServ::light_up()
 {
 	int event;
 
-	verbose(1) << "Lit server: " << config.get_val("server_name") << std::endl;
+	verbose(1) << "Light up server: " << config.getValStr("server_name") << std::endl;
+	verbose(1) << config.getValStr("welcome_message") << std::endl;
+
 	lit = true;
 	while (lit)
 	{
@@ -266,9 +268,20 @@ void WebServ::init()
 	flush_stdin();
 }
 
+void WebServ::load_defaults()
+{
+	if (config.getValStr("server_name") == "")
+		config.set("server_name", DEFAULT_SERVER_NAME);
+	if (config.getValStr("welcome_message") == "")
+		config.set("welcome_message", DEFAULT_WELCOME_MESSAGE);
+	if (config.getValStr("bye_message") == "")
+		config.set("bye_message", DEFAULT_BYE);
+}
+
 WebServ::WebServ(DataFold& u_config)
 : config(u_config), server(config.filter("server")), lit(false)
 {
+	load_defaults();
 	while (server.loop())
 		instance.push_back(dftosi(server.val));
 	return ;
