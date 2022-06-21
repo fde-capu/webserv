@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/15 17:06:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 12:50:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ ArgVal::ArgVal(int argc, char ** argv, const char * u_board_file_name)
 
 std::string ArgVal::relative_path(const char * fn) const
 {
-//	std::cout << "]]" << argv[0] << std::endl;
-//	std::cout << "]]" << argv[1] << std::endl;
 	return std::string(remove_filename_from_path(argv[0])) + std::string(fn);
 }
 

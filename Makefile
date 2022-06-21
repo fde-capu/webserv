@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/15 16:53:45 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/21 12:46:21 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,10 @@ ARGS1	=	unit/webserv-unit.conf
 NAME2	=	cgi_webserv
 ARGS2	=	./unit/ubuntu_cgi_tester 9000
 
+TEST_SH	=	./unit/general_tests.sh
+
 DEBUG	=	1
+
 ENVS	=	-DAGV_SKIP_CHECK=0
 SRCS	=	FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp \
@@ -74,7 +77,7 @@ vf1:		1
 vf2:		2
 	$(VAL) $(VALFLAG) ./$(NAME2) $(ARGS2)
 t1:			1
-	@echo '=======> Please run general_tests.sh on another terminal <======='
+	@echo '=======> Please run unit/general_tests.sh on another terminal <======='
 	./$(NAME1) $(ARGS1)
 t2:			2
 	./$(NAME2) $(ARGS2)
@@ -84,7 +87,7 @@ g1:			1
 g2:			2
 	gdb --args ./$(NAME2) $(ARGS2)
 gt1:
-	./general_tests.sh
+	$(TEST_SH)
 gt2:
 	./cgi_test.sh
 pk:
