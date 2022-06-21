@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 15:51:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 16:17:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,16 +101,6 @@ void WebServ::remove_from_poll(int fd)
 	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
-ws_reply_instance::ws_reply_instance()
-{
-	out_header.method = "";
-	out_header.directory = "/";
-	out_header.protocol = "HTTP/1.1";
-	out_header.status = 200;
-	out_header.status_msg = "OK";
-	out_header.connection = "close";
-}
-
 std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
 {
 	o << "ws_header | method | " << wsh.method << std::endl;
@@ -150,6 +140,22 @@ const DataFold ws_server_instance::operator[] (std::string df_query) const
 std::string ws_server_instance::val(std::string key) const
 { return this->config.get<DataFold>(key)[key]; }
 
+ws_reply_instance::ws_reply_instance()
+{
+	out_header.method = "";
+	out_header.directory = "/";
+	out_header.protocol = "HTTP/1.1";
+	out_header.status = 500;
+	out_header.status_msg = "Internal Server Error";
+	out_header.connection = "close";
+}
+
+void ws_reply_instance::set_code(int code_n, std::string u_output)
+{
+	out_header.status = code_n;
+	out_header.status_msg = u_output;
+}
+
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
 	DataFold loops;
@@ -158,17 +164,23 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 
 	*this = ws_reply_instance();
 	verbose(1) << "[THINK] " << std::endl;
-	verbose(2) << si << std::endl;
+	verbose(1) << si << std::endl;
 	loops = si["index"];
 	out_body = "";
 	while (loops.loop())
 	{
 		root = si.root_config.getValStr("root") + "/" + si.val("root");
-		file_name = root + si.in_header.directory + loops.val;
+		std::cout << "ROOT " << root << std::endl;
+		file_name = root + si.in_header.directory + "/" + loops.val;
+		std::cout << "FN " << file_name << std::endl;
 		FileString from_file(file_name.c_str());
 		out_body = from_file.content();
+		std::cout << "OUT " << out_body << std::endl;
 		if (out_body != "")
+		{
+			set_code(200, "OK");
 			break;
+		}
 	}
 }
 

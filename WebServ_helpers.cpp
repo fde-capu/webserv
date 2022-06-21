@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 15:07:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 16:05:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@ ws_server_instance WebServ::dftosi(DataFold df)
 {
 	ws_server_instance si;
 	int port;
-//	si.current_http_header = "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 13\n\n";
-//	si.current_http_body = "Hello, world!";
 	DataFold df_listen(df.get("listen"));
 	while (df_listen.loop())
 	{

@@ -64,8 +64,6 @@ if ! curl -v http://$name_server:3490; then
 	 exit 1;
 fi
 
-exit;
-
 # B ################################################################
 
 { anounce B \
@@ -76,6 +74,8 @@ exit;
 ; } 2> /dev/null
 
 curl -vL http://$name_server:3490/somesub
+
+exit;
 
 # C ################################################################
 
