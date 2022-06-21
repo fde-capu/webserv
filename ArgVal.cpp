@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 12:57:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 15:41:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,8 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				set_flags += AGF_FIXED_LEN;
 				fixed_len = 1;
 			}
+			if (par.val == "absolute")
+				set_flags += AGF_ABSOLUTE;
 			if (par.val == "file_name")
 				set_flags += AGF_FILE_NAME;
 			if (par.val == "bool")
@@ -218,20 +220,20 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			{
 				if (!(con.type & DF_TYPE_NUMBER))
 				{
-					verbose(1) << con.val << " is not a number." << std::endl;
+					verbose(1) << "(ArgVal) " << con.val << " is not a number." << std::endl;
 					return false;
 				}
 			}
 			if (set_flags & AGF_WORD && !isWord(con.val))
 			{
-				verbose(1) << con.val << " is not valid word." << std::endl;
+				verbose(1) << "(ArgVal) " << con.val << " is not valid word." << std::endl;
 				return false;
 			}
 			if (set_flags & AGF_ONLY)
 			{
 				if (!isWordInWordSet(con.val, par.get_val().pop()))
 				{
-					verbose(1) << con.val << " invalid." << std::endl;
+					verbose(1) << "(ArgVal) " << con.val << " invalid." << std::endl;
 					return false;
 				}
 			}
@@ -241,7 +243,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				if ((con.is_single_array() && foo.size() != fixed_len)
 					)
 				{
-					verbose(1) << con.string() << " has incorrect number of parameters." << std::endl;
+					verbose(1) << "(ArgVal) " << con.string() << " has incorrect number of parameters." << std::endl;
 					return false;
 				}
 			}
@@ -252,7 +254,19 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				{
 					if (!isFileName(foo.val))
 					{
-						verbose(1) << foo.val << " is not a valid file name." << std::endl;
+						verbose(1) << "(ArgVal) " << foo.val << " is not a valid file name." << std::endl;
+						return false;
+					}
+				}
+			}
+			if (set_flags & AGF_ABSOLUTE)
+			{
+				foo = splitOutsideQuotes(con.val);
+				while (foo.loop())
+				{
+					if (foo.val.c_str()[0] != '/')
+					{
+						verbose(1) << "(ArgVal) " << con.key << " must be absolute path." << std::endl;
 						return false;
 					}
 				}
@@ -261,7 +275,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			{
 				if (!isBoolStr(con.val))
 				{
-					verbose(1) << con.key << " must be a boolean." << std::endl;
+					verbose(1) << "(ArgVal) " << con.key << " must be a boolean." << std::endl;
 					return false;
 				}
 			}
@@ -274,7 +288,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					{
 						if (!isNumber(foo.val))
 						{
-							verbose(1) << con.key << " " << con.val << " bad syntax." << std::endl;
+							verbose(1) << "(ArgVal) " << con.key << " " << con.val << " bad syntax." << std::endl;
 							return false;
 						}
 					}
@@ -282,7 +296,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					{
 						if (!isFileName(foo.val))
 						{
-							verbose(1) << foo.val << " is not a valid file name." << std::endl;
+							verbose(1) << "(ArgVal) " << foo.val << " is not a valid file name." << std::endl;
 							return false;
 						}
 					}
@@ -295,7 +309,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				|| !isNumber(foo[0].val)
 				|| !isUri(foo[1].val))
 				{
-					verbose(1) << con.key << ": expected number then uri." << std::endl;
+					verbose(1) << "(ArgVal) " << con.key << ": expected number then uri." << std::endl;
 					return false;
 				}
 			}
@@ -308,7 +322,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					{
 						if (!isWord(foo.val))
 						{
-							verbose(1) << con.key << " " << foo.val << " should be a trail word." << std::endl;
+							verbose(1) << "(ArgVal) " << con.key << " " << foo.val << " should be a trail word." << std::endl;
 							return false;
 						}
 					}
@@ -316,7 +330,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					{
 						if (!isNumber(foo.val))
 						{
-							verbose(1) << foo.val << " should be a number for last element." << std::endl;
+							verbose(1) << "(ArgVal) " << foo.val << " should be a number for last element." << std::endl;
 							return false;
 						}
 					}
@@ -329,7 +343,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				{
 					if (!isUri(foo.val))
 					{
-						verbose(1) << foo.val << " is not a uri." << std::endl;
+						verbose(1) << "(ArgVal) " << foo.val << " is not a uri." << std::endl;
 						return false;
 					}
 				}

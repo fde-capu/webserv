@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 15:05:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 15:27:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	loops = si["index"];
 	while (loops.loop())
 	{
-		root = "./unit/confs/" + si.val("root");
+		root = si.root_config.getValStr("root") + "/" + si.val("root");
 		file_name = root + si.in_header.directory + loops.val;
 		std::cout << "file_name >" << file_name << "<" << std::endl;
 		FileString from_file(file_name.c_str());
@@ -229,6 +229,7 @@ void WebServ::respond_connection_from(int fd)
 	if (!si.in_header.is_valid)
 		return remove_from_poll(fd);
 	si.in_body = get_body(raw_data);
+	si.root_config.push_back("root", config.getValStr("working_directory"));
 	verbose(3) << "(webserv) BODY >" << si.in_body << "<" << std::endl;
 
 	ws_reply_instance respond(si);
