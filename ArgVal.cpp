@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 15:41:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 15:43:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void ArgVal::run()
 			if (vt[i] == "size_t" && !is_size_t(std::string(argv[argi])))
 				_fail = true;
 			if (_fail)
-				verbose(1) << "(ArgVal) " << std::string(argv[argi]) << " failed as " << std::string(vt[i]) << "." << std::endl;
+				verbose(1) << "(ArgVal) " << std::string(argv[argi]) << " failed to " << std::string(vt[i]) << "." << std::endl;
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/15 15:38:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 15:49:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ class FileString
 
 		char * getFileName() const;
 		std::string getContent() const;
+		std::string content() const;
 		std::string getProcessed() const;
 		DataFold getDataFold() const;
 		DataFold get_val(std::string) const;

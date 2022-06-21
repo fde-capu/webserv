@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/15 16:17:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 15:51:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void FileString::load(const char * u_fn)
 	{
 		_read_ok = false;
 		file_read.close();
-		verbose(1) << "(FileString) Failed to load or empty string for file " << u_fn << "." << std::endl;
+		verbose(3) << "(FileString) Failed to load or empty string for file " << u_fn << "." << std::endl;
 		return ;
 	}
 	else
@@ -113,7 +113,7 @@ char * FileString::getFileName() const
 
 std::ostream & operator<< (std::ostream & o, FileString & self)
 {
- 	o << "[CONTENTS FROM FILE]" << self.getContent() << "[]" << std::endl;
+ 	o << self.getContent() << std::endl;
 	return o;
 }
 
@@ -131,6 +131,9 @@ DataFold FileString::getDataFold() const
 
 std::string FileString::getProcessed() const
 { return _processed_ok ? _processed : 0; }
+
+std::string FileString::content() const
+{ return getContent(); }
 
 std::string FileString::getContent() const
 { return _content; }

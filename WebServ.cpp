@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 15:27:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 15:51:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,18 +158,18 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 
 	*this = ws_reply_instance();
 	verbose(1) << "[THINK] " << std::endl;
-	verbose(1) << si << std::endl;
+	verbose(2) << si << std::endl;
 	loops = si["index"];
+	out_body = "";
 	while (loops.loop())
 	{
 		root = si.root_config.getValStr("root") + "/" + si.val("root");
 		file_name = root + si.in_header.directory + loops.val;
-		std::cout << "file_name >" << file_name << "<" << std::endl;
 		FileString from_file(file_name.c_str());
-		std::cout << "from_file (name): " << from_file.getFileName() << std::endl;
-		std::cout << "from_file: " << from_file << std::endl;
+		out_body = from_file.content();
+		if (out_body != "")
+			break;
 	}
-	out_body = "Hello, world!\n";
 }
 
 std::string ws_reply_instance::encapsulate()
