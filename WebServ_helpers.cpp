@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 17:05:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 01:29:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,10 +104,19 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 		carrier = split_trim(line[i], ":");
 		if (is_equal_insensitive(carrier[0], "host"))
 		{
-			if (!validate_header_entry(carrier, 3, is_valid))
-				break ;
-			header.host = carrier[1];
-			header.port = carrier[2];
+			if (validate_header_entry(carrier, 3, is_valid))
+			{
+				header.host = carrier[1];
+				header.port = carrier[2];
+			}
+			else
+			{
+				is_valid = true;
+				if (validate_header_entry(carrier, 2, is_valid))
+					header.host = carrier[1];
+				else
+					break ;
+			}
 		}
 
 		if (is_equal_insensitive(carrier[0], "user-agent"))

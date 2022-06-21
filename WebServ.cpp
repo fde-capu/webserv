@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 16:55:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 01:25:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 			return;
 		}
 	}
-	std::cout << "FILE NOT FOUNT" << std::endl;
+	std::cout << "FILE NOT FOUND" << std::endl;
 }
 
 std::string ws_reply_instance::encapsulate()
@@ -237,8 +237,6 @@ void WebServ::respond_connection_from(int fd)
 	raw_data = get_raw_data(fd);
 	si = *fd_to_instance[fd];
 	si.in_header = get_header(raw_data);
-	if (!si.in_header.is_valid)
-		return remove_from_poll(fd);
 	si.in_body = get_body(raw_data);
 	si.root_config.push_back("root", config.getValStr("working_directory"));
 	verbose(1) << "(webserv) BODY >" << si.in_body << "<" << std::endl;
