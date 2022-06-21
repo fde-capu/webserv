@@ -69,7 +69,9 @@ fi
 { anounce B \
 \
 	'Accepts subdirectory calls. \n
-	-L tells curl to follow redirect.' \
+	-L tells curl to follow redirect. \n
+	nginx returns 301 on these cases, and client folows, \n
+	but webserv here is directly serving.' \
 \
 ; } 2> /dev/null
 
@@ -86,8 +88,6 @@ curl -vL http://$name_server:3490/somesub
 
 curl -v http://$name_server:3490/somesub/
 
-exit;
-
 # D ################################################################
 
 { anounce D \
@@ -98,6 +98,8 @@ exit;
 ; } 2> /dev/null
 
 curl -v http://$name_server:3490 -H 'Host: krazything'
+
+exit;
 
 # E ################################################################
 

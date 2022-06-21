@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 16:05:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 17:05:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,11 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 
 	remove_all(raw_data, "\r");
 	std::string h_block = raw_data.substr(0, raw_data.find("\n\n"));
-	verbose(3) << "get_header ==>" << h_block << "<==" << std::endl;
+	verbose(1) << "get_header ==>" << h_block << "<==" << std::endl;
 	line = split_trim(h_block, "\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
-		verbose(3) << "(webserv) LINE>" << line[i] << "<" << std::endl;
+		verbose(1) << "(webserv) LINE>" << line[i] << "<" << std::endl;
 
 		if (line[i].length() == 0)
 			continue ;
