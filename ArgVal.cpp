@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 12:50:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/21 12:57:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,6 +191,11 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			{
 				set_flags += AGF_FIXED_LEN;
 				fixed_len = atoi(par.val.c_str());
+			}
+			if (par.val == "single")
+			{
+				set_flags += AGF_FIXED_LEN;
+				fixed_len = 1;
 			}
 			if (par.val == "file_name")
 				set_flags += AGF_FILE_NAME;
