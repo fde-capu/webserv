@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 01:59:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 12:18:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,20 @@ bool WebServ::is_port_taken(int port) const
 		if (taken_ports[i] == port)
 			return true;
 	return false;
+}
+
+bool WebServ::same_port_another_name(const ws_server_instance* candidate) const
+{
+	bool out = false;
+	for (size_t i = 0; i < instance.size(); i++)
+	{
+		for (size_t j = 0; j < instance[i].port.size(); j++)
+		{
+			if (instance[i].config.getValStr("server_name") != candidate->config.getValStr("server_name"))
+				out = true;
+		}
+	}
+	return out;
 }
 
 ws_server_instance WebServ::dftosi(DataFold df)
@@ -261,4 +275,19 @@ void WebServ::load_defaults()
 		config.set("welcome_message", DEFAULT_WELCOME_MESSAGE);
 	if (config.getValStr("bye_message") == "")
 		config.set("bye_message", DEFAULT_BYE);
+}
+
+std::string ws_reply_instance::encapsulate()
+{
+	std::string out = "";
+
+	out += out_header.protocol + " ";
+	out += itoa(out_header.status) + " " + out_header.status_msg + "\n";
+	if (out_header.connection != "")
+		out += "Connection: " + out_header.connection + "\n";
+	out += "Content-Length: " + itoa(out_body.length()) + "\n";
+	out += "\n";
+	out += out_body;
+	package_length = out.length();
+	return out;
 }

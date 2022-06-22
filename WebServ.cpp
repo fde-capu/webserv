@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 01:59:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 12:17:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void WebServ::hook_it()
 					throw std::domain_error("(webserv) Listening problem.");
 				taken_ports.push_back(instance[i].port[j]);
 			}
-			else
+			else if (!same_port_another_name(&instance[i]))
 				verbose(1) << "(webserv) Warning: multiple servers configured on same port. Only the first will be used." << std::endl;
 		}
 	}

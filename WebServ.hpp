@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 16:16:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 12:06:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ class WebServ
 		static bool validate_header_entry(std::vector<std::string>&, size_t, bool&);
 		void flush_stdin();
 		bool is_port_taken(int) const;
+		bool same_port_another_name(const ws_server_instance*) const;
 		int catch_connection();
 		bool there_is_an_instance(int) const;
 		void add_to_poll(int);
