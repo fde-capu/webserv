@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 15:11:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 15:18:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,15 +149,15 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 
 	*this = ws_reply_instance();
 	verbose(1) << "[THINK] " << std::endl;
-//	verbose(1) << si << std::endl;
+	verbose(1) << si << std::endl;
 	loops = si.config.get("index");
 	out_body = "";
 	while (loops.loop())
 	{
 		root = si.root_config.getValStr("root") + "/" + si.val("root");
 		file_name = root + si.in_header.directory + "/" + loops.val;
-		stool.remove_dup_char(file_name, '/');
-		verbose(3) << "Fetching " << file_name << std::endl;
+		stool.remove_rep_char(file_name, '/');
+		verbose(1) << "Fetching " << file_name << std::endl;
 		FileString from_file(file_name.c_str());
 		out_body = from_file.content();
 		if (out_body != "")

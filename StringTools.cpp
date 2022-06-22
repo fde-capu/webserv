@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 16:41:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 15:19:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -618,4 +618,14 @@ void StringTools::remove_dup_char(std::string& dst, const char c) const
 	std::string before(2, c);
 	std::string after(1, c);
 	substitute_all(dst, before, after);
+}
+
+void remove_rep_char(std::string& dst, const char c)
+{ return stool.remove_rep_char(dst, c); }
+
+void StringTools::remove_rep_char(std::string& dst, const char c) const
+{
+	std::string before(2, c);
+	std::string after(1, c);
+	substitute_super(dst, before, after);
 }

@@ -99,8 +99,6 @@ curl -v http://$name_server:3490/somesub/
 
 curl -v http://$name_server:3490 -H 'Host: krazything'
 
-exit;
-
 # E ################################################################
 
 { anounce E \
@@ -132,6 +130,8 @@ curl -v http://$name_server:3491
 ; } 2> /dev/null
 
 curl -v http://$name_server:3492
+
+exit;
 
 # H ################################################################
 
