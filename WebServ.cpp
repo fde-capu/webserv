@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 15:09:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 15:11:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void WebServ::add_to_poll(int oldfd)
 		throw std::domain_error("(webserv) Unacceptable connection.");
 	poll_list.push_back(make_pollin_fd(newfd));
 	fd_to_port[newfd] = fd_to_port[oldfd];
-	verbose(1) << "(webserv) ======" << std::endl << "(webserv) New connection on fd (" << oldfd << ")->" << newfd << "." << std::endl;
+	verbose(1) << "(webserv) ======" << std::endl << "(webserv) New connection from fd (" << oldfd << ")->" << newfd << "." << std::endl;
 }
 
 int WebServ::catch_connection()
@@ -204,7 +204,7 @@ ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
 	if (si.config.get("index").empty())
 		si.config.set("index", config.getValStr("index"));
 	si.root_config.push_back("root", config.getValStr("working_directory"));
-	verbose(1) << "(webserv) Responding from " << choose->config.getValStr("server_name") << ":" << in_port << "." << std::endl;
+	verbose(1) << "(webserv) Responding as " << choose->config.getValStr("server_name") << ":" << in_port << "." << std::endl;
 	return si;
 }
 
