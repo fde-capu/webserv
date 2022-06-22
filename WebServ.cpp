@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 12:17:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 12:20:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,21 +166,6 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 		}
 	}
 	std::cout << "FILE NOT FOUND" << std::endl;
-}
-
-std::string ws_reply_instance::encapsulate()
-{
-	std::string out = "";
-
-	out += out_header.protocol + " ";
-	out += itoa(out_header.status) + " " + out_header.status_msg + "\n";
-	if (out_header.connection != "")
-		out += "Connection: " + out_header.connection + "\n";
-	out += "Content-Length: " + itoa(out_body.length()) + "\n";
-	out += "\n";
-	out += out_body;
-	package_length = out.length();
-	return out;
 }
 
 void WebServ::respond_connection_from(int fd)
