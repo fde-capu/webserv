@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 16:32:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 16:36:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ bool WebServ::validate_header_entry(std::vector<std::string>& test, size_t expec
 
 ws_header::ws_header()
 {
-	port = -1;
+	port = 0;
 	is_valid = false;
 	status = 0;
 }

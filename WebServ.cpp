@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 16:26:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 17:02:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,17 +151,32 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	DataFold indexes;
 	std::string file_name;
 
-//	si.in_header.header500();
 	*this = ws_reply_instance();
 
 	verbose(1) << "[THINK] " << std::endl;
 	verbose(1) << si << std::endl;
-	indexes = si.config.get("index");
 	out_body = "";
+
+	std::vector<std::string> s_return(si.config.get_vector_str("return"));
+	if (!s_return.empty())
+	{
+		std::cout << "--->" << s_return[0] << std::endl;
+		if (atoi(s_return[0].c_str()) == 301)
+		{
+			set_code(302, "MOCK --> " + s_return[1]);
+			return ;
+		}
+	}
+
+	if (si.val("root") == "")
+	{
+		set_code(301, "Forbidden");
+		return ;
+	}
+
+	indexes = si.config.get("index");
 	while (indexes.loop())
 	{
-		if (si.val("root") == "")
-			break ;
 		file_name = si.root_config.getValStr("root") \
 				  + "/" + si.val("root") \
 				  + si.in_header.directory \
@@ -176,15 +191,9 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 			return;
 		}
 	}
-	if (si.val("root") == "")
-	{
-		set_code(301, "Forbidden");
-	}
-	else
-	{
-		set_code(404, "File Not Found");
-		verbose(1) << "(webserv) ! 404 " << file_name << std::endl;
-	}
+	
+	set_code(404, "File Not Found");
+	verbose(1) << "(webserv) ! 404 " << file_name << std::endl;
 }
 
 ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
