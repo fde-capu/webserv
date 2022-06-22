@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 13:01:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 14:23:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,7 +240,6 @@ std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
 	o << "ws_header | status | " << wsh.status << std::endl;
 	o << "ws_header | status_msg | " << wsh.status_msg << std::endl;
 	o << "ws_header | connection | " << wsh.connection << std::endl;
-	o << "ws_header | content_length | " << wsh.content_length << std::endl;
 	return o;
 }
 
@@ -280,6 +279,8 @@ void WebServ::load_defaults()
 		config.set("welcome_message", DEFAULT_WELCOME_MESSAGE);
 	if (config.getValStr("bye_message") == "")
 		config.set("bye_message", DEFAULT_BYE);
+	if (config.getValStr("index") == "")
+		config.set("index", DEFAULT_INDEX);
 }
 
 std::string ws_reply_instance::encapsulate()

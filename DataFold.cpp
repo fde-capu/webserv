@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 15:02:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 14:58:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,15 +70,19 @@ DataFold DataFold::get_val(std::string key) const
 	DataFold out;
 	core_check();
 	for (size_t i = 0; i < index; i++)
+	{
 		if (key == core[i].key)
 		{
 			if (core[i].type & DF_TYPE_SUB)
 				out.push_back(core[i].sub);
-			if (core[i].type & DF_TYPE_ARRAY)
+			else if (core[i].type & DF_TYPE_ARRAY)
 			{
 				out = splitOutsideQuotes(core[i].val);
 			}
+			else
+				out = core[i].val;
 		}
+	}
 	return out;
 }
 

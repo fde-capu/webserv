@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 13:06:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 15:01:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void WebServ::hook_it()
 				ufds = pollfd();
 				ufds.fd = instance[i].listen_sock[j];
 				ufds.events = POLLIN;
+				fd_to_port[ufds.fd] = instance[i].port[j];
 				poll_list.push_back(ufds);
 				if (listen(instance[i].listen_sock[j], SOMAXCONN) != 0)
 					throw std::domain_error("(webserv) Listening problem.");
@@ -108,6 +109,7 @@ void WebServ::add_to_poll(int oldfd)
 	if (newfd == -1)
 		throw std::domain_error("(webserv) Unacceptable connection.");
 	poll_list.push_back(make_pollin_fd(newfd));
+	fd_to_port[newfd] = fd_to_port[oldfd];
 	verbose(1) << "(webserv) New connection on fd (" << oldfd << ")->" << newfd << "." << std::endl;
 }
 
@@ -147,14 +149,15 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 
 	*this = ws_reply_instance();
 	verbose(1) << "[THINK] " << std::endl;
-//	verbose(1) << si << std::endl;
-	loops = si["index"];
+	verbose(1) << si << std::endl;
+	loops = si.config.get("index");
 	out_body = "";
 	while (loops.loop())
 	{
 		root = si.root_config.getValStr("root") + "/" + si.val("root");
 		file_name = root + si.in_header.directory + "/" + loops.val;
 		stool.remove_dup_char(file_name, '/');
+		verbose(1) << "Fetching " << file_name << std::endl;
 		FileString from_file(file_name.c_str());
 		out_body = from_file.content();
 		if (out_body != "")
@@ -163,21 +166,23 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 			return;
 		}
 	}
-	std::cout << "FILE NOT FOUND" << std::endl;
+	set_code(404, "File Not Found");
+	verbose(1) << "404 " << file_name << std::endl;
 }
 
-ws_server_instance WebServ::choose_instance(ws_header in, std::string& body)
+ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
 {
 	ws_server_instance si;
 	ws_server_instance *choose;
+	ws_header in = get_header(raw_data);
 
 	choose = 0;
 	for (size_t i = 0; i < instance.size(); i++)
 	{
 		for (size_t j = 0; j < instance[i].port.size(); j++)
 		{
-			std::cout << instance[i].port[j] << " == " << in.port << " && " << instance[i].config.getValStr("server_name") << " == " << in.host << " ?" << std::endl;
-			if (instance[i].port[j] == in.port)
+			std::cout << instance[i].port[j] << " == " << in_port << " && " << instance[i].config.getValStr("server_name") << " == " << in.host << " ?" << std::endl;
+			if (instance[i].port[j] == in_port)
 			{
 				if (!choose)
 				{
@@ -188,17 +193,21 @@ ws_server_instance WebServ::choose_instance(ws_header in, std::string& body)
 				{
 					choose = &instance[i];
 					std::cout << "-- re-chose" << std::endl;
+					break ;
 				}
 			}
 		}
 	}
 	if (!choose)
-		throw std::domain_error("(webserv) Cannot define instance.");
+		throw std::domain_error("(webserv) Cannot define responding instance.");
 	si = *choose;
 	si.in_header = in;
-	si.in_body = body;
+	si.in_header.port = in_port;
+	si.in_body = get_body(raw_data);
+	if (si.config.get("index").empty())
+		si.config.set("index", config.getValStr("index"));
 	si.root_config.push_back("root", config.getValStr("working_directory"));
-	verbose(1) << "(webserv) Responding from " << choose->config.getValStr("server_name") << ":" << in.port << "." << std::endl;
+	verbose(1) << "(webserv) Responding from " << choose->config.getValStr("server_name") << ":" << in_port << "." << std::endl;
 	return si;
 }
 
@@ -208,11 +217,10 @@ void WebServ::respond_connection_from(int fd)
 	std::string raw_data;
 	std::string body;
 
-	verbose(1) << "(webserv) Got connection from fd " << fd << "." << std::endl;
+	verbose(1) << "======" << std::endl << "(webserv) Got connection from fd " << fd << "." << std::endl;
 	raw_data = get_raw_data(fd);
-	body = get_body(raw_data);
-	si = choose_instance(get_header(raw_data), body);
-	verbose(1) << "(webserv) BODY >" << si.in_body << "<" << std::endl;
+	si = choose_instance(raw_data, fd_to_port[fd]);
+	verbose(5) << "(webserv) BODY >" << si.in_body << "<" << std::endl;
 
 	ws_reply_instance respond(si);
 

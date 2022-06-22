@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 12:44:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 14:21:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ struct ws_header
 	int			status;
 	std::string status_msg;
 	std::string connection;
-	size_t		content_length;
 };
 std::ostream & operator<< (std::ostream & o, ws_header const &);
 
@@ -69,6 +68,7 @@ class WebServ
 		DataFold server;
 		std::vector<ws_server_instance> instance;
 		std::vector<struct pollfd> poll_list;
+		std::map<int, int> fd_to_port;
 		std::vector<int> taken_ports;
 		bool lit;
 
@@ -88,7 +88,7 @@ class WebServ
 		bool there_is_an_instance(int) const;
 		void add_to_poll(int);
 		void remove_from_poll(int);
-		ws_server_instance choose_instance(ws_header, std::string&);
+		ws_server_instance choose_instance(std::string&, int);
 		void respond_connection_from(int);
 		void load_defaults();
 
