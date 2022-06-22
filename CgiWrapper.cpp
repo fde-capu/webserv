@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/13 16:19:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 12:24:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ CgiWrapper::CgiWrapper(std::string u_executable, int u_port)
 	ufds.fd = listen_sock;
 	ufds.events = POLLIN;
 	poll_list.push_back(ufds);
-	// fd_to_instance[] ?
 	if (listen(listen_sock, SOMAXCONN) != 0)
 		throw std::domain_error("(CgiWrapper) Listening went wrong.");
 	verbose(1) << "^> (CgiWrapper) I'm listening." << std::endl;

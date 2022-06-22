@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 12:20:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 13:06:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ void WebServ::hook_it()
 				ufds.fd = instance[i].listen_sock[j];
 				ufds.events = POLLIN;
 				poll_list.push_back(ufds);
-				fd_to_instance[ufds.fd] = &instance[i];
 				if (listen(instance[i].listen_sock[j], SOMAXCONN) != 0)
 					throw std::domain_error("(webserv) Listening problem.");
 				taken_ports.push_back(instance[i].port[j]);
@@ -109,7 +108,6 @@ void WebServ::add_to_poll(int oldfd)
 	if (newfd == -1)
 		throw std::domain_error("(webserv) Unacceptable connection.");
 	poll_list.push_back(make_pollin_fd(newfd));
-	fd_to_instance[newfd] = fd_to_instance[oldfd];
 	verbose(1) << "(webserv) New connection on fd (" << oldfd << ")->" << newfd << "." << std::endl;
 }
 
@@ -149,7 +147,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 
 	*this = ws_reply_instance();
 	verbose(1) << "[THINK] " << std::endl;
-	verbose(1) << si << std::endl;
+//	verbose(1) << si << std::endl;
 	loops = si["index"];
 	out_body = "";
 	while (loops.loop())
@@ -168,17 +166,52 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	std::cout << "FILE NOT FOUND" << std::endl;
 }
 
+ws_server_instance WebServ::choose_instance(ws_header in, std::string& body)
+{
+	ws_server_instance si;
+	ws_server_instance *choose;
+
+	choose = 0;
+	for (size_t i = 0; i < instance.size(); i++)
+	{
+		for (size_t j = 0; j < instance[i].port.size(); j++)
+		{
+			std::cout << instance[i].port[j] << " == " << in.port << " && " << instance[i].config.getValStr("server_name") << " == " << in.host << " ?" << std::endl;
+			if (instance[i].port[j] == in.port)
+			{
+				if (!choose)
+				{
+					choose = &instance[i];
+					std::cout << "-- chose" << std::endl;
+				}
+				if (instance[i].config.getValStr("server_name") == in.host)
+				{
+					choose = &instance[i];
+					std::cout << "-- re-chose" << std::endl;
+				}
+			}
+		}
+	}
+	if (!choose)
+		throw std::domain_error("(webserv) Cannot define instance.");
+	si = *choose;
+	si.in_header = in;
+	si.in_body = body;
+	si.root_config.push_back("root", config.getValStr("working_directory"));
+	verbose(1) << "(webserv) Responding from " << choose->config.getValStr("server_name") << ":" << in.port << "." << std::endl;
+	return si;
+}
+
 void WebServ::respond_connection_from(int fd)
 {
 	ws_server_instance si;
 	std::string raw_data;
+	std::string body;
 
 	verbose(1) << "(webserv) Got connection from fd " << fd << "." << std::endl;
 	raw_data = get_raw_data(fd);
-	si = *fd_to_instance[fd];
-	si.in_header = get_header(raw_data);
-	si.in_body = get_body(raw_data);
-	si.root_config.push_back("root", config.getValStr("working_directory"));
+	body = get_body(raw_data);
+	si = choose_instance(get_header(raw_data), body);
 	verbose(1) << "(webserv) BODY >" << si.in_body << "<" << std::endl;
 
 	ws_reply_instance respond(si);

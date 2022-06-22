@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 12:18:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 13:01:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,13 @@ bool WebServ::same_port_another_name(const ws_server_instance* candidate) const
 	{
 		for (size_t j = 0; j < instance[i].port.size(); j++)
 		{
-			if (instance[i].config.getValStr("server_name") != candidate->config.getValStr("server_name"))
-				out = true;
+			for (size_t k = 0; k < candidate->port.size(); k++)
+			{
+				if ((instance[i].port[j] == candidate->port[k]) && \
+						(instance[i].config.getValStr("server_name") \
+						 != candidate->config.getValStr("server_name")))
+					out = true;
+			}
 		}
 	}
 	return out;
@@ -95,7 +100,7 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 
 	remove_all(raw_data, "\r");
 	std::string h_block = raw_data.substr(0, raw_data.find("\n\n"));
-	verbose(1) << "get_header ==>" << h_block << "<==" << std::endl;
+	verbose(3) << "get_header ==>" << h_block << "<==" << std::endl;
 	line = split_trim(h_block, "\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
@@ -121,7 +126,7 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 			if (validate_header_entry(carrier, 3, is_valid))
 			{
 				header.host = carrier[1];
-				header.port = carrier[2];
+				header.port = atoi(carrier[2].c_str());
 			}
 			else
 			{
