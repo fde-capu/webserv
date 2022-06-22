@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 01:25:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 01:59:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,44 +101,35 @@ void WebServ::remove_from_poll(int fd)
 	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
-std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
+void WebServ::add_to_poll(int oldfd)
 {
-	o << "ws_header | method | " << wsh.method << std::endl;
-	o << "ws_header | directory | " << wsh.directory << std::endl;
-	o << "ws_header | protocol | " << wsh.protocol << std::endl;
-	o << "ws_header | host | " << wsh.host << std::endl;
-	o << "ws_header | port | " << wsh.port << std::endl;
-	o << "ws_header | user_agent | " << wsh.user_agent << std::endl;
-	o << "ws_header | accept | " << wsh.accept << std::endl;
-	o << "ws_header | is_valid | " << wsh.is_valid << std::endl;
-	o << "ws_header | status | " << wsh.status << std::endl;
-	o << "ws_header | status_msg | " << wsh.status_msg << std::endl;
-	o << "ws_header | connection | " << wsh.connection << std::endl;
-	o << "ws_header | content_length | " << wsh.content_length << std::endl;
-	return o;
+	struct sockaddr_storage remoteaddr;
+	unsigned int addrlen = sizeof remoteaddr;
+	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
+	if (newfd == -1)
+		throw std::domain_error("(webserv) Unacceptable connection.");
+	poll_list.push_back(make_pollin_fd(newfd));
+	fd_to_instance[newfd] = fd_to_instance[oldfd];
+	verbose(1) << "(webserv) New connection on fd (" << oldfd << ")->" << newfd << "." << std::endl;
 }
 
-std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
+int WebServ::catch_connection()
 {
-	o << "ws_server_instance | in_header:" << std::endl << wssi.in_header << std::endl;
-	o << "ws_server_instance | in_body:" << std::endl << wssi.in_body.c_str() << std::endl;
-	o << "ws_server_instance | port | ";
-	for (size_t i = 0; i < wssi.port.size(); i++)
-	{ o << wssi.port[i] << " "; }
-	o << std::endl;
-	o << "ws_server_instance | listen_sock | ";
-	for (size_t i = 0; i < wssi.listen_sock.size(); i++)
-	{ o << wssi.listen_sock[i] << " "; }
-	o << std::endl;
-	o << "ws_server_instance | config | " << wssi.config << std::endl;
-	return o;
+	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
+	int poll_count;
+	DataFold event;
+
+	while (lit)
+	{
+		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+		if (poll_count == -1)
+			throw std::domain_error("(webserv) Poll error.");
+		for (size_t i = 0; i < poll_list.size(); i++)
+			if (poll_list[i].revents & POLLIN)
+				return poll_list[i].fd;
+	}
+	return 0;
 }
-
-const DataFold ws_server_instance::operator[] (std::string df_query) const
-{ return this->config.get_val(df_query); }
-
-std::string ws_server_instance::val(std::string key) const
-{ return this->config.get<DataFold>(key)[key]; }
 
 ws_reply_instance::ws_reply_instance()
 {
@@ -148,12 +139,6 @@ ws_reply_instance::ws_reply_instance()
 	out_header.status = 500;
 	out_header.status_msg = "Internal Server Error";
 	out_header.connection = "close";
-}
-
-void ws_reply_instance::set_code(int code_n, std::string u_output)
-{
-	out_header.status = code_n;
-	out_header.status_msg = u_output;
 }
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
@@ -196,36 +181,6 @@ std::string ws_reply_instance::encapsulate()
 	out += out_body;
 	package_length = out.length();
 	return out;
-}
-
-void WebServ::add_to_poll(int oldfd)
-{
-	struct sockaddr_storage remoteaddr;
-	unsigned int addrlen = sizeof remoteaddr;
-	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
-	if (newfd == -1)
-		throw std::domain_error("(webserv) Unacceptable connection.");
-	poll_list.push_back(make_pollin_fd(newfd));
-	fd_to_instance[newfd] = fd_to_instance[oldfd];
-	verbose(1) << "(webserv) New connection on fd (" << oldfd << ")->" << newfd << "." << std::endl;
-}
-
-int WebServ::catch_connection()
-{
-	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
-	int poll_count;
-	DataFold event;
-
-	while (lit)
-	{
-		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
-		if (poll_count == -1)
-			throw std::domain_error("(webserv) Poll error.");
-		for (size_t i = 0; i < poll_list.size(); i++)
-			if (poll_list[i].revents & POLLIN)
-				return poll_list[i].fd;
-	}
-	return 0;
 }
 
 void WebServ::respond_connection_from(int fd)
@@ -276,16 +231,6 @@ void WebServ::init()
 	hook_it();
 	light_up();
 	flush_stdin();
-}
-
-void WebServ::load_defaults()
-{
-	if (config.getValStr("server_name") == "")
-		config.set("server_name", DEFAULT_SERVER_NAME);
-	if (config.getValStr("welcome_message") == "")
-		config.set("welcome_message", DEFAULT_WELCOME_MESSAGE);
-	if (config.getValStr("bye_message") == "")
-		config.set("bye_message", DEFAULT_BYE);
 }
 
 WebServ::WebServ(DataFold& u_config)

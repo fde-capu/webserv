@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 01:29:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 01:59:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,4 +206,59 @@ void WebServ::flush_stdin()
 {
 	std::string line;
 	std::getline(std::cin, line);
+}
+
+std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
+{
+	o << "ws_header | method | " << wsh.method << std::endl;
+	o << "ws_header | directory | " << wsh.directory << std::endl;
+	o << "ws_header | protocol | " << wsh.protocol << std::endl;
+	o << "ws_header | host | " << wsh.host << std::endl;
+	o << "ws_header | port | " << wsh.port << std::endl;
+	o << "ws_header | user_agent | " << wsh.user_agent << std::endl;
+	o << "ws_header | accept | " << wsh.accept << std::endl;
+	o << "ws_header | is_valid | " << wsh.is_valid << std::endl;
+	o << "ws_header | status | " << wsh.status << std::endl;
+	o << "ws_header | status_msg | " << wsh.status_msg << std::endl;
+	o << "ws_header | connection | " << wsh.connection << std::endl;
+	o << "ws_header | content_length | " << wsh.content_length << std::endl;
+	return o;
+}
+
+std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
+{
+	o << "ws_server_instance | in_header:" << std::endl << wssi.in_header << std::endl;
+	o << "ws_server_instance | in_body:" << std::endl << wssi.in_body.c_str() << std::endl;
+	o << "ws_server_instance | port | ";
+	for (size_t i = 0; i < wssi.port.size(); i++)
+	{ o << wssi.port[i] << " "; }
+	o << std::endl;
+	o << "ws_server_instance | listen_sock | ";
+	for (size_t i = 0; i < wssi.listen_sock.size(); i++)
+	{ o << wssi.listen_sock[i] << " "; }
+	o << std::endl;
+	o << "ws_server_instance | config | " << wssi.config << std::endl;
+	return o;
+}
+
+const DataFold ws_server_instance::operator[] (std::string df_query) const
+{ return this->config.get_val(df_query); }
+
+std::string ws_server_instance::val(std::string key) const
+{ return this->config.get<DataFold>(key)[key]; }
+
+void ws_reply_instance::set_code(int code_n, std::string u_output)
+{
+	out_header.status = code_n;
+	out_header.status_msg = u_output;
+}
+
+void WebServ::load_defaults()
+{
+	if (config.getValStr("server_name") == "")
+		config.set("server_name", DEFAULT_SERVER_NAME);
+	if (config.getValStr("welcome_message") == "")
+		config.set("welcome_message", DEFAULT_WELCOME_MESSAGE);
+	if (config.getValStr("bye_message") == "")
+		config.set("bye_message", DEFAULT_BYE);
 }
