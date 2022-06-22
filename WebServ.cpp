@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 15:18:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 16:26:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,32 +131,42 @@ int WebServ::catch_connection()
 	return 0;
 }
 
+void ws_header::header500()
+{
+	method = "";
+	directory = "";
+	protocol = "HTTP/1.1";
+	status = 500;
+	status_msg = "Internal Server Error";
+	connection = "close";
+}
+
 ws_reply_instance::ws_reply_instance()
 {
-	out_header.method = "";
-	out_header.directory = "/";
-	out_header.protocol = "HTTP/1.1";
-	out_header.status = 500;
-	out_header.status_msg = "Internal Server Error";
-	out_header.connection = "close";
+	out_header.header500();
 }
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
-	DataFold loops;
-	std::string root;
+	DataFold indexes;
 	std::string file_name;
 
+//	si.in_header.header500();
 	*this = ws_reply_instance();
+
 	verbose(1) << "[THINK] " << std::endl;
 	verbose(1) << si << std::endl;
-	loops = si.config.get("index");
+	indexes = si.config.get("index");
 	out_body = "";
-	while (loops.loop())
+	while (indexes.loop())
 	{
-		root = si.root_config.getValStr("root") + "/" + si.val("root");
-		file_name = root + si.in_header.directory + "/" + loops.val;
-		stool.remove_rep_char(file_name, '/');
+		if (si.val("root") == "")
+			break ;
+		file_name = si.root_config.getValStr("root") \
+				  + "/" + si.val("root") \
+				  + si.in_header.directory \
+				  + "/" + indexes.val;
+//		stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
 		verbose(1) << "Fetching " << file_name << std::endl;
 		FileString from_file(file_name.c_str());
 		out_body = from_file.content();
@@ -166,8 +176,15 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 			return;
 		}
 	}
-	set_code(404, "File Not Found");
-	verbose(1) << "(webserv) ! 404 " << file_name << std::endl;
+	if (si.val("root") == "")
+	{
+		set_code(301, "Forbidden");
+	}
+	else
+	{
+		set_code(404, "File Not Found");
+		verbose(1) << "(webserv) ! 404 " << file_name << std::endl;
+	}
 }
 
 ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)

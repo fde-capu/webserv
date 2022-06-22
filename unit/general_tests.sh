@@ -114,7 +114,7 @@ curl -v http://$name_server:3490 -H 'Host: unexistent_servername'
 { anounce F \
 \
 	':3491, another port, another server, another folder: \n
-	root ./unit/confs/htmlB3491.' \
+	root ./unit/confs/html-3491.' \
 \
 ; } 2> /dev/null
 
@@ -124,14 +124,13 @@ curl -v http://$name_server:3491
 
 { anounce G \
 \
-	':3492 is solenly a `server { listen 3492; }`,
-	this is an open port, but forbidden serverside.' \
+	':3492 is solenly a `server { listen 3492; }`, \n
+	this is an open port, but forbidden serverside, \n
+	because it has no location nor redirect.' \
 \
 ; } 2> /dev/null
 
 curl -v http://$name_server:3492
-
-exit;
 
 # H ################################################################
 
@@ -142,6 +141,8 @@ exit;
 ; } 2> /dev/null
 
 curl -v http://$name_server:3493 -L
+
+exit;
 
 # I ################################################################
 

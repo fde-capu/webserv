@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 14:21:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/22 16:29:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 struct ws_header
 {
+	ws_header();
 	std::string method;
 	std::string directory;
 	std::string protocol;
@@ -30,6 +31,7 @@ struct ws_header
 	int			status;
 	std::string status_msg;
 	std::string connection;
+	void header500();
 };
 std::ostream & operator<< (std::ostream & o, ws_header const &);
 

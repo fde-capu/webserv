@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/22 15:02:30 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/22 15:41:06 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -90,8 +90,10 @@ gt1:
 	$(TEST_SH)
 gt2:
 	./cgi_test.sh
-pk:
-	-pkill webserv
+k1:
+	-pkill $(NAME1)
+k2:
+	-pkill $(NAME2)
 ft:
 	@echo "Please run \`make ftcgi\` on another terminal.";
 	@echo "";
