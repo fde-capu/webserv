@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 14:58:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/23 16:54:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -314,8 +314,7 @@ std::string DataFold::quoted_val(const datafold_t &dt) const
 	if (dt.type & DF_TYPE_STRING)
 		out << apply_quotes(dt.val, DF_VAL_QUOTE);
 	if (dt.type & DF_TYPE_SUB)
-		out << "(str)DataFold.sub;";
-//		out << dt.sub;
+		out << dt.sub;
 	return out.str();
 }
 
@@ -705,6 +704,12 @@ bool DataFold::not_ended()
 { return !loop_ended(); }
 
 std::ostream& operator<< (std::ostream& o, DataFold const& self)
+{
+	o << self.string();
+	return o;
+}
+
+std::ostream& operator<< (std::ostream& o, datavec const& self)
 {
 	o << self.string();
 	return o;

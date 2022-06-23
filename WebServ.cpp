@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/23 16:16:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/23 16:46:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 		}
 	}
 
+	std::cout << "---===> " << si.val("location") << " <===---" << std::endl;
 	if (si.val("root") == "")
 	{
 		set_code(403, "Forbidden");

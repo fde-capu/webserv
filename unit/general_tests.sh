@@ -126,7 +126,7 @@ curl -v http://$name_server:3491
 \
 	':3492 is solenly a `server { listen 3492; }`, \n
 	this is an open port, but forbidden serverside, \n
-	because it has no location nor redirect.' \
+	because it has no location, root, nor redirect.' \
 \
 ; } 2> /dev/null
 
@@ -142,13 +142,12 @@ curl -v http://$name_server:3492
 
 curl -v http://$name_server:3493 -L
 
-exit;
-
 # I ################################################################
 
 { anounce I \
 \
-	' - client NOT redirecting (gets 301):' \
+	' - client NOT redirecting (gets 301):\n
+	(dumb test, this is client-side).' \
 \
 ; } 2> /dev/null
 
@@ -156,7 +155,14 @@ curl -v http://$name_server:3493
 
 # J ################################################################
 
-{ divider; } 2> /dev/null
+{ anounce J \
+\
+	'Testing 4242 specifics. Will now use location.' \
+\
+; } 2> /dev/null
+
+curl -v http://$name_server:4242
+
 
 #curl -v http://$name_server:4242/directory/
 #curl -vLD- http://$name_server:4242/directory/youpi.bla
