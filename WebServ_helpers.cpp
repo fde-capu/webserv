@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 16:36:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/23 16:15:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,11 +272,14 @@ const DataFold ws_server_instance::operator[] (std::string df_query) const
 std::string ws_server_instance::val(std::string key) const
 { return this->config.get<DataFold>(key)[key]; }
 
-void ws_reply_instance::set_code(int code_n, std::string u_output)
+void ws_reply_instance::set_code(int code_n, const std::string& u_output)
 {
 	out_header.status = code_n;
 	out_header.status_msg = u_output;
 }
+
+void ws_reply_instance::set_redirect(const std::string& target)
+{ out_header.location = target; }
 
 void WebServ::load_defaults()
 {
@@ -299,6 +302,8 @@ std::string ws_reply_instance::encapsulate()
 	if (out_header.connection != "")
 		out += "Connection: " + out_header.connection + "\n";
 	out += "Content-Length: " + itoa(out_body.length()) + "\n";
+	if (out_header.location != "")
+		out += "Location: " + out_header.location + "\n";
 	out += "\n";
 	out += out_body;
 	package_length = out.length();

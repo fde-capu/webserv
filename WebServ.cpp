@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 17:02:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/23 16:16:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,17 +160,17 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	std::vector<std::string> s_return(si.config.get_vector_str("return"));
 	if (!s_return.empty())
 	{
-		std::cout << "--->" << s_return[0] << std::endl;
 		if (atoi(s_return[0].c_str()) == 301)
 		{
-			set_code(302, "MOCK --> " + s_return[1]);
+			set_code(301, "Moved Permanently");
+			set_redirect(s_return[1]);
 			return ;
 		}
 	}
 
 	if (si.val("root") == "")
 	{
-		set_code(301, "Forbidden");
+		set_code(403, "Forbidden");
 		return ;
 	}
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 16:29:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/23 16:14:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,15 @@ struct ws_header
 	std::string directory;
 	std::string protocol;
 	std::string host;
-	int port;
+	int			port;
 	std::string user_agent;
 	std::string accept;
 	bool		is_valid;
 	int			status;
 	std::string status_msg;
 	std::string connection;
-	void header500();
+	std::string location;
+	void		header500();
 };
 std::ostream & operator<< (std::ostream & o, ws_header const &);
 
@@ -56,7 +57,8 @@ struct ws_reply_instance
 	size_t package_length;
 	ws_reply_instance();
 	std::string encapsulate();
-	void set_code(int, std::string);
+	void set_code(int, const std::string&);
+	void set_redirect(const std::string&);
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert
