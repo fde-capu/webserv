@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/24 16:18:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/24 16:27:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,30 +181,22 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 			split(si.config.getValStr("accepted_request_methods"), " ") :
 			split(std::string(DEFAULT_ACCEPTED_METHODS), " ")
 	);
-	bool method_accepted;
+	bool method_accepted(false);
 
 	if (!locations.empty())
 	{
 		DataFold loc;
-		DataFold tmp;
 
 		while (locations.loop())
 		{
 			loc = locations.val;
 			if (loc.getValStr("uri") == si.in_header.directory)
-			{
 				while (loc.loop())
-				{
 					if (loc.key == "accepted_request_methods")
-					{
 						accepted_methods = loc.get("accepted_request_methods");
-					}
-				}
-			}
 		}
 	}
 
-	method_accepted = false;
 	while (accepted_methods.loop())
 	{
 		if (si.in_header.method == accepted_methods.val)
