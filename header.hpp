@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 14:27:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/24 16:12:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ bool valid_line(std::string line);
 std::string get_parameter(std::string line);
 std::string get_value(std::string line);
 
-# define STATUS_200 "HTTP/1.1 200 OK"
+# define DEFAULT_ACCEPTED_METHODS "GET"
 
 # define SERVER_UP "Server is up."
 # define SERVER_DN "Server is dn."

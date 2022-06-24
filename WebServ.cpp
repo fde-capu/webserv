@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/24 15:35:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/24 16:18:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,11 +176,17 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 		return ;
 	}
 
+	DataFold accepted_methods(
+		si.config.getValStr("accepted_request_methods") != "" ?
+			split(si.config.getValStr("accepted_request_methods"), " ") :
+			split(std::string(DEFAULT_ACCEPTED_METHODS), " ")
+	);
+	bool method_accepted;
+
 	if (!locations.empty())
 	{
 		DataFold loc;
 		DataFold tmp;
-		bool pass;
 
 		while (locations.loop())
 		{
@@ -191,22 +197,23 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 				{
 					if (loc.key == "accepted_request_methods")
 					{
-						tmp = loc.get("accepted_request_methods");
-						pass = false;
-						while (tmp.loop())
-						{
-							if (si.in_header.method == tmp.val)
-								pass = true;
-						}
-						if (!pass)
-						{
-							set_code(405, "Method Not Allowed");
-							return ;
-						}
+						accepted_methods = loc.get("accepted_request_methods");
 					}
 				}
 			}
 		}
+	}
+
+	method_accepted = false;
+	while (accepted_methods.loop())
+	{
+		if (si.in_header.method == accepted_methods.val)
+			method_accepted = true;
+	}
+	if (!method_accepted)
+	{
+		set_code(405, "Method Not Allowed");
+		return ;
 	}
 
 	indexes = si.config.get("index");

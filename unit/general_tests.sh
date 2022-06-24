@@ -109,9 +109,9 @@ curl -v http://$name_server:3490 -H 'Host: krazything'
 
 curl -v http://$name_server:3490 -H 'Host: unexistent_servername'
 
-# F ################################################################
+# FA ###############################################################
 
-{ anounce F \
+{ anounce FA \
 \
 	':3491, another port, another server, another folder: \n
 	root ./unit/confs/html-3491.' \
@@ -119,6 +119,27 @@ curl -v http://$name_server:3490 -H 'Host: unexistent_servername'
 ; } 2> /dev/null
 
 curl -v http://$name_server:3491
+
+# FB ###############################################################
+
+{ anounce FB \
+\
+	':3491 accepts only GET. Testing POST is not allowed.\n
+	Obs.: curl fails if script is not called from /unit.' \
+\
+; } 2> /dev/null
+
+curl -v -X POST -F 'file=@1MiB.noise' http://$name_server:3491
+
+# FC ###############################################################
+
+{ anounce FC \
+\
+	':3491 accepts only GET. Testing DELETE is not allowed.' \
+\
+; } 2> /dev/null
+
+curl -v -X DELETE http://$name_server:3491
 
 # G ################################################################
 
@@ -183,6 +204,16 @@ curl -vL -X POST -F 'file=@1MiB.noise' http://$name_server:4242
 ; } 2> /dev/null
 
 curl -vL -X PUT -d faa=fee -d fii=foo http://$name_server:4242
+
+# KC ###############################################################
+
+{ anounce KC \
+\
+	'DELETE :4242 at root (/) should fail.' \
+\
+; } 2> /dev/null
+
+curl -vL -X DELETE http://$name_server:4242
 
 
 #curl -v http://$name_server:4242/directory/
