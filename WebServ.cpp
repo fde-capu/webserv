@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/24 16:27:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/24 16:31:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	verbose(1) << si << std::endl;
 	out_body = "";
 
+////////// 301
 	std::vector<std::string> s_return(si.config.get_vector_str("return"));
 	if (!s_return.empty())
 	{
@@ -168,21 +169,21 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 		}
 	}
 
+////////// 403
 	DataFold locations = si.config.get<DataFold>("location");
-
 	if (locations.empty() && si.val("root") == "")
 	{
 		set_code(403, "Forbidden");
 		return ;
 	}
 
+////////// 405
 	DataFold accepted_methods(
 		si.config.getValStr("accepted_request_methods") != "" ?
 			split(si.config.getValStr("accepted_request_methods"), " ") :
 			split(std::string(DEFAULT_ACCEPTED_METHODS), " ")
 	);
 	bool method_accepted(false);
-
 	if (!locations.empty())
 	{
 		DataFold loc;
@@ -196,18 +197,16 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 						accepted_methods = loc.get("accepted_request_methods");
 		}
 	}
-
 	while (accepted_methods.loop())
-	{
 		if (si.in_header.method == accepted_methods.val)
 			method_accepted = true;
-	}
 	if (!method_accepted)
 	{
 		set_code(405, "Method Not Allowed");
 		return ;
 	}
 
+////////// 200
 	indexes = si.config.get("index");
 	while (indexes.loop())
 	{
@@ -226,6 +225,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 		}
 	}
 	
+////////// 404
 	set_code(404, "File Not Found");
 	verbose(1) << "(webserv) ! 404 " << file_name << std::endl;
 }
