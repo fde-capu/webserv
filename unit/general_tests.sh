@@ -157,11 +157,32 @@ curl -v http://$name_server:3493
 
 { anounce J \
 \
-	'Testing 4242 specifics. Will now use location.' \
+	'Testing :4242 specifics. Will now use location. \n
+	GET on / should be ok.' \
 \
 ; } 2> /dev/null
 
 curl -v http://$name_server:4242
+
+# KA ###############################################################
+
+{ anounce KA \
+\
+	'POST :4242 at root (/) should fail.' \
+\
+; } 2> /dev/null
+
+curl -vL -X POST -F 'file=@1MiB.noise' http://$name_server:4242 
+
+# KB ###############################################################
+
+{ anounce KB \
+\
+	'PUT :4242 at root (/) should fail.' \
+\
+; } 2> /dev/null
+
+curl -vL -X PUT -d faa=fee -d fii=foo http://$name_server:4242
 
 
 #curl -v http://$name_server:4242/directory/

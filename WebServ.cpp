@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/23 16:46:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/24 15:35:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,11 +168,45 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 		}
 	}
 
-	std::cout << "---===> " << si.val("location") << " <===---" << std::endl;
-	if (si.val("root") == "")
+	DataFold locations = si.config.get<DataFold>("location");
+
+	if (locations.empty() && si.val("root") == "")
 	{
 		set_code(403, "Forbidden");
 		return ;
+	}
+
+	if (!locations.empty())
+	{
+		DataFold loc;
+		DataFold tmp;
+		bool pass;
+
+		while (locations.loop())
+		{
+			loc = locations.val;
+			if (loc.getValStr("uri") == si.in_header.directory)
+			{
+				while (loc.loop())
+				{
+					if (loc.key == "accepted_request_methods")
+					{
+						tmp = loc.get("accepted_request_methods");
+						pass = false;
+						while (tmp.loop())
+						{
+							if (si.in_header.method == tmp.val)
+								pass = true;
+						}
+						if (!pass)
+						{
+							set_code(405, "Method Not Allowed");
+							return ;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	indexes = si.config.get("index");

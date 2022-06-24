@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 15:19:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/24 15:00:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -372,6 +372,12 @@ bool isWord(const std::string w)
 
 bool StringTools::isWord(const std::string w) const
 { return isAllInSet(w, ST_WORD_SET); }
+
+bool isWordContained(const std::string& word, const std::string& big_string)
+{ return stool.isWordContained(word, big_string); }
+
+bool StringTools::isWordContained(const std::string& word, const std::string& big_string) const
+{ return isWordInWordSet(word, split(big_string, " ")); }
 
 bool isWordInWordSet(std::string w, std::vector<std::string> vstr)
 { return stool.isWordInWordSet(w, vstr); }
