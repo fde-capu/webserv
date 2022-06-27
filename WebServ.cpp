@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/27 16:29:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/27 19:03:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,6 +234,7 @@ ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
 {
 	ws_server_instance si;
 	ws_server_instance *choose;
+	std::cout << "!!!!!!!!!!!!!!!" << raw_data << "!!!!!!!!!!!!" << std::endl;
 	ws_header in = get_header(raw_data);
 
 	choose = 0;

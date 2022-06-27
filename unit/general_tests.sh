@@ -123,16 +123,16 @@ done
 #
 #curl -v http://$name_server:3491
 #
-# FB ###############################################################
-
-{ anounce FB \
-\
-	':3491 accepts only GET. Testing POST is not allowed.' \
-\
-; } 2> /dev/null
-
-curl -v -X POST -F "file=@${MYDIR}/1MiB.noise" http://$name_server:3491
-
+## FB ###############################################################
+#
+#{ anounce FB \
+#\
+#	':3491 accepts only GET. Testing POST is not allowed.' \
+#\
+#; } 2> /dev/null
+#
+#curl -v -X POST -F "file=@${MYDIR}/1MiB.noise" http://$name_server:3491
+#
 ## FC ###############################################################
 #
 #{ anounce FC \
@@ -187,16 +187,16 @@ curl -v -X POST -F "file=@${MYDIR}/1MiB.noise" http://$name_server:3491
 #
 #curl -v http://$name_server:4242
 #
-# KA ###############################################################
-
-{ anounce KA \
-\
-	'POST :4242 at root (/) should fail.' \
-\
-; } 2> /dev/null
-
-curl -vL -X POST -F "file=@${MYDIR}1MiB.noise" http://$name_server:4242 
-
+## KA ###############################################################
+#
+#{ anounce KA \
+#\
+#	'POST :4242 at root (/) should fail, 405 not allowed.' \
+#\
+#; } 2> /dev/null
+#
+#curl -vL -X POST -F "file=@${MYDIR}/1MiB.noise" http://$name_server:4242 
+#
 ## KB ###############################################################
 #
 #{ anounce KB \
@@ -217,17 +217,36 @@ curl -vL -X POST -F "file=@${MYDIR}1MiB.noise" http://$name_server:4242
 #
 #curl -vL -X DELETE http://$name_server:4242
 #
-# L ###############################################################
+# LA ###############################################################
 
-{ anounce L \
+{ anounce LA \
 \
-	'- /post_body must answer anything to POST request with a \n
-	maxBody of 100.' \
+	'/post_body rejects all but POST (2 tests).' \
 \
 ; } 2> /dev/null
 
-curl -v -X POST -F "file=@${MYDIR}1MiB.noise" http://$name_server:4242/post_body
+#curl -v -X GET http://$name_server:4242/post_body
+#divider
+curl -v -X DDELETE http://$name_server:4242/post_body
 
+# LB ###############################################################
+#
+#{ anounce LB \
+#\
+#	'- /post_body must answer anything to POST request with a \n
+#	maxBody of 100. Three tests: 99B, 100B and 101B.' \
+#\
+#; } 2> /dev/null
+#
+#curl -vF "file=@${MYDIR}/99B.noise" http://$name_server:4242/post_body
+#divider
+#curl -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
+#divider
+#curl -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
+
+#################################################################
+#################################################################
+#################################################################
 
 #curl -v http://$name_server:4242/directory/
 #curl -vLD- http://$name_server:4242/directory/youpi.bla

@@ -48,3 +48,6 @@
 #  `make nginx-relog && make nginx-r && curl -vL -X POST -F 'file=@1MiB.noise' http://127.0.0.1:4242/directory/youpi.bla && make nginx-catlog`
 #  `make nginx-relog && make nginx-r && curl -vL -X POST --output cgi_returned_file -F "a=@100MB.noise" http://127.0.0.1:4242/directory/youpi.bla && make nginx-catlog`
 
+##
+# Do create noise files:
+#  `head -c 100 /dev/urandom > 100B.noise`
