@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/24 16:31:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/27 16:29:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void WebServ::hook_it()
 				instance[i].listen_sock.push_back(bind_socket_to_local(instance[i].port[j]));
 				ufds = pollfd();
 				ufds.fd = instance[i].listen_sock[j];
-				ufds.events = POLLIN;
+				ufds.events = POLLIN; // | POLLOUT (check read and write same time..?)
 				fd_to_port[ufds.fd] = instance[i].port[j];
 				poll_list.push_back(ufds);
 				if (listen(instance[i].listen_sock[j], SOMAXCONN) != 0)
