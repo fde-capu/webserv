@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/27 19:03:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/28 17:00:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int WebServ::bind_socket_to_local(int u_port)
 	struct addrinfo *result, *rp;
 	int sfd, s;
 	int yes = 1;
+	int no = 0;
 
 	hints = addrinfo();
 	hints.ai_flags = AI_PASSIVE;
@@ -44,10 +45,12 @@ int WebServ::bind_socket_to_local(int u_port)
 		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if (sfd == -1)
 			throw std::domain_error("(webserv) Socket creation failed.");
-		if (fcntl(sfd, F_SETFD, O_NONBLOCK) == -1)
+		if (fcntl(sfd, F_SETFL, O_NONBLOCK) == -1)
 			throw std::domain_error("(webserv) Failed to set non-blocking flag.");
 		if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
 			throw std::domain_error("(webserv) Could not unlock the socket.");
+		if (setsockopt(sfd, SOL_SOCKET, SO_RCVTIMEO, &no, sizeof(int)) == -1)
+			throw std::domain_error("(webserv) Unsuccessfull attempt to set socket receive timeout to zero.");
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 		close(sfd);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/24 16:12:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/28 16:04:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
 # include "DataFold.hpp"
 # include "CircularBuffer.hpp"
 # include <algorithm>
-# include <iostream>
 # include <vector>
 # include <arpa/inet.h>
 # include <netdb.h>

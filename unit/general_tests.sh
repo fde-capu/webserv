@@ -227,7 +227,7 @@ done
 
 #curl -v -X GET http://$name_server:4242/post_body
 #divider
-curl -v -X DDELETE http://$name_server:4242/post_body
+curl -v -X DELETE http://$name_server:4242/post_body
 
 # LB ###############################################################
 #
