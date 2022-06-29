@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 15:28:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 15:30:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,14 +159,14 @@ ws_reply_instance::ws_reply_instance()
 
 int ws_reply_instance::is_301(ws_server_instance& si)
 {
-	std::vector<std::string> locations;
-	locations = si.config.get_vector_str("return");
-	if (!locations.empty())
+	std::vector<std::string> returns;
+	returns = si.config.get_vector_str("return");
+	if (!returns.empty())
 	{
-		if (atoi(locations[0].c_str()) == 301)
+		if (atoi(returns[0].c_str()) == 301)
 		{
 			set_code(301, "Moved Permanently");
-			set_redirect(locations[1]);
+			set_redirect(returns[1]);
 			return 1;
 		}
 	}
@@ -186,9 +186,6 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	out_body = "";
 
 	if (is_301(si)) return;
-
-////////// 301
-//////////
 
 	locations = si.config.get<DataFold>("location");
 
