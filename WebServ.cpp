@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 04:42:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 15:28:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,10 +157,27 @@ ws_reply_instance::ws_reply_instance()
 	out_header.header500();
 }
 
+int ws_reply_instance::is_301(ws_server_instance& si)
+{
+	std::vector<std::string> locations;
+	locations = si.config.get_vector_str("return");
+	if (!locations.empty())
+	{
+		if (atoi(locations[0].c_str()) == 301)
+		{
+			set_code(301, "Moved Permanently");
+			set_redirect(locations[1]);
+			return 1;
+		}
+	}
+	return 0;
+}
+
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
 	DataFold indexes;
 	std::string file_name;
+	DataFold locations;
 
 	*this = ws_reply_instance();
 
@@ -168,20 +185,14 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	verbose(1) << si << std::endl;
 	out_body = "";
 
+	if (is_301(si)) return;
+
 ////////// 301
-	std::vector<std::string> s_return(si.config.get_vector_str("return"));
-	if (!s_return.empty())
-	{
-		if (atoi(s_return[0].c_str()) == 301)
-		{
-			set_code(301, "Moved Permanently");
-			set_redirect(s_return[1]);
-			return ;
-		}
-	}
+//////////
+
+	locations = si.config.get<DataFold>("location");
 
 ////////// 403
-	DataFold locations = si.config.get<DataFold>("location");
 	if (locations.empty() && si.val("root") == "")
 	{
 		set_code(403, "Forbidden");
@@ -234,7 +245,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 			if (out_body != "")
 			{
 				set_code(200, "OK");
-				return;
+				return ;
 			}
 		}
 	}
@@ -242,12 +253,20 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 ////////// POST
 	if (si.in_header.method == "POST")
 	{
+		int max_size;
+		max_size = si.config.get<int>("client_max_body_size");
+		verbose(1) << "(webserv) Accepting at most " << max_size << " bytes." << std::endl;
+
 		file_name = "file_name";
 		std::string dir_name = "dir_name";
 
 		verbose(1) << "(webserv) " << file_name << \
 			" will be saved into " << dir_name << \
 			".";
+
+		out_body = "\"Anything\"";
+		set_code(202, "Accepted");
+		return ;
 	}
 
 ////////// 404

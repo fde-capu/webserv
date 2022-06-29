@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 02:17:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 15:28:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ struct ws_reply_instance
 	void set_code(int, const std::string&);
 	void set_redirect(const std::string&);
 
+	int is_301(ws_server_instance&);
+
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert
 		ws_reply_instance(std::string&);	// to ws_server_instance&.
@@ -108,7 +110,7 @@ class WebServ
 		void init();
 		void light_up();
 
-		// Usefull services that needs sharing with CgiWrapper:
+		// Usefull services for everyone!
 		static int bind_socket_to_local(int);
 		struct pollfd make_pollin_fd(int) const;
 		static struct ws_header get_header(const std::string&);
