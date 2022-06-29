@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 02:52:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 04:42:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,34 +218,48 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	}
 
 ////////// 200
-	indexes = si.config.get("index");
-	while (indexes.loop())
+	if (si.in_header.method == "GET")
 	{
-		file_name = si.root_config.getValStr("root") \
-				  + "/" + si.val("root") \
-				  + si.in_header.directory \
-				  + "/" + indexes.val;
-//		stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
-		verbose(1) << "Fetching " << file_name << std::endl;
-		FileString from_file(file_name.c_str());
-		out_body = from_file.content();
-		if (out_body != "")
+		indexes = si.config.get("index");
+		while (indexes.loop())
 		{
-			set_code(200, "OK");
-			return;
+			file_name = si.root_config.getValStr("root") \
+						+ "/" + si.val("root") \
+						+ si.in_header.directory \
+						+ "/" + indexes.val;
+			//		stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
+			verbose(3) << "(webserv) Fetching " << file_name << std::endl;
+			FileString from_file(file_name.c_str());
+			out_body = from_file.content();
+			if (out_body != "")
+			{
+				set_code(200, "OK");
+				return;
+			}
 		}
 	}
 	
+////////// POST
+	if (si.in_header.method == "POST")
+	{
+		file_name = "file_name";
+		std::string dir_name = "dir_name";
+
+		verbose(1) << "(webserv) " << file_name << \
+			" will be saved into " << dir_name << \
+			".";
+	}
+
 ////////// 404
 	set_code(404, "File Not Found");
-	verbose(1) << "(webserv) ! 404 " << file_name << std::endl;
+	verbose(1) << "(webserv) ! 404 " << file_name \
+		<< std::endl;
 }
 
 ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
 {
 	ws_server_instance si;
 	ws_server_instance *choose;
-	std::cout << "!!!!!!!!!!!!!!!" << raw_data << "!!!!!!!!!!!!" << std::endl;
 	ws_header in = get_header(raw_data);
 
 	choose = 0;

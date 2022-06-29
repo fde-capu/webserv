@@ -33,6 +33,13 @@ name_server="127.0.0.1";
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
 
+div()
+{
+	{ set +x; } 2> /dev/null
+	echo "\n # # # # # #\n"
+	set -x
+}
+
 divider()
 {
 	{ set +x; } 2> /dev/null
@@ -225,24 +232,24 @@ done
 \
 ; } 2> /dev/null
 
-#curl -v -X GET http://$name_server:4242/post_body
-#divider
-curl -v -X DELETE http://$name_server:4242/post_body
+curl -vD- -X GET http://$name_server:4242/post_body
+div
+curl -vD- -X DELETE http://$name_server:4242/post_body
 
 # LB ###############################################################
-#
-#{ anounce LB \
-#\
-#	'- /post_body must answer anything to POST request with a \n
-#	maxBody of 100. Three tests: 99B, 100B and 101B.' \
-#\
-#; } 2> /dev/null
-#
-#curl -vF "file=@${MYDIR}/99B.noise" http://$name_server:4242/post_body
-#divider
-#curl -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
-#divider
-#curl -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
+
+{ anounce LB \
+\
+	'- /post_body must answer anything to POST request with a \n
+	maxBody of 100. Three tests: 99B, 100B and 101B.' \
+\
+; } 2> /dev/null
+
+curl -X POST -vF "file=@${MYDIR}/99B.noise" http://$name_server:4242/post_body
+div
+curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
+div
+curl -X POST -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
 
 #################################################################
 #################################################################
