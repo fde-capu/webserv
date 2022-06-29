@@ -61,18 +61,18 @@ done
 
 ## A ################################################################
 #
-#{ anounce A \
-#\
-#	':3490 will demonstrate the implementations. \n
-#	It is bound to directory ./unit/confs/html.	\n
-#	Must receive 200 OK and some html body from index.html.' \
-#\
-#; } 2> /dev/null
-#
-#if ! curl -v http://$name_server:3490; then
-#	 { anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
-#	 exit 1;
-#fi
+{ anounce A \
+\
+	':3490 will demonstrate the implementations. \n
+	It is bound to directory ./unit/confs/html.	\n
+	Must receive 200 OK and some html body from index.html.' \
+\
+; } 2> /dev/null
+
+if ! curl -v http://$name_server:3490; then
+	 { anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
+	 exit 1;
+fi
 #
 ## B ################################################################
 #
@@ -156,22 +156,22 @@ done
 #\
 #	':3492 is solenly a `server { listen 3492; }`, \n
 #	this is an open port, but forbidden serverside, \n
-#	because it has no location, root, nor redirect.' \
+#	because it has no location, root, nor redirect. (403)' \
 #\
 #; } 2> /dev/null
 #
 #curl -v http://$name_server:3492
+##
+### H ################################################################
+##
+#{ anounce H \
+#\
+#	':3493 server redirects 301 to :3490. \n
+#	- client redirecting:' \
+#\
+#; } 2> /dev/null
 #
-## H ################################################################
-#
-{ anounce H \
-\
-	':3493 server redirects 301 to :3490. \n
-	- client redirecting:' \
-\
-; } 2> /dev/null
-
-curl -v http://$name_server:3493 -L
+#curl -v http://$name_server:3493 -L
 #
 ## I ################################################################
 #
@@ -205,31 +205,31 @@ curl -v http://$name_server:3493 -L
 #
 #curl -vL -X POST -F "file=@${MYDIR}/1MiB.noise" http://$name_server:4242 
 #
-## KB ###############################################################
+### KB ###############################################################
 #
 #{ anounce KB \
 #\
-#	'PUT :4242 at root (/) should fail.' \
+#	'PUT :4242 at root (/) also should fail. 405' \
 #\
 #; } 2> /dev/null
 #
 #curl -vL -X PUT -d faa=fee -d fii=foo http://$name_server:4242
 #
-## KC ###############################################################
+### KC ###############################################################
 #
 #{ anounce KC \
 #\
-#	'DELETE :4242 at root (/) should fail.' \
+#	'DELETE :4242 at root (/) also should fail. 405' \
 #\
 #; } 2> /dev/null
 #
 #curl -vL -X DELETE http://$name_server:4242
 #
-# LA ###############################################################
+### LA ###############################################################
 #
 #{ anounce LA \
 #\
-#	'/post_body rejects all but POST (2 tests).' \
+#	'/post_body rejects all but POST (2 tests). 405' \
 #\
 #; } 2> /dev/null
 #
@@ -242,7 +242,7 @@ curl -v http://$name_server:3493 -L
 #{ anounce LB \
 #\
 #	'- /post_body must answer anything to POST request with a \n
-#	maxBody of 100. Three tests: 99B, 100B and 101B.' \
+#	maxBody of 100. Three tests: 99B (200), 100B (200) and 101B. (405)' \
 #\
 #; } 2> /dev/null
 #

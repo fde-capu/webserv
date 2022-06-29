@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 15:28:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 15:57:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,11 @@ struct ws_reply_instance
 	void set_redirect(const std::string&);
 
 	int is_301(ws_server_instance&);
+	int is_403(ws_server_instance&);
+	int is_405(ws_server_instance&);
+	int is_200(ws_server_instance&);
+	int is_202(ws_server_instance&);
+	int is_404(ws_server_instance&);
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert

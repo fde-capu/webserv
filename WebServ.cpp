@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 15:32:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 16:00:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,9 +159,7 @@ ws_reply_instance::ws_reply_instance()
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
-	DataFold indexes;
 	std::string file_name;
-	DataFold locations;
 
 	*this = ws_reply_instance();
 
@@ -169,91 +167,15 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	verbose(1) << si << std::endl;
 	out_body = "";
 
-	if (is_301(si)) return;
+	if (is_301(si)) return ;
+	if (is_403(si)) return ;
+	if (is_405(si)) return ;
+	if (is_200(si)) return ;
+	if (is_202(si)) return ;
+	if (is_404(si)) return ;
 
-	locations = si.config.get<DataFold>("location");
-
-////////// 403
-	if (locations.empty() && si.val("root") == "")
-	{
-		set_code(403, "Forbidden");
-		return ;
-	}
-
-////////// 405
-	DataFold accepted_methods(
-		si.config.getValStr("accepted_request_methods") != "" ?
-			split(si.config.getValStr("accepted_request_methods"), " ") :
-			split(std::string(DEFAULT_ACCEPTED_METHODS), " ")
-	);
-	bool method_accepted(false);
-	if (!locations.empty())
-	{
-		DataFold loc;
-
-		while (locations.loop())
-		{
-			loc = locations.val;
-			if (loc.getValStr("uri") == si.in_header.directory)
-				while (loc.loop())
-					if (loc.key == "accepted_request_methods")
-						accepted_methods = loc.get("accepted_request_methods");
-		}
-	}
-	while (accepted_methods.loop())
-		if (si.in_header.method == accepted_methods.val)
-			method_accepted = true;
-	if (!method_accepted)
-	{
-		set_code(405, "Method Not Allowed");
-		return ;
-	}
-
-////////// 200
-	if (si.in_header.method == "GET")
-	{
-		indexes = si.config.get("index");
-		while (indexes.loop())
-		{
-			file_name = si.root_config.getValStr("root") \
-						+ "/" + si.val("root") \
-						+ si.in_header.directory \
-						+ "/" + indexes.val;
-			//		stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
-			verbose(3) << "(webserv) Fetching " << file_name << std::endl;
-			FileString from_file(file_name.c_str());
-			out_body = from_file.content();
-			if (out_body != "")
-			{
-				set_code(200, "OK");
-				return ;
-			}
-		}
-	}
-	
-////////// POST
-	if (si.in_header.method == "POST")
-	{
-		int max_size;
-		max_size = si.config.get<int>("client_max_body_size");
-		verbose(1) << "(webserv) Accepting at most " << max_size << " bytes." << std::endl;
-
-		file_name = "file_name";
-		std::string dir_name = "dir_name";
-
-		verbose(1) << "(webserv) " << file_name << \
-			" will be saved into " << dir_name << \
-			".";
-
-		out_body = "\"Anything\"";
-		set_code(202, "Accepted");
-		return ;
-	}
-
-////////// 404
-	set_code(404, "File Not Found");
-	verbose(1) << "(webserv) ! 404 " << file_name \
-		<< std::endl;
+	set_code(420, "Enhance Your Calm");
+	out_body = "Left alone your request.";
 }
 
 ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
