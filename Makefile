@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/24 14:23:16 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/06/29 15:33:08 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,8 @@ ENVS	=	-DAGV_SKIP_CHECK=1
 
 SRCS	=	FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp \
-			CircularBuffer.cpp WebServ_helpers.cpp CgiWrapper.cpp
+			CircularBuffer.cpp WebServ_helpers.cpp \
+			http_routes.cpp CgiWrapper.cpp
 SRCS1	=	main.cpp
 SRCS2	=	main_cgi.cpp
 HEAD	=	Makefile header.hpp \
