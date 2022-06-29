@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/23 16:14:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 02:17:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ class WebServ
 		ws_server_instance choose_instance(std::string&, int);
 		void respond_connection_from(int);
 		void load_defaults();
+		static void setnonblocking(int);
 
 	public:
 		WebServ(DataFold&);
@@ -107,7 +108,7 @@ class WebServ
 		void init();
 		void light_up();
 
-	public: // Usefull services that needs sharing with CgiWrapper.
+		// Usefull services that needs sharing with CgiWrapper:
 		static int bind_socket_to_local(int);
 		struct pollfd make_pollin_fd(int) const;
 		static struct ws_header get_header(const std::string&);
