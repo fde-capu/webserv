@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 01:57:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 02:54:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,6 @@ void CircularBuffer::receive_until_eof()
 	bytes = read(fd, const_cast<char *>(memory), size);
 	if (bytes == -1 && fd == 0) // stdin
 		return set_eof();
-	if (bytes == -1)
-		throw std::domain_error("(CircularBuffer) Something went wrong receiving data.");
 	verbose(1) << "(CircularBuffer) bytes " << bytes << " size " << size << " (" << std::string(memory).substr(0, bytes) << ")" << std::endl;
 	if (bytes == 0)
 		return set_eof();

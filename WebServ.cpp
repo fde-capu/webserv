@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 02:17:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 02:52:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ void WebServ::add_to_poll(int oldfd)
 	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
 	if (newfd == -1)
 		throw std::domain_error("(webserv) Unacceptable connection.");
+	setnonblocking(newfd);
 	poll_list.push_back(make_pollin_fd(newfd));
 	fd_to_port[newfd] = fd_to_port[oldfd];
 	verbose(1) << "(webserv) ======" << std::endl << "(webserv) New connection from fd (" << oldfd << ")->" << newfd << "." << std::endl;
