@@ -59,6 +59,8 @@ do
 	{ divider "#"; } 2> /dev/null
 done
 
+if false; then
+
 ## A ################################################################
 
 { anounce A \
@@ -237,7 +239,8 @@ curl -vD- -X GET http://$name_server:4242/post_body
 { div; } 2> /dev/null
 curl -vD- -X DELETE http://$name_server:4242/post_body
 
- LB ###############################################################
+## LB ###############################################################
+fi
 
 { anounce LB \
 \
@@ -251,6 +254,7 @@ curl -X POST -vF "file=@${MYDIR}/99B.noise" http://$name_server:4242/post_body
 curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
 { div; } 2> /dev/null
 curl -X POST -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
+{ div; } 2> /dev/null
 
 #################################################################
 #################################################################

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 16:45:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 17:00:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,35 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	return 405;
 }
 
+int ws_reply_instance::is_404(ws_server_instance& si)
+{
+	DataFold indexes;
+	std::string file_name;
+	DataFold locations(si.config.get<DataFold>("location"));
+
+	if (si.in_header.method == "GET")
+	{
+		indexes = si.config.get("index");
+		while (indexes.loop())
+		{
+			file_name = si.root_config.getValStr("root") \
+						+ "/" + si.val("root") \
+						+ si.in_header.directory \
+						+ "/" + indexes.val;
+			//stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
+			verbose(3) << "(webserv) Fetching " << file_name << std::endl;
+			FileString from_file(file_name.c_str());
+			out_body = from_file.content();
+			if (out_body != "")
+				return 0;
+		}
+	}
+	set_code(404, "File Not Found");
+	verbose(1) << "(webserv) ! 404 " << file_name \
+		<< std::endl;
+	return 404;
+}
+
 int ws_reply_instance::is_200(ws_server_instance& si)
 {
 	DataFold indexes;
@@ -117,38 +146,9 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 			" will be saved into " << dir_name << \
 			".";
 
-		out_body = "anything";
 		set_code(202, "Accepted");
+		out_body = "anything";
 		return 202;
 	}
 	return 0;
-}
-
-int ws_reply_instance::is_404(ws_server_instance& si)
-{
-	DataFold indexes;
-	std::string file_name;
-	DataFold locations(si.config.get<DataFold>("location"));
-
-	if (si.in_header.method == "GET")
-	{
-		indexes = si.config.get("index");
-		while (indexes.loop())
-		{
-			file_name = si.root_config.getValStr("root") \
-						+ "/" + si.val("root") \
-						+ si.in_header.directory \
-						+ "/" + indexes.val;
-			//		stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
-			verbose(3) << "(webserv) Fetching " << file_name << std::endl;
-			FileString from_file(file_name.c_str());
-			out_body = from_file.content();
-			if (out_body != "")
-				return 0;
-		}
-	}
-	set_code(404, "File Not Found");
-	verbose(1) << "(webserv) ! 404 " << file_name \
-		<< std::endl;
-	return 404; // Currently allways true.
 }

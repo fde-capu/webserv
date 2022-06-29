@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 16:00:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/29 16:58:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,12 +170,12 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_301(si)) return ;
 	if (is_403(si)) return ;
 	if (is_405(si)) return ;
-	if (is_200(si)) return ;
-	if (is_202(si)) return ;
-	if (is_404(si)) return ;
+	if (is_404(si)) return ; // GET
+	if (is_200(si)) return ; // GET
+	if (is_202(si)) return ; // POST
 
 	set_code(420, "Enhance Your Calm");
-	out_body = "Left alone your request.";
+	out_body = "Spaced out your request.";
 }
 
 ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
