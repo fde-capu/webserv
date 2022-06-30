@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 17:00:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/30 16:03:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,12 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 			if (out_body != "")
 				return 0;
 		}
+		set_code(404, "File Not Found");
+		verbose(1) << "(webserv) ! 404 " << file_name \
+			<< std::endl;
+		return 404;
 	}
-	set_code(404, "File Not Found");
-	verbose(1) << "(webserv) ! 404 " << file_name \
-		<< std::endl;
-	return 404;
+	return 0;
 }
 
 int ws_reply_instance::is_200(ws_server_instance& si)

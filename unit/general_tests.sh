@@ -250,11 +250,11 @@ fi
 ; } 2> /dev/null
 
 curl -X POST -vF "file=@${MYDIR}/99B.noise" http://$name_server:4242/post_body
-{ div; } 2> /dev/null
-curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
-{ div; } 2> /dev/null
-curl -X POST -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
-{ div; } 2> /dev/null
+# { div; } 2> /dev/null
+# curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
+# { div; } 2> /dev/null
+# curl -X POST -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
+# { div; } 2> /dev/null
 
 #################################################################
 #################################################################
