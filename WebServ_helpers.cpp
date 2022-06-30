@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/23 16:15:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/30 16:42:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ ws_header::ws_header()
 	port = 0;
 	is_valid = false;
 	status = 0;
+	content_length = 0;
 }
 
 struct ws_header WebServ::get_header(const std::string& full_file)
@@ -158,18 +159,23 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 				break ;
 			header.accept = carrier[1];
 		}
+
+		if (is_equal_insensitive(carrier[0], "content-length"))
+		{
+			if (!validate_header_entry(carrier, 2, is_valid))
+				break ;
+			header.content_length = atoi(carrier[1].c_str());
+		}
+
+		if (is_equal_insensitive(carrier[0], "content-type"))
+		{
+			if (!validate_header_entry(carrier, 2, is_valid))
+				break ;
+			header.content_type = carrier[1];
+		}
 	}
 	header.is_valid = is_valid;
-
-	verbose(2) << "(webserv) method >" << header.method << "<" << std::endl;
-	verbose(2) << "(webserv) directory >" << header.directory << "<" << std::endl;
-	verbose(2) << "(webserv) protocol >" << header.protocol << "<" << std::endl;
-	verbose(2) << "(webserv) host >" << header.host << "<" << std::endl;
-	verbose(2) << "(webserv) port >" << header.port << "<" << std::endl;
-	verbose(2) << "(webserv) user_agent >" << header.user_agent << "<" << std::endl;
-	verbose(2) << "(webserv) accept >" << header.accept << "<" << std::endl;
-	verbose(2) << "(webserv) is_valid >" << header.is_valid << "<" << std::endl;
-
+	verbose(3) << header;
 	return header;
 }
 
@@ -236,25 +242,25 @@ void WebServ::flush_stdin()
 
 std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
 {
-	o << "ws_header | method | " << wsh.method << std::endl;
-	o << "ws_header | directory | " << wsh.directory << std::endl;
-	o << "ws_header | protocol | " << wsh.protocol << std::endl;
-	o << "ws_header | host | " << wsh.host << std::endl;
-	o << "ws_header | port | " << wsh.port << std::endl;
+	o << "ws_header | method     | " << wsh.method << std::endl;
+	o << "ws_header | directory  | " << wsh.directory << std::endl;
+	o << "ws_header | protocol   | " << wsh.protocol << std::endl;
+	o << "ws_header | host       | " << wsh.host << std::endl;
+	o << "ws_header | port       | " << wsh.port << std::endl;
 	o << "ws_header | user_agent | " << wsh.user_agent << std::endl;
-	o << "ws_header | accept | " << wsh.accept << std::endl;
-	o << "ws_header | is_valid | " << wsh.is_valid << std::endl;
-	o << "ws_header | status | " << wsh.status << std::endl;
+	o << "ws_header | accept     | " << wsh.accept << std::endl;
+	o << "ws_header | is_valid   | " << wsh.is_valid << std::endl;
+	o << "ws_header | status     | " << wsh.status << std::endl;
 	o << "ws_header | status_msg | " << wsh.status_msg << std::endl;
 	o << "ws_header | connection | " << wsh.connection << std::endl;
+	o << "ws_header | con-length | " << wsh.content_length << std::endl;
+	o << "ws_header | con-type   | " << wsh.content_type << std::endl;
 	return o;
 }
 
 std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 {
-	o << "ws_server_instance | in_header:" << std::endl << wssi.in_header << std::endl;
-	o << "ws_server_instance | in_body:" << std::endl << wssi.in_body.c_str() << std::endl;
-	o << "ws_server_instance | port | ";
+	o << "ws_server_instance | port        | ";
 	for (size_t i = 0; i < wssi.port.size(); i++)
 	{ o << wssi.port[i] << " "; }
 	o << std::endl;
@@ -262,7 +268,9 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 	for (size_t i = 0; i < wssi.listen_sock.size(); i++)
 	{ o << wssi.listen_sock[i] << " "; }
 	o << std::endl;
-	o << "ws_server_instance | config | " << wssi.config << std::endl;
+	o << "ws_server_instance | config      | " << wssi.config << std::endl;
+	o << "ws_server_instance | in_header   :" << std::endl << wssi.in_header << std::endl;
+	o << "ws_server_instance | in_body     :" << std::endl << wssi.in_body.c_str() << std::endl;
 	return o;
 }
 

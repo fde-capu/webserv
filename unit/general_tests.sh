@@ -249,7 +249,7 @@ fi
 \
 ; } 2> /dev/null
 
-curl -X POST -vF "file=@${MYDIR}/99B.noise" http://$name_server:4242/post_body
+curl -D- -X POST -vF "file=@${MYDIR}/99B.words" http://$name_server:4242/post_body
 # { div; } 2> /dev/null
 # curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
 # { div; } 2> /dev/null
