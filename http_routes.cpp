@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/30 16:03:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/06/30 16:14:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,13 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 
 int ws_reply_instance::is_405(ws_server_instance& si)
 {
-	DataFold locations(si.config.get<DataFold>("location"));
 	DataFold accepted_methods(
 		si.config.getValStr("accepted_request_methods") != "" ?
 			split(si.config.getValStr("accepted_request_methods"), " ") :
 			split(std::string(DEFAULT_ACCEPTED_METHODS), " ")
 	);
 	bool method_accepted(false);
+	DataFold locations(si.config.get<DataFold>("location"));
 	DataFold loc;
 
 	if (!locations.empty())
@@ -137,7 +137,22 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 
 	if (si.in_header.method == "POST")
 	{
+		DataFold locations(si.config.get<DataFold>("location"));
+		DataFold loc;
+
 		max_size = si.config.get<int>("client_max_body_size");
+		if (!locations.empty())
+		{
+			while (locations.loop())
+			{
+				loc = locations.val;
+				if (loc.getValStr("uri") == si.in_header.directory)
+				while (loc.loop())
+					if (loc.key == "client_max_body_size")
+						max_size = loc.get<int>("client_max_body_size");
+			}
+		}
+
 		verbose(1) << "(webserv) Accepting at most " << max_size << " bytes." << std::endl;
 
 		file_name = "file_name";
@@ -153,3 +168,24 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 	}
 	return 0;
 }
+
+//	DataFold locations(si.config.get<DataFold>("location"));
+//	DataFold loc;
+//
+//	if (!locations.empty())
+//	{
+//		while (locations.loop())
+//		{
+//			loc = locations.val;
+//			if (loc.getValStr("uri") == si.in_header.directory)
+//				while (loc.loop())
+//					if (loc.key == "accepted_request_methods")
+//						accepted_methods = loc.get("accepted_request_methods");
+//		}
+//	}
+//	while (accepted_methods.loop())
+//		if (si.in_header.method == accepted_methods.val)
+//			method_accepted = true;
+//	if (method_accepted) return 0;
+//	set_code(405, "Method Not Allowed");
+//	return 405;
