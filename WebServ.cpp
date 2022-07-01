@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 16:58:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/01 22:44:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,24 @@
 //   send response,
 //   close pollin_fd.
 
-void WebServ::setnonblocking(int sock)
+void WebServ::init()
+{
+	consider_stdin_because_grace();
+	give_up_if_empty_configuration();
+	hook_it();
+	light_up();
+}
+
+void WebServ::consider_stdin_because_grace()
+{ poll_list.push_back(stdin_to_pollfd()); }
+
+void WebServ::give_up_if_empty_configuration()
+{
+	if (instance.empty())
+		throw std::invalid_argument("(webserv) Configuration is empty.");
+}
+
+void WebServ::set_non_blocking(int sock)
 {
 	int opts;
 
@@ -57,7 +74,7 @@ int WebServ::bind_socket_to_local(int u_port)
 			throw std::domain_error("(webserv) Socket creation failed.");
 		if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
 			throw std::domain_error("(webserv) Could not unlock the socket.");
-		setnonblocking(sfd);
+		set_non_blocking(sfd);
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 		close(sfd);
@@ -118,7 +135,7 @@ void WebServ::add_to_poll(int oldfd)
 	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
 	if (newfd == -1)
 		throw std::domain_error("(webserv) Unacceptable connection.");
-	setnonblocking(newfd);
+	set_non_blocking(newfd);
 	poll_list.push_back(make_pollin_fd(newfd));
 	fd_to_port[newfd] = fd_to_port[oldfd];
 	verbose(1) << "(webserv) ======" << std::endl << "(webserv) New connection from fd (" << oldfd << ")->" << newfd << "." << std::endl;
@@ -195,7 +212,8 @@ ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
 				{
 					choose = &instance[i];
 				}
-				if (instance[i].config.getValStr("server_name") == in.host)
+				if (instance[i].config.getValStr("server_name") \
+					== in.host)
 				{
 					choose = &instance[i];
 					break ;
@@ -204,15 +222,19 @@ ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
 		}
 	}
 	if (!choose)
-		throw std::domain_error("(webserv) Cannot define responding instance.");
+		throw std::domain_error(\
+			"(webserv) Cannot define responding instance.");
 	si = *choose;
 	si.in_header = in;
 	si.in_header.port = in_port;
 	si.in_body = get_body(raw_data);
 	if (si.config.get("index").empty())
 		si.config.set("index", config.getValStr("index"));
-	si.root_config.push_back("root", config.getValStr("working_directory"));
-	verbose(1) << "(webserv) Responding as " << choose->config.getValStr("server_name") << ":" << in_port << "." << std::endl;
+	si.root_config.push_back("root", config.getValStr\
+		("working_directory"));
+	verbose(1) << "(webserv) Responding as " << \
+		choose->config.getValStr("server_name") << ":" << in_port << \
+		"." << std::endl;
 	return si;
 }
 
@@ -222,23 +244,28 @@ void WebServ::respond_connection_from(int fd)
 	std::string raw_data;
 	std::string body;
 
-	verbose(2) << "(webserv) Got connection from fd " << fd << "." << std::endl;
+	verbose(2) << "(webserv) Got connection from fd " << fd << "." \
+		<< std::endl;
 	raw_data = get_raw_data(fd);
 	si = choose_instance(raw_data, fd_to_port[fd]);
-	verbose(5) << "(webserv) BODY >" << si.in_body << "<" << std::endl;
+	verbose(5) << "(webserv) BODY >" << si.in_body << "<" << \
+		std::endl;
 
 	ws_reply_instance respond(si);
 
-	if (send(fd, respond.encapsulate().c_str(), respond.package_length, 0) == -1)
+	if (send(fd, respond.encapsulate().c_str(),
+		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 	remove_from_poll(fd);
+	close(fd);
 }
 
 void WebServ::light_up()
 {
 	int event;
 
-	verbose(1) << "Light up server: " << config.getValStr("server_name") << std::endl;
+	verbose(1) << "Light up server: " << \
+		config.getValStr("server_name") << std::endl;
 	verbose(1) << config.getValStr("welcome_message") << std::endl;
 
 	lit = true;
@@ -252,16 +279,6 @@ void WebServ::light_up()
 		else
 			respond_connection_from(event);
 	}
-}
-
-void WebServ::init()
-{
-	poll_list.push_back(stdin_to_pollfd());
-	if (instance.empty())
-		throw std::invalid_argument("(webserv) Configuration is empty.");
-	hook_it();
-	light_up();
-	flush_stdin();
 }
 
 WebServ::WebServ(DataFold& u_config)

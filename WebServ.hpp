@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/30 16:35:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/01 23:21:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,16 @@ class WebServ
 
 		void hook_it();
 
+		void consider_stdin_because_grace();
+		void give_up_if_empty_configuration();
+
 		ws_server_instance dftosi(DataFold);
 		struct pollfd stdin_to_pollfd();
 		void exit_gracefully();
 		std::string get_raw_data(int);
 		static bool validate_header_entry(std::vector<std::string>&, size_t, bool&);
+		static bool validate_header_1st_line(std::string&, size_t, bool&);
+		static bool read_1st_line(std::string&, ws_header&);
 		void flush_stdin();
 		bool is_port_taken(int) const;
 		bool same_port_another_name(const ws_server_instance*) const;
@@ -105,7 +110,8 @@ class WebServ
 		ws_server_instance choose_instance(std::string&, int);
 		void respond_connection_from(int);
 		void load_defaults();
-		static void setnonblocking(int);
+		static void set_non_blocking(int);
+		static bool ignore_empty(std::string&);
 
 	public:
 		WebServ(DataFold&);

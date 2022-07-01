@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/30 16:42:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/01 23:21:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ struct pollfd WebServ::make_pollin_fd(int newfd) const
 
 void WebServ::exit_gracefully()
 {
+	flush_stdin();
 	verbose(1) << "(webserv) Exit gracefully. Thanks!" << std::endl;
 	verbose(1) << config.getValStr("bye_message") << std::endl;
 	lit = false;
@@ -83,7 +84,18 @@ bool WebServ::there_is_an_instance(int fd) const
 	return false;
 }
 
-bool WebServ::validate_header_entry(std::vector<std::string>& test, size_t expected_size, bool& is_valid)
+bool WebServ::validate_header_1st_line
+	(std::string& test_str, size_t expected_size, bool& is_valid)
+{
+	std::vector<std::string> carrier;
+
+	carrier = split_trim(test_str, " ");
+	is_valid = true;
+	return validate_header_entry(carrier, expected_size, is_valid);
+}
+
+bool WebServ::validate_header_entry
+	(std::vector<std::string>& test, size_t expected_size, bool& is_valid)
 {
 	is_valid = is_valid && test.size() == expected_size;
 	return is_valid;
@@ -97,37 +109,38 @@ ws_header::ws_header()
 	content_length = 0;
 }
 
+bool WebServ::ignore_empty(std::string& line)
+{ return line.length() == 0; }
+
+bool WebServ::read_1st_line(std::string& line, ws_header& header)
+{
+	std::vector<std::string> carrier;
+
+	carrier = split_trim(line, " ");
+	header.method = carrier[0];
+	header.directory = carrier[1];
+	header.protocol = carrier[2];
+	return true;
+}
+
 struct ws_header WebServ::get_header(const std::string& full_file)
 {
-	std::string raw_data(full_file);
 	ws_header header;
 	std::vector<std::string> line;
 	std::vector<std::string> carrier;
 	bool is_valid;
 	is_valid = false;
 
-	remove_all(raw_data, "\r");
-	std::string h_block = raw_data.substr(0, raw_data.find("\n\n"));
-	verbose(3) << "get_header ==>" << h_block << "<==" << std::endl;
-	line = split_trim(h_block, "\n");
+	std::string h_block = full_file.substr(0, full_file.find("\r\n\r\n"));
+	line = split_trim(h_block, "\r\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
-		verbose(3) << "(webserv) LINE>" << line[i] << "<" << std::endl;
+		verbose(5) << "(webserv) LINE>" << line[i] << "<" << std::endl;
 
-		if (line[i].length() == 0)
-			continue ;
+		if (ignore_empty(line[i])) continue ;
+		if (i == 0 && !validate_header_1st_line(line[i], 3, is_valid)) break ;
+		if (i == 0 && read_1st_line(line[i], header)) continue ;
 
-		if (i == 0)
-		{
-			carrier = split_trim(line[i], " ");
-			is_valid = true;
-			if (!validate_header_entry(carrier, 3, is_valid))
-				break ;
-			header.method = carrier[0];
-			header.directory = carrier[1];
-			header.protocol = carrier[2];
-			continue ;
-		}
 		carrier = split_trim(line[i], ":");
 		if (is_equal_insensitive(carrier[0], "host"))
 		{
@@ -182,9 +195,9 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 std::string WebServ::get_body(const std::string& full_file)
 {
 	std::string raw_data(full_file);
-	remove_all(raw_data, "\r");
-	size_t body_p = raw_data.find("\n\n") + 2;
-	return body_p == std::string::npos ? raw_data : raw_data.substr(body_p);
+	size_t body_p = raw_data.find("\r\n\r\n") + 4;
+	return body_p == std::string::npos ? "" \
+		: raw_data.substr(body_p);
 }
 
 std::string WebServ::get_raw_data(int fd)
@@ -192,7 +205,7 @@ std::string WebServ::get_raw_data(int fd)
 	CircularBuffer buffer(fd);
 	buffer.receive_until_eof();
 	std::string raw_data = buffer.output;
-	verbose(2) << "-->" << raw_data << "<--" << std::endl;
+	verbose(5) << "RAW_DATA-->" << raw_data << "<--" << std::endl;
 	return raw_data;
 }
 
