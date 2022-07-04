@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 15:17:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 17:18:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,10 +182,8 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 
 std::string WebServ::get_body(const std::string& full_file)
 {
-	std::string raw_data(full_file);
-	size_t body_p = raw_data.find("\r\n\r\n") + 4;
-	return body_p == std::string::npos ? "" \
-		: raw_data.substr(body_p);
+	size_t pos = full_file.find("form-data");
+	return pos == std::string::npos ? "" : full_file.substr(pos);
 }
 
 std::string WebServ::get_raw_data(int fd)
@@ -193,13 +191,7 @@ std::string WebServ::get_raw_data(int fd)
 	CircularBuffer buffer(fd);
 	buffer.receive_until_eof();
 	std::string raw_data = buffer.output;
-	verbose(5) << "RAW_DATA-->" << raw_data << "<--" << std::endl;
-	verbose(1) << "BIN_DATA-->";
-	for (size_t i = 0; i < buffer.bin.size(); i++)
-	{
-		write(1, &*&buffer.bin[i], 1); 
-	}
-	verbose(1) << "<--BIN_DATA" << std::endl;
+	verbose(1) << "RAW_DATA-->" << raw_data << "<--" << std::endl;
 	return raw_data;
 }
 
@@ -277,7 +269,7 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 	o << std::endl;
 	o << "ws_server_instance | config      | " << wssi.config << std::endl;
 	o << "ws_server_instance | in_header   :" << std::endl << wssi.in_header << std::endl;
-	o << "ws_server_instance | in_body     :" << std::endl << wssi.in_body.c_str() << std::endl;
+	o << "ws_server_instance | in_body     :" << std::endl << wssi.in_body << std::endl;
 	return o;
 }
 

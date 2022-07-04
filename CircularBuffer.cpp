@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 15:10:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 16:35:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,13 @@ void CircularBuffer::receive_until_eof()
 	bytes = read(fd, const_cast<char *>(memory), size);
 	if (bytes == -1 && fd == 0) // stdin
 		return set_eof();
-	verbose(6) << "(CircularBuffer) bytes " << bytes << " size " << size << " (" << std::string(memory).substr(0, bytes) << ")" << std::endl;
+	verbose(1) << "(CircularBuffer) bytes " << bytes << " size " << size << " (" << std::string(memory).substr(0, bytes) << ")" << std::endl;
 	if (bytes == 0)
 		return set_eof();
 	if (static_cast<size_t>(bytes) <= size)
-	{
-		output += std::string(memory).substr(0, bytes);
-		for (int i = 0; i < bytes; i++)
-			bin.push_back(memory[i]);
-	}
+		output.append(memory, size);
 	if (static_cast<size_t>(bytes) == size)
-		return receive_until_eof();
+		receive_until_eof();
 }
 
 CircularBuffer & CircularBuffer::operator= (CircularBuffer const & rhs)
