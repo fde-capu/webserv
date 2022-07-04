@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/29 04:35:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 15:10:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,11 @@ void CircularBuffer::receive_until_eof()
 	if (bytes == 0)
 		return set_eof();
 	if (static_cast<size_t>(bytes) <= size)
+	{
 		output += std::string(memory).substr(0, bytes);
+		for (int i = 0; i < bytes; i++)
+			bin.push_back(memory[i]);
+	}
 	if (static_cast<size_t>(bytes) == size)
 		return receive_until_eof();
 }

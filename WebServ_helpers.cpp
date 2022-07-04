@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 14:46:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 15:17:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,12 @@ std::string WebServ::get_raw_data(int fd)
 	buffer.receive_until_eof();
 	std::string raw_data = buffer.output;
 	verbose(5) << "RAW_DATA-->" << raw_data << "<--" << std::endl;
+	verbose(1) << "BIN_DATA-->";
+	for (size_t i = 0; i < buffer.bin.size(); i++)
+	{
+		write(1, &*&buffer.bin[i], 1); 
+	}
+	verbose(1) << "<--BIN_DATA" << std::endl;
 	return raw_data;
 }
 

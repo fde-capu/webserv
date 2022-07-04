@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/07 15:10:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 15:13:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <unistd.h>
 # include <cstdlib>
 # include <sys/socket.h>
+# include <vector>
 
 class CircularBuffer
 {
@@ -46,6 +47,7 @@ class CircularBuffer
 		void receive_until_eof();
 		std::string output;
 		std::string reof_out();
+		std::vector<char> bin;
 
 		operator std::string();
 };
