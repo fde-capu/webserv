@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/24 15:00:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 14:33:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -604,7 +604,10 @@ bool is_equal_insensitive(const std::string a, const std::string b)
 { return stool.is_equal_insensitive(a, b); }
 
 bool StringTools::is_equal_insensitive(const std::string a, const std::string b) const
-{ return to_lower(a) == to_lower(b); }
+{
+	std::cout << "ISQUEAL " << to_lower(a) << " == " << to_lower(b) << std::endl;
+	return to_lower(a) == to_lower(b);
+}
 
 std::string to_lower(std::string a)
 { return stool.to_lower(a); }

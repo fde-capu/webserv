@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/01 23:21:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 14:46:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,15 +112,44 @@ ws_header::ws_header()
 bool WebServ::ignore_empty(std::string& line)
 { return line.length() == 0; }
 
-bool WebServ::read_1st_line(std::string& line, ws_header& header)
+bool WebServ::read_1st_line(std::string& line, ws_header& header, bool& is_valid)
 {
 	std::vector<std::string> carrier;
 
-	carrier = split_trim(line, " ");
-	header.method = carrier[0];
-	header.directory = carrier[1];
-	header.protocol = carrier[2];
-	return true;
+	if (validate_header_1st_line(line, 3, is_valid))
+	{
+		carrier = split_trim(line, " ");
+		header.method = carrier[0];
+		header.directory = carrier[1];
+		header.protocol = carrier[2];
+	}
+	else
+		is_valid = false;
+	return is_valid;
+}
+
+bool WebServ::read_host(std::string& line, ws_header& header, bool& is_valid)
+{
+	std::vector<std::string> carrier;
+	bool prev_valid = is_valid;
+
+	carrier = split_trim(line, ":");
+	if (is_equal_insensitive(carrier[0], "host"))
+	{
+		if (validate_header_entry(carrier, 3, is_valid))
+		{
+			header.host = carrier[1];
+			header.port = atoi(carrier[2].c_str());
+		}
+		else
+		{
+			is_valid = prev_valid;
+			if (validate_header_entry(carrier, 2, is_valid))
+				header.host = carrier[1];
+		}
+		return is_valid;
+	}
+	return false;
 }
 
 struct ws_header WebServ::get_header(const std::string& full_file)
@@ -135,57 +164,16 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 	line = split_trim(h_block, "\r\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
-		verbose(5) << "(webserv) LINE>" << line[i] << "<" << std::endl;
-
+		verbose(1) << "(webserv) LINE>" << line[i] << "<" << std::endl;
 		if (ignore_empty(line[i])) continue ;
-		if (i == 0 && !validate_header_1st_line(line[i], 3, is_valid)) break ;
-		if (i == 0 && read_1st_line(line[i], header)) continue ;
-
+		if (i == 0 && read_1st_line(line[i], header, is_valid)) continue ;
+		if (read_host(line[i], header, is_valid)) continue ;
 		carrier = split_trim(line[i], ":");
-		if (is_equal_insensitive(carrier[0], "host"))
-		{
-			if (validate_header_entry(carrier, 3, is_valid))
-			{
-				header.host = carrier[1];
-				header.port = atoi(carrier[2].c_str());
-			}
-			else
-			{
-				is_valid = true;
-				if (validate_header_entry(carrier, 2, is_valid))
-					header.host = carrier[1];
-				else
-					break ;
-			}
-		}
-
-		if (is_equal_insensitive(carrier[0], "user-agent"))
-		{
-			if (!validate_header_entry(carrier, 2, is_valid))
-				break ;
-			header.user_agent = carrier[1];
-		}
-
-		if (is_equal_insensitive(carrier[0], "accept"))
-		{
-			if (!validate_header_entry(carrier, 2, is_valid))
-				break ;
-			header.accept = carrier[1];
-		}
-
-		if (is_equal_insensitive(carrier[0], "content-length"))
-		{
-			if (!validate_header_entry(carrier, 2, is_valid))
-				break ;
-			header.content_length = atoi(carrier[1].c_str());
-		}
-
-		if (is_equal_insensitive(carrier[0], "content-type"))
-		{
-			if (!validate_header_entry(carrier, 2, is_valid))
-				break ;
-			header.content_type = carrier[1];
-		}
+		if (!validate_header_entry(carrier, 2, is_valid)) continue ;
+		if (is_equal_insensitive(carrier[0], "user-agent")) header.user_agent = carrier[1];
+		if (is_equal_insensitive(carrier[0], "accept")) header.accept = carrier[1];
+		if (is_equal_insensitive(carrier[0], "content-length")) header.content_length = atoi(carrier[1].c_str());
+		if (is_equal_insensitive(carrier[0], "content-type")) header.content_type = carrier[1];
 	}
 	header.is_valid = is_valid;
 	verbose(3) << header;
