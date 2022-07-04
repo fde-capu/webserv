@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 14:54:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 20:32:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,7 +189,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_405(si)) return ;
 	if (is_404(si)) return ; // GET
 	if (is_200(si)) return ; // GET
-	if (is_202(si)) return ; // POST
+	if (is_202(si)) return ; // for POST
 
 	set_code(420, "Enhance Your Calm");
 	out_body = "Spaced out your request.";
@@ -227,7 +227,7 @@ ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
 	si = *choose;
 	si.in_header = in;
 	si.in_header.port = in_port;
-	si.in_body = get_body(raw_data);
+//	si.in_body = get_body(raw_data);
 	if (si.config.get("index").empty())
 		si.config.set("index", config.getValStr("index"));
 	si.root_config.push_back("root", config.getValStr\

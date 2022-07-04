@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 17:18:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 20:34:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ std::string WebServ::get_raw_data(int fd)
 {
 	CircularBuffer buffer(fd);
 	buffer.receive_until_eof();
-	std::string raw_data = buffer.output;
+	std::string raw_data(buffer.output);
 	verbose(1) << "RAW_DATA-->" << raw_data << "<--" << std::endl;
 	return raw_data;
 }
@@ -268,8 +268,10 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 	{ o << wssi.listen_sock[i] << " "; }
 	o << std::endl;
 	o << "ws_server_instance | config      | " << wssi.config << std::endl;
-	o << "ws_server_instance | in_header   :" << std::endl << wssi.in_header << std::endl;
-	o << "ws_server_instance | in_body     :" << std::endl << wssi.in_body << std::endl;
+	o << "ws_server_instance | in_header   :" << std::endl << wssi.in_header \
+		<< std::endl;
+	o << "ws_server_instance | in_body     :" << std::endl << wssi.in_body \
+		<< std::endl;
 	return o;
 }
 

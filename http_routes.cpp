@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/30 16:25:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/04 20:34:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 						+ "/" + si.val("root") \
 						+ si.in_header.directory \
 						+ "/" + indexes.val;
-			//		stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
+			// stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
 			verbose(3) << "(webserv) Fetching " << file_name << std::endl;
 			FileString from_file(file_name.c_str());
 			out_body = from_file.content();
@@ -134,6 +134,7 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 	std::string file_name;
 	std::string dir_name;
 	int max_size;
+			std::string boundary;
 
 	if (si.in_header.method == "POST")
 	{
@@ -153,7 +154,18 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 			}
 		}
 
-		verbose(1) << "(webserv) " << si.in_header.directory << " accepting at most " << max_size << " bytes." << std::endl;
+		verbose(1) << "Len, Type " << si.in_header.content_length << \
+			", " << si.in_header.content_type;
+
+		if (si.in_header.content_type.find("multipart/form-data") == 0)
+		{
+			boundary = si.in_header.content_type.substr( \
+				(si.in_header.content_type.find("boundary=") + 9));
+		}
+		std::cout << "boundary " << boundary << std::endl;
+
+		verbose(1) << "(webserv) " << si.in_header.directory << \
+			" accepting at most " << max_size << " bytes." << std::endl;
 
 		file_name = "file_name";
 		dir_name = "dir_name";
