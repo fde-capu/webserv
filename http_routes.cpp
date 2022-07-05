@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 20:34:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 21:54:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 {
 	DataFold indexes;
 	std::string file_name;
-	DataFold locations(si.config.get<DataFold>("location"));
+//	DataFold locations(si.config.get<DataFold>("location"));
 
 	if (si.in_header.method == "GET")
 	{
@@ -104,7 +104,7 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 {
 	DataFold indexes;
 	std::string file_name;
-	DataFold locations(si.config.get<DataFold>("location"));
+//	DataFold locations(si.config.get<DataFold>("location"));
 
 	if (si.in_header.method == "GET")
 	{
@@ -129,30 +129,30 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 	return 0;
 }
 
+DataFold ws_reply_instance::get_location_config(ws_server_instance& si)
+{
+	DataFold locations(si.config.get<DataFold>("location"));
+	if (locations.empty()) return locations;
+	while (locations.loop())
+		if (DataFold(locations.val).getValStr("uri") == si.in_header.directory)
+			return locations.val;
+	return locations;
+}
+
 int ws_reply_instance::is_202(ws_server_instance& si)
 {
 	std::string file_name;
 	std::string dir_name;
 	int max_size;
-			std::string boundary;
+	std::string boundary;
 
 	if (si.in_header.method == "POST")
 	{
-		DataFold locations(si.config.get<DataFold>("location"));
-		DataFold loc;
+		DataFold loc = get_location_config(si);
 
-		max_size = si.config.get<int>("client_max_body_size");
-		if (!locations.empty())
-		{
-			while (locations.loop())
-			{
-				loc = locations.val;
-				if (loc.getValStr("uri") == si.in_header.directory)
-				while (loc.loop())
-					if (loc.key == "client_max_body_size")
-						max_size = loc.get<int>("client_max_body_size");
-			}
-		}
+		while (loc.loop())
+			if (loc.key == "client_max_body_size")
+				max_size = loc.get<int>("client_max_body_size");
 
 		verbose(1) << "Len, Type " << si.in_header.content_length << \
 			", " << si.in_header.content_type;
@@ -174,7 +174,7 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 			" will be saved into " << dir_name << \
 			"." << std::endl;
 
-		set_code(202, "Accepted");
+		set_code(202, "Accepted (Mocked)");
 		out_body = "anything";
 		return 202;
 	}

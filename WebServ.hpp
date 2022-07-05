@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/05 21:25:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 21:53:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ struct ws_reply_instance
 	std::string encapsulate();
 	void set_code(int, const std::string&);
 	void set_redirect(const std::string&);
+	DataFold get_location_config(ws_server_instance&);
 
 	int is_301(ws_server_instance&);
 	int is_403(ws_server_instance&);
