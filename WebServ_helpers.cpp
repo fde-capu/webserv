@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 20:34:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 13:08:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ std::string WebServ::get_raw_data(int fd)
 	CircularBuffer buffer(fd);
 	buffer.receive_until_eof();
 	std::string raw_data(buffer.output);
-	verbose(1) << "RAW_DATA-->" << raw_data << "<--" << std::endl;
+	verbose(1) << "(WebServ) RAW_DATA-->" << raw_data << "<--" << std::endl;
 	return raw_data;
 }
 

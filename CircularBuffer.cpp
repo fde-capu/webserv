@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/05 13:00:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 13:19:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void CircularBuffer::resetMemory()
 
 void CircularBuffer::set_eof()
 {
+	std::cout << "(CircularBuffer) Setting EOF; output >" << output << "<" << std::endl;
 	resetMemory();
 	eof = true;
 }
@@ -58,17 +59,24 @@ void CircularBuffer::receive_until_eof()
 {
 	int bytes = read(fd, const_cast<char *>(memory), size);
 
-	verbose(1) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << " size " << size << \
-		" (" << std::string(memory).substr(0, bytes) << ")" << std::endl;
+	verbose(1) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
+		" size " << size << " (" << std::string(memory).substr(0, bytes) \
+		<< ")" << std::endl;
 
 	if (bytes == -1 && fd == 0) // stdin
 		return set_eof();
 	if (bytes <= 0)
 		return set_eof();
-	if (static_cast<size_t>(bytes) <= size)
-		output.append(memory, size);
+	if (static_cast<size_t>(bytes) < size)
+	{
+		output.append(memory, bytes);
+		return set_eof();
+	}
 	if (static_cast<size_t>(bytes) == size)
+	{
+		output.append(memory, size);
 		return receive_until_eof();
+	}
 }
 
 CircularBuffer & CircularBuffer::operator= (CircularBuffer const & rhs)
