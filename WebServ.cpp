@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 20:32:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 21:35:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,11 +195,10 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	out_body = "Spaced out your request.";
 }
 
-ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
+ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 {
 	ws_server_instance si;
 	ws_server_instance *choose;
-	ws_header in = get_header(raw_data);
 
 	choose = 0;
 	for (size_t i = 0; i < instance.size(); i++)
@@ -227,14 +226,15 @@ ws_server_instance WebServ::choose_instance(std::string& raw_data, int in_port)
 	si = *choose;
 	si.in_header = in;
 	si.in_header.port = in_port;
-//	si.in_body = get_body(raw_data);
 	if (si.config.get("index").empty())
 		si.config.set("index", config.getValStr("index"));
 	si.root_config.push_back("root", config.getValStr\
 		("working_directory"));
+
 	verbose(1) << "(webserv) Responding as " << \
 		choose->config.getValStr("server_name") << ":" << in_port << \
 		"." << std::endl;
+
 	return si;
 }
 
@@ -243,16 +243,16 @@ void WebServ::respond_connection_from(int fd)
 	ws_server_instance si;
 	std::string raw_data;
 	std::string body;
+	ws_header in_header;
 
 	verbose(2) << "(webserv) Got connection from fd " << fd << "." \
 		<< std::endl;
+
 	raw_data = get_raw_data(fd);
-	si = choose_instance(raw_data, fd_to_port[fd]);
-	verbose(5) << "(webserv) BODY >" << si.in_body << "<" << \
-		std::endl;
-
+	in_header = get_header(raw_data);
+	si = choose_instance(in_header, fd_to_port[fd]);
+	si.in_body = get_body(raw_data);
 	ws_reply_instance respond(si);
-
 	if (send(fd, respond.encapsulate().c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");

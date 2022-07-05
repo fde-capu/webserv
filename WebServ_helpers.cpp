@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/05 13:26:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 21:37:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,8 +182,8 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 
 std::string WebServ::get_body(const std::string& full_file)
 {
-	size_t pos = full_file.find("form-data");
-	return pos == std::string::npos ? "" : full_file.substr(pos);
+	size_t pos = full_file.find("\r\n\r\n");
+	return pos == std::string::npos ? "" : full_file.substr(pos + 3);
 }
 
 std::string WebServ::get_raw_data(int fd)
@@ -270,8 +270,8 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 	o << "ws_server_instance | config      | " << wssi.config << std::endl;
 	o << "ws_server_instance | in_header   :" << std::endl << wssi.in_header \
 		<< std::endl;
-	o << "ws_server_instance | in_body     :" << std::endl << wssi.in_body \
-		<< std::endl;
+	o << "ws_server_instance | in_body     :" << std::endl << ">>" << \
+		wssi.in_body << "<<" << std::endl;
 	return o;
 }
 

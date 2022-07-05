@@ -6,13 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/05 13:28:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 21:22:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CircularBuffer.hpp"
 #include "bladefs.hpp"
 #include <iostream>
+# include <errno.h>
 
 CircularBuffer::CircularBuffer(int u_fd)
 : fd(u_fd), size(10), eof(false)
@@ -42,7 +43,8 @@ void CircularBuffer::resetMemory()
 
 void CircularBuffer::set_eof()
 {
-	std::cout << "(CircularBuffer) Setting EOF; output >>" << output << "<<" << std::endl;
+	std::cout << "(CircularBuffer) Setting EOF; output >>" << output << \
+		"<<" << std::endl;
 	resetMemory();
 	eof = true;
 }
@@ -53,21 +55,20 @@ std::string CircularBuffer::reof_out()
 	return output;
 }
 
-# include <errno.h>
-
 void CircularBuffer::receive_until_eof()
 {
 	int bytes = read(fd, const_cast<char *>(memory), size);
 
 	verbose(1) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
-		" size " << size << " (" << std::string(memory).substr(0, bytes) \
+		" size " << size << "\t(" << std::string(memory).substr(0, bytes) \
 		<< ")" << std::endl;
 
 	if (bytes == -1 && fd == 0) // stdin
 		return set_eof();
 	if (bytes == -1)
 	{
-		std::cout << "(CB ERROR) " << strerror(errno) << std::endl;
+		verbose(1) << "(CircularBuffer) Encontered an error, treated " << \
+			"as warning, set point  as EOF: " << strerror(errno) << std::endl;
 		return set_eof();
 	}
 	if (bytes == 0)
@@ -76,7 +77,6 @@ void CircularBuffer::receive_until_eof()
 	{
 		output.append(memory, bytes);
 		return receive_until_eof();
-//		return set_eof();
 	}
 	if (static_cast<size_t>(bytes) == size)
 	{

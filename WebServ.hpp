@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 14:36:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 21:25:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ class WebServ
 		bool there_is_an_instance(int) const;
 		void add_to_poll(int);
 		void remove_from_poll(int);
-		ws_server_instance choose_instance(std::string&, int);
+		ws_server_instance choose_instance(ws_header&, int);
 		void respond_connection_from(int);
 		void load_defaults();
 		static void set_non_blocking(int);
