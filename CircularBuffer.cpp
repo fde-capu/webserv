@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 20:19:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 13:00:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,23 +52,23 @@ std::string CircularBuffer::reof_out()
 	return output;
 }
 
+# include <errno.h>
+
 void CircularBuffer::receive_until_eof()
 {
-	int bytes = 0;
+	int bytes = read(fd, const_cast<char *>(memory), size);
 
-	verbose(5) << "(CircularBuffer) Receiving from fd " << fd << "." << std::endl;
-	bytes = read(fd, const_cast<char *>(memory), size);
+	verbose(1) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << " size " << size << \
+		" (" << std::string(memory).substr(0, bytes) << ")" << std::endl;
+
 	if (bytes == -1 && fd == 0) // stdin
 		return set_eof();
-	verbose(1) << "(CircularBuffer) bytes " << bytes << " size " << size << " (" << std::string(memory).substr(0, bytes) << ")" << std::endl;
-	if (bytes == -1)
-		throw std::domain_error("(CircularBuffer) Failed.");
-	if (bytes == 0)
+	if (bytes <= 0)
 		return set_eof();
 	if (static_cast<size_t>(bytes) <= size)
 		output.append(memory, size);
 	if (static_cast<size_t>(bytes) == size)
-		receive_until_eof();
+		return receive_until_eof();
 }
 
 CircularBuffer & CircularBuffer::operator= (CircularBuffer const & rhs)
