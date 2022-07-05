@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/05 13:08:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/05 13:26:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 	line = split_trim(h_block, "\r\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
-		verbose(1) << "(webserv) LINE>" << line[i] << "<" << std::endl;
+		verbose(1) << "(webserv) LINE >>" << line[i] << "<<" << std::endl;
 		if (ignore_empty(line[i])) continue ;
 		if (i == 0 && read_1st_line(line[i], header, is_valid)) continue ;
 		if (read_host(line[i], header, is_valid)) continue ;
@@ -191,7 +191,7 @@ std::string WebServ::get_raw_data(int fd)
 	CircularBuffer buffer(fd);
 	buffer.receive_until_eof();
 	std::string raw_data(buffer.output);
-	verbose(1) << "(WebServ) RAW_DATA-->" << raw_data << "<--" << std::endl;
+	verbose(1) << "(WebServ) RAW_DATA >>" << raw_data << "<<" << std::endl;
 	return raw_data;
 }
 
