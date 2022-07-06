@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/06 15:16:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/06 16:42:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ struct ws_server_instance
 	std::string boundary;
 	size_t max_size;
 	std::string read_fd_for_boundary_at_most();
+	void boundary_start_end(size_t&, size_t&);
+	void body_start_end(const size_t&, const size_t&, size_t&, size_t&);
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 

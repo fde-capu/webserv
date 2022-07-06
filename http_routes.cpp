@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/06 15:49:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/06 16:48:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,27 +139,50 @@ DataFold ws_reply_instance::get_location_config(ws_server_instance& si)
 	return locations;
 }
 
+void ws_server_instance::boundary_start_end(size_t& start, size_t& end)
+{
+	start = in_body.find(boundary);
+	if (start == std::string::npos)
+		start = 0;
+	else
+		start = in_body.find("\r\n", start + boundary.length()) + 2;
+	end = in_body.find(boundary, start);
+	end = end == std::string::npos ? in_body.length() : end - 5;
+}
+
+void ws_server_instance::body_start_end(const size_t& start, const \
+	size_t& end, size_t& body_start, size_t& body_end)
+{
+	body_start = in_body.find("\r\n\r\n", start);
+	body_start += body_start == std::string::npos ? 0 : 4;
+	body_end = end;
+}
+
 std::string ws_server_instance::read_fd_for_boundary_at_most()
 {
 	std::string dir_name(in_header.directory);
 	size_t len(in_header.content_length);
-	size_t start, end;
+	size_t start, end, body_start, body_end;
 
-	verbose(1) << "(webserv) " << dir_name << \
+	verbose(1) << "(read_fd_for_boundary_at_most) " << dir_name << \
 		" accepting at most " << max_size << " bytes." << std::endl;
+	verbose(1) << "(read_fd_for_boundary_at_most) Will read " << len << \
+		" bytes for " << multipart_type << " using boundary >>" << boundary \
+		<< "<<." << std::endl;
 
-	verbose(1) << "(is_202) Will read " << len << " bytes for " \
-		<< multipart_type << " using boundary >>" << boundary << "<<." \
-		<< std::endl;
+	boundary_start_end(start, end);
+	body_start_end(start, end, body_start, body_end);
 
-	start = in_body.find(boundary);
-	start = start == std::string::npos ? 0 : start + boundary.length();
-	end = in_body.find(boundary, start);
-	end = end == std::string::npos ? in_body.length() : end;
+	verbose(1) << "(read_fd_for_boundary_at_most) Start: " << start << \
+		", end: " << end << "." << std::endl;
+	verbose(1) << "(read_fd_for_boundary_at_most) Body start: " << \
+		body_start << ", end: " << body_end << "." << std::endl;
 
-	verbose(1) << "(get_multipart_data) Start: " << start << ", end: " << \
-		end << "." << std::endl;
-	
+	std::string body_block;
+	body_block = in_body.substr(body_start, body_end - body_start);
+	verbose(1) << "(read_fd_for_boundary_at_most) Body block: >>" \
+		<< body_block << "<<" << std::endl;
+
 	if (!start)
 		return "Incomplete recv.";
 
@@ -195,8 +218,6 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 
 		verbose(1) << si << std::endl;
 		mp_block = si.read_fd_for_boundary_at_most();
-
-		verbose(1) << "(is_202) multipart block: >>" << mp_block << "<<" << std::endl;
 
 		file_name = "file_name";
 		dir_name = "dir_name";
