@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/05 21:35:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/06 15:24:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,21 +159,6 @@ int WebServ::catch_connection()
 	return 0;
 }
 
-void ws_header::header500()
-{
-	method = "";
-	directory = "";
-	protocol = "HTTP/1.1";
-	status = 500;
-	status_msg = "Internal Server Error";
-	connection = "close";
-}
-
-ws_reply_instance::ws_reply_instance()
-{
-	out_header.header500();
-}
-
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
 	std::string file_name;
@@ -181,7 +166,6 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	*this = ws_reply_instance();
 
 	verbose(1) << "[THINK] " << std::endl;
-	verbose(1) << si << std::endl;
 	out_body = "";
 
 	if (is_301(si)) return ;

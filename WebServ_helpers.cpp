@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/05 21:37:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/06 15:44:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,7 +183,7 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 std::string WebServ::get_body(const std::string& full_file)
 {
 	size_t pos = full_file.find("\r\n\r\n");
-	return pos == std::string::npos ? "" : full_file.substr(pos + 3);
+	return pos == std::string::npos ? "" : full_file.substr(pos + 4);
 }
 
 std::string WebServ::get_raw_data(int fd)
@@ -272,6 +272,9 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 		<< std::endl;
 	o << "ws_server_instance | in_body     :" << std::endl << ">>" << \
 		wssi.in_body << "<<" << std::endl;
+	o << "ws_server_instance | multipart_type | " << wssi.multipart_type << std::endl;
+	o << "ws_server_instance | boundary >>" << wssi.boundary << "<<" << std::endl;
+	o << "ws_server_instance | max_size | " << wssi.max_size << std::endl;
 	return o;
 }
 
@@ -317,4 +320,19 @@ std::string ws_reply_instance::encapsulate()
 	out += out_body;
 	package_length = out.length();
 	return out;
+}
+
+void ws_header::header500()
+{
+	method = "";
+	directory = "";
+	protocol = "HTTP/1.1";
+	status = 500;
+	status_msg = "Internal Server Error";
+	connection = "close";
+}
+
+ws_reply_instance::ws_reply_instance()
+{
+	out_header.header500();
 }

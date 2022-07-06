@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/06 14:28:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/06 15:49:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,45 +139,64 @@ DataFold ws_reply_instance::get_location_config(ws_server_instance& si)
 	return locations;
 }
 
+std::string ws_server_instance::read_fd_for_boundary_at_most()
+{
+	std::string dir_name(in_header.directory);
+	size_t len(in_header.content_length);
+	size_t start, end;
+
+	verbose(1) << "(webserv) " << dir_name << \
+		" accepting at most " << max_size << " bytes." << std::endl;
+
+	verbose(1) << "(is_202) Will read " << len << " bytes for " \
+		<< multipart_type << " using boundary >>" << boundary << "<<." \
+		<< std::endl;
+
+	start = in_body.find(boundary);
+	start = start == std::string::npos ? 0 : start + boundary.length();
+	end = in_body.find(boundary, start);
+	end = end == std::string::npos ? in_body.length() : end;
+
+	verbose(1) << "(get_multipart_data) Start: " << start << ", end: " << \
+		end << "." << std::endl;
+	
+	if (!start)
+		return "Incomplete recv.";
+
+	return in_body.substr(start, end - start);
+}
+
 int ws_reply_instance::is_202(ws_server_instance& si)
 {
 	std::string file_name;
 	std::string dir_name;
-	int max_size;
-	int len;
-	std::string multitype;
-	std::string boundary;
+	std::string mp_block;
 
 	if (si.in_header.method == "POST")
 	{
+		si.max_size = si.config.get<int>("client_max_body_size");
 		DataFold loc = get_location_config(si);
-
-		max_size = si.config.get<int>("client_max_body_size");
 		while (loc.loop())
 		{
 			if (loc.key == "client_max_body_size")
 			{
-				max_size = loc.get<int>("client_max_body_size");
+				si.max_size = loc.get<int>("client_max_body_size");
 				break ;
 			}
 		}
 
-		len = si.in_header.content_length;
-
 		if (si.in_header.content_type.find("multipart") == 0)
 		{
-			multitype = word_from(si.in_header.content_type,
-				si.in_header.content_type.find("/") + 1);
-			boundary = si.in_header.content_type.substr( \
-				(si.in_header.content_type.find("boundary=") + 9));
+			si.multipart_type = word_from(si.in_header.content_type,
+					si.in_header.content_type.find("/") + 1);
+			si.boundary = si.in_header.content_type.substr( \
+					(si.in_header.content_type.find("boundary=") + 9));
 		}
 
-		verbose(1) << "(is_202) Will read " << len << " bytes for " \
-			<< multitype << " using boundary >>" << boundary << "<<." \
-			<< std::endl;
+		verbose(1) << si << std::endl;
+		mp_block = si.read_fd_for_boundary_at_most();
 
-		verbose(1) << "(webserv) " << si.in_header.directory << \
-			" accepting at most " << max_size << " bytes." << std::endl;
+		verbose(1) << "(is_202) multipart block: >>" << mp_block << "<<" << std::endl;
 
 		file_name = "file_name";
 		dir_name = "dir_name";

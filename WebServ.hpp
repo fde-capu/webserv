@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/05 21:53:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/06 15:16:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,11 @@ struct ws_server_instance
 
 	const DataFold operator[] (std::string) const;
 	std::string val(std::string) const;
+
+	std::string multipart_type;
+	std::string boundary;
+	size_t max_size;
+	std::string read_fd_for_boundary_at_most();
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 
