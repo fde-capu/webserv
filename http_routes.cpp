@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/05 21:54:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/06 14:28:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,25 +144,37 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 	std::string file_name;
 	std::string dir_name;
 	int max_size;
+	int len;
+	std::string multitype;
 	std::string boundary;
 
 	if (si.in_header.method == "POST")
 	{
 		DataFold loc = get_location_config(si);
 
+		max_size = si.config.get<int>("client_max_body_size");
 		while (loc.loop())
-			if (loc.key == "client_max_body_size")
-				max_size = loc.get<int>("client_max_body_size");
-
-		verbose(1) << "Len, Type " << si.in_header.content_length << \
-			", " << si.in_header.content_type;
-
-		if (si.in_header.content_type.find("multipart/form-data") == 0)
 		{
+			if (loc.key == "client_max_body_size")
+			{
+				max_size = loc.get<int>("client_max_body_size");
+				break ;
+			}
+		}
+
+		len = si.in_header.content_length;
+
+		if (si.in_header.content_type.find("multipart") == 0)
+		{
+			multitype = word_from(si.in_header.content_type,
+				si.in_header.content_type.find("/") + 1);
 			boundary = si.in_header.content_type.substr( \
 				(si.in_header.content_type.find("boundary=") + 9));
 		}
-		std::cout << "boundary " << boundary << std::endl;
+
+		verbose(1) << "(is_202) Will read " << len << " bytes for " \
+			<< multitype << " using boundary >>" << boundary << "<<." \
+			<< std::endl;
 
 		verbose(1) << "(webserv) " << si.in_header.directory << \
 			" accepting at most " << max_size << " bytes." << std::endl;

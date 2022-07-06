@@ -6,12 +6,14 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/04 14:51:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/06 14:32:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "StringTools.hpp"
 #include <iostream>
+
+std::string StringTools::st_word_set(ST_WORD_SET);
 
 StringTools::StringTools()
 : _soft_trim_set(ST_SOFT_TRIM), _hard_trim_set(ST_HARD_TRIM),
@@ -570,6 +572,24 @@ bool StringTools::isAllInSet(std::string str, std::string set) const
 			return false;
 	}
 	return true;
+}
+
+bool not_in_word_set(char x)
+{ return stool.not_in_word_set(x); }
+
+bool StringTools::not_in_word_set(char x) const
+{ return st_word_set.find(x) != std::string::npos; }
+
+std::string word_from(const std::string& phrase, size_t pos)
+{ return stool.word_from(phrase, pos); }
+
+std::string StringTools::word_from(const std::string& phrase, size_t pos) const
+{
+	std::string word;
+	
+	while(not_in_word_set(phrase.at(pos)))
+		word += phrase.at(pos++);
+	return word;
 }
 
 std::string nth_word(std::string str, int n)

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/24 14:59:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/06 14:33:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # define ST_QUOTE_SET "\"'`"
 # define ST_COMMENT_INLINE "#"
 # define ST_DEFAULT_QUOTE "'"
-# define ST_WORD_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789"
+# define ST_WORD_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789-"
 # define ST_FILENAME_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_"
 # define ST_URI_SET "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./-_:"
 # define ST_BOOL_WORDS "0 1 off on false true"
@@ -34,6 +34,8 @@
 class StringTools
 {
 	public:
+		static std::string st_word_set;
+
 		StringTools();
 		~StringTools();
 		StringTools(StringTools const & src);
@@ -86,7 +88,9 @@ class StringTools
 		bool						isUri(std::string) const;
 		bool						isAllInSet(std::string, std::string) const;
 		std::string					nth_word(std::string, int) const;
+		bool						not_in_word_set(char x) const;
 		size_t						word_count(std::string) const;
+		std::string					word_from(const std::string&, size_t) const;
 		bool						is_equal_insensitive(const std::string, const std::string) const;
 		std::string					to_lower(std::string) const;
 		void						remove_dup_char(std::string&, const char) const;
@@ -144,5 +148,7 @@ bool isUri(std::string);
 bool isAllInSet(std::string, std::string);
 std::string nth_word(std::string, int);
 size_t word_count(std::string);
+std::string word_from(const std::string&, size_t);
+bool not_in_word_set(char x);
 
 #endif
