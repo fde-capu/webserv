@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/06 15:24:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/07 12:58:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,19 +161,18 @@ int WebServ::catch_connection()
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
-	std::string file_name;
+	verbose(1) << "[THINK] " << std::endl;
 
 	*this = ws_reply_instance();
-
-	verbose(1) << "[THINK] " << std::endl;
 	out_body = "";
 
-	if (is_301(si)) return ;
-	if (is_403(si)) return ;
-	if (is_405(si)) return ;
-	if (is_404(si)) return ; // GET
-	if (is_200(si)) return ; // GET
-	if (is_202(si)) return ; // for POST
+	if (is_301(si)) return ; // Redirect.
+	if (is_403(si)) return ; // Forbidden.
+	if (is_405(si)) return ; // Bad method.
+	if (is_404(si)) return ; // Not found. GET
+	if (is_413(si)) return ; // Too large. All methods.
+	if (is_200(si)) return ; // Ok (GET)
+	if (is_202(si)) return ; // Accepted (POST)
 
 	set_code(420, "Enhance Your Calm");
 	out_body = "Spaced out your request.";

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/06 16:48:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/07 13:08:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,54 +139,100 @@ DataFold ws_reply_instance::get_location_config(ws_server_instance& si)
 	return locations;
 }
 
-void ws_server_instance::boundary_start_end(size_t& start, size_t& end)
+void ws_server_instance::boundary_start_end()
 {
-	start = in_body.find(boundary);
-	if (start == std::string::npos)
-		start = 0;
+	payload_start = in_body.find(boundary);
+	if (payload_start == std::string::npos)
+		payload_start = 0;
 	else
-		start = in_body.find("\r\n", start + boundary.length()) + 2;
-	end = in_body.find(boundary, start);
-	end = end == std::string::npos ? in_body.length() : end - 5;
+		payload_start = in_body.find("\r\n", payload_start + boundary.length()) + 2;
+	payload_end = in_body.find(boundary, payload_start);
+	payload_end = payload_end == std::string::npos ? in_body.length() : payload_end - 4;
 }
 
-void ws_server_instance::body_start_end(const size_t& start, const \
-	size_t& end, size_t& body_start, size_t& body_end)
+void ws_server_instance::body_start_end()
 {
-	body_start = in_body.find("\r\n\r\n", start);
-	body_start += body_start == std::string::npos ? 0 : 4;
-	body_end = end;
+	body_start = in_body.find("\r\n\r\n", payload_start);
+	body_start = body_start == std::string::npos ? 0 : body_start;
+	body_start += body_start ? 4 : 0;
+	body_end = payload_end;
 }
 
 std::string ws_server_instance::read_fd_for_boundary_at_most()
 {
 	std::string dir_name(in_header.directory);
-	size_t len(in_header.content_length);
-	size_t start, end, body_start, body_end;
 
 	verbose(1) << "(read_fd_for_boundary_at_most) " << dir_name << \
 		" accepting at most " << max_size << " bytes." << std::endl;
-	verbose(1) << "(read_fd_for_boundary_at_most) Will read " << len << \
-		" bytes for " << multipart_type << " using boundary >>" << boundary \
-		<< "<<." << std::endl;
-
-	boundary_start_end(start, end);
-	body_start_end(start, end, body_start, body_end);
-
-	verbose(1) << "(read_fd_for_boundary_at_most) Start: " << start << \
-		", end: " << end << "." << std::endl;
-	verbose(1) << "(read_fd_for_boundary_at_most) Body start: " << \
-		body_start << ", end: " << body_end << "." << std::endl;
 
 	std::string body_block;
 	body_block = in_body.substr(body_start, body_end - body_start);
+
 	verbose(1) << "(read_fd_for_boundary_at_most) Body block: >>" \
 		<< body_block << "<<" << std::endl;
 
-	if (!start)
-		return "Incomplete recv.";
+	if (!payload_start)
+		return "(read_fd_for_boundary_at_most) Incomplete receivement.";
 
-	return in_body.substr(start, end - start);
+	return in_body.substr(payload_start, payload_end - payload_start);
+}
+
+int ws_reply_instance::is_413(ws_server_instance& si)
+{
+	si.max_size = si.config.get<int>("client_max_body_size");
+	DataFold loc = get_location_config(si);
+	while (loc.loop())
+	{
+		if (loc.key == "client_max_body_size")
+		{
+			si.max_size = loc.get<int>("client_max_body_size");
+			break ;
+		}
+	}
+	if (si.in_header.method != "POST")
+	{
+		if (static_cast<size_t>(si.in_header.content_length) \
+				> si.max_size \
+				|| si.in_body.length() > si.max_size)
+		{
+			set_code(413, "Payload Too Large");
+			out_body = "BODY FOR 413";
+			return 413;
+		}
+		return 0;
+	}
+	if (si.in_header.content_type.find("multipart") == 0)
+	{
+		si.multipart_type = word_from(si.in_header.content_type,
+				si.in_header.content_type.find("/") + 1);
+		si.boundary = si.in_header.content_type.substr( \
+				(si.in_header.content_type.find("boundary=") + 9));
+
+		verbose(1) << "(is_413) Will read " << \
+			si.in_header.content_length << " bytes for " << \
+			si.multipart_type << " using boundary >>" << si.boundary \
+			<< "<<." << std::endl;
+
+		si.boundary_start_end();
+		si.body_start_end();
+
+		verbose(1) << "(is_413) Start: " << si.payload_start << \
+			", end: " << si.payload_end << "." << std::endl;
+		verbose(1) << "(is_413) Body start: " << \
+			si.body_start << ", end: " << si.body_end << "." << std::endl;
+
+		size_t body_size(si.body_end - si.body_start);
+		verbose(1) << "(is_413) This accounts for " \
+			<< body_size << " bytes." << std::endl;
+
+		if (body_size > si.max_size)
+		{
+			set_code(413, "Payload Too Large");
+			out_body = "BODY FOR 413";
+			return 413;
+		}
+	}
+	return 0;
 }
 
 int ws_reply_instance::is_202(ws_server_instance& si)
@@ -197,26 +243,6 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 
 	if (si.in_header.method == "POST")
 	{
-		si.max_size = si.config.get<int>("client_max_body_size");
-		DataFold loc = get_location_config(si);
-		while (loc.loop())
-		{
-			if (loc.key == "client_max_body_size")
-			{
-				si.max_size = loc.get<int>("client_max_body_size");
-				break ;
-			}
-		}
-
-		if (si.in_header.content_type.find("multipart") == 0)
-		{
-			si.multipart_type = word_from(si.in_header.content_type,
-					si.in_header.content_type.find("/") + 1);
-			si.boundary = si.in_header.content_type.substr( \
-					(si.in_header.content_type.find("boundary=") + 9));
-		}
-
-		verbose(1) << si << std::endl;
 		mp_block = si.read_fd_for_boundary_at_most();
 
 		file_name = "file_name";
