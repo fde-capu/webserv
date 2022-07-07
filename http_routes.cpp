@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/07 15:08:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:23:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,9 +195,11 @@ bool ws_server_instance::read_more()
 	if (is_multitype())
 		in_body = in_body.substr(body_start, body_end - body_start);
 
+//	verbose(1) << "=== SI ===" << std::endl << *this;
+//	CircularBuffer more();
+
 	verbose(1) << "(read_more) in_body: >>" << in_body << "<<" \
 		<< std::endl;
-
 	return false;
 }
 

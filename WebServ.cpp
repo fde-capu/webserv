@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/07 13:50:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:35:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,10 @@ void WebServ::add_to_poll(int oldfd)
 	set_non_blocking(newfd);
 	poll_list.push_back(make_pollin_fd(newfd));
 	fd_to_port[newfd] = fd_to_port[oldfd];
-	verbose(1) << "(webserv) ======" << std::endl << "(webserv) New connection from fd (" << oldfd << ")->" << newfd << "." << std::endl;
+
+	verbose(1) << "(webserv) ======" << std::endl << \
+		"(webserv) New connection from fd (" << oldfd << ")->" \
+		<< newfd << "." << std::endl;
 }
 
 int WebServ::catch_connection()
@@ -205,7 +208,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 	}
 	if (!choose)
 		throw std::domain_error(\
-			"(webserv) Cannot define responding instance.");
+			"(choose_instance) Cannot define responding instance.");
 	si = *choose;
 	si.in_header = in;
 	si.in_header.port = in_port;
@@ -214,7 +217,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 	si.root_config.push_back("root", config.getValStr\
 		("working_directory"));
 
-	verbose(1) << "(webserv) Responding as " << \
+	verbose(1) << "(choose_instance) Responding as " << \
 		choose->config.getValStr("server_name") << ":" << in_port << \
 		"." << std::endl;
 
@@ -228,14 +231,15 @@ void WebServ::respond_connection_from(int fd)
 	std::string body;
 	ws_header in_header;
 
-	verbose(2) << "(webserv) Got connection from fd " << fd << "." \
-		<< std::endl;
+	verbose(1) << "(respond_connection_from) Getting data from fd " << fd \
+		<< "." << std::endl;
 
 	raw_data = get_raw_data(fd);
 	in_header = get_header(raw_data);
 	si = choose_instance(in_header, fd_to_port[fd]);
 	si.in_body = get_body(raw_data);
 	si.set_sizes();
+	si.fd = fd;
 	ws_reply_instance respond(si);
 	if (send(fd, respond.encapsulate().c_str(),
 		respond.package_length, 0) == -1)
