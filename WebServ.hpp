@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/07 13:00:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/07 13:46:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,11 @@ struct ws_server_instance
 	size_t body_start, body_end;
 
 	std::string read_fd_for_boundary_at_most();
+	void set_sizes();
 	void boundary_start_end();
 	void body_start_end();
+	DataFold get_location_config();
+	bool is_multitype() const;
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 
@@ -73,7 +76,6 @@ struct ws_reply_instance
 	std::string encapsulate();
 	void set_code(int, const std::string&);
 	void set_redirect(const std::string&);
-	DataFold get_location_config(ws_server_instance&);
 
 	int is_301(ws_server_instance&); // Redirect.
 	int is_403(ws_server_instance&); // Forbidden.
