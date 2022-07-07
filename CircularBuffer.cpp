@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/07 13:09:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/07 14:30:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,9 @@ void CircularBuffer::resetMemory()
 
 void CircularBuffer::set_eof()
 {
-	std::cout << "(CircularBuffer) Setting EOF; output >>" << output << \
-		"<<" << std::endl;
 	resetMemory();
 	eof = true;
+	verbose(2) << "(CircularBuffer) EOF set." << std::endl;
 }
 
 std::string CircularBuffer::reof_out()
@@ -59,7 +58,7 @@ void CircularBuffer::receive_until_eof()
 {
 	int bytes = read(fd, const_cast<char *>(memory), size);
 
-	verbose(1) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
+	verbose(5) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
 		" size " << size << "\t(" << std::string(memory).substr(0, bytes) \
 		<< ")" << std::endl;
 
@@ -67,7 +66,7 @@ void CircularBuffer::receive_until_eof()
 		return set_eof();
 	if (bytes == -1)
 	{
-		verbose(1) << "(CircularBuffer) Encontered an error, treated " << \
+		verbose(2) << "(CircularBuffer) Encontered an error, treated " << \
 			"as warning, set point as EOF: " << strerror(errno) << std::endl;
 		return set_eof();
 	}

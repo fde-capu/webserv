@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/07 13:46:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/07 15:08:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,14 +54,11 @@ struct ws_server_instance
 	std::string multipart_type;
 	std::string boundary;
 	size_t max_size;
-
 	size_t payload_start, payload_end;
 	size_t body_start, body_end;
 
-	std::string read_fd_for_boundary_at_most();
+	bool read_more();
 	void set_sizes();
-	void boundary_start_end();
-	void body_start_end();
 	DataFold get_location_config();
 	bool is_multitype() const;
 };
