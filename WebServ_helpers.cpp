@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/11 16:33:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/11 16:41:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,13 @@ bool ws_server_instance::read_more()
 	if (is_multipart())
 	{
 		multipart_content = in_body.substr(body_start, body_end - body_start);
+		if (multipart_content.length() < max_size)
+			return true;
+	}
+	else
+	{
+		if (in_body.length() < max_size)
+			return true;
 	}
 
 	verbose(1) << "(read_more) " << in_header.directory << \
@@ -44,6 +51,9 @@ bool ws_server_instance::read_more()
 
 	verbose(1) << "(read_more) in_body: >>" << in_body << "<<" \
 		<< std::endl;
+	verbose(1) << "(read_more) multipart_content: >>" << multipart_content << "<<" \
+		<< std::endl;
+	verbose(1) << "(read_more) Finished." << std::endl;
 	return false;
 }
 
