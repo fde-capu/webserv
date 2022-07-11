@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/07 15:35:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/11 16:33:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ struct ws_server_instance
 	DataFold config;
 	DataFold root_config;
 	int fd;
+	std::string multipart_content;
 
 	const DataFold operator[] (std::string) const;
 	std::string val(std::string) const;
@@ -61,7 +62,7 @@ struct ws_server_instance
 	bool read_more();
 	void set_sizes();
 	DataFold get_location_config();
-	bool is_multitype() const;
+	bool is_multipart() const;
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 

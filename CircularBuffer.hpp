@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/11 15:47:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/11 16:31:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ class CircularBuffer
 		int getFd() const;
 		bool ended() const;
 
-		std::string receive_until_eof();
+		std::string& receive_until_eof();
+		std::string& receive_at_most(size_t);
 		std::string output;
 
 		operator std::string();

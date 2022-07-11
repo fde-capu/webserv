@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/11 15:50:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/11 16:33:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,25 @@ bool ws_server_instance::read_more()
 		<< ", end: " << body_end << "." << std::endl;
 	verbose(1) << "(read_more) From fd: " << fd << std::endl;
 
-	if (is_multitype())
-		in_body = in_body.substr(body_start, body_end - body_start);
+//	verbose(1) << "=== SI ===" << std::endl << *this;
 
-	verbose(1) << "=== SI ===" << std::endl << *this;
+	int acceptable_load = max_size;
+
 	CircularBuffer more(fd);
-	in_body += more.receive_until_eof();
+	in_body += more.receive_at_most(acceptable_load);
+	set_sizes();
+	if (is_multipart())
+	{
+		multipart_content = in_body.substr(body_start, body_end - body_start);
+	}
+
+	verbose(1) << "(read_more) " << in_header.directory << \
+		" accepting at most " << max_size << " bytes." << std::endl;
+	verbose(1) << "(read_more) Payload start: " << payload_start \
+		<< ", end: " << payload_end << "." << std::endl;
+	verbose(1) << "(read_more) Body start: " << body_start \
+		<< ", end: " << body_end << "." << std::endl;
+	verbose(1) << "(read_more) From fd: " << fd << std::endl;
 
 	verbose(1) << "(read_more) in_body: >>" << in_body << "<<" \
 		<< std::endl;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/11 15:48:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/11 16:32:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,39 @@ void CircularBuffer::set_eof()
 	verbose(2) << "(CircularBuffer) EOF set." << std::endl;
 }
 
-std::string CircularBuffer::receive_until_eof()
+std::string& CircularBuffer::receive_at_most(size_t max)
+{
+	size_t b_size = max < size ? max : size;
+	b_size = max - output.length() < b_size ? max - output.length() : b_size;
+	int bytes = read(fd, const_cast<char *>(memory), b_size);
+
+	verbose(5) << "(receive_at_most) ->" << fd << ": bytes " << bytes << \
+		" b_size " << b_size << "\t(" << std::string(memory).substr(0, bytes) \
+		<< ")" << std::endl;
+
+	if (bytes == -1)
+	{
+		verbose(2) << "(CircularBuffer) Encontered an error, treated " << \
+			"as warning, set point as EOF: " << strerror(errno) << std::endl;
+		set_eof();
+		return output;
+	}
+	if (bytes == 0)
+		return receive_at_most(max);
+	if (static_cast<size_t>(bytes) < b_size)
+	{
+		output.append(memory, bytes);
+		return receive_at_most(max);
+	}
+	if (static_cast<size_t>(bytes) == size)
+	{
+		output.append(memory, b_size);
+		return receive_at_most(max);
+	}
+	return output;
+}
+
+std::string& CircularBuffer::receive_until_eof()
 {
 	int bytes = read(fd, const_cast<char *>(memory), size);
 

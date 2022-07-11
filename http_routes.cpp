@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/11 15:36:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/11 16:33:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ void ws_server_instance::set_sizes()
 			break ;
 		}
 	}
-	if (is_multitype())
+	if (is_multipart())
 	{
 		multipart_type = word_from(in_header.content_type,
 				in_header.content_type.find("/") + 1);
@@ -180,12 +180,12 @@ void ws_server_instance::set_sizes()
 	}
 }
 
-bool ws_server_instance::is_multitype() const
+bool ws_server_instance::is_multipart() const
 { return in_header.content_type.find("multipart") == 0; }
 
 int ws_reply_instance::is_413(ws_server_instance& si)
 {
-	if (!si.is_multitype() && \
+	if (!si.is_multipart() && \
 		(static_cast<size_t>(si.in_header.content_length) > \
 		si.max_size || si.in_body.length() > si.max_size))
 	{
@@ -202,8 +202,17 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 			out_body = "BODY FOR 413";
 			return 413;
 		}
-		verbose(1) << "(is_413) Multipart accounts for " \
-			<< si.in_body.length() << " bytes." << std::endl;
+		if (si.is_multipart())
+		{
+			verbose(1) << "(is_413) Multipart accounts for " \
+				<< si.multipart_content.length() << " bytes." \
+				<< std::endl;
+		}
+		else
+		{
+			verbose(1) << "(is_413) Non-multipart accounts for " \
+				<< si.in_body.length() << " bytes." << std::endl;
+		}
 	}
 	return 0;
 }
