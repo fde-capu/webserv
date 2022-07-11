@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/11 15:42:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/11 15:50:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ bool ws_server_instance::read_more()
 
 	verbose(1) << "=== SI ===" << std::endl << *this;
 	CircularBuffer more(fd);
+	in_body += more.receive_until_eof();
 
 	verbose(1) << "(read_more) in_body: >>" << in_body << "<<" \
 		<< std::endl;
