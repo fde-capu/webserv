@@ -6,11 +6,32 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/07 15:05:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/11 15:42:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+
+bool ws_server_instance::read_more()
+{
+	verbose(1) << "(read_more) " << in_header.directory << \
+		" accepting at most " << max_size << " bytes." << std::endl;
+	verbose(1) << "(read_more) Payload start: " << payload_start \
+		<< ", end: " << payload_end << "." << std::endl;
+	verbose(1) << "(read_more) Body start: " << body_start \
+		<< ", end: " << body_end << "." << std::endl;
+	verbose(1) << "(read_more) From fd: " << fd << std::endl;
+
+	if (is_multitype())
+		in_body = in_body.substr(body_start, body_end - body_start);
+
+	verbose(1) << "=== SI ===" << std::endl << *this;
+	CircularBuffer more(fd);
+
+	verbose(1) << "(read_more) in_body: >>" << in_body << "<<" \
+		<< std::endl;
+	return false;
+}
 
 bool WebServ::is_port_taken(int port) const
 {

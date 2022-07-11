@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/07 15:35:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/08 13:38:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,7 +240,7 @@ void WebServ::respond_connection_from(int fd)
 	si.in_body = get_body(raw_data);
 	si.set_sizes();
 	si.fd = fd;
-	ws_reply_instance respond(si);
+	ws_reply_instance respond(si); // ..oonn...
 	if (send(fd, respond.encapsulate().c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");

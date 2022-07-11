@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/07 15:23:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/11 15:36:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,26 +182,6 @@ void ws_server_instance::set_sizes()
 
 bool ws_server_instance::is_multitype() const
 { return in_header.content_type.find("multipart") == 0; }
-
-bool ws_server_instance::read_more()
-{
-	verbose(1) << "(read_more) " << in_header.directory << \
-		" accepting at most " << max_size << " bytes." << std::endl;
-	verbose(1) << "(read_more) Payload start: " << payload_start \
-		<< ", end: " << payload_end << "." << std::endl;
-	verbose(1) << "(read_more) Body start: " << body_start \
-		<< ", end: " << body_end << "." << std::endl;
-
-	if (is_multitype())
-		in_body = in_body.substr(body_start, body_end - body_start);
-
-//	verbose(1) << "=== SI ===" << std::endl << *this;
-//	CircularBuffer more();
-
-	verbose(1) << "(read_more) in_body: >>" << in_body << "<<" \
-		<< std::endl;
-	return false;
-}
 
 int ws_reply_instance::is_413(ws_server_instance& si)
 {
