@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 13:10:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 14:58:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,8 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	while (accepted_methods.loop())
 		if (si.in_header.method == accepted_methods.val)
 			method_accepted = true;
-	if (method_accepted) return 0;
+	if (method_accepted)
+		return 0;
 	set_code(405, "Method Not Allowed");
 	return 405;
 }

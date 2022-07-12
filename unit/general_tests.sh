@@ -249,8 +249,8 @@ fi
 \
 ; } 2> /dev/null
 
-#curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
-#	http://$name_server:4242/post_body && cat log && rm log
+curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
+	http://$name_server:4242/post_body && cat log && rm log
 
 # { div; } 2> /dev/null
 
@@ -259,7 +259,7 @@ fi
 
 # { div; } 2> /dev/null
 
- curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
+# curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
 
 # { div; } 2> /dev/null
 
