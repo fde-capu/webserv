@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 15:43:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 16:36:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,35 +56,34 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 	
 	int bytes = read(fd, const_cast<char *>(memory), b_size);
 
-	verbose(1) << "(receive_at_most) fd " << fd << ": read " << bytes << \
+	verbose(2) << "(receive_at_most) fd " << fd << ": read " << bytes << \
 		", b_size " << b_size << ", max " << max << ", have " << output.length() \
 		<< "\t(" << std::string(memory).substr(0, bytes) << ")" << std::endl;
 
 	if (bytes == -1)
 	{
-		verbose(1) << "(receive_at_most) " << strerror(errno) << \
-			"..? Treat as warning, set EOF." << std::endl;
+		verbose(3) << "(receive_at_most) " << strerror(errno) << "." << std::endl;
 		return set_eof();
 	}
 	if (bytes == 0)
 	{
-		verbose(1) << "(receive_at_most) Zero bytes EOF." << std::endl;
+		verbose(3) << "(receive_at_most) Zero bytes EOF." << std::endl;
 		return set_eof();
 	}
 	if (static_cast<size_t>(bytes) < b_size)
 	{
-		verbose(1) << "(receive_at_most) Buffer lesser than expected, come again." \
+		verbose(3) << "(receive_at_most) Buffer lesser than expected, come again." \
 			<< std::endl;
 		output.append(memory, bytes);
 		return receive_at_most(max);
 	}
 	if (static_cast<size_t>(bytes) == size)
 	{
-		verbose(1) << "(receive_at_most) Buffer full, come again." << std::endl;
+		verbose(4) << "(receive_at_most) Buffer full, come again." << std::endl;
 		output.append(memory, b_size);
 		return receive_at_most(max);
 	}
-	verbose (1) << "(receive_at_most) End of recursion." << std::endl;
+	verbose (3) << "(receive_at_most) End of recursion." << std::endl;
 	return set_eof();
 }
 

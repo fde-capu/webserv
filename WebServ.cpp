@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/08 13:38:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 16:19:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_405(si)) return ; // Bad method.
 	if (is_404(si)) return ; // Not found. GET
 	if (is_413(si)) return ; // Too large. All methods.
+	if (is_529(si)) return ; // Site is overloaded.
 	if (is_200(si)) return ; // Ok (GET)
 	if (is_202(si)) return ; // Accepted (POST)
 
@@ -240,12 +241,12 @@ void WebServ::respond_connection_from(int fd)
 	si.in_body = get_body(raw_data);
 	si.set_sizes();
 	si.fd = fd;
-	ws_reply_instance respond(si); // ..oonn...
+	ws_reply_instance respond(si); // ...oonn...
 	if (send(fd, respond.encapsulate().c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
-	remove_from_poll(fd);
 	close(fd);
+	remove_from_poll(fd);
 }
 
 void WebServ::light_up()

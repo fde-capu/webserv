@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 15:00:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 16:30:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 void ws_server_instance::read_more()
 {
-	int acceptable_load = max_size;
+	full_load = max_size;
 	if (is_multipart())
-		acceptable_load = in_header.content_length;
+		full_load = in_header.content_length;
 
 	verbose(3) << "(read_more) From fd: " << fd << std::endl;
 	verbose(1) << "(read_more) " << in_header.directory << \
 		" accepting at most " << max_size << " bytes." << std::endl;
-	verbose(1) << "(read_more) Actually downloading " << acceptable_load \
+	verbose(1) << "(read_more) Actually downloading " << full_load \
 		<< " bytes." << std::endl;
 	verbose(4) << "(read_more) Payload start: " << payload_start \
 		<< ", end: " << payload_end << "." << std::endl;
@@ -31,7 +31,7 @@ void ws_server_instance::read_more()
 	CircularBuffer more(fd);
 	while (1)
 	{
-		in_body = more.receive_at_most(acceptable_load);
+		in_body = more.receive_at_most(full_load);
 		if (more.ended())
 		{
 			verbose(1) << "(read_more) No more data." << std::endl;
@@ -58,6 +58,16 @@ void ws_server_instance::read_more()
 			}
 		}
 	}
+
+	if (is_multipart())
+	{
+		set_sizes();
+		multipart_content = in_body.substr(body_start, body_end - body_start);
+	}
+
+	verbose(1) << "(read_more) Finished with body " << in_body.length() << \
+		" and multipart-content " << multipart_content.length() << "." << \
+		std::endl;
 }
 
 bool WebServ::is_port_taken(int port) const

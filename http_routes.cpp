@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 14:58:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 16:36:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,14 +204,31 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 		out_body = "BODY FOR 413";
 		return 413;
 	}
-	verbose(1) << "(is_413) Multipart content accounts for " \
+	verbose(3) << "(is_413) Multipart content accounts for " \
 		<< si.multipart_content.length() << " bytes." \
 		<< std::endl;
-	verbose(1) << "(is_413) Non-multipart accounts for " \
+	verbose(3) << "(is_413) Non-multipart accounts for " \
 		<< si.in_body.length() << " bytes." << std::endl;
-	verbose(1) << "(is_413) in_body >>" << si.in_body << "<<" << std::endl;
-	verbose(1) << "(is_413) multipart_content >>" << si.multipart_content << \
+	verbose(3) << "(is_413) in_body >>" << si.in_body << "<<" << std::endl;
+	verbose(3) << "(is_413) multipart_content >>" << si.multipart_content << \
 		"<<" << std::endl;
+	return 0;
+}
+
+int ws_reply_instance::is_529(ws_server_instance& si)
+{
+	verbose(1) << "(is_529) Multipart? " << si.is_multipart() << \
+		" multipart-content-length: " << \
+		si.multipart_content.length() << " in_body-length: " <<  \
+		si.in_body.length() << " full_load: " << si.full_load << \
+		std::endl;
+
+	if (si.in_body.length() < si.full_load)
+	{
+		set_code(529, "Site is overloaded.");
+		out_body = "BODY FOR 529";
+		return 529;
+	}
 	return 0;
 }
 

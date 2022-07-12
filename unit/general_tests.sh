@@ -240,7 +240,7 @@ curl -vD- -X GET http://$name_server:4242/post_body
 curl -vD- -X DELETE http://$name_server:4242/post_body
 
 ## LB ###############################################################
-fi
+##fi
 
 { anounce LB \
 \
@@ -267,7 +267,24 @@ curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
 
 # { div; } 2> /dev/null
 
-#################################################################
+## M ################################################################
+
+##exit;
+fi
+
+{ anounce M \
+\
+	'Double test: make two simultaneous calls. Not mandatory. \n
+	(and is not working for me, though it does not crash).' \
+\
+; } 2> /dev/null
+
+curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
+	http://$name_server:4242/post_body && cat log && rm log  & \
+curl -D- --trace-ascii log2 -X POST -F "file=@${MYDIR}/99B.words" \
+	http://$name_server:4242/post_body && cat log2 && rm log2
+
+
 #################################################################
 #################################################################
 

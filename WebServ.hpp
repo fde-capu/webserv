@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 13:10:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 16:25:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ struct ws_server_instance
 	size_t max_size;
 	size_t payload_start, payload_end;
 	size_t body_start, body_end;
+	size_t full_load;
 
 	void read_more();
 	void set_sizes();
@@ -83,6 +84,7 @@ struct ws_reply_instance
 	int is_202(ws_server_instance&); // Accepted.
 	int is_404(ws_server_instance&); // Not Found.
 	int is_413(ws_server_instance&); // Payload Too Large.
+	int is_529(ws_server_instance&); // Site is overloaded.
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert
