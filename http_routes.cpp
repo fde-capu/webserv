@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 12:58:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 13:10:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,7 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 	si.read_more();
 
 	if ((!si.is_multipart() && si.in_body.length() > si.max_size)
-			|| (si.is_multipart() && si.multipart_content.length() > si.max_size))
+	|| (si.is_multipart() && si.multipart_content.length() > si.max_size))
 	{
 		set_code(413, "Payload Too Large (Read Interrupt)");
 		out_body = "BODY FOR 413";

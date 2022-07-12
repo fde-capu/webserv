@@ -6,13 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 12:56:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 13:13:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-bool ws_server_instance::read_more()
+void ws_server_instance::read_more()
 {
 	int acceptable_load = max_size;
 	if (is_multipart())
@@ -29,22 +29,24 @@ bool ws_server_instance::read_more()
 		<< ", end: " << body_end << "." << std::endl;
 
 	CircularBuffer more(fd);
-	in_body += more.receive_at_most(acceptable_load);
-	if (more.ended())
-		return false;
-	if (is_multipart())
+	while (1)
 	{
-		set_sizes();
-		multipart_content = in_body.substr(body_start, body_end - body_start);
-		if (multipart_content.length() <= max_size)
-			return true;
+		in_body += more.receive_at_most(acceptable_load);
+		if (more.ended())
+			break ;
+		if (is_multipart())
+		{
+			set_sizes();
+			multipart_content = in_body.substr(body_start, body_end - body_start);
+			if (multipart_content.length() > max_size)
+				break ;
+		}
+		else
+		{
+			if (in_body.length() > max_size)
+				break ;
+		}
 	}
-	else
-	{
-		if (in_body.length() <= max_size)
-			return true;
-	}
-	return false;
 }
 
 bool WebServ::is_port_taken(int port) const
