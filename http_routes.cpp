@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/11 16:33:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 12:58:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,31 +189,28 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 		(static_cast<size_t>(si.in_header.content_length) > \
 		si.max_size || si.in_body.length() > si.max_size))
 	{
-		set_code(413, "Payload Too Large");
+		set_code(413, "Payload Too Large (Declared Size)");
 		out_body = "BODY FOR 413";
 		return 413;
 	}
 
-	while(si.read_more())
+	si.read_more();
+
+	if ((!si.is_multipart() && si.in_body.length() > si.max_size)
+			|| (si.is_multipart() && si.multipart_content.length() > si.max_size))
 	{
-		if (si.in_body.length() > si.max_size)
-		{
-			set_code(413, "Payload Too Large");
-			out_body = "BODY FOR 413";
-			return 413;
-		}
-		if (si.is_multipart())
-		{
-			verbose(1) << "(is_413) Multipart accounts for " \
-				<< si.multipart_content.length() << " bytes." \
-				<< std::endl;
-		}
-		else
-		{
-			verbose(1) << "(is_413) Non-multipart accounts for " \
-				<< si.in_body.length() << " bytes." << std::endl;
-		}
+		set_code(413, "Payload Too Large (Read Interrupt)");
+		out_body = "BODY FOR 413";
+		return 413;
 	}
+	verbose(1) << "(is_413) Multipart content accounts for " \
+		<< si.multipart_content.length() << " bytes." \
+		<< std::endl;
+	verbose(1) << "(is_413) Non-multipart accounts for " \
+		<< si.in_body.length() << " bytes." << std::endl;
+	verbose(1) << "(is_413) in_body >>" << si.in_body << "<<" << std::endl;
+	verbose(1) << "(is_413) multipart_content >>" << si.multipart_content << \
+		"<<" << std::endl;
 	return 0;
 }
 

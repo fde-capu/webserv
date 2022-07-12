@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/11 16:36:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 12:46:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 
 	int bytes = read(fd, const_cast<char *>(memory), b_size);
 
-	verbose(1) << "(receive_at_most) ->" << fd << ": bytes " << bytes << \
+	verbose(4) << "(receive_at_most) ->" << fd << ": bytes " << bytes << \
 		" b_size " << b_size << "\t(" << std::string(memory).substr(0, bytes) \
 		<< ")" << std::endl;
 
