@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 16:43:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 16:56:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,9 @@ void ws_server_instance::read_more()
 		full_load = in_header.content_length;
 
 	verbose(3) << "(read_more) From fd: " << fd << std::endl;
-	verbose(1) << "(read_more) " << in_header.directory << \
+	verbose(3) << "(read_more) " << in_header.directory << \
 		" accepting at most " << max_size << " bytes." << std::endl;
-	verbose(1) << "(read_more) Actually downloading " << full_load \
+	verbose(3) << "(read_more) Actually downloading " << full_load \
 		<< " bytes." << std::endl;
 	verbose(4) << "(read_more) Payload start: " << payload_start \
 		<< ", end: " << payload_end << "." << std::endl;
@@ -65,7 +65,7 @@ void ws_server_instance::read_more()
 		multipart_content = in_body.substr(body_start, body_end - body_start);
 	}
 
-	verbose(1) << "(read_more) Finished with body " << in_body.length() << \
+	verbose(2) << "(read_more) Finished with body " << in_body.length() << \
 		" and multipart-content " << multipart_content.length() << "." << \
 		std::endl;
 }
