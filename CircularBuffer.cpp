@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 16:36:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/12 16:53:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 	}
 	if (bytes == 0)
 	{
-		verbose(3) << "(receive_at_most) Zero bytes EOF." << std::endl;
+		verbose(3) << "(receive_at_most) Zero bytes, EOF." << std::endl;
 		return set_eof();
 	}
 	if (static_cast<size_t>(bytes) < b_size)
@@ -80,10 +80,11 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 	if (static_cast<size_t>(bytes) == size)
 	{
 		verbose(4) << "(receive_at_most) Buffer full, come again." << std::endl;
-		output.append(memory, b_size);
+		output.append(memory, bytes);
 		return receive_at_most(max);
 	}
 	verbose (3) << "(receive_at_most) End of recursion." << std::endl;
+	output.append(memory, bytes);
 	return set_eof();
 }
 
