@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/06 14:32:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 16:46:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -654,4 +654,11 @@ void StringTools::remove_rep_char(std::string& dst, const char c) const
 	std::string before(2, c);
 	std::string after(1, c);
 	substitute_super(dst, before, after);
+}
+
+std::string StringTools::query_for(std::string query, std::string& src)
+{
+	(void) query;
+	(void) src;
+	return "Boo";
 }

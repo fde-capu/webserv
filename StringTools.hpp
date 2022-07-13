@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/06 14:33:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 16:46:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ class StringTools
 		std::string					to_lower(std::string) const;
 		void						remove_dup_char(std::string&, const char) const;
 		void						remove_rep_char(std::string&, const char) const;
+		static std::string			query_for(std::string, std::string&);
 };
 
 //std::ostream & operator<< (std::ostream & o, StringTools const & i);
