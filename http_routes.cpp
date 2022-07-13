@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 16:21:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 21:09:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,7 +249,7 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 
 	if (si.in_header.method == "POST")
 	{
-		file_name = "file_name";
+		file_name = si.multipart_filename;
 		dir_name = "dir_name";
 
 		verbose(1) << "(webserv) " << file_name << \

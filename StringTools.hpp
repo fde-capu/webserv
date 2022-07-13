@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 20:45:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 21:14:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <vector>
 # include <cstdio>
 
-# define ST_SOFT_TRIM " \t\n"
+# define ST_SOFT_TRIM " \t\n\r"
 # define ST_HARD_TRIM " \t"
 # define ST_QUOTE_SET "\"'`"
 # define ST_COMMENT_INLINE "#"

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 20:55:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 21:13:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -660,6 +660,6 @@ std::string StringTools::query_for(std::string query, std::string& src)
 	if (h == std::string::npos)
 		return "";
 	std::string tmp = src.substr(h);
-	tmp = src.substr(h, find_outside_quotes_set(tmp, ";\n"));
-	return trim(tmp);
+	tmp = src.substr(h, find_outside_quotes_set(tmp, ";\r\n"));
+	return trim(tmp, " \"\'");
 }
