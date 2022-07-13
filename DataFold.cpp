@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 19:47:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 20:26:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -410,7 +410,7 @@ int DataFold::df_type(std::string val)
 		return DF_TYPE_SUB;
 	}
 	int out = 0;
-	if (find_outside_quotes(val, " ") != std::string::npos)
+	if (StringTools::find_outside_quotes(val, " ") != std::string::npos)
 	{
 		out += DF_TYPE_ARRAY;
 		out += isAllNumber(splitOutsideQuotes(val)) ? DF_TYPE_NUMBER : DF_TYPE_STRING;
@@ -468,7 +468,7 @@ void DataFold::push_back(std::string key, std::string val)
 		entry.val = "";
 		for (size_t i = 0; i < spl.size(); i++)
 		{
-			if (find_outside_quotes(spl[i], " ") == nopos)
+			if (StringTools::find_outside_quotes(spl[i], " ") == nopos)
 				entry.val += spl[i];
 			else
 				entry.val += "\"" + escape_char(spl[i], "\"") + "\"";
@@ -506,8 +506,8 @@ void DataFold::array_into_inline(std::string& dst) const
 	size_t p_cl;
 	std::string blk;
 
-	p_op = find_outside_quotes(dst, "[");
-	p_cl = find_outside_quotes(dst, "]");
+	p_op = StringTools::find_outside_quotes(dst, "[");
+	p_cl = StringTools::find_outside_quotes(dst, "]");
 	while (p_op != std::string::npos && p_cl != std::string::npos)
 	{
 		blk = dst.substr(p_op + 1, p_cl - p_op - 1);
@@ -519,8 +519,8 @@ void DataFold::array_into_inline(std::string& dst) const
 		if (dst.substr(p_op - 1, 1) == ":")
 			p_op--;
 		dst = dst.substr(0, p_op) + " " + blk + dst.substr(p_cl + 1);
-		p_op = find_outside_quotes(dst, "[");
-		p_cl = find_outside_quotes(dst, "]");
+		p_op = StringTools::find_outside_quotes(dst, "[");
+		p_cl = StringTools::find_outside_quotes(dst, "]");
 	}
 }
 
@@ -588,10 +588,10 @@ DF DF::parse_data(const str_t jstr)
 	while (!pass)
 	{
 		pass = true;
-		p[0] = find_outside_quotes_set(ops, " :,");
-		p[1] = find_outside_quotes_set(ops, "{");
-		p[2] = find_outside_quotes_set(ops, ";");
-		p[3] = find_outside_quotes_set(ops, "\n");
+		p[0] = StringTools::find_outside_quotes_set(ops, " :,");
+		p[1] = StringTools::find_outside_quotes_set(ops, "{");
+		p[2] = StringTools::find_outside_quotes_set(ops, ";");
+		p[3] = StringTools::find_outside_quotes_set(ops, "\n");
 
 		verbose(5)	<< p[0] << ", " << p[1] << ", " \
 					<< p[2] << ", " << p[3] << nl;
@@ -603,9 +603,9 @@ DF DF::parse_data(const str_t jstr)
 			key = ops.substr(0, p[0]);
 			ops = ops.substr(p[0] + 1);
 			if (p[2] < p[3])
-				div_p = find_outside_quotes_set(ops, ";");
+				div_p = StringTools::find_outside_quotes_set(ops, ";");
 			else
-				div_p = find_outside_quotes(ops, "\n");
+				div_p = StringTools::find_outside_quotes(ops, "\n");
 			val = ops.substr(0, div_p);
 			ops = ops.substr(div_p + 1);
 			out.push_back(key, val);
@@ -688,8 +688,8 @@ void DataFold::loop_reset()
 
 bool DataFold::loop_ended()
 {
-	return is_single_array()	?	loop_index >= word_count(core[0].val)
-								||	loop_index >= index;
+	return is_single_array() ? loop_index >= word_count(core[0].val)
+							 : loop_index >= index;
 }
 
 bool DataFold::not_ended()

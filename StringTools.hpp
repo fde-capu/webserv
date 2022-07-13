@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 19:34:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 20:33:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ class StringTools
 		std::string					substitute_all_ret(const std::string, std::string, std::string) const;
 		void						erase_boundaries(std::string&, std::string) const;
 		void						erase_boundaries(std::string&, std::string, std::string) const;
-		size_t						find_outside_quotes(std::string&, std::string) const;
+		static size_t				find_outside_quotes(std::string&, std::string);
+		static size_t				find_outside_quotes_set(std::string&, std::string);
 		size_t						find_closing_bracket(std::string) const;
-		size_t						find_outside_quotes_set(std::string&, std::string) const;
 		void						remove_comments(std::string&) const;
 		std::string					remove_quotes(std::string&) const;
 		std::string					remove_quotes(const std::string&) const;
@@ -71,6 +71,7 @@ class StringTools
 		bool						isAllNumber(std::vector<std::string>) const;
 		bool						isDigit(char) const;
 		bool						isWord(const std::string) const;
+		static bool					isWord(const std::string&, size_t);
 		bool						isWordContained(const std::string&, const std::string&) const;
 		bool						isWordInWordSet(std::string, std::vector<std::string>) const;
 		bool						isBoolStr(std::string) const;
@@ -88,7 +89,7 @@ class StringTools
 		bool						isUri(std::string) const;
 		bool						isAllInSet(std::string, std::string) const;
 		std::string					nth_word(std::string, int) const;
-		bool						not_in_word_set(char x) const;
+		static bool					not_in_word_set(char x);
 		size_t						word_count(std::string) const;
 		std::string					word_from(const std::string&, size_t) const;
 		bool						is_equal_insensitive(const std::string, const std::string) const;
@@ -121,9 +122,7 @@ std::string substitute_super(std::string&, std::string, std::string);
 std::string substitute_all_ret(const std::string, std::string, std::string);
 void erase_boundaries(std::string&, std::string);
 void erase_boundaries(std::string&, std::string, std::string);
-size_t find_outside_quotes(std::string, std::string);
 size_t find_closing_bracket(std::string);
-size_t find_outside_quotes_set(std::string& str, std::string set);
 void remove_comments(std::string&);
 std::string remove_quotes(std::string&);
 std::string remove_quotes(const std::string&);
@@ -150,6 +149,5 @@ bool isAllInSet(std::string, std::string);
 std::string nth_word(std::string, int);
 size_t word_count(std::string);
 std::string word_from(const std::string&, size_t);
-bool not_in_word_set(char x);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 19:34:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 20:28:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,10 +252,7 @@ std::string apply_quotes(std::string str, std::string quote)
 std::string StringTools::apply_quotes(std::string str, std::string quote) const
 { return std::string(quote + escape_char(str, quote) + quote); }
 
-size_t find_outside_quotes(std::string str, std::string needle)
-{ return stool.find_outside_quotes(str, needle); }
-
-size_t StringTools::find_outside_quotes(std::string& str, std::string needle) const
+size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 {
 	std::string q = "";
 	std::string::iterator e = str.end();
@@ -289,10 +286,7 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle) co
 	return std::string::npos;
 }
 
-size_t find_outside_quotes_set(std::string& str, std::string set)
-{ return stool.find_outside_quotes_set(str, set); }
-
-size_t StringTools::find_outside_quotes_set(std::string& str, std::string set) const
+size_t StringTools::find_outside_quotes_set(std::string& str, std::string set)
 {
 	size_t out = std::string::npos;
 	for (std::string::iterator i = set.begin(); *i; i++)
@@ -575,10 +569,7 @@ bool StringTools::isAllInSet(std::string str, std::string set) const
 	return true;
 }
 
-bool not_in_word_set(char x)
-{ return stool.not_in_word_set(x); }
-
-bool StringTools::not_in_word_set(char x) const
+bool StringTools::not_in_word_set(char x)
 { return st_word_set.find(x) != std::string::npos; }
 
 std::string word_from(const std::string& phrase, size_t pos)
@@ -657,10 +648,17 @@ void StringTools::remove_rep_char(std::string& dst, const char c) const
 	substitute_super(dst, before, after);
 }
 
+bool StringTools::isWord(const std::string& str, size_t pos)
+{ return !not_in_word_set(str.at(pos)); }
+
 std::string StringTools::query_for(std::string query, std::string& src)
 {
-	DataFold d(src);
-	verbose(1) << "==!!!+==" << std::endl << d << std::endl << "===++++==" << std::endl;
-	(void) query;
-	return "Boo";
+	size_t h = src.find(query);
+	if (h == std::string::npos)
+		return "";
+	while (!isWord(query, h++)) ;
+	if (h == std::string::npos)
+		return "";
+	std::string tmp = query.substr(h);
+	return query.substr(h, find_outside_quotes_set(tmp, ";\n"));
 }
