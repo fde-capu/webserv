@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 20:33:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 20:45:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ class StringTools
 
 		std::string					_soft_trim_set;
 		std::string					_hard_trim_set;
-		std::string					_quote_set;
+		static std::string			_quote_set;
 		std::string					_comment_open;
 		std::string					_comment_close;
 		std::string					_comment_inline;

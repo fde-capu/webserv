@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 20:28:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 20:55:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,11 @@
 #include <iostream>
 
 std::string StringTools::st_word_set(ST_WORD_SET);
+std::string StringTools::_quote_set(ST_QUOTE_SET);
 
 StringTools::StringTools()
 : _soft_trim_set(ST_SOFT_TRIM), _hard_trim_set(ST_HARD_TRIM),
-  _quote_set(ST_QUOTE_SET), _comment_inline(ST_COMMENT_INLINE)
+  _comment_inline(ST_COMMENT_INLINE)
 {
 	return ;
 }
@@ -35,7 +36,6 @@ StringTools & StringTools::operator= (StringTools const & rhs)
 	{
 		this->_soft_trim_set = rhs._soft_trim_set;
 		this->_hard_trim_set = rhs._hard_trim_set;
-		this->_quote_set = rhs._quote_set;
 		this->_comment_open = rhs._comment_open;
 		this->_comment_close = rhs._comment_close;
 		this->_comment_inline = rhs._comment_inline;
@@ -656,9 +656,10 @@ std::string StringTools::query_for(std::string query, std::string& src)
 	size_t h = src.find(query);
 	if (h == std::string::npos)
 		return "";
-	while (!isWord(query, h++)) ;
+	while (!isWord(src, h++)) ;
 	if (h == std::string::npos)
 		return "";
-	std::string tmp = query.substr(h);
-	return query.substr(h, find_outside_quotes_set(tmp, ";\n"));
+	std::string tmp = src.substr(h);
+	tmp = src.substr(h, find_outside_quotes_set(tmp, ";\n"));
+	return trim(tmp);
 }
