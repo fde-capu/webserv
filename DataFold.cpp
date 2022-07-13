@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/23 16:54:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 19:47:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -688,16 +688,8 @@ void DataFold::loop_reset()
 
 bool DataFold::loop_ended()
 {
-//	std::cout << " ...loop_check " << loop_index << ":" << index << nl;
-	if (is_single_array())
-	{
-//		std::cout << " ...array " << loop_index << ":" << word_count(core[0].val) << nl;
-		return loop_index >= word_count(core[0].val);
-	}
-//	if (type & DF_TYPE_SUB)
-//		return loop_index >= sub_size();
-//	std::cout << " ...normal " << loop_index << ":" << index << nl;
-	return loop_index >= index;
+	return is_single_array()	?	loop_index >= word_count(core[0].val)
+								||	loop_index >= index;
 }
 
 bool DataFold::not_ended()

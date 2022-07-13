@@ -6,11 +6,12 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 16:46:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 19:34:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "StringTools.hpp"
+#include "DataFold.hpp"
 #include <iostream>
 
 std::string StringTools::st_word_set(ST_WORD_SET);
@@ -77,8 +78,8 @@ void StringTools::hard_trim(std::string& dst, std::string set) const
 {
 	for (std::string::iterator i = set.begin(); *i; i++)
 	{
-		std::string xx = std::string(i, i + 1) + std::string(i, i + 1);
-		substitute_super(dst, xx, std::string(i, i + 1));
+		std::string trimmed = std::string(i, i + 1) + std::string(i, i + 1);
+		substitute_super(dst, trimmed, std::string(i, i + 1));
 	}
 }
 
@@ -658,7 +659,8 @@ void StringTools::remove_rep_char(std::string& dst, const char c) const
 
 std::string StringTools::query_for(std::string query, std::string& src)
 {
+	DataFold d(src);
+	verbose(1) << "==!!!+==" << std::endl << d << std::endl << "===++++==" << std::endl;
 	(void) query;
-	(void) src;
 	return "Boo";
 }

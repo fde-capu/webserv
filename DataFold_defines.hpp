@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 12:02:11 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/03/22 23:20:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 19:52:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@
 # define DF_TYPE_ARRAY		8
 # define DF_TYPE_SUB		16
 # define DF_TYPE_ONLY_VAL	32
-# define DF_QUOTE_SET "\"\'`"
-# define DF_KEY_QUOTE "\'"
+
 # define DF_NUM_QUOTE ""
 # define DF_VAL_QUOTE "\'"
 # define DF_ARRAY_INIT "[ "

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/23 16:53:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 19:42:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,6 @@ typedef struct datafold_type
 	datafold_type();
 	operator std::string() const;
 	operator int() const;
-
-	void log_self() const;
 
 } datafold_t;
 
