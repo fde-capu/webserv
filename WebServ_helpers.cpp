@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 16:56:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 16:15:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,7 +330,16 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 		<< std::endl;
 	o << "ws_server_instance | in_body     :" << std::endl << ">>" << \
 		wssi.in_body << "<<" << std::endl;
-	o << "ws_server_instance | multipart_type | " << wssi.multipart_type << std::endl;
+	o << "ws_server_instance | multipart_type | " << wssi.multipart_type \
+		<< std::endl;
+	o << "ws_server_instance | multipart_content_disposition | " << \
+		wssi.multipart_content_disposition << std::endl;
+	o << "ws_server_instance | multipart_name | " << wssi.multipart_name \
+		<< std::endl;
+	o << "ws_server_instance | multipart_filename | " \
+		<< wssi.multipart_filename << std::endl;
+	o << "ws_server_instance | multipart_content_type | " \
+		<< wssi.multipart_content_type << std::endl;
 	o << "ws_server_instance | boundary >>" << wssi.boundary << "<<" << std::endl;
 	o << "ws_server_instance | max_size | " << wssi.max_size << std::endl;
 	return o;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 16:36:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 16:21:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,13 @@ void ws_server_instance::set_sizes()
 		body_start = body_start == std::string::npos ? 0 : body_start;
 		body_start += body_start ? 4 : 0;
 		body_end = payload_end;
+
+		multipart_content_disposition = StringTools::query_for( \
+			"Content-Disposition", in_body);
+		multipart_name = StringTools::query_for("name", in_body);
+		multipart_filename = StringTools::query_for("filename", in_body);
+		multipart_content_type = StringTools::query_for("Content-Type", in_body);
+
 	}
 	else
 	{
@@ -217,7 +224,7 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 
 int ws_reply_instance::is_529(ws_server_instance& si)
 {
-	verbose(1) << "(is_529) Multipart? " << si.is_multipart() << \
+	verbose(1) << "(is_529) Multipart: " << si.is_multipart() << \
 		" multipart-content-length: " << \
 		si.multipart_content.length() << " in_body-length: " <<  \
 		si.in_body.length() << " full_load: " << si.full_load << \
@@ -237,6 +244,8 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 	std::string file_name;
 	std::string dir_name;
 	std::string mp_block;
+
+	verbose(1) << si << std::endl;
 
 	if (si.in_header.method == "POST")
 	{

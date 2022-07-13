@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 16:25:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/13 16:14:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,13 @@ struct ws_server_instance
 	std::string val(std::string) const;
 
 	std::string multipart_type;
+
+	// Maybe put on another struct.
+	std::string multipart_content_disposition;
+	std::string multipart_name;
+	std::string multipart_filename;
+	std::string multipart_content_type;
+
 	std::string boundary;
 	size_t max_size;
 	size_t payload_start, payload_end;
