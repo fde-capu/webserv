@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 21:14:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/14 19:52:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ class StringTools
 		void						remove_dup_char(std::string&, const char) const;
 		void						remove_rep_char(std::string&, const char) const;
 		static std::string			query_for(std::string, std::string&);
+		static std::string&			trim(std::string&, std::string);
+		static bool					isInSet(const char&, std::string set);
 };
 
 //std::ostream & operator<< (std::ostream & o, StringTools const & i);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 21:13:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/14 19:55:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -422,7 +422,7 @@ std::vector<std::string> StringTools::split_trim(const std::string str, const st
 {
 	std::vector<std::string> out = split(str, sep);
 	for (size_t i = 0; i < out.size(); i++)
-		trim(out[i]);
+		::trim(out[i]);
 	return out;
 }
 
@@ -662,4 +662,28 @@ std::string StringTools::query_for(std::string query, std::string& src)
 	std::string tmp = src.substr(h);
 	tmp = src.substr(h, find_outside_quotes_set(tmp, ";\r\n"));
 	return trim(tmp, " \"\'");
+}
+
+bool StringTools::isInSet(const char& test_char, std::string set)
+{
+	size_t h = 0;
+	while (h < set.length())
+	{
+		if (set.at(h) == test_char)
+			return true;
+		h++;
+	}
+	return false;
+}
+
+std::string& StringTools::trim(std::string& str, std::string set)
+{
+	size_t start = 0;
+	size_t end;
+
+	while (isInSet(str.at(start++), set)) ;
+	end = str.length() - 1;
+	while (isInSet(str.at(end--), set)) ;
+	str = str.substr(start - 1, end - start + 2);
+	return str;
 }
