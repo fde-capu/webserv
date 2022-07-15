@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/15 13:36:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 16:25:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,14 +48,13 @@ struct ws_server_instance
 	DataFold config;
 	DataFold root_config;
 	int fd;
-	std::string multipart_content;
 
 	const DataFold operator[] (std::string) const;
 	std::string val(std::string) const;
 
-	std::string multipart_type;
-
 	// Maybe put on another struct.
+	std::string multipart_type;
+	std::string multipart_content;
 	std::string multipart_content_disposition;
 	std::string multipart_name;
 	std::string multipart_filename;

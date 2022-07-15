@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/15 16:23:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 16:30:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,11 +244,12 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 			"/" + loc_choice + "/" + si.multipart_filename;
 		stool.remove_rep_char(dir_name, '/');
 
-		verbose(1) << si << std::endl;
-		std::string data("foo");
+		std::string data(si.multipart_content);
 		verbose(1) << "(webserv) >" << data << \
 			"< will be saved into " << dir_name << \
 			"." << std::endl;
+
+		FileString::write(dir_name, si.multipart_content);
 
 		set_code(202, "Accepted (Mocked)");
 		out_body = "anything";
