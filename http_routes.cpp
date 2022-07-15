@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/15 15:54:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 16:21:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,11 +213,11 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 
 int ws_reply_instance::is_529(ws_server_instance& si)
 {
-	verbose(1) << "(is_529) Multipart: " << si.is_multipart() << \
-		" multipart-content-length: " << \
-		si.multipart_content.length() << " in_body-length: " <<  \
-		si.in_body.length() << " full_load: " << si.full_load << \
-		std::endl;
+	verbose(3) << "(is_529) Multipart: " << si.is_multipart() << \
+		", multipart-content-length: " << \
+		si.multipart_content.length() << ", in_body-length: " <<  \
+		si.in_body.length() << ", full_load: " << si.full_load << \
+		"." << std::endl;
 
 	if (si.in_body.length() < si.full_load)
 	{
@@ -238,13 +238,7 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 
 	if (si.in_header.method == "POST")
 	{
-		while (loc.loop())
-		{
-			if (loc.key == "root")
-			{
-				loc_choice = loc.getValStr("root");
-			}
-		}
+		loc_choice = loc.getValStr("root");
 		if (loc_choice.empty() || loc_choice.at(0) != '/')
 			loc_choice = si.config.getValStr("root") + "/" + loc_choice;
 		file_name = si.multipart_filename;
