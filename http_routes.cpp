@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 21:09:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 12:59:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,7 +232,7 @@ int ws_reply_instance::is_529(ws_server_instance& si)
 
 	if (si.in_body.length() < si.full_load)
 	{
-		set_code(529, "Site is overloaded.");
+		set_code(529, "Site is overloaded");
 		out_body = "BODY FOR 529";
 		return 529;
 	}
@@ -245,7 +245,7 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 	std::string dir_name;
 	std::string mp_block;
 
-	verbose(1) << si << std::endl;
+	verbose(1) << si.config << std::endl;
 
 	if (si.in_header.method == "POST")
 	{
