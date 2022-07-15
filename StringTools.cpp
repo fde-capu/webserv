@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/14 19:55:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 12:40:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -681,9 +681,9 @@ std::string& StringTools::trim(std::string& str, std::string set)
 	size_t start = 0;
 	size_t end;
 
-	while (isInSet(str.at(start++), set)) ;
+	while (isInSet(str.at(start), set)) start++;
 	end = str.length() - 1;
-	while (isInSet(str.at(end--), set)) ;
-	str = str.substr(start - 1, end - start + 2);
+	while (isInSet(str.at(end), set)) end--;
+	str = str.substr(start, end - start + 1);
 	return str;
 }
