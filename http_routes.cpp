@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/15 16:21:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 16:23:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,6 @@ int ws_reply_instance::is_529(ws_server_instance& si)
 
 int ws_reply_instance::is_202(ws_server_instance& si)
 {
-	std::string file_name;
 	std::string dir_name;
 	std::string mp_block;
 	DataFold loc = si.get_location_config();
@@ -241,13 +240,14 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 		loc_choice = loc.getValStr("root");
 		if (loc_choice.empty() || loc_choice.at(0) != '/')
 			loc_choice = si.config.getValStr("root") + "/" + loc_choice;
-		file_name = si.multipart_filename;
 		dir_name = si.root_config.getValStr("root") + \
-			"/" + loc_choice + "/" + file_name;
+			"/" + loc_choice + "/" + si.multipart_filename;
 		stool.remove_rep_char(dir_name, '/');
 
-		verbose(1) << "(webserv) " << file_name << \
-			" will be saved into " << dir_name << \
+		verbose(1) << si << std::endl;
+		std::string data("foo");
+		verbose(1) << "(webserv) >" << data << \
+			"< will be saved into " << dir_name << \
 			"." << std::endl;
 
 		set_code(202, "Accepted (Mocked)");
