@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 16:19:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 13:27:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,12 +215,13 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 	si.in_header.port = in_port;
 	if (si.config.get("index").empty())
 		si.config.set("index", config.getValStr("index"));
-	si.root_config.push_back("root", config.getValStr\
+	si.root_config.push_back("root", config.getValStr \
 		("working_directory"));
 
 	verbose(1) << "(choose_instance) Responding as " << \
 		choose->config.getValStr("server_name") << ":" << in_port << \
 		"." << std::endl;
+	verbose(1) << choose->config << std::endl;
 
 	return si;
 }

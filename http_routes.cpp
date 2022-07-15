@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/15 12:59:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 13:30:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,6 @@ void ws_server_instance::set_sizes()
 		multipart_name = StringTools::query_for("name", in_body);
 		multipart_filename = StringTools::query_for("filename", in_body);
 		multipart_content_type = StringTools::query_for("Content-Type", in_body);
-
 	}
 	else
 	{
@@ -245,12 +244,15 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 	std::string dir_name;
 	std::string mp_block;
 
+	verbose(1) << si << std::endl;
 	verbose(1) << si.config << std::endl;
+	verbose(1) << si.root_config << std::endl;
 
 	if (si.in_header.method == "POST")
 	{
 		file_name = si.multipart_filename;
-		dir_name = "dir_name";
+		dir_name = si.root_config.getValStr("root") + \
+			"/" + si.config.getValStr("root") + "/" + file_name;
 
 		verbose(1) << "(webserv) " << file_name << \
 			" will be saved into " << dir_name << \

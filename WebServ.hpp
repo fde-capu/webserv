@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 16:14:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 13:24:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,7 @@ struct ws_server_instance
 	size_t payload_start, payload_end;
 	size_t body_start, body_end;
 	size_t full_load;
+	std::string root;
 
 	void read_more();
 	void set_sizes();
