@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/15 13:30:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 15:54:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 						+ "/" + si.val("root") \
 						+ si.in_header.directory \
 						+ "/" + indexes.val;
-			//stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
+			stool.remove_rep_char(file_name, '/');
 			verbose(3) << "(webserv) Fetching " << file_name << std::endl;
 			FileString from_file(file_name.c_str());
 			out_body = from_file.content();
@@ -116,7 +116,7 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 						+ "/" + si.val("root") \
 						+ si.in_header.directory \
 						+ "/" + indexes.val;
-			// stool.remove_rep_char(file_name, '/'); // The kernel doesn't really care.
+			stool.remove_rep_char(file_name, '/');
 			verbose(3) << "(webserv) Fetching " << file_name << std::endl;
 			FileString from_file(file_name.c_str());
 			out_body = from_file.content();
@@ -128,16 +128,6 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 		}
 	}
 	return 0;
-}
-
-DataFold ws_server_instance::get_location_config()
-{
-	DataFold locations(config.get<DataFold>("location"));
-	if (locations.empty()) return locations;
-	while (locations.loop())
-		if (DataFold(locations.val).getValStr("uri") == in_header.directory)
-			return locations.val;
-	return locations;
 }
 
 void ws_server_instance::set_sizes()
@@ -243,16 +233,24 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 	std::string file_name;
 	std::string dir_name;
 	std::string mp_block;
-
-	verbose(1) << si << std::endl;
-	verbose(1) << si.config << std::endl;
-	verbose(1) << si.root_config << std::endl;
+	DataFold loc = si.get_location_config();
+	std::string loc_choice;
 
 	if (si.in_header.method == "POST")
 	{
+		while (loc.loop())
+		{
+			if (loc.key == "root")
+			{
+				loc_choice = loc.getValStr("root");
+			}
+		}
+		if (loc_choice.empty() || loc_choice.at(0) != '/')
+			loc_choice = si.config.getValStr("root") + "/" + loc_choice;
 		file_name = si.multipart_filename;
 		dir_name = si.root_config.getValStr("root") + \
-			"/" + si.config.getValStr("root") + "/" + file_name;
+			"/" + loc_choice + "/" + file_name;
+		stool.remove_rep_char(dir_name, '/');
 
 		verbose(1) << "(webserv) " << file_name << \
 			" will be saved into " << dir_name << \

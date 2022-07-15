@@ -6,11 +6,21 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 16:15:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/15 15:32:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+
+DataFold ws_server_instance::get_location_config()
+{
+	DataFold locations(config.get<DataFold>("location"));
+	if (locations.empty()) return locations;
+	while (locations.loop())
+		if (DataFold(locations.val).getValStr("uri") == in_header.directory)
+			return locations.val;
+	return locations;
+}
 
 void ws_server_instance::read_more()
 {
