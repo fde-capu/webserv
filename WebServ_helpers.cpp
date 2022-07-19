@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/15 15:32:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/19 16:26:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,24 +24,24 @@ DataFold ws_server_instance::get_location_config()
 
 void ws_server_instance::read_more()
 {
-	full_load = max_size;
+	expected_full_load = max_size;
 	if (is_multipart())
-		full_load = in_header.content_length;
+		expected_full_load = in_header.content_length;
 
-	verbose(3) << "(read_more) From fd: " << fd << std::endl;
-	verbose(3) << "(read_more) " << in_header.directory << \
+	verbose(1) << "(read_more) From fd: " << fd << std::endl;
+	verbose(1) << "(read_more) " << in_header.directory << \
 		" accepting at most " << max_size << " bytes." << std::endl;
-	verbose(3) << "(read_more) Actually downloading " << full_load \
+	verbose(1) << "(read_more) Actually downloading " << expected_full_load \
 		<< " bytes." << std::endl;
-	verbose(4) << "(read_more) Payload start: " << payload_start \
+	verbose(1) << "(read_more) Payload start: " << payload_start \
 		<< ", end: " << payload_end << "." << std::endl;
-	verbose(4) << "(read_more) Body start: " << body_start \
+	verbose(1) << "(read_more) Body start: " << body_start \
 		<< ", end: " << body_end << "." << std::endl;
 
 	CircularBuffer more(fd);
 	while (1)
 	{
-		in_body = more.receive_at_most(full_load);
+		in_body = more.receive_at_most(expected_full_load);
 		if (more.ended())
 		{
 			verbose(1) << "(read_more) No more data." << std::endl;
@@ -75,7 +75,7 @@ void ws_server_instance::read_more()
 		multipart_content = in_body.substr(body_start, body_end - body_start);
 	}
 
-	verbose(2) << "(read_more) Finished with body " << in_body.length() << \
+	verbose(1) << "(read_more) Finished with body " << in_body.length() << \
 		" and multipart-content " << multipart_content.length() << "." << \
 		std::endl;
 }
@@ -238,10 +238,16 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 		if (read_host(line[i], header, is_valid)) continue ;
 		carrier = split_trim(line[i], ":");
 		if (!validate_header_entry(carrier, 2, is_valid)) continue ;
-		if (is_equal_insensitive(carrier[0], "user-agent")) header.user_agent = carrier[1];
-		if (is_equal_insensitive(carrier[0], "accept")) header.accept = carrier[1];
-		if (is_equal_insensitive(carrier[0], "content-length")) header.content_length = atoi(carrier[1].c_str());
-		if (is_equal_insensitive(carrier[0], "content-type")) header.content_type = carrier[1];
+		if (is_equal_insensitive(carrier[0], "user-agent"))
+			header.user_agent = carrier[1];
+		if (is_equal_insensitive(carrier[0], "accept"))
+			header.accept = carrier[1];
+		if (is_equal_insensitive(carrier[0], "content-length"))
+			header.content_length = atoi(carrier[1].c_str());
+		if (is_equal_insensitive(carrier[0], "content-type"))
+			header.content_type = carrier[1];
+		if (is_equal_insensitive(carrier[0], "expect"))
+			header.expect = carrier[1];
 	}
 	header.is_valid = is_valid;
 	verbose(3) << header;
@@ -322,6 +328,7 @@ std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
 	o << "ws_header | connection | " << wsh.connection << std::endl;
 	o << "ws_header | con-length | " << wsh.content_length << std::endl;
 	o << "ws_header | con-type   | " << wsh.content_type << std::endl;
+	o << "ws_header | expect     | " << wsh.expect << std::endl;
 	return o;
 }
 

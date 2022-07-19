@@ -270,11 +270,9 @@ curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.noise" \
 
 curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
 
-fi
-
 { anounce LB_4th \
 \
-	'4th) 101B.noise should not pass.' \
+	'4th) 101B.noise should not pass because of max_size. 413' \
 \
 ; } 2> /dev/null
 
@@ -282,14 +280,31 @@ fi
 
 ## Large Uploads ################################################################
 
-{ anounce Large_Uploads \
+{ anounce Large_Uploads_1 \
 \
-	'Testing 1MiB.noise.' \
+	'Testing 1MiB.noise. This should be reject by 413 because exceeds max_size.' \
 \
 ; } 2> /dev/null
 
-curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/1MiB.noise" \
-	http://$name_server:4242/post_body && cat log && rm log
+curl -X POST -vF "file=@${MYDIR}/1MiB.noise" http://$name_server:4242/post_body
+
+{ anounce Large_Uploads_2 \
+\
+	'Not large, but shows "uri /large_upload" is working. 202' \
+\
+; } 2> /dev/null
+
+ curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/large_upload
+
+fi
+
+{ anounce Large_Uploads_3 \
+\
+	'Now POSTing 1MiB.noise, shall be accepted, saved, and returned 202.' \
+\
+; } 2> /dev/null
+
+ curl -X POST -vF "file=@${MYDIR}/1MiB.noise" http://$name_server:4242/large_upload
 
 exit;
 
