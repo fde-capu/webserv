@@ -288,8 +288,6 @@ curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
 
 ## Stress ################################################################
 
-fi
-
 stress_count=300;
 
 { anounce Stress \
@@ -304,11 +302,11 @@ set +x;
 rm -f stress_out
 i=1;
 while [ "$i" -le "$stress_count" ]; do
-echo -n "\r $i";
-curl -sv -H "Keep-Alive: 60" -H "Connection: keep-alive" http://localhost:3491 2>> stress_out 1> /dev/null
+	echo -n "\r $i";
+	curl -sv -H "Keep-Alive: 60" -H "Connection: keep-alive" http://localhost:3491 2>> stress_out 1> /dev/null
 	i=$(( i + 1 ))
 done
-echo -n "\rCount of 200 OK responses must be $stress_count, and it is: ";
+echo -n "\rCount of '200 OK' responses must be $stress_count, and it is: ";
 cat stress_out | grep HTTP | grep "200 OK" | wc -l;
 rm -f stress_out
 set -x;
@@ -316,6 +314,8 @@ set -x;
 ## N ################################################################
 
 exit;
+fi
+
 
 { anounce N \
 \
