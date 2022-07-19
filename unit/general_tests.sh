@@ -240,48 +240,84 @@ curl -vD- -X GET http://$name_server:4242/post_body
 curl -vD- -X DELETE http://$name_server:4242/post_body
 
 ## LB ###############################################################
-fi
 
-{ anounce LB \
+{ anounce LB_1st \
 \
 	'- /post_body must answer anything to POST request with a \n
-	maxBody of 100. Three tests: 99B (200), 100B (200) and 101B (405).' \
+	maxBody of 100. Many tests.\n
+	- 1st) Post 99B.words into html4242/uploads (as set in config).' \
 \
 ; } 2> /dev/null
 
 curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
 	http://$name_server:4242/post_body && cat log && rm log
 
-#{ div; } 2> /dev/null
 
-#curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.noise" \
-#	http://$name_server:4242/post_body && cat log && rm log
-
-#{ div; } 2> /dev/null
-
-#curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
-
-# { div; } 2> /dev/null
-
-# curl -X POST -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
-
-# { div; } 2> /dev/null
-
-## M ################################################################
-
-exit;
-
-{ anounce M \
+{ anounce LB_2nd \
 \
-	'Double test: make two simultaneous calls. Not mandatory. \n
-	(and is not working for me, though it does not crash).' \
+	'2nd) The same, using noise file.' \
 \
 ; } 2> /dev/null
 
-curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
-	http://$name_server:4242/post_body && cat log && rm log  & \
-curl -D- --trace-ascii log2 -X POST -F "file=@${MYDIR}/99B.words" \
-	http://$name_server:4242/post_body && cat log2 && rm log2
+curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.noise" \
+	http://$name_server:4242/post_body && cat log && rm log
+
+{ anounce LB_3rd \
+\
+	'3rd) Same, with 100B.noise. Max is at 100B, this passes.' \
+\
+; } 2> /dev/null
+
+curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
+
+{ anounce LB_4th \
+\
+	'4th) 101B.noise should not pass.' \
+\
+; } 2> /dev/null
+
+ curl -X POST -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
+
+## M ################################################################
+
+{ anounce M \
+\
+	'Large uploads.' \
+\
+; } 2> /dev/null
+
+## Stress ################################################################
+
+fi
+
+{ anounce Stress \
+\
+	'Stress test.' \
+\
+; } 2> /dev/null
+
+set +x;
+i=0;
+while [ "$i" -le 300 ]; do
+	curl -H "Keep-Alive: 60" -H "Connection: keep-alive" http://localhost:3491;
+	i=$(( i + 1 ))
+done
+
+## N ################################################################
+
+exit;
+
+{ anounce N \
+\
+	'Double test: make two simultaneous calls. Not mandatory. \n
+	(not implemented, though taken care not to crash).' \
+\
+; } 2> /dev/null
+
+curl -X POST -F "file=@${MYDIR}/99B.words" \
+	http://$name_server:4242/post_body & \
+curl -X POST -F "file=@${MYDIR}/99B.words" \
+	http://$name_server:4242/post_body
 
 
 #################################################################
