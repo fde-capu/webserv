@@ -300,12 +300,22 @@ fi
 
 { anounce Large_Uploads_3 \
 \
-	'Now POSTing 1MiB.noise, shall be accepted, saved, and returned 202.' \
+	'Now POSTing 1MiB.noise.\n
+	This shall NOT be accepted, because curl will expect 100-continue,\n
+	but webserv must always close the connection. Chose 424 for answer.' \
 \
 ; } 2> /dev/null
 
  curl -X POST -vF "file=@${MYDIR}/1MiB.noise" http://$name_server:4242/large_upload
 
+{ anounce Large_Uploads_4 \
+\
+	'Again 1MiB.noise, this time sending the file right away.\n
+	This SHALL BE accepted and saved.' \
+\
+; } 2> /dev/null
+
+ curl -X POST -vF "file=@${MYDIR}/1MiB.noise" -H "Expect:" http://$name_server:4242/large_upload
 exit;
 
 ## Stress ################################################################
