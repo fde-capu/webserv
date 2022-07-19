@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/19 16:26:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/19 16:48:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@ void ws_server_instance::read_more()
 	if (is_multipart())
 		expected_full_load = in_header.content_length;
 
-	verbose(1) << "(read_more) From fd: " << fd << std::endl;
-	verbose(1) << "(read_more) " << in_header.directory << \
+	verbose(3) << "(read_more) From fd: " << fd << std::endl;
+	verbose(3) << "(read_more) " << in_header.directory << \
 		" accepting at most " << max_size << " bytes." << std::endl;
-	verbose(1) << "(read_more) Actually downloading " << expected_full_load \
+	verbose(3) << "(read_more) Actually downloading " << expected_full_load \
 		<< " bytes." << std::endl;
-	verbose(1) << "(read_more) Payload start: " << payload_start \
+	verbose(4) << "(read_more) Payload start: " << payload_start \
 		<< ", end: " << payload_end << "." << std::endl;
-	verbose(1) << "(read_more) Body start: " << body_start \
+	verbose(4) << "(read_more) Body start: " << body_start \
 		<< ", end: " << body_end << "." << std::endl;
 
 	CircularBuffer more(fd);
@@ -44,7 +44,7 @@ void ws_server_instance::read_more()
 		in_body = more.receive_at_most(expected_full_load);
 		if (more.ended())
 		{
-			verbose(1) << "(read_more) No more data." << std::endl;
+			verbose(2) << "(read_more) No more data." << std::endl;
 			break ;
 		}
 		if (is_multipart())
@@ -75,7 +75,7 @@ void ws_server_instance::read_more()
 		multipart_content = in_body.substr(body_start, body_end - body_start);
 	}
 
-	verbose(1) << "(read_more) Finished with body " << in_body.length() << \
+	verbose(3) << "(read_more) Finished with body " << in_body.length() << \
 		" and multipart-content " << multipart_content.length() << "." << \
 		std::endl;
 }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/19 16:45:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/19 16:49:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ bool ws_server_instance::is_multipart() const
 
 int ws_reply_instance::is_413(ws_server_instance& si)
 {
-	verbose(1) << "(is_413) max_size: " << si.max_size << "." << std::endl;
+	verbose(3) << "(is_413) max_size: " << si.max_size << "." << std::endl;
 
 	if ((si.is_multipart() && \
 		static_cast<size_t>(si.in_header.content_length) > si.max_size)
@@ -203,13 +203,13 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 		out_body = "BODY FOR 413";
 		return 413;
 	}
-	verbose(1) << "(is_413) Multipart content accounts for " \
+	verbose(4) << "(is_413) Multipart content accounts for " \
 		<< si.multipart_content.length() << " bytes." \
 		<< std::endl;
-	verbose(1) << "(is_413) Non-multipart accounts for " \
+	verbose(4) << "(is_413) Non-multipart accounts for " \
 		<< si.in_body.length() << " bytes." << std::endl;
-	verbose(3) << "(is_413) in_body >>" << si.in_body << "<<" << std::endl;
-	verbose(3) << "(is_413) multipart_content >>" << si.multipart_content << \
+	verbose(5) << "(is_413) in_body >>" << si.in_body << "<<" << std::endl;
+	verbose(5) << "(is_413) multipart_content >>" << si.multipart_content << \
 		"<<" << std::endl;
 	return 0;
 }
@@ -218,10 +218,12 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 {
 	if (is_equal_insensitive(si.in_header.expect, "100-continue"))
 	{
-		verbose(1) << "(is_424) Because of " << si.in_header.expect << \
+
+		verbose(2) << "(is_424) Because of " << si.in_header.expect << \
 			", and sizes are ok, would return 100-continue. " \
 			"webserv must always close connection, so, instead, " \
-			"returning not met dependency." << std::endl;
+			"will return 424 Failed Dependency." << std::endl;
+
 		set_code(424, "Failed Dependency");
 		out_body = "BODY FOR 424";
 		return 424;
