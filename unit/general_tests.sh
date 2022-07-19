@@ -270,6 +270,8 @@ curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.noise" \
 
 curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
 
+fi
+
 { anounce LB_4th \
 \
 	'4th) 101B.noise should not pass.' \
@@ -278,13 +280,18 @@ curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
 
  curl -X POST -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
 
-## M ################################################################
+## Large Uploads ################################################################
 
-{ anounce M \
+{ anounce Large_Uploads \
 \
-	'Large uploads.' \
+	'Testing 1MiB.noise.' \
 \
 ; } 2> /dev/null
+
+curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/1MiB.noise" \
+	http://$name_server:4242/post_body && cat log && rm log
+
+exit;
 
 ## Stress ################################################################
 
@@ -312,9 +319,6 @@ rm -f stress_out
 set -x;
 
 ## N ################################################################
-
-exit;
-fi
 
 
 { anounce N \
