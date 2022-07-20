@@ -59,6 +59,9 @@ do
 	{ divider "#"; } 2> /dev/null
 done
 
+{ ${MYDIR}/clean_uploads.sh; }
+
+{ set +x; } 2> /dev/null
 if false; then
 	echo 'foo';
 

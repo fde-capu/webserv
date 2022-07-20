@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo 'Cleaning uploaded files.'
+
 clean()
 {
 	rm $1 2> /dev/null;
