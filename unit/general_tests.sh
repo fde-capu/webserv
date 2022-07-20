@@ -28,7 +28,12 @@ name_server="127.0.0.1";
 #	To run the subject tests 42 ubuntu_tester and ubuntu_cgi_tester:
 #	tcp 	0	0.0.0.0:4242	0.0.0.0:*	LISTEN	67/nginx: master pr	
 
+
+
+
+
 # (helpers) #######################################################
+
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -64,6 +69,11 @@ done
 { set +x; } 2> /dev/null
 if false; then
 	echo 'foo';
+
+
+#################################################################### Begin
+
+
 
 ## Basic_1 ################################################################
 
