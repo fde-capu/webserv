@@ -25,7 +25,7 @@ name_server="127.0.0.1";
 #	Redirect 301 to :3490:
 #	tcp 	0	0.0.0.0:3493	0.0.0.0:*	LISTEN	67/nginx: master pr	
 
-#	To run the subject tests:
+#	To run the subject tests 42 ubuntu_tester and ubuntu_cgi_tester:
 #	tcp 	0	0.0.0.0:4242	0.0.0.0:*	LISTEN	67/nginx: master pr	
 
 # (helpers) #######################################################
@@ -60,14 +60,15 @@ do
 done
 
 if false; then
+	echo 'foo';
 
-## A ################################################################
+## Basic_1 ################################################################
 
-{ anounce A \
+{ anounce Basic_1 \
 \
 	':3490 will demonstrate the implementations. \n
 	It is bound to directory ./unit/confs/html.	\n
-	Must receive 200 OK and some html body from index.html.' \
+	Must receive 200 OK and some html body from html/index.html.' \
 \
 ; } 2> /dev/null
 
@@ -75,6 +76,63 @@ if ! curl -v http://$name_server:3490; then
 	 { anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
 	 exit 1;
 fi
+
+## Basic_2 ################################################################
+
+{ anounce Basic_2 \
+\
+	'If server_name is unexistent, defaults to previous: 200' \
+\
+; } 2> /dev/null
+
+curl -v http://$name_server:3490 -H 'Host: wft_server'
+
+## Basic_3 ################################################################
+
+{ anounce Basic_3 \
+\
+	'If server_name is existent on another root: 200' \
+\
+; } 2> /dev/null
+
+curl -v http://$name_server:3490 -H 'Host: krazything'
+
+## Basic_4 ################################################################
+
+{ anounce Basic_4 \
+\
+	'Existent server_name without root definition. 413' \
+\
+; } 2> /dev/null
+
+curl -v http://$name_server:3490 -H 'Host: rootless'
+
+## Basic_5 ################################################################
+
+{ anounce Basic_5 \
+\
+	'POST test. Within limits of client_max_body_size:' \
+\
+; } 2> /dev/null
+
+curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
+	http://$name_server:3490 && cat log && rm log
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+## Basic_6 ################################################################
+
+{ anounce Basic_6 \
+\
+	'POST test. 99B again, noise this time.' \
+\
+; } 2> /dev/null
+
+head -c 99 /dev/urandom > ${MYDIR}/file.noise
+curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/file.noise" \
+	http://$name_server:3490 && cat log && rm log
+rm ${MYDIR}/file.noise
+
+exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 # B ################################################################
 
@@ -101,15 +159,6 @@ curl -vL http://$name_server:3490/somesub
 curl -v http://$name_server:3490/somesub/
 
 # D ################################################################
-
-{ anounce D \
-\
-	'Send Host header as an existent server_name. \n
-	Rooted on ./unit/confs/html-custom-server-name.' \
-\
-; } 2> /dev/null
-
-curl -v http://$name_server:3490 -H 'Host: krazything'
 
 # E ################################################################
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/19 16:49:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/20 16:48:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,15 +184,15 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 {
 	verbose(3) << "(is_413) max_size: " << si.max_size << "." << std::endl;
 
-	if ((si.is_multipart() && \
-		static_cast<size_t>(si.in_header.content_length) > si.max_size)
-	|| (!si.is_multipart() && \
-		si.in_body.length() > si.max_size))
-	{
-		set_code(413, "Payload Too Large (Declared Size)");
-		out_body = "BODY FOR 413";
-		return 413;
-	}
+//	if ((si.is_multipart() && \
+//		static_cast<size_t>(si.in_header.content_length) > si.max_size)
+//	|| (!si.is_multipart() && \
+//		si.in_body.length() > si.max_size))
+//	{
+//		set_code(413, "Payload Too Large (Declared Size)");
+//		out_body = "BODY FOR 413";
+//		return 413;
+//	}
 
 	si.read_more();
 
@@ -239,7 +239,8 @@ int ws_reply_instance::is_529(ws_server_instance& si)
 		si.in_body.length() << ", expected_full_load: " << si.expected_full_load << \
 		"." << std::endl;
 
-	if (si.in_body.length() < si.expected_full_load)
+	// Only multipart..?
+	if (si.is_multipart() && si.in_body.length() < si.expected_full_load)
 	{
 		set_code(529, "Site is overloaded");
 		out_body = "BODY FOR 529";
