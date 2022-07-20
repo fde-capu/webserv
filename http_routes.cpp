@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/20 16:48:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/20 18:34:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,6 +233,8 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 
 int ws_reply_instance::is_529(ws_server_instance& si)
 {
+	si.read_more();
+
 	verbose(1) << "(is_529) Multipart: " << si.is_multipart() << \
 		", multipart-content-length: " << \
 		si.multipart_content.length() << ", in_body-length: " <<  \

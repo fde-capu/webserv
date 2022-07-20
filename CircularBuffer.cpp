@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/20 15:50:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/20 18:46:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,33 +60,33 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 		b_size = max - output.length() < b_size ? max - output.length() : b_size;
 		
 		bytes = read(fd, const_cast<char *>(memory), b_size);
-		verbose(3) << "(receive_at_most) fd " << fd << ": read " << bytes << \
+		verbose(1) << "(receive_at_most) fd " << fd << ": read " << bytes << \
 			", b_size " << b_size << ", max " << max << ", have " << output.length() \
 			<< "\t(" << std::string(memory).substr(0, bytes) << ")" << std::endl;
 		if (bytes == -1)
 		{
-			verbose(2) << "(receive_at_most) " << strerror(errno) << "." << std::endl;
+			verbose(1) << "(receive_at_most) Error: " << strerror(errno) << "." << std::endl;
 			return set_eof();
 		}
 		if (bytes == 0)
 		{
-			verbose(2) << "(receive_at_most) Zero bytes, EOF." << std::endl;
+			verbose(1) << "(receive_at_most) Zero bytes, EOF." << std::endl;
 			return set_eof();
 		}
 		if (static_cast<size_t>(bytes) < b_size)
 		{
-			verbose(2) << "(receive_at_most) Buffer lesser than expected, come again." \
+			verbose(1) << "(receive_at_most) Buffer lesser than expected, come again." \
 				<< std::endl;
 			output.append(memory, bytes);
 			continue ;
 		}
 		if (static_cast<size_t>(bytes) == size)
 		{
-			verbose(2) << "(receive_at_most) Buffer full, come again." << std::endl;
+			verbose(1) << "(receive_at_most) Buffer full, come again." << std::endl;
 			output.append(memory, bytes);
 			continue ;
 		}
-		verbose (3) << "(receive_at_most) End of in data." << std::endl;
+		verbose (1) << "(receive_at_most) End of in data." << std::endl;
 		output.append(memory, bytes);
 		return set_eof();
 	}
