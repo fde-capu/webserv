@@ -1,3 +1,4 @@
 webserv
 cgi_webserv
 *.o
+*.noise
