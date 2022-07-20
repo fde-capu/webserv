@@ -307,9 +307,6 @@ curl -X POST -vF "file=@${MYDIR}/1MiB.noise" http://$name_server:4242/post_body
 
  curl -X POST -vF "file=@${MYDIR}/1MiB.noise" http://$name_server:4242/large_upload
 
-exit;
-
-fi
 
 { anounce Large_Uploads_4 \
 \
@@ -319,7 +316,6 @@ fi
 ; } 2> /dev/null
 
  curl -X POST -vF "file=@${MYDIR}/1MiB.noise" -H "Expect:" http://$name_server:4242/large_upload
-exit;
 
 ## Stress ################################################################
 
@@ -346,10 +342,9 @@ cat stress_out | grep HTTP | grep "200 OK" | wc -l;
 rm -f stress_out
 set -x;
 
-## N ################################################################
+## Double_call ################################################################
 
-
-{ anounce N \
+{ anounce Double_call \
 \
 	'Double test: make two simultaneous calls. Not mandatory. \n
 	(not implemented, though taken care not to crash).' \
