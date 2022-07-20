@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/12 14:55:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/20 15:48:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <cstdlib>
 # include <sys/socket.h>
 # include <vector>
+
+# define CIRCULAR_BUFFER_SIZE 1024
 
 class CircularBuffer
 {
