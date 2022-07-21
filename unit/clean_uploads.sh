@@ -16,5 +16,3 @@ clean ${MYDIR}/confs/html/file.noise
 #clean confs/html4242/uploads/99B.words
 
 echo 'You should not see any file listed above this line.'
-echo 'Press any key.'
-read -n 1 any_key

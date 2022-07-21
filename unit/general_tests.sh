@@ -38,6 +38,14 @@ name_server="127.0.0.1";
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
 
+enterkey()
+{
+	{ set +x; } 2> /dev/null
+	echo -n "\t\t\t\t\t--> Next ";
+	read anything;
+	set -x
+}
+
 div()
 {
 	{ set +x; } 2> /dev/null
@@ -54,6 +62,7 @@ divider()
 
 anounce()
 {
+	enterkey;
 	{ divider $1; } 2> /dev/null
 	echo $2
 	{ echo '-------------------------------------------------'; } 2> /dev/null
@@ -70,6 +79,8 @@ done
 if false; then
 	echo 'foo';
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+#exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 #################################################################### Begin
 
@@ -122,7 +133,6 @@ curl -v http://$name_server:3490 -H 'Host: rootless'
 
 ## Basic_5 ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 { anounce Basic_5 \
 \
 	'POST test. Within limits of client_max_body_size:' \
@@ -131,7 +141,9 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 curl -D- --trace-ascii log -F "file=@${MYDIR}/99B.words" \
 	http://$name_server:3490 && cat log && rm log
-exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+
+ls -l ${MYDIR}/confs/html/99B.words;
+cat ${MYDIR}/confs/html/99B.words;
 
 ## Basic_6 ################################################################
 
@@ -146,6 +158,7 @@ curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/file.noise" \
 	http://$name_server:3490 && cat log && rm log
 rm ${MYDIR}/file.noise
 
+ls -l ${MYDIR}/confs/html/file.noise;
 
 # B ################################################################
 

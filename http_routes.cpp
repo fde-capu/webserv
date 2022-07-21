@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/21 13:33:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/21 14:30:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,8 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 		return 413;
 	}
 
-	si.read_more();
+	if (si.is_multipart())
+		si.read_more();
 
 	verbose(4) << "(is_413) Multipart content accounts for " \
 		<< si.multipart_content.length() << " bytes." \
@@ -267,7 +268,7 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 		std::string data(si.multipart_content);
 		data_simple = data.length() <= 202 ? data : \
 			"(large file, will not print)";
-		verbose(1) << "(webserv) >" << data_simple << \
+		verbose(5) << "(webserv) >" << data_simple << \
 			"< will be saved into " << dir_name << \
 			"." << std::endl;
 

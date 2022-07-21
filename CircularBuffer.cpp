@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/21 13:38:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/21 14:19:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,10 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 		
 		bytes = read(fd, const_cast<char *>(memory), in_size);
 
-		verbose(1) << "(receive_at_most) fd " << fd << ": read " << bytes << \
+		verbose(2) << "(receive_at_most) fd " << fd << ": read " << bytes << \
 			", in_size " << in_size << ", max " << max << ", have " \
 			<< output.length() << "\t(" << \
 			std::string(memory).substr(0, bytes) << ")" << std::endl;
-		return set_eof();
 
 		if (bytes == -1)
 		{
@@ -76,24 +75,24 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 		}
 		if (bytes == 0)
 		{
-			verbose(1) << "(receive_at_most) Zero bytes, EOF." << std::endl;
+			verbose(2) << "(receive_at_most) Zero bytes, EOF." << std::endl;
 			return set_eof();
 		}
 		if (static_cast<size_t>(bytes) < in_size)
 		{
-			verbose(1) << "(receive_at_most) Buffer lesser than expected, come again." \
+			verbose(2) << "(receive_at_most) Buffer lesser than expected, come again." \
 				<< std::endl;
 			output.append(memory, bytes);
 			continue ;
 		}
 		if (static_cast<size_t>(bytes) == size)
 		{
-			verbose(1) << "(receive_at_most) Buffer full, come again." << std::endl;
+			verbose(2) << "(receive_at_most) Buffer full, come again." << std::endl;
 			output.append(memory, bytes);
 			continue ;
 		}
 
-		verbose (1) << "(receive_at_most) End of in data." << std::endl;
+		verbose (2) << "(receive_at_most) End of in data." << std::endl;
 		output.append(memory, bytes);
 		return set_eof();
 	}

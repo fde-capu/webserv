@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/21 13:27:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/21 14:00:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,9 +139,9 @@ void WebServ::add_to_poll(int oldfd)
 	poll_list.push_back(make_pollin_fd(newfd));
 	fd_to_port[newfd] = fd_to_port[oldfd];
 
-	verbose(1) << "(webserv) ======" << std::endl << \
-		"(webserv) New connection from fd (" << oldfd << ")->" \
-		<< newfd << "." << std::endl;
+	verbose(2) << "(webserv) ======" << std::endl;
+	verbose(2) << "(webserv) New connection from fd (" << oldfd << \
+		")->" << newfd << "." << std::endl;
 }
 
 int WebServ::catch_connection()
@@ -219,7 +219,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 	si.root_config.push_back("root", config.getValStr \
 		("working_directory"));
 
-	verbose(1) << "(choose_instance) Responding as " << \
+	verbose(2) << "(choose_instance) Responding as " << \
 		choose->config.getValStr("server_name") << ":" << in_port << \
 		"." << std::endl;
 
@@ -233,7 +233,7 @@ void WebServ::respond_connection_from(int fd)
 	std::string body;
 	ws_header in_header;
 
-	verbose(1) << "(respond_connection_from) Getting data from fd " << fd \
+	verbose(2) << "(respond_connection_from) Getting data from fd " << fd \
 		<< "." << std::endl;
 
 	raw_data = get_raw_data(fd);
