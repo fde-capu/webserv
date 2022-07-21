@@ -98,7 +98,7 @@ fi
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3490 -H 'Host: wft_server'
+curl -v http://$name_server:3490 -H 'Host: wtf_server'
 
 ## Basic_3 ################################################################
 
@@ -114,7 +114,7 @@ curl -v http://$name_server:3490 -H 'Host: krazything'
 
 { anounce Basic_4 \
 \
-	'Existent server_name without root definition. 413' \
+	'Existent server_name without root definition. 403' \
 \
 ; } 2> /dev/null
 
@@ -122,16 +122,17 @@ curl -v http://$name_server:3490 -H 'Host: rootless'
 
 ## Basic_5 ################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 { anounce Basic_5 \
 \
 	'POST test. Within limits of client_max_body_size:' \
 \
 ; } 2> /dev/null
 
-curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
+curl -D- --trace-ascii log -F "file=@${MYDIR}/99B.words" \
 	http://$name_server:3490 && cat log && rm log
+exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ## Basic_6 ################################################################
 
 { anounce Basic_6 \
@@ -145,7 +146,6 @@ curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/file.noise" \
 	http://$name_server:3490 && cat log && rm log
 rm ${MYDIR}/file.noise
 
-exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 # B ################################################################
 
