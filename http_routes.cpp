@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/20 18:34:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/21 13:27:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,13 +196,6 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 
 	si.read_more();
 
-	if ((!si.is_multipart() && si.in_body.length() > si.max_size)
-	|| (si.is_multipart() && si.multipart_content.length() > si.max_size))
-	{
-		set_code(413, "Payload Too Large (Read Interrupt)");
-		out_body = "BODY FOR 413";
-		return 413;
-	}
 	verbose(4) << "(is_413) Multipart content accounts for " \
 		<< si.multipart_content.length() << " bytes." \
 		<< std::endl;
@@ -211,7 +204,16 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 	verbose(5) << "(is_413) in_body >>" << si.in_body << "<<" << std::endl;
 	verbose(5) << "(is_413) multipart_content >>" << si.multipart_content << \
 		"<<" << std::endl;
-	return 0;
+
+	if ((!si.is_multipart() && si.in_body.length() > si.max_size)
+	|| (si.is_multipart() && si.multipart_content.length() > si.max_size))
+	{
+		set_code(413, "Payload Too Large (Read Interrupt)");
+		out_body = "BODY FOR 413";
+		return 413;
+	}
+	else
+		return 0;
 }
 
 int ws_reply_instance::is_424(ws_server_instance& si)
@@ -233,15 +235,12 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 
 int ws_reply_instance::is_529(ws_server_instance& si)
 {
-	si.read_more();
-
 	verbose(1) << "(is_529) Multipart: " << si.is_multipart() << \
 		", multipart-content-length: " << \
 		si.multipart_content.length() << ", in_body-length: " <<  \
 		si.in_body.length() << ", expected_full_load: " << si.expected_full_load << \
 		"." << std::endl;
 
-	// Only multipart..?
 	if (si.is_multipart() && si.in_body.length() < si.expected_full_load)
 	{
 		set_code(529, "Site is overloaded");

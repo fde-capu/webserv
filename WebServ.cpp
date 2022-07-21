@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/19 16:40:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/21 13:27:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_404(si)) return ; // Not found. GET
 	if (is_413(si)) return ; // Too large. All methods.
 	if (is_424(si)) return ; // Not met dependency. Used when client expects 100-continue.
-	if (is_529(si)) return ; // Site is overloaded.
+//	if (is_529(si)) return ; // Site is overloaded.
 	if (is_200(si)) return ; // Ok (GET)
 	if (is_202(si)) return ; // Accepted (POST)
 

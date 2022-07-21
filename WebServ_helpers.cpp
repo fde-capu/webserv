@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/20 18:57:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/21 13:13:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ DataFold ws_server_instance::get_location_config()
 void ws_server_instance::read_more()
 {
 	CircularBuffer more(fd);
-	while (1)
+	while (more.output.length() < expected_full_load)
 	{
 		expected_full_load = is_multipart() ? \
 							 in_header.content_length : max_size;

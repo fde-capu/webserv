@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/20 18:46:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/21 13:21:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,29 +51,34 @@ std::string& CircularBuffer::set_eof()
 
 std::string& CircularBuffer::receive_at_most(size_t max)
 {
-	size_t b_size;
+	size_t in_size;
 	int bytes;
 
 	while (1)
 	{
-		b_size = max < size ? max : size;
-		b_size = max - output.length() < b_size ? max - output.length() : b_size;
+		in_size = max < size ? max : size;
+		in_size = max - output.length() < in_size ? max - output.length() : in_size;
 		
-		bytes = read(fd, const_cast<char *>(memory), b_size);
+		bytes = read(fd, const_cast<char *>(memory), in_size);
+
 		verbose(1) << "(receive_at_most) fd " << fd << ": read " << bytes << \
-			", b_size " << b_size << ", max " << max << ", have " << output.length() \
-			<< "\t(" << std::string(memory).substr(0, bytes) << ")" << std::endl;
+			", in_size " << in_size << ", max " << max << ", have " \
+			<< output.length() << "\t(" << \
+			std::string(memory).substr(0, bytes) << ")" << std::endl;
+
 		if (bytes == -1)
 		{
-			verbose(1) << "(receive_at_most) Error: " << strerror(errno) << "." << std::endl;
-			return set_eof();
+			verbose(1) << "(receive_at_most) Try again: " << \
+				strerror(errno) << "." << std::endl;
+			continue ;
+//			return set_eof();
 		}
 		if (bytes == 0)
 		{
 			verbose(1) << "(receive_at_most) Zero bytes, EOF." << std::endl;
 			return set_eof();
 		}
-		if (static_cast<size_t>(bytes) < b_size)
+		if (static_cast<size_t>(bytes) < in_size)
 		{
 			verbose(1) << "(receive_at_most) Buffer lesser than expected, come again." \
 				<< std::endl;
@@ -86,6 +91,7 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 			output.append(memory, bytes);
 			continue ;
 		}
+
 		verbose (1) << "(receive_at_most) End of in data." << std::endl;
 		output.append(memory, bytes);
 		return set_eof();
