@@ -13,6 +13,7 @@ clean()
 
 clean ${MYDIR}/confs/html/99B.words
 clean ${MYDIR}/confs/html/file.noise
-#clean confs/html4242/uploads/99B.words
+clean ${MYDIR}/confs/html4242/uploads/99B.words
+clean ${MYDIR}/confs/html4242/uploads/file.noise
 
 echo 'You should not see any file listed above this line.'

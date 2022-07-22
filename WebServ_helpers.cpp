@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/21 14:31:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/22 13:08:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void ws_server_instance::read_more()
 		in_body = more.receive_at_most(expected_full_load);
 		if (more.ended())
 		{
-			verbose(1) << "(read_more) No more data." << std::endl;
+			verbose(2) << "(read_more) No more data." << std::endl;
 			break ;
 		}
 		if (is_multipart())

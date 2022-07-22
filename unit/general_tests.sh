@@ -1,5 +1,7 @@
 #!/bin/sh
 
+stress_count=30;
+
 #`./webserv`
 name_server="127.0.0.1";
 
@@ -79,8 +81,6 @@ done
 if false; then
 	echo 'foo';
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-#exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 #################################################################### Begin
 
@@ -154,10 +154,9 @@ cat ${MYDIR}/confs/html/99B.words;
 ; } 2> /dev/null
 
 head -c 99 /dev/urandom > ${MYDIR}/file.noise
-curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/file.noise" \
+curl -D- --trace-ascii log -F "file=@${MYDIR}/file.noise" \
 	http://$name_server:3490 && cat log && rm log
 rm ${MYDIR}/file.noise
-
 ls -l ${MYDIR}/confs/html/file.noise;
 
 # B ################################################################
@@ -215,7 +214,10 @@ curl -v http://$name_server:3491
 \
 ; } 2> /dev/null
 
-curl -v -X POST -F "file=@${MYDIR}/1MiB.noise" http://$name_server:3491
+head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
+curl -v -F "file=@${MYDIR}/file.noise" http://$name_server:3491
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html-3491/file.noise;
 
 # FC ###############################################################
 
@@ -280,7 +282,10 @@ curl -v http://$name_server:4242
 \
 ; } 2> /dev/null
 
-curl -vL -X POST -F "file=@${MYDIR}/1MiB.noise" http://$name_server:4242 
+head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vL -F "file=@${MYDIR}/file.noise" http://$name_server:4242 
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/file.noise;
 
 ## KB ###############################################################
 
@@ -324,9 +329,12 @@ curl -vD- -X DELETE http://$name_server:4242/post_body
 \
 ; } 2> /dev/null
 
-curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
+curl -D- --trace-ascii log -F "file=@${MYDIR}/99B.words" \
 	http://$name_server:4242/post_body && cat log && rm log
+ls -l ${MYDIR}/confs/html4242/uploads/99B.words
+cat ${MYDIR}/confs/html4242/uploads/99B.words
 
+## LB ###############################################################
 
 { anounce LB_2nd \
 \
@@ -334,24 +342,37 @@ curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.words" \
 \
 ; } 2> /dev/null
 
-curl -D- --trace-ascii log -X POST -F "file=@${MYDIR}/99B.noise" \
+head -c 99 /dev/urandom > ${MYDIR}/file.noise
+curl -D- --trace-ascii log -F "file=@${MYDIR}/file.noise" \
 	http://$name_server:4242/post_body && cat log && rm log
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## LB ###############################################################
 
 { anounce LB_3rd \
 \
-	'3rd) Same, with 100B.noise. Max is at 100B, this passes.' \
+	'3rd) Same, with 100B.noise. Max is at 100B, this passes. \n
+	Same file name, so it overwrites.'\
 \
 ; } 2> /dev/null
 
-curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
+head -c 100 /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/post_body
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
+## LB ###############################################################
 { anounce LB_4th \
 \
-	'4th) 101B.noise should not pass because of max_size. 413' \
+	'4th) 101B.noise should not pass because of max_size is set for 100. 413' \
 \
 ; } 2> /dev/null
 
- curl -X POST -vF "file=@${MYDIR}/101B.noise" http://$name_server:4242/post_body
+head -c 101 /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/post_body
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
@@ -361,16 +382,25 @@ curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/post_body
 \
 ; } 2> /dev/null
 
-curl -X POST -vF "file=@${MYDIR}/1MiB.noise" http://$name_server:4242/post_body
+head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/post_body
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Large Uploads ################################################################
 
 { anounce Large_Uploads_2 \
 \
-	'Not large, but shows "uri /large_upload" is working. 202' \
+	'Not large, but shows "uri /large_upload" is working. 42B. 202' \
 \
 ; } 2> /dev/null
 
- curl -X POST -vF "file=@${MYDIR}/100B.noise" http://$name_server:4242/large_upload
+head -c 42 /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
+## Large Uploads ################################################################
 
 { anounce Large_Uploads_3 \
 \
@@ -380,8 +410,12 @@ curl -X POST -vF "file=@${MYDIR}/1MiB.noise" http://$name_server:4242/post_body
 \
 ; } 2> /dev/null
 
- curl -X POST -vF "file=@${MYDIR}/1MiB.noise" http://$name_server:4242/large_upload
+head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
+## Large Uploads ################################################################
 
 { anounce Large_Uploads_4 \
 \
@@ -390,11 +424,56 @@ curl -X POST -vF "file=@${MYDIR}/1MiB.noise" http://$name_server:4242/post_body
 \
 ; } 2> /dev/null
 
- curl -X POST -vF "file=@${MYDIR}/1MiB.noise" -H "Expect:" http://$name_server:4242/large_upload
+head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
+## Large Uploads ################################################################
+
+{ anounce Large_Uploads_5 \
+\
+	'Now 2MiB.noise, alse sending the file right away.' \
+\
+; } 2> /dev/null
+
+head -c 2MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Large Uploads ################################################################
+
+{ anounce Large_Uploads_6 \
+\
+	'How about 100MiB?' \
+\
+; } 2> /dev/null
+
+head -c 100MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Large Uploads ################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce Large_Uploads_7 \
+\
+	'How about 500MiB? Wait a little.\n
+	This would make webserv run out of memory because of Workspace limits.\n
+	However, the server should not crash.' \
+\
+; } 2> /dev/null
+
+head -c 500MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+
+exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 ## Stress ################################################################
-
-stress_count=300;
 
 { anounce Stress \
 \
@@ -421,16 +500,14 @@ set -x;
 
 { anounce Double_call \
 \
-	'Double test: make two simultaneous calls. Not mandatory. \n
-	(not implemented, though taken care not to crash).' \
+	'Double test: make two simultaneous calls. Not mandatory.'
 \
 ; } 2> /dev/null
 
-curl -X POST -F "file=@${MYDIR}/99B.words" \
+curl -F "file=@${MYDIR}/99B.words" \
 	http://$name_server:4242/post_body & \
-curl -X POST -F "file=@${MYDIR}/99B.words" \
+curl -F "file=@${MYDIR}/99B.words" \
 	http://$name_server:4242/post_body
-
 
 #################################################################
 #################################################################
@@ -448,7 +525,7 @@ curl -X POST -F "file=@${MYDIR}/99B.words" \
 #curl -vLD- http://127.0.0.1:4242/directory/oulalala
 #curl -vLD- http://$name_server:4242/directory/Yeah
 
-#curl -vLD- -X POST http://$name_server:4242/post_body -F 'file=./1M.noise'
-#curl -vLD- -X POST http://$name_server:4242/directory/youpi.bla
+#curl -vLD- http://$name_server:4242/post_body -F 'file=./1M.noise'
+#curl -vLD- http://$name_server:4242/directory/youpi.bla
 
 #################################################################
