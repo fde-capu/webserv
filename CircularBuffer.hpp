@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/20 15:48:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 13:47:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,15 @@
 # include <sys/socket.h>
 # include <vector>
 
-# define CIRCULAR_BUFFER_SIZE 1024
+# define CIRCULARBUFFER_SIZE 1024
+# define CIRCULARBUFFER_LIMIT 104857600
 
 class CircularBuffer
 {
 	private:
 		const int fd;
 		const size_t size;
+		const size_t limit;
 		const char* memory;
 		char* head;
 		bool eof;
@@ -35,6 +37,7 @@ class CircularBuffer
 		void mountMemory();
 		void resetMemory();
 		std::string& set_eof();
+		bool checkLimits() const;
 
 	public:
 		CircularBuffer(int);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 13:36:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 13:49:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@
 # include <errno.h>
 
 CircularBuffer::CircularBuffer(int u_fd)
-: fd(u_fd), size(CIRCULAR_BUFFER_SIZE), eof(false)
+: fd(u_fd), size(CIRCULARBUFFER_SIZE), limit(CIRCULARBUFFER_LIMIT), eof(false)
 {
 	mountMemory();
 	return ;
 }
 
 CircularBuffer::CircularBuffer(CircularBuffer const & src)
-: fd(src.getFd()), size(src.getSize()), eof(false)
+: fd(src.getFd()), size(src.getSize()), limit(CIRCULARBUFFER_LIMIT), eof(false)
 {
 	*this = src;
 	return ;
@@ -49,12 +49,19 @@ std::string& CircularBuffer::set_eof()
 	return output;
 }
 
+bool CircularBuffer::checkLimits() const
+{
+	if (output.length() > limit)
+		throw std::length_error("(CircularBuffer) Is limited.");
+	return true;
+}
+
 std::string& CircularBuffer::receive_at_most(size_t max)
 {
 	size_t in_size;
 	int bytes;
 
-	while (1)
+	while (checkLimits() || true)
 	{
 		verbose(2) << "(receive_at_most) Length: " << output.length() << \
 			", capacity: " << output.capacity() << ", max_size: " << \
@@ -102,8 +109,10 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 
 std::string& CircularBuffer::receive_until_eof()
 {
-	while (1)
+	while (checkLimits() || true)
 	{
+		checkLimits();
+
 		int bytes = read(fd, const_cast<char *>(memory), size);
 
 		verbose(5) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
