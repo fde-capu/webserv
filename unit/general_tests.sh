@@ -446,11 +446,12 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
 { anounce Large_Uploads_6 \
 \
-	'How about 100MiB?' \
+	'How about 114MiB?\n
+	Testing on 42SP Workspace, it gets Oom Kill if larger than that.' \
 \
 ; } 2> /dev/null
 
-head -c 100MiB /dev/urandom > ${MYDIR}/file.noise
+head -c 114MiB /dev/urandom > ${MYDIR}/file.noise
 curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
 ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
@@ -466,7 +467,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 \
 ; } 2> /dev/null
 
-head -c 500MiB /dev/urandom > ${MYDIR}/file.noise
+head -c 120MiB /dev/urandom > ${MYDIR}/file.noise
 curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
 ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;

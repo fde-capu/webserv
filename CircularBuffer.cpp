@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/22 14:58:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 13:36:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,37 +102,40 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 
 std::string& CircularBuffer::receive_until_eof()
 {
-	int bytes = read(fd, const_cast<char *>(memory), size);
-
-	verbose(5) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
-		" size " << size << "\t(" << std::string(memory).substr(0, bytes) \
-		<< ")" << std::endl;
-
-	if (bytes == -1 && fd == 0) // stdin
+	while (1)
 	{
-		set_eof();
+		int bytes = read(fd, const_cast<char *>(memory), size);
+
+		verbose(5) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
+			" size " << size << "\t(" << std::string(memory).substr(0, bytes) \
+			<< ")" << std::endl;
+
+		if (bytes == -1 && fd == 0) // stdin
+		{
+			set_eof();
+			return output;
+		}
+		if (bytes == -1)
+		{
+			verbose(2) << "(CircularBuffer) Encontered an error, treated " << \
+				"as warning, set point as EOF: " << strerror(errno) << std::endl;
+			set_eof();
+			return output;
+		}
+		if (bytes == 0)
+			continue ;
+		if (static_cast<size_t>(bytes) < size)
+		{
+			output.append(memory, bytes);
+			continue ;
+		}
+		if (static_cast<size_t>(bytes) == size)
+		{
+			output.append(memory, size);
+			continue ;
+		}
 		return output;
 	}
-	if (bytes == -1)
-	{
-		verbose(2) << "(CircularBuffer) Encontered an error, treated " << \
-			"as warning, set point as EOF: " << strerror(errno) << std::endl;
-		set_eof();
-		return output;
-	}
-	if (bytes == 0)
-		return receive_until_eof();
-	if (static_cast<size_t>(bytes) < size)
-	{
-		output.append(memory, bytes);
-		return receive_until_eof();
-	}
-	if (static_cast<size_t>(bytes) == size)
-	{
-		output.append(memory, size);
-		return receive_until_eof();
-	}
-	return output;
 }
 
 CircularBuffer & CircularBuffer::operator= (CircularBuffer const & rhs)
