@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/15 12:40:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 14:20:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -318,7 +318,9 @@ size_t StringTools::find_closing_bracket(std::string ops) const
 		pos++;
 	}
 	if (!ops[pos])
-		throw std::out_of_range(ST_ERR_UNMATCHED_BRACKETS);
+	{
+		return std::string::npos;
+	}
 	return pos;
 }
 
