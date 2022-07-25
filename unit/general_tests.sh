@@ -461,13 +461,12 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 { anounce Large_Uploads_7 \
 \
-	'How about 500MiB? Wait a little.\n
-	This would make webserv run out of memory because of Workspace limits.\n
-	However, the server should not crash.' \
+	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
+	Server should not crash, so 507 Insufficient Storage.' \
 \
 ; } 2> /dev/null
 
-head -c 120MiB /dev/urandom > ${MYDIR}/file.noise
+head -c 200MiB /dev/urandom > ${MYDIR}/file.noise
 curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
 ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;

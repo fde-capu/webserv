@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/21 14:30:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 14:01:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 {
 	DataFold indexes;
 	std::string file_name;
-//	DataFold locations(si.config.get<DataFold>("location"));
 
 	if (si.in_header.method == "GET")
 	{
@@ -105,7 +104,6 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 {
 	DataFold indexes;
 	std::string file_name;
-//	DataFold locations(si.config.get<DataFold>("location"));
 
 	if (si.in_header.method == "GET")
 	{
@@ -192,7 +190,18 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 	}
 
 	if (si.is_multipart())
-		si.read_more();
+	{
+		try
+		{
+			si.read_more();
+		}
+		catch (std::exception& e)
+		{
+			set_code(507, "Insufficient Storage");
+			out_body = "BODY FOR 507";
+			return 507;
+		}
+	}
 
 	verbose(4) << "(is_413) Multipart content accounts for " \
 		<< si.multipart_content.length() << " bytes." \
