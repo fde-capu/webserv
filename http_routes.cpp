@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 15:47:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 16:14:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,29 +42,18 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 
 int ws_reply_instance::is_405(ws_server_instance& si)
 {
-	DataFold accepted_methods(
-		si.config.getValStr("accepted_request_methods") != "" ?
-			split(si.config.getValStr("accepted_request_methods"), " ") :
-			split(std::string(DEFAULT_ACCEPTED_METHODS), " ")
-	);
 	bool method_accepted(false);
-	DataFold locations(si.config.get<DataFold>("location"));
-	DataFold loc;
 
-	if (!locations.empty())
-	{
-		while (locations.loop())
-		{
-			loc = locations.val;
-			if (loc.getValStr("uri") == si.in_header.directory)
-				while (loc.loop())
-					if (loc.key == "accepted_request_methods")
-						accepted_methods = loc.get("accepted_request_methods");
-		}
-	}
+	DataFold accepted_methods = si.location_get(
+		"accepted_request_methods",
+		DEFAULT_ACCEPTED_METHODS,
+		true
+	);
 	while (accepted_methods.loop())
+	{
 		if (si.in_header.method == accepted_methods.val)
 			method_accepted = true;
+	}
 	if (method_accepted)
 		return 0;
 	set_code(405, "Method Not Allowed");
@@ -85,7 +74,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 		verbose(1) << "(is_404) Fetching " << file_name << std::endl;
 		FileString from_file(file_name.c_str());
 		out_body = from_file.content();
-		verbose(1) << "(is_404) out_body >" << out_body << "<" << std::endl;
+		verbose(2) << "(webserv) out_body >" << out_body << "<" << std::endl;
 		if (out_body != "")
 			return 0;
 	}
@@ -223,18 +212,22 @@ std::string ws_server_instance::location_path(const std::string& file_name) cons
 	return full_path;
 }
 
-DataFold ws_server_instance::location_get(const std::string& key) const
+DataFold ws_server_instance::location_get(const std::string& key, std::string u_default, bool do_split) const
 {
 	DataFold locations(config.get<DataFold>("location"));
 	DataFold loc;
+	DataFold out;
 
+	out = config.get(key) != "" ? config.get(key) : u_default;
 	while (locations.loop())
 	{
 		loc = locations.val;
 		if (loc.getValStr("uri") == in_header.directory)
 			while (loc.loop())
 				if (loc.key == key)
-					return loc.get(key);
+					out = loc.get(key);
 	}
-	return config.get(key);
+	if (do_split)
+		return split(out, " ");
+	return out;
 }
