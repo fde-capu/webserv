@@ -6,13 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/22 13:08:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 15:03:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-DataFold ws_server_instance::get_location_config()
+DataFold ws_server_instance::get_location_config() const
 {
 	DataFold locations(config.get<DataFold>("location"));
 	if (locations.empty()) return locations;
@@ -372,6 +372,7 @@ void ws_reply_instance::set_code(int code_n, const std::string& u_output)
 {
 	out_header.status = code_n;
 	out_header.status_msg = u_output;
+	verbose(1) << "(webserv) " << code_n << " " << u_output << std::endl;
 }
 
 void ws_reply_instance::set_redirect(const std::string& target)
@@ -420,3 +421,53 @@ ws_reply_instance::ws_reply_instance()
 {
 	out_header.header500();
 }
+
+void ws_server_instance::set_sizes()
+{
+	max_size = config.get<int>("client_max_body_size");
+	DataFold loc = get_location_config();
+	while (loc.loop())
+	{
+		if (loc.key == "client_max_body_size")
+		{
+			max_size = loc.get<int>("client_max_body_size");
+			break ;
+		}
+	}
+	if (is_multipart())
+	{
+		multipart_type = word_from(in_header.content_type,
+				in_header.content_type.find("/") + 1);
+		boundary = in_header.content_type.substr( \
+				(in_header.content_type.find("boundary=") + 9));
+		payload_start = in_body.find(boundary);
+		if (payload_start == std::string::npos)
+			payload_start = 0;
+		else
+			payload_start = in_body.find("\r\n", payload_start \
+				+ boundary.length()) + 2;
+		payload_end = in_body.find(boundary, payload_start);
+		payload_end = payload_end == std::string::npos ? \
+					  in_body.length() : payload_end - 4;
+		body_start = in_body.find("\r\n\r\n", payload_start);
+		body_start = body_start == std::string::npos ? 0 : body_start;
+		body_start += body_start ? 4 : 0;
+		body_end = payload_end;
+
+		multipart_content_disposition = StringTools::query_for( \
+			"Content-Disposition", in_body);
+		multipart_name = StringTools::query_for("name", in_body);
+		multipart_filename = StringTools::query_for("filename", in_body);
+		multipart_content_type = StringTools::query_for("Content-Type", in_body);
+	}
+	else
+	{
+		payload_start = 0;
+		payload_end = in_body.length();
+		body_start = payload_start;
+		body_end = payload_end;
+	}
+}
+
+bool ws_server_instance::is_multipart() const
+{ return in_header.content_type.find("multipart") == 0; }

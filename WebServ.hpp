@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/19 16:46:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 15:27:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,10 @@ struct ws_server_instance
 
 	void read_more();
 	void set_sizes();
-	DataFold get_location_config();
+	DataFold get_location_config() const;
 	bool is_multipart() const;
+	std::string location_path(const std::string&) const;
+	DataFold location_get(const std::string&) const;
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 

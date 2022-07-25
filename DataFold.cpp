@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 20:26:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 15:41:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -516,7 +516,7 @@ void DataFold::array_into_inline(std::string& dst) const
 		substitute_all(blk, ",", " ");
 		hard_trim(blk);
 		soft_trim(blk);
-		if (dst.substr(p_op - 1, 1) == ":")
+		if (p_op > 0 && dst.substr(p_op - 1, 1) == ":")
 			p_op--;
 		dst = dst.substr(0, p_op) + " " + blk + dst.substr(p_cl + 1);
 		p_op = StringTools::find_outside_quotes(dst, "[");

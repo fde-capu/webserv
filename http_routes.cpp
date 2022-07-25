@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 14:01:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/25 15:47:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,107 +76,34 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	DataFold indexes;
 	std::string file_name;
 
-	if (si.in_header.method == "GET")
+	if (si.in_header.method != "GET")
+		return 0;
+	indexes = si.location_get("index");
+	while (indexes.loop())
 	{
-		indexes = si.config.get("index");
-		while (indexes.loop())
-		{
-			file_name = si.root_config.getValStr("root") \
-						+ "/" + si.val("root") \
-						+ si.in_header.directory \
-						+ "/" + indexes.val;
-			stool.remove_rep_char(file_name, '/');
-			verbose(3) << "(webserv) Fetching " << file_name << std::endl;
-			FileString from_file(file_name.c_str());
-			out_body = from_file.content();
-			if (out_body != "")
-				return 0;
-		}
-		set_code(404, "File Not Found");
-		verbose(1) << "(webserv) ! 404 " << file_name \
-			<< std::endl;
-		return 404;
+		file_name = si.location_path(indexes.val);
+		verbose(1) << "(is_404) Fetching " << file_name << std::endl;
+		FileString from_file(file_name.c_str());
+		out_body = from_file.content();
+		verbose(1) << "(is_404) out_body >" << out_body << "<" << std::endl;
+		if (out_body != "")
+			return 0;
 	}
-	return 0;
+	set_code(404, "File Not Found");
+	return 404;
 }
 
 int ws_reply_instance::is_200(ws_server_instance& si)
 {
-	DataFold indexes;
-	std::string file_name;
-
-	if (si.in_header.method == "GET")
+	if (si.in_header.method != "GET")
+		return 0;
+	if (out_body != "")
 	{
-		indexes = si.config.get("index");
-		while (indexes.loop())
-		{
-			file_name = si.root_config.getValStr("root") \
-						+ "/" + si.val("root") \
-						+ si.in_header.directory \
-						+ "/" + indexes.val;
-			stool.remove_rep_char(file_name, '/');
-			verbose(3) << "(webserv) Fetching " << file_name << std::endl;
-			FileString from_file(file_name.c_str());
-			out_body = from_file.content();
-			if (out_body != "")
-			{
-				set_code(200, "OK");
-				return 200;
-			}
-		}
+		set_code(200, "OK");
+		return 200;
 	}
 	return 0;
 }
-
-void ws_server_instance::set_sizes()
-{
-	max_size = config.get<int>("client_max_body_size");
-	DataFold loc = get_location_config();
-	while (loc.loop())
-	{
-		if (loc.key == "client_max_body_size")
-		{
-			max_size = loc.get<int>("client_max_body_size");
-			break ;
-		}
-	}
-	if (is_multipart())
-	{
-		multipart_type = word_from(in_header.content_type,
-				in_header.content_type.find("/") + 1);
-		boundary = in_header.content_type.substr( \
-				(in_header.content_type.find("boundary=") + 9));
-		payload_start = in_body.find(boundary);
-		if (payload_start == std::string::npos)
-			payload_start = 0;
-		else
-			payload_start = in_body.find("\r\n", payload_start \
-				+ boundary.length()) + 2;
-		payload_end = in_body.find(boundary, payload_start);
-		payload_end = payload_end == std::string::npos ? \
-					  in_body.length() : payload_end - 4;
-		body_start = in_body.find("\r\n\r\n", payload_start);
-		body_start = body_start == std::string::npos ? 0 : body_start;
-		body_start += body_start ? 4 : 0;
-		body_end = payload_end;
-
-		multipart_content_disposition = StringTools::query_for( \
-			"Content-Disposition", in_body);
-		multipart_name = StringTools::query_for("name", in_body);
-		multipart_filename = StringTools::query_for("filename", in_body);
-		multipart_content_type = StringTools::query_for("Content-Type", in_body);
-	}
-	else
-	{
-		payload_start = 0;
-		payload_end = in_body.length();
-		body_start = payload_start;
-		body_end = payload_end;
-	}
-}
-
-bool ws_server_instance::is_multipart() const
-{ return in_header.content_type.find("multipart") == 0; }
 
 int ws_reply_instance::is_413(ws_server_instance& si)
 {
@@ -227,7 +154,6 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 {
 	if (is_equal_insensitive(si.in_header.expect, "100-continue"))
 	{
-
 		verbose(2) << "(is_424) Because of " << si.in_header.expect << \
 			", and sizes are ok, would return 100-continue. " \
 			"webserv must always close connection, so, instead, " \
@@ -259,33 +185,56 @@ int ws_reply_instance::is_529(ws_server_instance& si)
 
 int ws_reply_instance::is_202(ws_server_instance& si)
 {
-	std::string dir_name;
+	std::string full_path;
 	std::string mp_block;
-	DataFold loc = si.get_location_config();
-	std::string loc_choice;
 	std::string data_simple;
 
 	if (si.in_header.method == "POST")
 	{
-		loc_choice = loc.getValStr("root");
-		if (loc_choice.empty() || loc_choice.at(0) != '/')
-			loc_choice = si.config.getValStr("root") + "/" + loc_choice;
-		dir_name = si.root_config.getValStr("root") + \
-			"/" + loc_choice + "/" + si.multipart_filename;
-		stool.remove_rep_char(dir_name, '/');
-
+		full_path = si.location_path(si.multipart_filename);
 		std::string data(si.multipart_content);
+
 		data_simple = data.length() <= 202 ? data : \
 			"(large file, will not print)";
 		verbose(5) << "(webserv) >" << data_simple << \
-			"< will be saved into " << dir_name << \
+			"< will be saved into " << full_path << \
 			"." << std::endl;
 
-		FileString::write(dir_name, si.multipart_content);
+		FileString::write(full_path, si.multipart_content);
 
 		set_code(202, "Accepted");
 		out_body = "BODY FOR 202";
 		return 202;
 	}
 	return 0;
+}
+
+std::string ws_server_instance::location_path(const std::string& file_name) const
+{
+	DataFold loc = get_location_config();
+	std::string loc_choice = loc.getValStr("root");
+	std::string full_path;
+
+	if (loc_choice.empty() || loc_choice.at(0) != '/')
+		loc_choice = config.getValStr("root") + "/" + loc_choice;
+	full_path = root_config.getValStr("root") + \
+		"/" + loc_choice + "/" + file_name;
+	stool.remove_rep_char(full_path, '/');
+	return full_path;
+}
+
+DataFold ws_server_instance::location_get(const std::string& key) const
+{
+	DataFold locations(config.get<DataFold>("location"));
+	DataFold loc;
+
+	while (locations.loop())
+	{
+		loc = locations.val;
+		if (loc.getValStr("uri") == in_header.directory)
+			while (loc.loop())
+				if (loc.key == key)
+					return loc.get(key);
+	}
+	return config.get(key);
 }
