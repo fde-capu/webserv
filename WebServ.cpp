@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 14:44:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/26 13:01:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,14 +173,14 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_403(si)) return ; // Forbidden.
 	if (is_405(si)) return ; // Bad method.
 	if (is_404(si)) return ; // Not found. GET
-	if (is_413(si)) return ; // Too large. All methods.
+	if (is_413_507(si)) return ; // Too large / Out of storage. All methods.
 	if (is_424(si)) return ; // Not met dependency. Used when client expects 100-continue.
 //	if (is_529(si)) return ; // Site is overloaded.
 	if (is_200(si)) return ; // Ok (GET)
 	if (is_202(si)) return ; // Accepted (POST)
 
 	set_code(420, "Enhance Your Calm");
-	out_body = "Spaced out your request.";
+	out_body = "BODY FOR 420";
 }
 
 ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)

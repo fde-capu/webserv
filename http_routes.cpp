@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 16:14:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/26 13:10:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,7 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 
 	DataFold accepted_methods = si.location_get(
 		"accepted_request_methods",
-		DEFAULT_ACCEPTED_METHODS,
-		true
+		DEFAULT_ACCEPTED_METHODS
 	);
 	while (accepted_methods.loop())
 	{
@@ -82,21 +81,9 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	return 404;
 }
 
-int ws_reply_instance::is_200(ws_server_instance& si)
+int ws_reply_instance::is_413_507(ws_server_instance& si)
 {
-	if (si.in_header.method != "GET")
-		return 0;
-	if (out_body != "")
-	{
-		set_code(200, "OK");
-		return 200;
-	}
-	return 0;
-}
-
-int ws_reply_instance::is_413(ws_server_instance& si)
-{
-	verbose(3) << "(is_413) max_size: " << si.max_size << "." << std::endl;
+	verbose(3) << "(is_413_507) max_size: " << si.max_size << "." << std::endl;
 
 	if (!si.is_multipart() && static_cast<size_t>(si.in_header.content_length) > si.max_size)
 	{
@@ -119,13 +106,13 @@ int ws_reply_instance::is_413(ws_server_instance& si)
 		}
 	}
 
-	verbose(4) << "(is_413) Multipart content accounts for " \
+	verbose(4) << "(is_413_507) Multipart content accounts for " \
 		<< si.multipart_content.length() << " bytes." \
 		<< std::endl;
-	verbose(4) << "(is_413) Non-multipart accounts for " \
+	verbose(4) << "(is_413_507) Non-multipart accounts for " \
 		<< si.in_body.length() << " bytes." << std::endl;
-	verbose(5) << "(is_413) in_body >>" << si.in_body << "<<" << std::endl;
-	verbose(5) << "(is_413) multipart_content >>" << si.multipart_content << \
+	verbose(5) << "(is_413_507) in_body >>" << si.in_body << "<<" << std::endl;
+	verbose(5) << "(is_413_507) multipart_content >>" << si.multipart_content << \
 		"<<" << std::endl;
 
 	if ((!si.is_multipart() && si.in_body.length() > si.max_size)
@@ -172,6 +159,18 @@ int ws_reply_instance::is_529(ws_server_instance& si)
 	return 0;
 }
 
+int ws_reply_instance::is_200(ws_server_instance& si)
+{
+	if (si.in_header.method != "GET")
+		return 0;
+	if (out_body != "")
+	{
+		set_code(200, "OK");
+		return 200;
+	}
+	return 0;
+}
+
 int ws_reply_instance::is_202(ws_server_instance& si)
 {
 	std::string full_path;
@@ -212,13 +211,13 @@ std::string ws_server_instance::location_path(const std::string& file_name) cons
 	return full_path;
 }
 
-DataFold ws_server_instance::location_get(const std::string& key, std::string u_default, bool do_split) const
+DataFold ws_server_instance::location_get(const std::string& key, std::string u_default) const
 {
 	DataFold locations(config.get<DataFold>("location"));
 	DataFold loc;
 	DataFold out;
 
-	out = config.get(key) != "" ? config.get(key) : u_default;
+	out = config.get(key) != "" ? config.get(key) : std::string(key + ":" + u_default);
 	while (locations.loop())
 	{
 		loc = locations.val;
@@ -227,7 +226,6 @@ DataFold ws_server_instance::location_get(const std::string& key, std::string u_
 				if (loc.key == key)
 					out = loc.get(key);
 	}
-	if (do_split)
-		return split(out, " ");
+	verbose(1) << "(location_get) Return: " << out << std::endl;
 	return out;
 }

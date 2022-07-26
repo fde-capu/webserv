@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 16:07:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/26 13:08:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ struct ws_server_instance
 	DataFold get_location_config() const;
 	bool is_multipart() const;
 	std::string location_path(const std::string&) const;
-	DataFold location_get(const std::string&, std::string = "", bool = false) const;
+	DataFold location_get(const std::string&, std::string = "") const;
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 
@@ -92,7 +92,7 @@ struct ws_reply_instance
 	int is_200(ws_server_instance&); // OK.
 	int is_202(ws_server_instance&); // Accepted.
 	int is_404(ws_server_instance&); // Not Found.
-	int is_413(ws_server_instance&); // Payload Too Large.
+	int is_413_507(ws_server_instance&); // Payload Too Large.
 	int is_424(ws_server_instance&); // Failed Dependency.
 	int is_529(ws_server_instance&); // Site is overloaded.
 
