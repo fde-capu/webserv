@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/26 16:51:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 15:23:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,8 +236,11 @@ void WebServ::respond_connection_from(int fd)
 	verbose(2) << "(respond_connection_from) Getting data from fd " << fd \
 		<< "." << std::endl;
 
-	raw_data = get_raw_data(fd);
-	in_header = get_header(raw_data);
+	while (!in_header.is_valid)
+	{
+		raw_data += get_raw_data(fd);
+		in_header = get_header(raw_data);
+	}
 	si = choose_instance(in_header, fd_to_port[fd]);
 	si.in_body = get_body(raw_data);
 	si.set_sizes();

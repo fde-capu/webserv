@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 13:47:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 15:04:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class CircularBuffer
 		void mountMemory();
 		void resetMemory();
 		std::string& set_eof();
+		std::string& unfinished();
 		bool checkLimits() const;
 
 	public:

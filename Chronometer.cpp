@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 11:59:38 by fde-capu          #+#    #+#             */
-/*   Updated: 2021/12/08 11:59:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 15:01:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,43 +17,38 @@
 #include <string>
 #include <fstream>
 
-clock_t Chronometer::_start = std::clock();
-
 Chronometer::Chronometer(void)
+: _start(0), _check(0)
 {
-	this->_start = std::clock();
-	return ;
+	btn_reset();
 }
 
-Chronometer::Chronometer(Chronometer const & src)
+std::ostream& operator<< (std::ostream& o, Chronometer& self)
 {
-	*this = src;
-	return ;
-}
-
-Chronometer & Chronometer::operator = (Chronometer const & rhs)
-{
-	static_cast<void>(rhs);
-	return *this;
-}
-
-std::ostream & operator << (std::ostream & o, Chronometer const & self)
-{
-	clock_t now = std::clock();
-	double elapsed = static_cast<double>(now - self._start) / CLOCKS_PER_SEC * 1000;
-	o << "::: " << std::fixed << std::showpoint << std::setprecision(CHRONOMETER_PRECISION);
-	o << elapsed;
+	self.btn_check();
+	o << "::: " << std::fixed << std::showpoint \
+		<< std::setprecision(CHRONOMETER_PRECISION);
+	o << self.read_last();
 	o << " :::";
 	return o;
 }
 
 Chronometer::~Chronometer(void)
+{ return ; }
+
+double Chronometer::read_last() const
 {
-	return ;
+	return _check;
 }
 
-std::string Chronometer::start()
+void Chronometer::btn_reset()
 {
 	this->_start = std::clock();
-	return "::: clock :::";
+}
+
+void Chronometer::btn_check()
+{
+	clock_t now = std::clock();
+	this->_check = static_cast<double>(now - _start) \
+		/ CLOCKS_PER_SEC * 1000;
 }

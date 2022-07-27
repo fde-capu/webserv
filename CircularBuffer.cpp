@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 13:30:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 15:07:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,13 @@ std::string& CircularBuffer::set_eof()
 	resetMemory();
 	eof = true;
 	verbose(2) << "(CircularBuffer) EOF set." << std::endl;
+	return output;
+}
+
+std::string& CircularBuffer::unfinished()
+{
+	resetMemory();
+	verbose(2) << "(CircularBuffer) Returning unfinished." << std::endl;
 	return output;
 }
 
@@ -113,12 +120,10 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 std::string& CircularBuffer::receive_until_eof()
 {
 	int bytes;
-	int deb = 0;
 
 	while (checkLimits() || true)
 	{
 		checkLimits();
-		resetMemory();
 		bytes = read(fd, const_cast<char *>(memory), size);
 
 		verbose(1) << "(receive_until_eof) ->" << fd << ": bytes " << bytes << \
@@ -133,9 +138,7 @@ std::string& CircularBuffer::receive_until_eof()
 		{
 			verbose(1) << "(receive_until_eof) Encontered an error, treated " << \
 				"as warning (" << errno << "): " << strerror(errno) << std::endl;
-//			return set_eof();
-			if (++deb == 5) return set_eof();
-			continue ;
+			return unfinished();
 		}
 		if (bytes == 0)
 		{

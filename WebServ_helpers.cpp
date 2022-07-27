@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/26 16:54:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 15:25:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,8 +228,12 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 	std::vector<std::string> carrier;
 	bool is_valid;
 	is_valid = false;
+	size_t header_break;
 
-	std::string h_block = full_file.substr(0, full_file.find("\r\n\r\n"));
+	header_break = full_file.find("\r\n\r\n");
+	if (header_break == std::string::npos)
+		return header;
+	std::string h_block = full_file.substr(0, header_break);
 	line = split_trim(h_block, "\r\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
@@ -265,6 +269,7 @@ std::string WebServ::get_raw_data(int fd)
 {
 	CircularBuffer buffer(fd);
 	buffer.receive_until_eof();
+	verbose(1) << "(get_raw_data) EOF? " << buffer.ended() << std::endl;
 	std::string raw_data(buffer.output);
 	verbose(1) << "(get_raw_data) RAW_DATA >>" << raw_data << "<<" << std::endl;
 	return raw_data;
