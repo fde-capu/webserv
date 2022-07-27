@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/26 17:08:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 13:30:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,41 +63,44 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 
 	while (checkLimits() || true)
 	{
-		verbose(2) << "(receive_at_most) Length: " << output.length() << \
+		verbose(1) << "(receive_at_most) Length: " << output.length() << \
 			", capacity: " << output.capacity() << ", max_size: " << \
 			output.max_size() << "." << std::endl;
 
 		in_size = max < size ? max : size;
-		in_size = max - output.length() < in_size ? max - output.length() : in_size;
+		in_size = max > output.length() && max - output.length() < in_size ? \
+			max - output.length() : in_size;
+
+		verbose(1) << "(receive_at_most) " << in_size << " bytes." << std::endl;
 
 		bytes = read(fd, const_cast<char *>(memory), in_size);
 
-		verbose(2) << "(receive_at_most) fd " << fd << ": read " << bytes << \
+		verbose(1) << "(receive_at_most) fd " << fd << ": read " << bytes << \
 			", in_size " << in_size << ", max " << max << ", have " \
 			<< output.length() << "\t(" << \
 			std::string(memory).substr(0, bytes) << ")" << std::endl;
 
 		if (bytes == -1)
 		{
-			verbose(2) << "(receive_at_most) Try again: " << \
+			verbose(1) << "(receive_at_most) Try again: " << \
 				strerror(errno) << "." << std::endl;
 			continue ;
 		}
 		if (bytes == 0)
 		{
-			verbose(2) << "(receive_at_most) Zero bytes, EOF." << std::endl;
+			verbose(1) << "(receive_at_most) Zero bytes, EOF." << std::endl;
 			return set_eof();
 		}
 		if (static_cast<size_t>(bytes) < in_size)
 		{
-			verbose(2) << "(receive_at_most) Buffer less than expected, come again." \
+			verbose(1) << "(receive_at_most) Buffer less than expected, come again." \
 				<< std::endl;
 			output.append(memory, bytes);
 			continue ;
 		}
-		if (static_cast<size_t>(bytes) == size)
+		if (static_cast<size_t>(bytes) == in_size)
 		{
-			verbose(2) << "(receive_at_most) Buffer full, come again." << std::endl;
+			verbose(1) << "(receive_at_most) Buffer full, come again." << std::endl;
 			output.append(memory, bytes);
 			continue ;
 		}
@@ -110,13 +113,15 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 std::string& CircularBuffer::receive_until_eof()
 {
 	int bytes;
+	int deb = 0;
 
 	while (checkLimits() || true)
 	{
 		checkLimits();
+		resetMemory();
 		bytes = read(fd, const_cast<char *>(memory), size);
 
-		verbose(1) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
+		verbose(1) << "(receive_until_eof) ->" << fd << ": bytes " << bytes << \
 			" size " << size << "\t(" << std::string(memory).substr(0, bytes) \
 			<< ")" << std::endl;
 
@@ -126,22 +131,26 @@ std::string& CircularBuffer::receive_until_eof()
 		}
 		if (bytes == -1)
 		{
-			verbose(1) << "(CircularBuffer) Encontered an error, treated " << \
+			verbose(1) << "(receive_until_eof) Encontered an error, treated " << \
 				"as warning (" << errno << "): " << strerror(errno) << std::endl;
-			return set_eof();
+//			return set_eof();
+			if (++deb == 5) return set_eof();
 			continue ;
 		}
 		if (bytes == 0)
 		{
+			verbose(1) << "(receive_until_eof) 0" << std::endl;
 			return set_eof();
 		}
 		if (static_cast<size_t>(bytes) < size)
 		{
+			verbose(1) << "(receive_until_eof) " << bytes << " < " << size << std::endl;
 			output.append(memory, bytes);
 			continue ;
 		}
 		if (static_cast<size_t>(bytes) == size)
 		{
+			verbose(1) << "(receive_until_eof) " << bytes << " == " << size << std::endl;
 			output.append(memory, size);
 			continue ;
 		}
