@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/26 16:53:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 16:47:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,18 +195,4 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 		return 202;
 	}
 	return 0;
-}
-
-std::string ws_server_instance::location_path(const std::string& file_name) const
-{
-	DataFold loc = get_location_config();
-	std::string loc_choice = loc.getValStr("root");
-	std::string full_path;
-
-	if (loc_choice.empty() || loc_choice.at(0) != '/')
-		loc_choice = config.getValStr("root") + "/" + loc_choice;
-	full_path = root_config.getValStr("root") + \
-		"/" + loc_choice + "/" + file_name;
-	stool.remove_rep_char(full_path, '/');
-	return full_path;
 }

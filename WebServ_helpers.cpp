@@ -6,21 +6,11 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 16:21:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 17:45:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
-
-DataFold ws_server_instance::get_location_config() const
-{
-	DataFold locations(config.get<DataFold>("location"));
-	if (locations.empty()) return locations;
-	while (locations.loop())
-		if (DataFold(locations.val).getValStr("uri") == in_header.directory)
-			return locations.val;
-	return locations;
-}
 
 void ws_server_instance::read_more()
 {
@@ -428,18 +418,27 @@ ws_reply_instance::ws_reply_instance()
 	out_header.header500();
 }
 
+bool ws_server_instance::is_multipart() const
+{ return in_header.content_type.find("multipart") == 0; }
+
+void WebServ::respond_timeout(int fd)
+{
+	ws_reply_instance respond;
+	respond.set_code(408, "Request Timeout");
+	respond.out_body = "BODY FOR 408";
+	if (send(fd, respond.encapsulate().c_str(),
+		respond.package_length, 0) == -1)
+		throw std::domain_error("(webserv) Sending response went wrong.");
+	close(fd);
+	remove_from_poll(fd);
+}
+
 void ws_server_instance::set_sizes()
 {
 	max_size = config.get<int>("client_max_body_size");
-	DataFold loc = get_location_config();
-	while (loc.loop())
-	{
-		if (loc.key == "client_max_body_size")
-		{
-			max_size = loc.get<int>("client_max_body_size");
-			break ;
-		}
-	}
+	verbose(1) << "(set_sizes) max A: " << max_size << std::endl;
+	max_size = std::stoi(location_get_single("client_max_body_size", itoa(DEFAULT_MAX_BODY_SIZE)));
+	verbose(1) << "(set_sizes) max B: " << max_size << std::endl;
 	if (is_multipart())
 	{
 		multipart_type = word_from(in_header.content_type,
@@ -475,8 +474,15 @@ void ws_server_instance::set_sizes()
 	}
 }
 
-bool ws_server_instance::is_multipart() const
-{ return in_header.content_type.find("multipart") == 0; }
+DataFold ws_server_instance::get_location_config() const
+{
+	DataFold locations(config.get<DataFold>("location"));
+	if (locations.empty()) return locations;
+	while (locations.loop())
+		if (DataFold(locations.val).getValStr("uri") == in_header.directory)
+			return locations.val;
+	return locations;
+}
 
 DataFold ws_server_instance::location_get(const std::string& key, std::string u_default) const
 {
@@ -488,7 +494,7 @@ DataFold ws_server_instance::location_get(const std::string& key, std::string u_
 	while (locations.loop())
 	{
 		loc = locations.val;
-		if (loc.getValStr("uri") == in_header.directory)
+		if (StringTools::startsWith(in_header.directory, loc.getValStr("uri")))
 			while (loc.loop())
 				if (loc.key == key)
 					out = loc.get(key);
@@ -497,14 +503,24 @@ DataFold ws_server_instance::location_get(const std::string& key, std::string u_
 	return out;
 }
 
-void WebServ::respond_timeout(int fd)
+std::string ws_server_instance::location_get_single(const std::string& key, std::string u_default) const
 {
-	ws_reply_instance respond;
-	respond.set_code(408, "Request Timeout");
-	respond.out_body = "BODY FOR 408";
-	if (send(fd, respond.encapsulate().c_str(),
-		respond.package_length, 0) == -1)
-		throw std::domain_error("(webserv) Sending response went wrong.");
-	close(fd);
-	remove_from_poll(fd);
+	DataFold x(location_get(key, u_default));
+	if (x.loop())
+		return x.val.c_str();
+	return 0;
+}
+
+std::string ws_server_instance::location_path(const std::string& file_name) const
+{
+	DataFold loc = get_location_config();
+	std::string loc_choice = loc.getValStr("root");
+	std::string full_path;
+
+	if (loc_choice.empty() || loc_choice.at(0) != '/')
+		loc_choice = config.getValStr("root") + "/" + loc_choice;
+	full_path = root_config.getValStr("root") + \
+		"/" + loc_choice + "/" + file_name;
+	stool.remove_rep_char(full_path, '/');
+	return full_path;
 }

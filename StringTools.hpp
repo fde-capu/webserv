@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/14 19:52:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 16:38:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,7 @@ class StringTools
 		static std::string			query_for(std::string, std::string&);
 		static std::string&			trim(std::string&, std::string);
 		static bool					isInSet(const char&, std::string set);
+		static bool					startsWith(const std::string&, const std::string&);
 };
 
 //std::ostream & operator<< (std::ostream & o, StringTools const & i);

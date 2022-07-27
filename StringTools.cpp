@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 14:20:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 16:40:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -677,6 +677,9 @@ bool StringTools::isInSet(const char& test_char, std::string set)
 	}
 	return false;
 }
+
+bool StringTools::startsWith(const std::string& full, const std::string& begining)
+{ return full.find(begining) == 0; }
 
 std::string& StringTools::trim(std::string& str, std::string set)
 {

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 15:41:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 17:40:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ DataFold::operator int() const
 	if ((core.empty())
 	|| (!(core.type & DF_TYPE_NUMBER)))
 		return 0;
-	return atoi(core[0].val.c_str());
+	return std::atoi(core[0].val.c_str());
 }
 
 DataFold DataFold::filter(std::string key) const
