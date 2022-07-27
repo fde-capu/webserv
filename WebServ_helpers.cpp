@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 15:25:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 16:21:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ bool WebServ::read_1st_line(std::string& line, ws_header& header, bool& is_valid
 {
 	std::vector<std::string> carrier;
 
-	verbose(1) << "(read_1st_line) >" << line << "<" << std::endl;
+	verbose(4) << "(read_1st_line) >" << line << "<" << std::endl;
 	if (validate_header_1st_line(line, 3, is_valid))
 	{
 		carrier = split_trim(line, " ");
@@ -255,7 +255,7 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 			header.expect = carrier[1];
 	}
 	header.is_valid = is_valid;
-	verbose(1) << "(get_header) " << header << std::endl;
+	verbose(3) << "(get_header) " << header << std::endl;
 	return header;
 }
 
@@ -269,9 +269,9 @@ std::string WebServ::get_raw_data(int fd)
 {
 	CircularBuffer buffer(fd);
 	buffer.receive_until_eof();
-	verbose(1) << "(get_raw_data) EOF? " << buffer.ended() << std::endl;
+	verbose(5) << "(get_raw_data) EOF? " << buffer.ended() << std::endl;
 	std::string raw_data(buffer.output);
-	verbose(1) << "(get_raw_data) RAW_DATA >>" << raw_data << "<<" << std::endl;
+	verbose(6) << "(get_raw_data) RAW_DATA >>" << raw_data << "<<" << std::endl;
 	return raw_data;
 }
 
@@ -495,4 +495,16 @@ DataFold ws_server_instance::location_get(const std::string& key, std::string u_
 	}
 	verbose(1) << "(location_get) Return: " << out << std::endl;
 	return out;
+}
+
+void WebServ::respond_timeout(int fd)
+{
+	ws_reply_instance respond;
+	respond.set_code(408, "Request Timeout");
+	respond.out_body = "BODY FOR 408";
+	if (send(fd, respond.encapsulate().c_str(),
+		respond.package_length, 0) == -1)
+		throw std::domain_error("(webserv) Sending response went wrong.");
+	close(fd);
+	remove_from_poll(fd);
 }

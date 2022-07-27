@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/28 16:04:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 16:24:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # include "ArgVal.hpp"
 # include "DataFold.hpp"
 # include "CircularBuffer.hpp"
+# include "Chronometer.hpp"
 # include <algorithm>
 # include <vector>
 # include <arpa/inet.h>
@@ -51,6 +52,7 @@ bool valid_line(std::string line);
 std::string get_parameter(std::string line);
 std::string get_value(std::string line);
 
+# define TIME_OUT_SECONDS 1.25 
 # define DEFAULT_ACCEPTED_METHODS "GET"
 
 # define SERVER_UP "Server is up."

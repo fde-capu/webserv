@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 15:07:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 16:19:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,6 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 			output.append(memory, bytes);
 			continue ;
 		}
-//		verbose (2) << "(receive_at_most) End of in data." << std::endl;
-//		output.append(memory, bytes);
-//		return set_eof();
 	}
 }
 
@@ -126,7 +123,7 @@ std::string& CircularBuffer::receive_until_eof()
 		checkLimits();
 		bytes = read(fd, const_cast<char *>(memory), size);
 
-		verbose(1) << "(receive_until_eof) ->" << fd << ": bytes " << bytes << \
+		verbose(2) << "(receive_until_eof) ->" << fd << ": bytes " << bytes << \
 			" size " << size << "\t(" << std::string(memory).substr(0, bytes) \
 			<< ")" << std::endl;
 
@@ -136,28 +133,27 @@ std::string& CircularBuffer::receive_until_eof()
 		}
 		if (bytes == -1)
 		{
-			verbose(1) << "(receive_until_eof) Encontered an error, treated " << \
+			verbose(2) << "(receive_until_eof) Encontered an error, treated " << \
 				"as warning (" << errno << "): " << strerror(errno) << std::endl;
 			return unfinished();
 		}
 		if (bytes == 0)
 		{
-			verbose(1) << "(receive_until_eof) 0" << std::endl;
+			verbose(2) << "(receive_until_eof) 0" << std::endl;
 			return set_eof();
 		}
 		if (static_cast<size_t>(bytes) < size)
 		{
-			verbose(1) << "(receive_until_eof) " << bytes << " < " << size << std::endl;
+			verbose(2) << "(receive_until_eof) " << bytes << " < " << size << std::endl;
 			output.append(memory, bytes);
 			continue ;
 		}
 		if (static_cast<size_t>(bytes) == size)
 		{
-			verbose(1) << "(receive_until_eof) " << bytes << " == " << size << std::endl;
+			verbose(2) << "(receive_until_eof) " << bytes << " == " << size << std::endl;
 			output.append(memory, size);
 			continue ;
 		}
-//		return output;
 	}
 }
 

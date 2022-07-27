@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 15:23:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/27 16:26:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,6 +232,7 @@ void WebServ::respond_connection_from(int fd)
 	std::string raw_data;
 	std::string body;
 	ws_header in_header;
+	Chronometer time_out;
 
 	verbose(2) << "(respond_connection_from) Getting data from fd " << fd \
 		<< "." << std::endl;
@@ -240,7 +241,18 @@ void WebServ::respond_connection_from(int fd)
 	{
 		raw_data += get_raw_data(fd);
 		in_header = get_header(raw_data);
+		if (time_out > TIME_OUT_SECONDS)
+		{
+			verbose(1) << "(respond_connection_from) Timout! << " << time_out << \
+				" > Incomplete header:" << \
+				std::endl << in_header << std::endl;
+			return respond_timeout(fd);
+		}
 	}
+
+	verbose(1) << "(respond_connection_from) Got header:" << std::endl << \
+		in_header << std::endl;
+
 	si = choose_instance(in_header, fd_to_port[fd]);
 	si.in_body = get_body(raw_data);
 	si.set_sizes();
