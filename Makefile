@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/29 15:33:08 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/07/27 09:39:46 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,13 +24,13 @@ ENVS	=	-DAGV_SKIP_CHECK=1
 SRCS	=	FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp \
 			CircularBuffer.cpp WebServ_helpers.cpp \
-			http_routes.cpp CgiWrapper.cpp
+			http_routes.cpp CgiWrapper.cpp Chronometer.cpp
 SRCS1	=	main.cpp
 SRCS2	=	main_cgi.cpp
 HEAD	=	Makefile header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
-			CircularBuffer.hpp CgiWrapper.hpp
+			CircularBuffer.hpp CgiWrapper.hpp Chronometer.hpp
 SHELL	=	/bin/sh
 CC		=	c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(DEBUG) $(ENVS)
 CCFLAGS	=	-Wall -Werror -Wextra -g -O0 -fno-limit-debug-info
