@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/26 13:01:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/26 16:51:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,8 +164,6 @@ int WebServ::catch_connection()
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
-	verbose(1) << "[THINK] " << std::endl;
-
 	*this = ws_reply_instance();
 	out_body = "";
 
@@ -228,6 +226,8 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 
 void WebServ::respond_connection_from(int fd)
 {
+	verbose(1) << "[THINK] " << std::endl;
+
 	ws_server_instance si;
 	std::string raw_data;
 	std::string body;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 13:49:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/26 17:08:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,38 +101,40 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 			output.append(memory, bytes);
 			continue ;
 		}
-		verbose (2) << "(receive_at_most) End of in data." << std::endl;
-		output.append(memory, bytes);
-		return set_eof();
+//		verbose (2) << "(receive_at_most) End of in data." << std::endl;
+//		output.append(memory, bytes);
+//		return set_eof();
 	}
 }
 
 std::string& CircularBuffer::receive_until_eof()
 {
+	int bytes;
+
 	while (checkLimits() || true)
 	{
 		checkLimits();
+		bytes = read(fd, const_cast<char *>(memory), size);
 
-		int bytes = read(fd, const_cast<char *>(memory), size);
-
-		verbose(5) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
+		verbose(1) << "(CircularBuffer) ->" << fd << ": bytes " << bytes << \
 			" size " << size << "\t(" << std::string(memory).substr(0, bytes) \
 			<< ")" << std::endl;
 
 		if (bytes == -1 && fd == 0) // stdin
 		{
-			set_eof();
-			return output;
+			return set_eof();
 		}
 		if (bytes == -1)
 		{
-			verbose(2) << "(CircularBuffer) Encontered an error, treated " << \
-				"as warning, set point as EOF: " << strerror(errno) << std::endl;
-			set_eof();
-			return output;
+			verbose(1) << "(CircularBuffer) Encontered an error, treated " << \
+				"as warning (" << errno << "): " << strerror(errno) << std::endl;
+			return set_eof();
+			continue ;
 		}
 		if (bytes == 0)
-			continue ;
+		{
+			return set_eof();
+		}
 		if (static_cast<size_t>(bytes) < size)
 		{
 			output.append(memory, bytes);
@@ -143,7 +145,7 @@ std::string& CircularBuffer::receive_until_eof()
 			output.append(memory, size);
 			continue ;
 		}
-		return output;
+//		return output;
 	}
 }
 

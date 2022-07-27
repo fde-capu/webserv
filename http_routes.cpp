@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/26 13:10:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/26 16:53:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,23 +209,4 @@ std::string ws_server_instance::location_path(const std::string& file_name) cons
 		"/" + loc_choice + "/" + file_name;
 	stool.remove_rep_char(full_path, '/');
 	return full_path;
-}
-
-DataFold ws_server_instance::location_get(const std::string& key, std::string u_default) const
-{
-	DataFold locations(config.get<DataFold>("location"));
-	DataFold loc;
-	DataFold out;
-
-	out = config.get(key) != "" ? config.get(key) : std::string(key + ":" + u_default);
-	while (locations.loop())
-	{
-		loc = locations.val;
-		if (loc.getValStr("uri") == in_header.directory)
-			while (loc.loop())
-				if (loc.key == key)
-					out = loc.get(key);
-	}
-	verbose(1) << "(location_get) Return: " << out << std::endl;
-	return out;
 }
