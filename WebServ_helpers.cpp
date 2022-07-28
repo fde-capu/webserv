@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/28 15:53:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/28 17:04:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -520,14 +520,32 @@ std::string ws_server_instance::location_path(const std::string& file_name) cons
 {
 	std::string html_dir = config.getValStr("root");
 	std::string uri2root = location_get_single("root", file_name);
+	std::string sys_dir = root_config.getValStr("root");
+	std::string get_request = in_header.directory;
+	std::string converted = get_request;
+	std::string trunk = get_request;
 	std::string full_path;
+	size_t h;
 
-	verbose(1) << "(location_path) Receives: " << file_name << std::endl;
+	verbose(1) << "(location_path) sys_dir: " << sys_dir << std::endl;
 	verbose(1) << "(location_path) html_dir: " << html_dir << std::endl;
 	verbose(1) << "(location_path) uri2root: " << uri2root << std::endl;
+	verbose(1) << "(location_path) file_name: " << file_name << std::endl;
+	verbose(1) << "(location_path) get_request: " << get_request << std::endl;
 
-	full_path = root_config.getValStr("root") + \
-		"/" + uri2root + "/" + file_name;
+	h = trunk.find("/", 1);
+	if (h != std::string::npos)
+		trunk = trunk.substr(1, h - 1);
+
+	verbose(1) << "(location_path) trunk: " << trunk << std::endl;
+
+	converted = stool.substitute_all(converted, trunk, uri2root);
+	if (html_dir != uri2root)
+		converted = html_dir + "/" + converted;
+
+	verbose(1) << "(location_path) converted: " << converted << std::endl;
+
+	full_path = sys_dir + "/" + converted + "/" + file_name;
 
 	stool.remove_rep_char(full_path, '/');
 	verbose(1) << "(location_path) Returns: " << full_path << "." << std::endl;

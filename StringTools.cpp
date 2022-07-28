@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 16:40:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/28 17:01:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,8 @@ std::string StringTools::substitute_all(std::string& dst, std::string before, st
 		pass = true;
 		size_t pos = find_outside_quotes(dst, before);
 		size_t scap_t = find_outside_quotes(dst, std::string("\\" + before));
-		if (pos != scap_t + 1 && pos != std::string::npos && pos > lastp)
+		if (pos != std::string::npos && \
+			(pos == 0 || (pos != scap_t + 1 && pos > lastp)))
 		{
 			pass = false;
 			lastp = pos;
