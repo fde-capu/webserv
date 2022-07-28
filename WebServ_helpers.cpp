@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/28 15:26:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/28 15:53:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -518,14 +518,18 @@ std::string ws_server_instance::location_get_single \
 
 std::string ws_server_instance::location_path(const std::string& file_name) const
 {
-	DataFold loc = get_location_config();
-	std::string loc_choice = loc.getValStr("root");
+	std::string html_dir = config.getValStr("root");
+	std::string uri2root = location_get_single("root", file_name);
 	std::string full_path;
 
-	if (loc_choice.empty() || loc_choice.at(0) != '/')
-		loc_choice = config.getValStr("root") + "/" + loc_choice;
+	verbose(1) << "(location_path) Receives: " << file_name << std::endl;
+	verbose(1) << "(location_path) html_dir: " << html_dir << std::endl;
+	verbose(1) << "(location_path) uri2root: " << uri2root << std::endl;
+
 	full_path = root_config.getValStr("root") + \
-		"/" + loc_choice + "/" + file_name;
+		"/" + uri2root + "/" + file_name;
+
 	stool.remove_rep_char(full_path, '/');
+	verbose(1) << "(location_path) Returns: " << full_path << "." << std::endl;
 	return full_path;
 }
