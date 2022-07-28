@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 17:45:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/28 14:17:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -437,7 +437,7 @@ void ws_server_instance::set_sizes()
 {
 	max_size = config.get<int>("client_max_body_size");
 	verbose(1) << "(set_sizes) max A: " << max_size << std::endl;
-	max_size = std::stoi(location_get_single("client_max_body_size", itoa(DEFAULT_MAX_BODY_SIZE)));
+	max_size = std::atoi(location_get_single("client_max_body_size", itoa(DEFAULT_MAX_BODY_SIZE)).c_str());
 	verbose(1) << "(set_sizes) max B: " << max_size << std::endl;
 	if (is_multipart())
 	{

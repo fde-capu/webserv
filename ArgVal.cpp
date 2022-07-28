@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 15:43:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/28 14:35:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 
 		while (con.loop())
 		{
-			verbose(4) << "con_loop " << con.key << " : " << con.val << " (" << con.type << ")" << std::endl;
+			verbose(3) << "(Argval) " << con.key << " : " << con.val << " (" << con.type << ")" << std::endl;
 			if (set_flags & AGF_NUMBER)
 			{
 				if (!(con.type & DF_TYPE_NUMBER))
@@ -391,8 +391,12 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 
 			if (config.type & DF_TYPE_SUB)
 			{
-				if (!comply_config_keys(board.get_val(config.key), config.get_val(config.key)))
+				if (!comply_config_keys(board.get_val(config.key), \
+					config.get_val(config.key)))
+				{
+					verbose(1) << "(ArgVal) Note: " << config.key << "." << std::endl;
 					return false;
+				}
 			}
 			if (count_keys(board.get_val(board.key), config.key))
 			{
@@ -418,7 +422,7 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 	}
 	else
 	{
-		verbose(3) << "> " << config.string() << " is invalid." << std::endl;
+		verbose(1) << "> " << config.string() << " is invalid." << std::endl;
 	}
 	return valid;
 }
@@ -477,14 +481,5 @@ FileString& ArgVal::getConfig() const
 FileString& ArgVal::getBoard() const
 { return *const_cast<FileString*>(&_board); }
 
-//std::ostream & operator<< (std::ostream & o, ArgVal const & self)
-//{
-//	o << "::ArgVal::" << std::endl;
-//	o << "_board: " << self.getBoard() << std::endl << "_config: " << self.getConfig();
-//	return o;
-//}
-
 ArgVal::~ArgVal()
-{
-	return ;
-}
+{ return ; }
