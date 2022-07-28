@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/28 14:17:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/28 15:26:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -435,10 +435,8 @@ void WebServ::respond_timeout(int fd)
 
 void ws_server_instance::set_sizes()
 {
-	max_size = config.get<int>("client_max_body_size");
-	verbose(1) << "(set_sizes) max A: " << max_size << std::endl;
 	max_size = std::atoi(location_get_single("client_max_body_size", itoa(DEFAULT_MAX_BODY_SIZE)).c_str());
-	verbose(1) << "(set_sizes) max B: " << max_size << std::endl;
+	verbose(1) << "(set_sizes) max_size: " << max_size << std::endl;
 	if (is_multipart())
 	{
 		multipart_type = word_from(in_header.content_type,
@@ -484,26 +482,33 @@ DataFold ws_server_instance::get_location_config() const
 	return locations;
 }
 
-DataFold ws_server_instance::location_get(const std::string& key, std::string u_default) const
+DataFold ws_server_instance::location_get(const std::string& key, \
+	std::string u_default) const
 {
 	DataFold locations(config.get<DataFold>("location"));
 	DataFold loc;
 	DataFold out;
 
-	out = config.get(key) != "" ? config.get(key) : std::string(key + ":" + u_default);
+	out = config.get(key) != "" ? config.get(key) \
+		: root_config.get(key) != "" ? root_config.get(key) \
+		: std::string(key + ":" + u_default);
 	while (locations.loop())
 	{
 		loc = locations.val;
-		if (StringTools::startsWith(in_header.directory, loc.getValStr("uri")))
+		if (StringTools::startsWith(in_header.directory, \
+			loc.getValStr("uri")))
+		{
 			while (loc.loop())
 				if (loc.key == key)
 					out = loc.get(key);
+		}
 	}
 	verbose(1) << "(location_get) Return: " << out << std::endl;
 	return out;
 }
 
-std::string ws_server_instance::location_get_single(const std::string& key, std::string u_default) const
+std::string ws_server_instance::location_get_single \
+	(const std::string& key, std::string u_default) const
 {
 	DataFold x(location_get(key, u_default));
 	if (x.loop())
