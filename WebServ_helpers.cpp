@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/28 17:04:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 14:53:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -436,7 +436,6 @@ void WebServ::respond_timeout(int fd)
 void ws_server_instance::set_sizes()
 {
 	max_size = std::atoi(location_get_single("client_max_body_size", itoa(DEFAULT_MAX_BODY_SIZE)).c_str());
-	verbose(1) << "(set_sizes) max_size: " << max_size << std::endl;
 	if (is_multipart())
 	{
 		multipart_type = word_from(in_header.content_type,
@@ -503,7 +502,7 @@ DataFold ws_server_instance::location_get(const std::string& key, \
 					out = loc.get(key);
 		}
 	}
-	verbose(1) << "(location_get) Return: " << out << std::endl;
+	verbose(3) << "(location_get) Return: " << out << std::endl;
 	return out;
 }
 
@@ -516,10 +515,10 @@ std::string ws_server_instance::location_get_single \
 	return 0;
 }
 
-std::string ws_server_instance::location_path(const std::string& file_name) const
+std::string ws_server_instance::location_path(const std::string& default_file) const
 {
 	std::string html_dir = config.getValStr("root");
-	std::string uri2root = location_get_single("root", file_name);
+	std::string uri2root = location_get_single("root", default_file);
 	std::string sys_dir = root_config.getValStr("root");
 	std::string get_request = in_header.directory;
 	std::string converted = get_request;
@@ -527,27 +526,34 @@ std::string ws_server_instance::location_path(const std::string& file_name) cons
 	std::string full_path;
 	size_t h;
 
-	verbose(1) << "(location_path) sys_dir: " << sys_dir << std::endl;
-	verbose(1) << "(location_path) html_dir: " << html_dir << std::endl;
-	verbose(1) << "(location_path) uri2root: " << uri2root << std::endl;
-	verbose(1) << "(location_path) file_name: " << file_name << std::endl;
-	verbose(1) << "(location_path) get_request: " << get_request << std::endl;
+	verbose(4) << "(location_path) sys_dir: " << sys_dir << std::endl;
+	verbose(4) << "(location_path) html_dir: " << html_dir << std::endl;
+	verbose(4) << "(location_path) uri2root: " << uri2root << std::endl;
+	verbose(4) << "(location_path) default_file: " << default_file << std::endl;
+	verbose(4) << "(location_path) get_request: " << get_request << std::endl;
 
 	h = trunk.find("/", 1);
 	if (h != std::string::npos)
 		trunk = trunk.substr(1, h - 1);
 
-	verbose(1) << "(location_path) trunk: " << trunk << std::endl;
+	verbose(4) << "(location_path) trunk: " << trunk << std::endl;
 
 	converted = stool.substitute_all(converted, trunk, uri2root);
 	if (html_dir != uri2root)
 		converted = html_dir + "/" + converted;
 
-	verbose(1) << "(location_path) converted: " << converted << std::endl;
+	verbose(4) << "(location_path) converted: " << converted << std::endl;
 
-	full_path = sys_dir + "/" + converted + "/" + file_name;
-
+	full_path = sys_dir + "/" + converted;
 	stool.remove_rep_char(full_path, '/');
-	verbose(1) << "(location_path) Returns: " << full_path << "." << std::endl;
+	struct stat s;
+	if (stat(full_path.c_str(), &s) == 0 && s.st_mode & S_IFDIR)
+	{
+		full_path += "/" + default_file;
+		stool.remove_rep_char(full_path, '/');
+		verbose(3) << "(location_path) Returns (is directory, append file): " << full_path << "." << std::endl;
+		return full_path;
+	}
+	verbose(3) << "(location_path) Returns (file from get): " << full_path << "." << std::endl;
 	return full_path;
 }
