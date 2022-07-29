@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/28 15:31:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 14:59:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ int ws_reply_instance::is_301(ws_server_instance& si)
 		if (atoi(returns[0].c_str()) == 301)
 		{
 			set_code(301, "Moved Permanently");
+			out_body = "BODY FOR 301";
 			set_redirect(returns[1]);
 			return 301;
 		}
@@ -35,6 +36,7 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 	if (locations.empty() && si.val("root") == "")
 	{
 		set_code(403, "Forbidden");
+		out_body = "BODY FOR 403";
 		return 403;
 	}
 	return 0;
@@ -56,6 +58,7 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	if (method_accepted)
 		return 0;
 	set_code(405, "Method Not Allowed");
+	out_body = "BODY FOR 405";
 	return 405;
 }
 
@@ -78,6 +81,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 			return 0;
 	}
 	set_code(404, "File Not Found");
+	out_body = "BODY FOR 404".
 	return 404;
 }
 
@@ -166,12 +170,13 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 	if (out_body != "")
 	{
 		set_code(200, "OK");
+		out_body = "BODY FOR 200";
 		return 200;
 	}
 	return 0;
 }
 
-int ws_reply_instance::is_202(ws_server_instance& si)
+int ws_reply_instance::is_201(ws_server_instance& si)
 {
 	std::string full_path;
 	std::string mp_block;
@@ -182,7 +187,7 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 		full_path = si.location_path(si.multipart_filename);
 		std::string data(si.multipart_content);
 
-		data_simple = data.length() <= 202 ? data : \
+		data_simple = data.length() <= 201 ? data : \
 			"(large file, will not print)";
 		verbose(5) << "(webserv) >" << data_simple << \
 			"< will be saved into " << full_path << \
@@ -190,9 +195,9 @@ int ws_reply_instance::is_202(ws_server_instance& si)
 
 		FileString::write(full_path, si.multipart_content);
 
-		set_code(202, "Accepted");
-		out_body = "BODY FOR 202";
-		return 202;
+		set_code(201, "Accepted");
+		out_body = "BODY FOR 201";
+		return 201;
 	}
 	return 0;
 }
