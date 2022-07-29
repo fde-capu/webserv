@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 16:49:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 16:59:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,4 +170,16 @@ bool FileString::is_dir(const std::string& pathname)
 {
 	struct stat s;
 	return stat(pathname.c_str(), &s) == 0 && s.st_mode & S_IFDIR;
+}
+
+bool FileString::is_file(const std::string& filename)
+{
+	struct stat s;
+	return stat(filename.c_str(), &s) == 0 && !(s.st_mode & S_IFDIR);
+}
+
+bool FileString::exists(const std::string& pathorfile)
+{
+	struct stat s;
+	return stat(pathorfile.c_str(), &s) == 0;
 }

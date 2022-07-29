@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 16:25:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 16:59:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,12 +101,18 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	while (indexes.loop())
 	{
 		file_name = si.location_path(indexes.val);
-		verbose(1) << "(is_404) Fetching " << file_name << std::endl;
-		FileString from_file(file_name.c_str());
-		out_body = from_file.content();
-		verbose(2) << "(webserv) out_body >" << out_body << "<" << std::endl;
-		if (out_body != "")
+		verbose(1) << "(is_404) Fetching " << file_name \
+			<< std::endl;
+		if (FileString::exists(file_name))
+		{
+///////////////////  Move this to is_200!!
+//			FileString from_file(file_name.c_str());
+//			out_body = from_file.content();
+//			verbose(2) << "(webserv) out_body >" << out_body << "<" \
+//				<< std::endl;
+//			if (out_body != "")
 			return 0;
+		}
 	}
 	set_code(404, "File Not Found");
 	out_body = "BODY FOR 404";
