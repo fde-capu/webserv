@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 16:59:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 17:07:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ int ws_reply_instance::is_cgi(ws_server_instance& si)
 int ws_reply_instance::is_404(ws_server_instance& si)
 {
 	DataFold indexes;
-	std::string file_name;
 
 	if (si.in_header.method != "GET")
 		return 0;
@@ -104,15 +103,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 		verbose(1) << "(is_404) Fetching " << file_name \
 			<< std::endl;
 		if (FileString::exists(file_name))
-		{
-///////////////////  Move this to is_200!!
-//			FileString from_file(file_name.c_str());
-//			out_body = from_file.content();
-//			verbose(2) << "(webserv) out_body >" << out_body << "<" \
-//				<< std::endl;
-//			if (out_body != "")
 			return 0;
-		}
 	}
 	set_code(404, "File Not Found");
 	out_body = "BODY FOR 404";
@@ -201,12 +192,14 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 {
 	if (si.in_header.method != "GET")
 		return 0;
+
+	FileString from_file(file_name.c_str());
+	out_body = from_file.content();
+	verbose(2) << "(is_200) out_body >" << out_body << "<" \
+		<< std::endl;
 	if (out_body != "")
-	{
 		set_code(200, "OK");
-		return 200;
-	}
-	return 0;
+	return 200;
 }
 
 int ws_reply_instance::is_201(ws_server_instance& si)

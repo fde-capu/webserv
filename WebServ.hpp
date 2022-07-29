@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 16:22:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 17:06:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ struct ws_reply_instance
 	std::string encapsulate();
 	void set_code(int, const std::string&);
 	void set_redirect(const std::string&);
+	std::string file_name;
 
 	int PUT_mock(ws_server_instance&); // So it proceeds for 42 ubuntu_tester.
 	int is_501(ws_server_instance&); // Refuses if something is not implemented.
