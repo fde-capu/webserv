@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 14:59:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 15:07:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 			return 0;
 	}
 	set_code(404, "File Not Found");
-	out_body = "BODY FOR 404".
+	out_body = "BODY FOR 404";
 	return 404;
 }
 
@@ -170,7 +170,6 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 	if (out_body != "")
 	{
 		set_code(200, "OK");
-		out_body = "BODY FOR 200";
 		return 200;
 	}
 	return 0;
