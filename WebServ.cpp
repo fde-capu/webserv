@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 15:40:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 16:21:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,11 +167,12 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	*this = ws_reply_instance();
 	out_body = "";
 
-	if (is_301(si)) return ; // Redirect.
 	if (PUT_mock(si)) return ; // 200 but mocked.
+	if (is_501(si)) return ; // Is it not implemented? (PUT)
+	if (is_301(si)) return ; // Redirect.
 	if (is_403(si)) return ; // Forbidden.
-	if (is_501(si)) return ; // Not implemented.
 	if (is_405(si)) return ; // Bad method.
+	if (is_cgi(si)) return ; // Runs CGI and returns accordingly.
 	if (is_404(si)) return ; // Not found. GET. Loads file if existent.
 	if (is_413_507(si)) return ; // Too large / Out of storage. All methods.
 	if (is_424(si)) return ; // Not met dependency. Used when client expects 100-continue.

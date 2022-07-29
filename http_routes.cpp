@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 15:42:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 16:25:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,12 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	set_code(405, "Method Not Allowed");
 	out_body = "BODY FOR 405";
 	return 405;
+}
+
+int ws_reply_instance::is_cgi(ws_server_instance& si)
+{
+	verbose(1) << "(is_cgi) " << si << std::endl;
+	return 0;
 }
 
 int ws_reply_instance::is_404(ws_server_instance& si)
