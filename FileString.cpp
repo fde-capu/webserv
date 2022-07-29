@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/25 15:33:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 16:49:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,4 +164,10 @@ void FileString::write(std::string filename, std::string& data)
 	std::ofstream out(filename.c_str());
 	out << data;
 	out.close();
+}
+
+bool FileString::is_dir(const std::string& pathname)
+{
+	struct stat s;
+	return stat(pathname.c_str(), &s) == 0 && s.st_mode & S_IFDIR;
 }

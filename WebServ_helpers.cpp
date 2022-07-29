@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 15:46:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 16:50:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -546,8 +546,8 @@ std::string ws_server_instance::location_path(const std::string& default_file) c
 
 	full_path = sys_dir + "/" + converted;
 	stool.remove_rep_char(full_path, '/');
-	struct stat s;
-	if (stat(full_path.c_str(), &s) == 0 && s.st_mode & S_IFDIR)
+
+	if (FileString::is_dir(full_path))
 	{
 		full_path += "/" + default_file;
 		stool.remove_rep_char(full_path, '/');

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 14:49:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 16:49:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,6 @@
 # include <iostream>
 # include <cstdlib>
 # include <fstream>
-# include <sys/types.h>
-# include <sys/stat.h>
 # include "bladefs.hpp"
 # include "FileString.hpp"
 # include "ArgVal.hpp"
