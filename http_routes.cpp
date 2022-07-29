@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 15:07:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 15:42:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,28 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 		set_code(403, "Forbidden");
 		out_body = "BODY FOR 403";
 		return 403;
+	}
+	return 0;
+}
+
+int ws_reply_instance::PUT_mock(ws_server_instance& si)
+{
+	if (si.in_header.method == "PUT")
+	{
+		set_code(200, "OK, but PUT is mocked.");
+		out_body = "PUT is MOCKED, because it is not mandatory for this project.";
+		return 200;
+	}
+	return 0;
+}
+
+int ws_reply_instance::is_501(ws_server_instance& si)
+{
+	if (si.in_header.method == "PUT")
+	{
+		set_code(501, "Not Implemented");
+		out_body = "BODY FOR 501";
+		return 501;
 	}
 	return 0;
 }

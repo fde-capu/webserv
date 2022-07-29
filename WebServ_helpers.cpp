@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 15:10:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/29 15:46:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -554,6 +554,6 @@ std::string ws_server_instance::location_path(const std::string& default_file) c
 		verbose(1) << "(location_path) Returns (is directory, append file): " << full_path << "." << std::endl;
 		return full_path;
 	}
-	verbose(1) << "(location_path) Returns (file from get): " << full_path << "." << std::endl;
+	verbose(1) << "(location_path) Returns (file from header): " << full_path << "." << std::endl;
 	return full_path;
 }
