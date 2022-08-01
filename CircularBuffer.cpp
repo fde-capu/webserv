@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 15:12:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 15:28:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,21 +67,22 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 {
 	# define V 1
 	# define O_LIM 15
-
 	size_t in_size;
 	int bytes;
 
 	while (checkLimits() || true)
 	{
 		verbose(V) << "(receive_at_most) Length: " << output.length() << \
-			", capacity: " << output.capacity() << ", max_size: " << \
-			output.max_size() << "." << std::endl;
+			", capacity: " << output.capacity() << std::endl;
 
 		in_size = max < size ? max : size;
 		in_size = max > output.length() && max - output.length() < in_size ? \
 			max - output.length() : in_size;
 
 		verbose(V) << "(receive_at_most) " << in_size << " bytes." << std::endl;
+
+		if (output.length() > max)
+			return output;
 
 		bytes = read(fd, const_cast<char *>(memory), in_size);
 
@@ -98,7 +99,6 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 			verbose(V) << "\t(" << std::string(memory).substr(0, O_LIM) << \
 				"...) len " << bytes << std::endl;	
 		}
-
 
 		if (bytes == -1)
 		{

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 15:02:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 15:28:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void ws_server_instance::read_more()
 		verbose(V) << "(read_more) From fd: " << fd << std::endl;
 		verbose(V) << "(read_more) " << in_header.directory << \
 			" accepting at most " << max_size << " bytes." << std::endl;
-		verbose(V) << "(read_more) For multipart, actually downloading " \
+		verbose(V) << "(read_more) Actually downloading " \
 			<< expected_full_load << " bytes." << std::endl;
 		verbose(V) << "(read_more) Payload start: " << payload_start \
 			<< ", end: " << payload_end << "." << std::endl;
@@ -53,8 +53,8 @@ void ws_server_instance::read_more()
 		{
 			if (in_body.length() > max_size)
 			{
-				verbose(V) << "(read_more) Body exceded decalaration." << \
-					std::endl;
+				verbose(V) << "(read_more) Body " << in_body.length() << \
+					" exceded expectation " << max_size << "." << std::endl;
 				break ;
 			}
 		}

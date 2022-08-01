@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 15:04:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 15:31:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 	if ((!si.is_multipart() && si.in_body.length() > si.max_size)
 	|| (si.is_multipart() && si.multipart_content.length() > si.max_size))
 	{
-		set_code(413, "Payload Too Large (Deceptive Declaration)");
+		set_code(413, "Payload Too Large (Deceptive Declaration or Excess)");
 		out_body = "BODY FOR 413";
 		return 413;
 	}
