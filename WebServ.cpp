@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 16:21:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 14:50:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,12 +173,12 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_403(si)) return ; // Forbidden.
 	if (is_405(si)) return ; // Bad method.
 	if (is_cgi(si)) return ; // Runs CGI and returns accordingly.
-	if (is_404(si)) return ; // Not found. GET. Loads file if existent.
+	if (is_404(si)) return ; // Not found. GET.
 	if (is_413_507(si)) return ; // Too large / Out of storage. All methods.
 	if (is_424(si)) return ; // Not met dependency. Used when client expects 100-continue.
 //	if (is_529(si)) return ; // Site is overloaded.
-	if (is_200(si)) return ; // Ok (GET)
-	if (is_201(si)) return ; // Accepted (POST)
+	if (is_200(si)) return ; // Ok (GET) and loads file.
+	if (is_201(si)) return ; // Accepted (POST) and saves data.
 
 	set_code(420, "Enhance Your Calm");
 	out_body = "BODY FOR 420";
@@ -222,7 +222,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 	si.root_config.push_back("client_max_body_size", config.getValStr \
 		("client_max_body_size"));
 
-	verbose(1) << "(choose_instance) Responding as " << \
+	verbose(2) << "(choose_instance) Responding as " << \
 		choose->config.getValStr("server_name") << ":" << in_port << \
 		"." << std::endl;
 
@@ -231,7 +231,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 
 void WebServ::respond_connection_from(int fd)
 {
-	verbose(1) << "[THINK] " << std::endl;
+	verbose(1) << std::endl << std::endl << "[THINK] " << std::endl;
 
 	ws_server_instance si;
 	std::string raw_data;
@@ -248,14 +248,14 @@ void WebServ::respond_connection_from(int fd)
 		in_header = get_header(raw_data);
 		if (time_out > TIME_OUT_SECONDS)
 		{
-			verbose(1) << "(respond_connection_from) Timout! << " << time_out << \
+			verbose(1) << "(respond_connection_from) Timeout! << " << time_out << \
 				" > Incomplete header:" << \
 				std::endl << in_header << std::endl;
 			return respond_timeout(fd);
 		}
 	}
 
-	verbose(1) << "(respond_connection_from) Got header:" << std::endl << \
+	verbose(2) << "(respond_connection_from) Got header:" << std::endl << \
 		in_header << std::endl;
 
 	si = choose_instance(in_header, fd_to_port[fd]);

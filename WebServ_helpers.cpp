@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 16:50:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 15:02:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void ws_server_instance::read_more()
 {
+	# define V 1
 	CircularBuffer more(fd);
 	while (more.output.length() < expected_full_load)
 	{
@@ -21,20 +22,20 @@ void ws_server_instance::read_more()
 							 in_header.content_length : max_size;
 		expected_full_load -= in_body.length();
 
-		verbose(3) << "(read_more) From fd: " << fd << std::endl;
-		verbose(2) << "(read_more) " << in_header.directory << \
+		verbose(V) << "(read_more) From fd: " << fd << std::endl;
+		verbose(V) << "(read_more) " << in_header.directory << \
 			" accepting at most " << max_size << " bytes." << std::endl;
-		verbose(2) << "(read_more) For multipart, actually downloading " \
+		verbose(V) << "(read_more) For multipart, actually downloading " \
 			<< expected_full_load << " bytes." << std::endl;
-		verbose(3) << "(read_more) Payload start: " << payload_start \
+		verbose(V) << "(read_more) Payload start: " << payload_start \
 			<< ", end: " << payload_end << "." << std::endl;
-		verbose(3) << "(read_more) Body start: " << body_start \
+		verbose(V) << "(read_more) Body start: " << body_start \
 			<< ", end: " << body_end << "." << std::endl;
 
 		in_body = more.receive_at_most(expected_full_load);
 		if (more.ended())
 		{
-			verbose(2) << "(read_more) No more data." << std::endl;
+			verbose(V) << "(read_more) No more data." << std::endl;
 			break ;
 		}
 		if (is_multipart())
@@ -43,7 +44,7 @@ void ws_server_instance::read_more()
 			multipart_content = in_body.substr(body_start, body_end - body_start);
 			if (multipart_content.length() > max_size)
 			{
-				verbose(1) << "(read_more) Multipart content exceeded limit." \
+				verbose(V) << "(read_more) Multipart content exceeded limit." \
 					<< std::endl;
 				break ;
 			}
@@ -52,7 +53,7 @@ void ws_server_instance::read_more()
 		{
 			if (in_body.length() > max_size)
 			{
-				verbose(1) << "(read_more) Body exceded decalaration." << \
+				verbose(V) << "(read_more) Body exceded decalaration." << \
 					std::endl;
 				break ;
 			}
@@ -65,7 +66,7 @@ void ws_server_instance::read_more()
 		multipart_content = in_body.substr(body_start, body_end - body_start);
 	}
 
-	verbose(3) << "(read_more) Finished with body " << in_body.length() << \
+	verbose(V) << "(read_more) Finished with body " << in_body.length() << \
 		" and multipart-content " << multipart_content.length() << "." << \
 		std::endl;
 }
@@ -341,8 +342,17 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const & wssi)
 	o << "ws_server_instance | config      | " << wssi.config << std::endl;
 	o << "ws_server_instance | in_header   :" << std::endl << wssi.in_header \
 		<< std::endl;
-	o << "ws_server_instance | in_body     :" << std::endl << ">>" << \
-		wssi.in_body << "<<" << std::endl;
+	if (wssi.in_body.length() < 512)
+	{
+		o << "ws_server_instance | in_body     :" << std::endl << ">>" << \
+			wssi.in_body << "<<" << std::endl;
+	}
+	else
+	{
+		o << "ws_server_instance | in_body     :" << std::endl << ">>" << \
+			wssi.in_body.substr(0, 500) << "(...)<< len " \
+			<< wssi.in_body.length() << "." << std::endl;
+	}
 	o << "ws_server_instance | multipart_type | " << wssi.multipart_type \
 		<< std::endl;
 	o << "ws_server_instance | multipart_content_disposition | " << \
@@ -526,24 +536,21 @@ std::string ws_server_instance::location_path(const std::string& default_file) c
 	std::string full_path;
 	size_t h;
 
-	verbose(1) << "(location_path) sys_dir: " << sys_dir << std::endl;
-	verbose(1) << "(location_path) html_dir: " << html_dir << std::endl;
-	verbose(1) << "(location_path) uri2root: " << uri2root << std::endl;
-	verbose(1) << "(location_path) default_file: " << default_file << std::endl;
-	verbose(1) << "(location_path) get_request: " << get_request << std::endl;
+	verbose(3) << "(location_path) sys_dir: " << sys_dir << std::endl;
+	verbose(3) << "(location_path) html_dir: " << html_dir << std::endl;
+	verbose(3) << "(location_path) uri2root: " << uri2root << std::endl;
+	verbose(3) << "(location_path) default_file: " << default_file << std::endl;
+	verbose(3) << "(location_path) get_request: " << get_request << std::endl;
 
 	h = trunk.find("/", 1);
 	if (h != std::string::npos)
 		trunk = trunk.substr(1, h - 1);
 
-	verbose(1) << "(location_path) trunk: " << trunk << std::endl;
+	verbose(3) << "(location_path) trunk: " << trunk << std::endl;
 
 	converted = stool.substitute_all(converted, trunk, uri2root);
 	if (html_dir != uri2root)
 		converted = html_dir + "/" + converted;
-
-	verbose(1) << "(location_path) converted: " << converted << std::endl;
-
 	full_path = sys_dir + "/" + converted;
 	stool.remove_rep_char(full_path, '/');
 
@@ -551,9 +558,9 @@ std::string ws_server_instance::location_path(const std::string& default_file) c
 	{
 		full_path += "/" + default_file;
 		stool.remove_rep_char(full_path, '/');
-		verbose(1) << "(location_path) Returns (is directory, append file): " << full_path << "." << std::endl;
+		verbose(2) << "(location_path) Returns (is directory, append file): " << full_path << "." << std::endl;
 		return full_path;
 	}
-	verbose(1) << "(location_path) Returns (file from header): " << full_path << "." << std::endl;
+	verbose(2) << "(location_path) Returns (file from header): " << full_path << "." << std::endl;
 	return full_path;
 }

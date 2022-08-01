@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 13:58:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 15:04:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,16 +112,18 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507(ws_server_instance& si)
 {
-	verbose(3) << "(is_413_507) max_size: " << si.max_size << "." << std::endl;
+	verbose(1) << "(is_413_507) max_size: " << si.max_size << "." << std::endl;
 
-	if (!si.is_multipart() && static_cast<size_t>(si.in_header.content_length) > si.max_size)
+	if (!si.is_multipart() && \
+		static_cast<size_t>(si.in_header.content_length) > si.max_size)
 	{
 		set_code(413, "Payload Too Large (Declared Size)");
 		out_body = "BODY FOR 413";
 		return 413;
 	}
 
-	if (si.is_multipart())
+	std::cout << "(is_413_507) con-t: " << si.in_header.content_type << std::endl;
+	if (si.is_multipart() || si.in_header.content_type == "test/file")
 	{
 		try
 		{
@@ -135,10 +137,10 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		}
 	}
 
-	verbose(4) << "(is_413_507) Multipart content accounts for " \
+	verbose(1) << "(is_413_507) Multipart content accounts for " \
 		<< si.multipart_content.length() << " bytes." \
 		<< std::endl;
-	verbose(4) << "(is_413_507) Non-multipart accounts for " \
+	verbose(1) << "(is_413_507) Non-multipart accounts for " \
 		<< si.in_body.length() << " bytes." << std::endl;
 	verbose(5) << "(is_413_507) in_body >>" << si.in_body << "<<" << std::endl;
 	verbose(5) << "(is_413_507) multipart_content >>" << si.multipart_content << \
@@ -218,7 +220,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 
 		data_simple = data.length() <= 201 ? data : \
 			"(large file, will not print)";
-		verbose(5) << "(webserv) >" << data_simple << \
+		verbose(1) << "(webserv) >" << data_simple << \
 			"< will be saved into " << full_path << \
 			"." << std::endl;
 
