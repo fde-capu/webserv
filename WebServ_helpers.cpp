@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 15:28:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 16:42:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void ws_server_instance::read_more()
 {
-	# define V 1
+	static int V(2);
 	CircularBuffer more(fd);
 	while (more.output.length() < expected_full_load)
 	{
@@ -22,7 +22,6 @@ void ws_server_instance::read_more()
 							 in_header.content_length : max_size;
 		expected_full_load -= in_body.length();
 
-		verbose(V) << "(read_more) From fd: " << fd << std::endl;
 		verbose(V) << "(read_more) " << in_header.directory << \
 			" accepting at most " << max_size << " bytes." << std::endl;
 		verbose(V) << "(read_more) Actually downloading " \
@@ -51,6 +50,8 @@ void ws_server_instance::read_more()
 		}
 		else
 		{
+			verbose(V) << "(read_more) Body " << in_body.length() << \
+				" must not exceded " << max_size << "." << std::endl;
 			if (in_body.length() > max_size)
 			{
 				verbose(V) << "(read_more) Body " << in_body.length() << \
@@ -445,7 +446,8 @@ void WebServ::respond_timeout(int fd)
 
 void ws_server_instance::set_sizes()
 {
-	max_size = std::atoi(location_get_single("client_max_body_size", itoa(DEFAULT_MAX_BODY_SIZE)).c_str());
+	max_size = std::atoi(location_get_single("client_max_body_size", \
+		itoa(DEFAULT_MAX_BODY_SIZE)).c_str());
 	if (is_multipart())
 	{
 		multipart_type = word_from(in_header.content_type,
@@ -494,13 +496,24 @@ DataFold ws_server_instance::get_location_config() const
 DataFold ws_server_instance::location_get(const std::string& key, \
 	std::string u_default) const
 {
+	static int V(2);
 	DataFold locations(config.get<DataFold>("location"));
 	DataFold loc;
 	DataFold out;
 
-	out = config.get(key) != "" ? config.get(key) \
-		: root_config.get(key) != "" ? root_config.get(key) \
-		: std::string(key + ":" + u_default);
+	out = std::string(key + ":" + u_default);
+	verbose(V) << "(location_get) default: " << out << std::endl;
+	if (root_config.getValStr(key) != "")
+	{
+		out = root_config.get(key);
+		verbose(V) << "(location_get) root_config: " << out << std::endl;
+	}
+	if (config.get(key) != "")
+	{
+		out = config.get(key);
+		verbose(V) << "(location_get) config.get: " << out << std::endl;
+	}
+
 	while (locations.loop())
 	{
 		loc = locations.val;
@@ -509,10 +522,13 @@ DataFold ws_server_instance::location_get(const std::string& key, \
 		{
 			while (loc.loop())
 				if (loc.key == key)
+				{
 					out = loc.get(key);
+					verbose(V) << "(location_get) location: " << out << std::endl;
+				}
 		}
 	}
-	verbose(3) << "(location_get) Return: " << out << std::endl;
+	verbose(V) << "(location_get) Return: " << out << std::endl;
 	return out;
 }
 
