@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 16:42:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 16:51:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ bool CircularBuffer::checkLimits() const
 std::string& CircularBuffer::receive_at_most(size_t max)
 {
 	static int V(2);
-	# define O_LIM 15
+	static int O_LIM(15);
 	size_t in_size;
 	int bytes;
 
