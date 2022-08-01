@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/29 16:59:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 13:59:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,9 @@ bool FileString::is_file(const std::string& filename)
 	struct stat s;
 	return stat(filename.c_str(), &s) == 0 && !(s.st_mode & S_IFDIR);
 }
+
+bool FileString::exists()
+{ return exists(_file_name); }
 
 bool FileString::exists(const std::string& pathorfile)
 {
