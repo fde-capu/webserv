@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 16:51:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/02 15:39:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ bool CircularBuffer::checkLimits() const
 
 std::string& CircularBuffer::receive_at_most(size_t max)
 {
-	static int V(2);
+	static int V(1);
 	static int O_LIM(15);
 	size_t in_size;
 	int bytes;
@@ -91,16 +91,16 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 		verbose(V) << "(receive_at_most) got " << bytes << \
 			", called " << in_size << ", max " << max << ", have " \
 			<< output.length();
-		if (bytes < O_LIM)
+		if (bytes > 0 && bytes <= O_LIM)
 		{
-			verbose(V) << "\t(" << std::string(memory).substr(0, bytes) << \
-				")" << std::endl;
+			verbose(V) << "\t(" << std::string(memory).substr(0, bytes) << ")";
 		}
-		else
+		else if (bytes > 0 && bytes > O_LIM)
 		{
 			verbose(V) << "\t(" << std::string(memory).substr(0, O_LIM) << \
-				"...) len " << bytes << std::endl;	
+				"...) len " << bytes;	
 		}
+		verbose(V) << std::endl;
 
 		if (bytes == -1)
 		{

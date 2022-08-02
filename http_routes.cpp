@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 16:55:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/02 15:26:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,9 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507(ws_server_instance& si)
 {
-	verbose(1) << "(is_413_507) max_size: " << si.max_size << "." << std::endl;
+	static int V(1);
+
+	verbose(V) << "(is_413_507) max_size: " << si.max_size << "." << std::endl;
 
 	if (!si.is_multipart() && \
 		static_cast<size_t>(si.in_header.content_length) > si.max_size)
@@ -122,7 +124,8 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		return 413;
 	}
 
-	std::cout << "(is_413_507) con-t: " << si.in_header.content_type << std::endl;
+	verbose(V) << "(is_413_507) con-t: " << si.in_header.content_type << std::endl;
+
 	if (si.is_multipart() || si.in_header.content_type == "test/file")
 	{
 		try
@@ -137,10 +140,10 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		}
 	}
 
-	verbose(1) << "(is_413_507) Multipart content accounts for " \
+	verbose(V) << "(is_413_507) Multipart content accounts for " \
 		<< si.multipart_content.length() << " bytes." \
 		<< std::endl;
-	verbose(1) << "(is_413_507) Non-multipart accounts for " \
+	verbose(V) << "(is_413_507) Non-multipart accounts for " \
 		<< si.in_body.length() << " bytes." << std::endl;
 	verbose(5) << "(is_413_507) in_body >>" << si.in_body << "<<" << std::endl;
 	verbose(5) << "(is_413_507) multipart_content >>" << \
@@ -215,23 +218,23 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 	std::string full_path;
 	std::string mp_block;
 	std::string data_simple;
-	std::string data;
+	std::string* data;
 
 	if (si.in_header.method == "POST")
 	{
 		full_path = si.location_path(si.multipart_filename);
 		if (si.is_multipart())
-			data = si.multipart_content;
+			data = &si.multipart_content;
 		else
-			data = si.in_body;
+			data = &si.in_body;
 
-		data_simple = data.length() <= O_LIM ? data : \
-			data.substr(0, O_LIM) + "... (len " + itoa(data.length()) + ")";
+		data_simple = data->length() <= O_LIM ? *data : \
+			data->substr(0, O_LIM) + "... (len " + itoa(data->length()) + ")";
 		verbose(V) << "(webserv) >" << data_simple << \
 			"< will be saved into " << full_path << \
 			"." << std::endl;
 
-		FileString::write(full_path, si.multipart_content);
+		FileString::write(full_path, *data);
 
 		set_code(201, "Accepted");
 		out_body = "BODY FOR 201";

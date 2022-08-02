@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 16:42:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/02 15:26:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 void ws_server_instance::read_more()
 {
-	static int V(2);
+	static int V(1);
 	CircularBuffer more(fd);
+
 	while (more.output.length() < expected_full_load)
 	{
 		expected_full_load = is_multipart() ? \
