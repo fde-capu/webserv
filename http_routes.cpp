@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/02 15:26:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/02 16:39:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 int ws_reply_instance::is_413_507(ws_server_instance& si)
 {
 	static int V(1);
+	bool chunked(stool.is_equal_insensitive(si.in_header.transfer_encoding, "chunked"));
 
 	verbose(V) << "(is_413_507) max_size: " << si.max_size << "." << std::endl;
 
@@ -124,9 +125,10 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		return 413;
 	}
 
-	verbose(V) << "(is_413_507) con-t: " << si.in_header.content_type << std::endl;
+	verbose(V) << "(is_413_507) content_type: " << si.in_header.content_type << std::endl;
+	verbose(V) << "(is_413_507) transfer_encoding: " << si.in_header.transfer_encoding << std::endl;
 
-	if (si.is_multipart() || si.in_header.content_type == "test/file")
+	if (si.is_multipart() || chunked)
 	{
 		try
 		{

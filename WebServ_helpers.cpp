@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/02 15:26:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/02 16:34:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,6 +216,7 @@ bool WebServ::read_host(std::string& line, ws_header& header, bool& is_valid)
 
 struct ws_header WebServ::get_header(const std::string& full_file)
 {
+	static int V(1);
 	ws_header header;
 	std::vector<std::string> line;
 	std::vector<std::string> carrier;
@@ -230,7 +231,7 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 	line = split_trim(h_block, "\r\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
-		verbose(3) << "(webserv) LINE >>" << line[i] << "<<" << std::endl;
+		verbose(V) << "(webserv) LINE >>" << line[i] << "<<" << std::endl;
 		if (ignore_empty(line[i])) continue ;
 		if (i == 0 && read_1st_line(line[i], header, is_valid)) continue ;
 		if (read_host(line[i], header, is_valid)) continue ;
@@ -244,11 +245,13 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 			header.content_length = atoi(carrier[1].c_str());
 		if (is_equal_insensitive(carrier[0], "content-type"))
 			header.content_type = carrier[1];
+		if (is_equal_insensitive(carrier[0], "transfer-encoding"))
+			header.transfer_encoding = carrier[1];
 		if (is_equal_insensitive(carrier[0], "expect"))
 			header.expect = carrier[1];
 	}
 	header.is_valid = is_valid;
-	verbose(3) << "(get_header) " << header << std::endl;
+	verbose(V) << "(get_header) " << header << std::endl;
 	return header;
 }
 
@@ -327,6 +330,7 @@ std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
 	o << "ws_header | connection | " << wsh.connection << std::endl;
 	o << "ws_header | con-length | " << wsh.content_length << std::endl;
 	o << "ws_header | con-type   | " << wsh.content_type << std::endl;
+	o << "ws_header | transf-enc | " << wsh.transfer_encoding << std::endl;
 	o << "ws_header | expect     | " << wsh.expect << std::endl;
 	return o;
 }

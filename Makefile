@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/07/29 16:15:38 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/02 16:07:23 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -98,6 +98,7 @@ k2:
 ft:
 	@echo "Please run \`make ftcgi\` on another terminal.";
 	@echo "";
+	echo 'Initial YoupiBanane/youpi.bla' > unit/confs/html4242/YoupiBanane/youpi.bla
 	unit/ubuntu_tester http://0.0.0.0:4242
 
 .PHONY: webserv
