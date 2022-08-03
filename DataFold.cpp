@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 17:40:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 16:41:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,8 +197,9 @@ std::vector<std::string> DataFold::get_vector_str() const
 
 std::vector<std::string> DataFold::get_vector_str(std::string key) const
 {
-	core_check();
 	std::vector<std::string> out;
+	core_check();
+
 	for (size_t i = 0; i < index; i++)
 		if (core[i].key == key)
 		{
@@ -217,8 +218,9 @@ std::vector<std::string> DataFold::get_vector_str(std::string key) const
 
 std::vector<std::string> DataFold::get_vector_str(std::string key, std::string ksub) const
 {
-	core_check();
 	std::vector<std::string> out;
+	core_check();
+
 	for (size_t i = 0; i < index; i++)
 		if (key == core[i].key)
 			for (size_t j = 0; j < core[i].sub.size(); j++)

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 15:41:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 17:05:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,29 +256,34 @@ std::string StringTools::apply_quotes(std::string str, std::string quote) const
 
 size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 {
-	std::string q = "";
-	std::string::iterator e = str.end();
-	for(std::string::iterator s = str.begin(); s < str.end(); s++)
+	std::string qlist = "";
+	size_t e(str.length());
+	for(size_t s = 0; e - s > needle.length(); s++)
 	{
-		if (*s == '\\')
-			s += 2;
-		for(std::string::iterator i = _quote_set.begin(); i < _quote_set.end(); i++)
+		if (str.at(s) == '\\')
 		{
-			if (*i == *s)
+			s += 1;
+			continue ;
+		}
+		if (s >= str.length())
+		{
+			break ;
+		}
+		for(size_t q = 0; q < _quote_set.length(); q++)
+		{
+			if (_quote_set.at(q) == str.at(s))
 			{
-				if (*(q.end() - 1) == *i)
-					q = q.substr(0, q.length() - 1);
-				else
-					q = q + *i;
+				if (qlist.empty())
+					qlist = qlist + _quote_set.at(q);
+				else if (qlist.at(qlist.length() - 1) == _quote_set.at(q))
+					qlist = qlist.substr(0, qlist.length() - 1);
 				break ;
 			}
 		}
-		if (!q.empty())
+		if (!qlist.empty())
 			continue ;
-		if (e - s < static_cast<long>(needle.size()))
-			break ;
-		if (std::string(s, s + (needle.length())) == needle)
-			return s - str.begin();
+		if (std::string(str, s, needle.length()) == needle)
+			return s;
 	}
 	return std::string::npos;
 }
@@ -406,7 +411,8 @@ std::vector<std::string> StringTools::split(const std::string str, const std::st
 	mark = find_outside_quotes(crop, sep);
 	while (mark != std::string::npos)
 	{
-		out.push_back(crop.substr(0, mark));
+		if (mark)
+			out.push_back(crop.substr(0, mark));
 		crop = crop.substr(mark + sep.length());
 		mark = find_outside_quotes(crop, sep);
 	}
