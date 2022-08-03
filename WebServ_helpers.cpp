@@ -6,69 +6,92 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/02 16:34:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 13:42:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-void ws_server_instance::read_more()
+int ws_server_instance::read_more_general()
+{
+	if (is_chunked() && is_multipart())
+		return 422;
+	if (!is_chunked() || !is_multipart())
+		read_more_plain();
+	if (is_chunked())
+		read_more_chunked();
+	if (is_multipart())
+		read_more_multipart();
+	return 0;
+}
+
+void ws_server_instance::read_more_plain()
 {
 	static int V(1);
-	CircularBuffer more(fd);
+	size_t next_load;
+	CircularBuffer buf(fd);
 
-	while (more.output.length() < expected_full_load)
+	if (in_body.length() > max_size)
+		return ;
+	do
 	{
-		expected_full_load = is_multipart() ? \
-							 in_header.content_length : max_size;
-		expected_full_load -= in_body.length();
-
-		verbose(V) << "(read_more) " << in_header.directory << \
-			" accepting at most " << max_size << " bytes." << std::endl;
-		verbose(V) << "(read_more) Actually downloading " \
-			<< expected_full_load << " bytes." << std::endl;
-		verbose(V) << "(read_more) Payload start: " << payload_start \
-			<< ", end: " << payload_end << "." << std::endl;
-		verbose(V) << "(read_more) Body start: " << body_start \
-			<< ", end: " << body_end << "." << std::endl;
-
-		in_body = more.receive_at_most(expected_full_load);
-		if (more.ended())
+		next_load = max_size - in_body.length();
+		in_body = buf.receive_at_most(next_load);
+		set_sizes();
+		if (exceeded_limit)
 		{
-			verbose(V) << "(read_more) No more data." << std::endl;
+			verbose(V) << "(read_more_plain) Multipart content exceeded limit." \
+				<< std::endl;
 			break ;
 		}
-		if (is_multipart())
+		if (buf.ended())
 		{
-			set_sizes();
-			multipart_content = in_body.substr(body_start, body_end - body_start);
-			if (multipart_content.length() > max_size)
-			{
-				verbose(V) << "(read_more) Multipart content exceeded limit." \
-					<< std::endl;
-				break ;
-			}
-		}
-		else
-		{
-			verbose(V) << "(read_more) Body " << in_body.length() << \
-				" must not exceded " << max_size << "." << std::endl;
-			if (in_body.length() > max_size)
-			{
-				verbose(V) << "(read_more) Body " << in_body.length() << \
-					" exceded expectation " << max_size << "." << std::endl;
-				break ;
-			}
+			verbose(V) << "(read_more_plain) No more data." << std::endl;
+			break ;
 		}
 	}
+	while (buf.length() < next_load);
 
-	if (is_multipart())
+	verbose(V) << "(read_more_plain) Finished with body " << in_body.length() << \
+		" and multipart-content " << multipart_content.length() << "." << \
+		std::endl;
+}
+
+void ws_server_instance::read_more_chunked()
+{
+	static int V(1);
+	verbose(V) << "(read_more_chunked) WILL READ MORE CHUNKS." << std::endl;
+}
+
+
+void ws_server_instance::read_more_multipart()
+{
+	static int V(1);
+	size_t next_load;
+	CircularBuffer buf(fd);
+
+	if (in_body.length() > static_cast<size_t>(in_header.content_length))
+		return ;
+	do
 	{
-		set_sizes();
-		multipart_content = in_body.substr(body_start, body_end - body_start);
+		next_load = in_header.content_length - in_body.length();
+		in_body = buf.receive_at_most(next_load);
+		mount_multipart();
+		if (exceeded_limit)
+		{
+			verbose(V) << "(read_more_multipart) Multipart content exceeded limit." \
+				<< std::endl;
+			break ;
+		}
+		if (buf.ended())
+		{
+			verbose(V) << "(read_more_multipart) No more data." << std::endl;
+			break ;
+		}
 	}
+	while (buf.length() < next_load);
 
-	verbose(V) << "(read_more) Finished with body " << in_body.length() << \
+	verbose(V) << "(read_more_multipart) Finished with body " << in_body.length() << \
 		" and multipart-content " << multipart_content.length() << "." << \
 		std::endl;
 }
@@ -437,6 +460,9 @@ ws_reply_instance::ws_reply_instance()
 bool ws_server_instance::is_multipart() const
 { return in_header.content_type.find("multipart") == 0; }
 
+bool ws_server_instance::is_chunked() const
+{ return stool.is_equal_insensitive(in_header.transfer_encoding, "chunked"); }
+
 void WebServ::respond_timeout(int fd)
 {
 	ws_reply_instance respond;
@@ -449,10 +475,19 @@ void WebServ::respond_timeout(int fd)
 	remove_from_poll(fd);
 }
 
+void ws_server_instance::mount_multipart()
+{
+	set_sizes();
+	multipart_content = in_body.substr(body_start, body_end - body_start);
+	exceeded_limit = multipart_content.length() > max_size;
+}
+
 void ws_server_instance::set_sizes()
 {
+	static int V(1);
+
 	max_size = std::atoi(location_get_single("client_max_body_size", \
-		itoa(DEFAULT_MAX_BODY_SIZE)).c_str());
+				itoa(DEFAULT_MAX_BODY_SIZE)).c_str());
 	if (is_multipart())
 	{
 		multipart_type = word_from(in_header.content_type,
@@ -464,7 +499,7 @@ void ws_server_instance::set_sizes()
 			payload_start = 0;
 		else
 			payload_start = in_body.find("\r\n", payload_start \
-				+ boundary.length()) + 2;
+					+ boundary.length()) + 2;
 		payload_end = in_body.find(boundary, payload_start);
 		payload_end = payload_end == std::string::npos ? \
 					  in_body.length() : payload_end - 4;
@@ -474,10 +509,16 @@ void ws_server_instance::set_sizes()
 		body_end = payload_end;
 
 		multipart_content_disposition = StringTools::query_for( \
-			"Content-Disposition", in_body);
+				"Content-Disposition", in_body);
 		multipart_name = StringTools::query_for("name", in_body);
 		multipart_filename = StringTools::query_for("filename", in_body);
 		multipart_content_type = StringTools::query_for("Content-Type", in_body);
+		exceeded_limit = multipart_content.length() > max_size;
+	}
+	else if (is_chunked())
+	{
+		verbose(V) << "(set_sizes) WILL SET SIZE FOR CHUNKED" << std::endl;
+		exceeded_limit = chunked_content.length() > max_size;
 	}
 	else
 	{
@@ -485,6 +526,7 @@ void ws_server_instance::set_sizes()
 		payload_end = in_body.length();
 		body_start = payload_start;
 		body_end = payload_end;
+		exceeded_limit = in_body.length() > max_size;
 	}
 }
 

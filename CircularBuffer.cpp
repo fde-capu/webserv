@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/02 16:01:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 13:36:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ std::string& CircularBuffer::unfinished()
 
 bool CircularBuffer::checkLimits() const
 {
-	if (output.length() > limit)
+	if (length() > limit)
 		throw std::length_error("(CircularBuffer) Is limited.");
 	return true;
 }
@@ -73,24 +73,24 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 	while (checkLimits() || true)
 	{
 		verbose(V) << "(receive_at_most) " << max << \
-			", Length: " << output.length() << \
+			", Length: " << length() << \
 			", capacity: " << output.capacity() << std::endl;
 
 		in_size = max < size ? max : size;
-		in_size = max > output.length() && max - output.length() < in_size ? \
-			max - output.length() : in_size;
+		in_size = max > length() && max - length() < in_size ? \
+			max - length() : in_size;
 
 		verbose(V) << \
 			"(receive_at_most) Actually receiving " << in_size << std::endl;
 
-		if (output.length() > max)
+		if (length() > max)
 			return set_eof();
 
 		bytes = read(fd, const_cast<char *>(memory), in_size);
 
 		verbose(V) << "(receive_at_most) got " << bytes << \
 			", called " << in_size << ", max " << max << ", have " \
-			<< output.length();
+			<< length();
 		if (bytes > 0 && bytes <= O_LIM)
 		{
 			verbose(V) << "\t(" << std::string(memory).substr(0, bytes) << ")";
@@ -100,7 +100,7 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 			verbose(V) << "\t(" << std::string(memory).substr(0, O_LIM) << \
 				"...) len " << bytes;	
 		}
-		verbose(1) << "\r" << output.length() << "\t" << (errno & EWOULDBLOCK);
+		verbose(1) << "\r" << length() << "\t" << (errno & EWOULDBLOCK);
 		verbose(V) << std::endl;
 
 		if (bytes == -1)
@@ -205,6 +205,9 @@ int CircularBuffer::getFd() const
 
 bool CircularBuffer::ended() const
 { return eof; }
+
+size_t CircularBuffer::length() const
+{ return output.length(); }
 
 CircularBuffer::operator std::string()
 { return receive_until_eof(); }
