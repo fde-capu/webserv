@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 14:28:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 13:42:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void ws_server_instance::read_more_plain()
 	do
 	{
 		next_load = max_size - in_body.length();
-		in_body = buf.receive_until_eof(next_load);
+		in_body = buf.receive_at_most(next_load);
 		set_sizes();
 		if (exceeded_limit)
 		{

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 23:02:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/07/28 17:01:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,10 @@ void hard_trim(std::string& dst, std::string set)
 
 void StringTools::hard_trim(std::string& dst, std::string set) const
 {
-	for (size_t i = 0; i < set.length(); i++)
+	for (std::string::iterator i = set.begin(); *i; i++)
 	{
-		std::string before(2, set.at(i));
-		std::string after(1, set.at(i));
-		verbose(2) << "(hard_trim) From '" << before << "' to '" << \
-			after << "'" << std::endl;
-		substitute_super(dst, before, after);
+		std::string trimmed = std::string(i, i + 1) + std::string(i, i + 1);
+		substitute_super(dst, trimmed, std::string(i, i + 1));
 	}
 }
 
@@ -99,19 +96,19 @@ void StringTools::soft_trim(std::string& dst, std::string set) const
 {
 	bool pass = false;
 
-	while (!pass && !dst.empty())
+	while (!pass)
 	{
 		pass = true;
-		for (size_t i = 0; i < set.length(); i++)
+		for (std::string::iterator i = set.begin(); *i; i++)
 		{
-			if (dst.at(0) == set.at(i))
+			if (*dst.begin() == *i)
 			{
 				dst = dst.substr(1);
 				pass = false;
 			}
-			if (dst.at(dst.length() - 1) == set.at(i))
+			if (*(dst.end() - 1) == *i)
 			{
-				dst = dst.substr(0, dst.length() - 1);
+				dst = dst.substr(0, dst.size() - 1);
 				pass = false;
 			}
 		}
@@ -207,13 +204,12 @@ std::string substitute_super(std::string& dst, std::string before, std::string a
 std::string StringTools::substitute_super(std::string& dst, std::string before, std::string after) const
 {
 	bool pass = false;
-	size_t pos;
-
 	while (!pass)
 	{
 		pass = true;
-		pos = find_outside_quotes(dst, before);
-		if (pos != std::string::npos)
+		size_t pos = find_outside_quotes(dst, before);
+		size_t scap_t = find_outside_quotes(dst, std::string("\\" + before));
+		if (pos != scap_t + 1 && pos != std::string::npos)
 		{
 			pass = false;
 			dst.replace(pos, before.length(), after);
@@ -259,34 +255,34 @@ std::string StringTools::apply_quotes(std::string str, std::string quote) const
 
 size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 {
-	std::string qlist = "";
-	size_t e(str.length());
-	for(size_t s = 0; e - s > needle.length(); s++)
+	std::string q = "";
+	std::string::iterator e = str.end();
+	for(std::string::iterator s = str.begin(); *s; s++)
 	{
-		if (str.at(s) == '\\')
-		{
-			s += 1;
-			continue ;
-		}
-		if (s >= str.length())
-		{
+		if (*s == '\\')
+			s += 2;
+		if (!*s)
 			break ;
-		}
-		for(size_t q = 0; q < _quote_set.length(); q++)
+		for(std::string::const_iterator i = _quote_set.begin(); *i; i++)
 		{
-			if (_quote_set.at(q) == str.at(s))
+			if (*i == *s)
 			{
-				if (qlist.empty())
-					qlist = qlist + _quote_set.at(q);
-				else if (qlist.at(qlist.length() - 1) == _quote_set.at(q))
-					qlist = qlist.substr(0, qlist.length() - 1);
-				break ;
+				if (*(q.end() - 1) == *i)
+					q = q.substr(0, q.length() - 1);
+				else if (q.empty())
+					q = q + *i;
+			}
+			else
+			{
+				if (e - s < static_cast<long>(needle.size()))
+					return std::string::npos;
+				if (std::string(s, s + (needle.length())) == needle)
+				{
+					if (q.length() == 0)
+						return s - str.begin();
+				}
 			}
 		}
-		if (!qlist.empty())
-			continue ;
-		if (std::string(str, s, needle.length()) == needle)
-			return s;
 	}
 	return std::string::npos;
 }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 23:12:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/01 13:59:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,23 +31,20 @@ void FileString::load(const std::string & str)
 
 void FileString::load(const char * u_fn)
 {
-	static int V(1);
 	std::fstream file_read;
-	std::string line;
-
 	file_read.open(u_fn, std::ios::in);
 	if (!file_read)
 	{
 		_read_ok = false;
 		file_read.close();
-		verbose(V) << "(FileString) Failed to load or empty string for file " << u_fn << "." << std::endl;
+		verbose(3) << "(FileString) Failed to load or empty string for file " << u_fn << "." << std::endl;
 		return ;
 	}
-	_read_ok = true;
+	else
+		_read_ok = true;
+	std::string line;
 	while (std::getline(file_read, line))
 		_content += line + "\n";
-	verbose(V) << "(FileString::load) _content pre-parse: " << _content \
-		<< std::endl;
 	parse();
 }
 
@@ -65,28 +62,12 @@ std::string const FileString::operator[](std::string key) const
 
 void FileString::parse()
 {
-	static int V(1);
-
 	_processed = _content;
 	remove_comments(_processed);
-	substitute_super(_processed, "\n", ";");
-	substitute_super(_processed, "\r", ";");
-	substitute_super(_processed, "\t", " ");
-//	substitute_super(_processed, "; {", " {");
-//	substitute_super(_processed, "{; ", "{ ");
-//	substitute_super(_processed, "; ;", "; ");
-//	substitute_super(_processed, ";;", ";");
 	soft_trim(_processed);
 	hard_trim(_processed);
 	_processed_ok = true;
-
-	verbose(V) << "(FileString::parse) _processed: " << _processed \
-		<< std::endl;
-
 	this->fs_data = DataFold(_processed);
-
-	verbose(V) << "(FileString::parse) this->fs_data: " << this->fs_data \
-		<< std::endl;
 }
 
 void FileString::parse(std::string str)
