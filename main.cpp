@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 17:51:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 22:07:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ DataFold load_configuration(int argc, char **argv, std::string conf_file)
 	args[0] = argv[0];
 	if (argc == 1)
 	{
-		args[1] = std::string(WS_DEFAULT_CONFIG).c_str();
+		args[1] = const_cast<char *>(std::string(WS_DEFAULT_CONFIG).c_str());
 		argc = 2;
 	}
 	else

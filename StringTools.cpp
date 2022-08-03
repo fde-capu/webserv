@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 17:48:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 23:02:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,13 @@ void hard_trim(std::string& dst, std::string set)
 
 void StringTools::hard_trim(std::string& dst, std::string set) const
 {
-	for (std::string::iterator i = set.begin(); *i; i++)
+	for (size_t i = 0; i < set.length(); i++)
 	{
-		std::string trimmed = std::string(i, i + 1) + std::string(i, i + 1);
-		substitute_super(dst, trimmed, std::string(i, i + 1));
+		std::string before(2, set.at(i));
+		std::string after(1, set.at(i));
+		verbose(2) << "(hard_trim) From '" << before << "' to '" << \
+			after << "'" << std::endl;
+		substitute_super(dst, before, after);
 	}
 }
 
@@ -96,19 +99,19 @@ void StringTools::soft_trim(std::string& dst, std::string set) const
 {
 	bool pass = false;
 
-	while (!pass)
+	while (!pass && !dst.empty())
 	{
 		pass = true;
-		for (std::string::iterator i = set.begin(); *i; i++)
+		for (size_t i = 0; i < set.length(); i++)
 		{
-			if (*dst.begin() == *i)
+			if (dst.at(0) == set.at(i))
 			{
 				dst = dst.substr(1);
 				pass = false;
 			}
-			if (*(dst.end() - 1) == *i)
+			if (dst.at(dst.length() - 1) == set.at(i))
 			{
-				dst = dst.substr(0, dst.size() - 1);
+				dst = dst.substr(0, dst.length() - 1);
 				pass = false;
 			}
 		}
