@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/02 16:39:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 13:46:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,33 +113,39 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 int ws_reply_instance::is_413_507(ws_server_instance& si)
 {
 	static int V(1);
-	bool chunked(stool.is_equal_insensitive(si.in_header.transfer_encoding, "chunked"));
+	int pos_status(0);
 
-	verbose(V) << "(is_413_507) max_size: " << si.max_size << "." << std::endl;
+	verbose(V) << "(is_413_507) max_size: " << si.max_size << "." \
+		<< std::endl;
+	verbose(V) << "(is_413_507) content_type: " << \
+		si.in_header.content_type << std::endl;
+	verbose(V) << "(is_413_507) transfer_encoding: " \
+		<< si.in_header.transfer_encoding << std::endl;
 
-	if (!si.is_multipart() && \
-		static_cast<size_t>(si.in_header.content_length) > si.max_size)
+	si.set_sizes();
+	if (si.exceeded_limit)
 	{
 		set_code(413, "Payload Too Large (Declared Size)");
 		out_body = "BODY FOR 413";
 		return 413;
 	}
 
-	verbose(V) << "(is_413_507) content_type: " << si.in_header.content_type << std::endl;
-	verbose(V) << "(is_413_507) transfer_encoding: " << si.in_header.transfer_encoding << std::endl;
-
-	if (si.is_multipart() || chunked)
+	try
 	{
-		try
-		{
-			si.read_more();
-		}
-		catch (std::exception& e)
-		{
-			set_code(507, "Insufficient Storage");
-			out_body = "BODY FOR 507";
-			return 507;
-		}
+		pos_status = si.read_more_general();
+	}
+	catch (std::exception& e)
+	{
+		set_code(507, "Insufficient Storage");
+		out_body = "BODY FOR 507";
+		return 507;
+	}
+
+	if (pos_status == 422)
+	{
+		set_code(422, "Unprocessable Entity");
+		out_body = "BODY FOR 422";
+		return 422;
 	}
 
 	verbose(V) << "(is_413_507) Multipart content accounts for " \
@@ -147,7 +153,8 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		<< std::endl;
 	verbose(V) << "(is_413_507) Non-multipart accounts for " \
 		<< si.in_body.length() << " bytes." << std::endl;
-	verbose(5) << "(is_413_507) in_body >>" << si.in_body << "<<" << std::endl;
+	verbose(5) << "(is_413_507) in_body >>" << si.in_body << "<<" \
+		<< std::endl;
 	verbose(5) << "(is_413_507) multipart_content >>" << \
 		si.multipart_content << "<<" << std::endl;
 
@@ -174,23 +181,6 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 		set_code(424, "Failed Dependency");
 		out_body = "BODY FOR 424";
 		return 424;
-	}
-	return 0;
-}
-
-int ws_reply_instance::is_529(ws_server_instance& si)
-{
-	verbose(1) << "(is_529) Multipart: " << si.is_multipart() << \
-		", multipart-content-length: " << \
-		si.multipart_content.length() << ", in_body-length: " <<  \
-		si.in_body.length() << ", expected_full_load: " << si.expected_full_load << \
-		"." << std::endl;
-
-	if (si.is_multipart() && si.in_body.length() < si.expected_full_load)
-	{
-		set_code(529, "Site is overloaded");
-		out_body = "BODY FOR 529";
-		return 529;
 	}
 	return 0;
 }
