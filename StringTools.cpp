@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/28 17:01:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 15:41:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,12 +204,13 @@ std::string substitute_super(std::string& dst, std::string before, std::string a
 std::string StringTools::substitute_super(std::string& dst, std::string before, std::string after) const
 {
 	bool pass = false;
+	size_t pos;
+
 	while (!pass)
 	{
 		pass = true;
-		size_t pos = find_outside_quotes(dst, before);
-		size_t scap_t = find_outside_quotes(dst, std::string("\\" + before));
-		if (pos != scap_t + 1 && pos != std::string::npos)
+		pos = find_outside_quotes(dst, before);
+		if (pos != std::string::npos)
 		{
 			pass = false;
 			dst.replace(pos, before.length(), after);
@@ -257,32 +258,27 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 {
 	std::string q = "";
 	std::string::iterator e = str.end();
-	for(std::string::iterator s = str.begin(); *s; s++)
+	for(std::string::iterator s = str.begin(); s < str.end(); s++)
 	{
 		if (*s == '\\')
 			s += 2;
-		if (!*s)
-			break ;
-		for(std::string::const_iterator i = _quote_set.begin(); *i; i++)
+		for(std::string::iterator i = _quote_set.begin(); i < _quote_set.end(); i++)
 		{
 			if (*i == *s)
 			{
 				if (*(q.end() - 1) == *i)
 					q = q.substr(0, q.length() - 1);
-				else if (q.empty())
+				else
 					q = q + *i;
-			}
-			else
-			{
-				if (e - s < static_cast<long>(needle.size()))
-					return std::string::npos;
-				if (std::string(s, s + (needle.length())) == needle)
-				{
-					if (q.length() == 0)
-						return s - str.begin();
-				}
+				break ;
 			}
 		}
+		if (!q.empty())
+			continue ;
+		if (e - s < static_cast<long>(needle.size()))
+			break ;
+		if (std::string(s, s + (needle.length())) == needle)
+			return s - str.begin();
 	}
 	return std::string::npos;
 }

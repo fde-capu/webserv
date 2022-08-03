@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 13:36:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/03 14:31:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 		verbose(V) << "(receive_at_most) got " << bytes << \
 			", called " << in_size << ", max " << max << ", have " \
 			<< length();
+
 		if (bytes > 0 && bytes <= O_LIM)
 		{
 			verbose(V) << "\t(" << std::string(memory).substr(0, bytes) << ")";
@@ -100,7 +101,9 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 			verbose(V) << "\t(" << std::string(memory).substr(0, O_LIM) << \
 				"...) len " << bytes;	
 		}
-		verbose(1) << "\r" << length() << "\t" << (errno & EWOULDBLOCK);
+
+		verbose(1) << "\r len:" << length() << "\terrno:" << (errno & EWOULDBLOCK);
+		verbose(1) << "\t max:" << max;
 		verbose(V) << std::endl;
 
 		if (bytes == -1)
@@ -132,13 +135,15 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 	}
 }
 
-std::string& CircularBuffer::receive_until_eof()
+std::string& CircularBuffer::receive_until_eof(size_t max)
 {
 	int bytes;
 
 	while (checkLimits() || true)
 	{
-		checkLimits();
+		if (max && length() >= max)
+			return set_eof();
+
 		bytes = read(fd, const_cast<char *>(memory), size);
 
 		verbose(2) << "(receive_until_eof) ->" << fd << ": bytes " << bytes << \
