@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 13:46:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/02 16:29:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,24 +62,16 @@ struct ws_server_instance
 	std::string multipart_filename;
 	std::string multipart_content_type;
 
-	std::string chunked_content;
-
-	void set_sizes();
 	std::string boundary;
 	size_t max_size;
 	size_t payload_start, payload_end;
 	size_t body_start, body_end;
-	bool exceeded_limit;
+	size_t expected_full_load;
 
-	int read_more_general();
-	void read_more_plain();
-	void read_more_chunked();
-	void read_more_multipart();
-	void mount_multipart();
-
+	void read_more();
+	void set_sizes();
 	DataFold get_location_config() const;
 	bool is_multipart() const;
-	bool is_chunked() const;
 	std::string location_path(const std::string&) const;
 	DataFold location_get(const std::string&, std::string = "") const;
 	std::string location_get_single(const std::string&, std::string = "") const;
@@ -108,6 +100,7 @@ struct ws_reply_instance
 	int is_404(ws_server_instance&); // Not Found.
 	int is_413_507(ws_server_instance&); // Payload Too Large.
 	int is_424(ws_server_instance&); // Failed Dependency.
+	int is_529(ws_server_instance&); // Site is overloaded.
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert
