@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 13:46:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/04 16:05:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ class WebServ
 		static bool validate_header_entry(std::vector<std::string>&, size_t, bool&);
 		static bool validate_header_1st_line(std::string&, size_t, bool&);
 		static bool read_1st_line(std::string&, ws_header&, bool&);
-		static bool read_host(std::string&, ws_header&, bool&);
+		static bool host_from_header(std::string&, ws_header&, bool&);
 		void flush_stdin();
 		bool is_port_taken(int) const;
 		bool same_port_another_name(const ws_server_instance*) const;
@@ -153,11 +153,11 @@ class WebServ
 		void load_defaults();
 		static void set_non_blocking(int);
 		static bool ignore_empty(std::string&);
+		WebServ & operator= (WebServ const & rhs);
+		WebServ(WebServ const & src);
 
 	public:
 		WebServ(DataFold&);
-		WebServ(WebServ const & src);
-		WebServ & operator= (WebServ const & rhs);
 		~WebServ();
 		DataFold getConfig() const;
 		DataFold getServer() const;

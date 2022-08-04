@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/08/02 16:07:23 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/04 16:09:26 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,9 +22,11 @@ DEBUG	=	1
 ENVS	=	-DAGV_SKIP_CHECK=1
 
 SRCS	=	FileString.cpp DataFold.cpp \
-			StringTools.cpp ArgVal.cpp datafold_type.cpp WebServ.cpp \
+			StringTools.cpp ArgVal.cpp datafold_type.cpp \
 			CircularBuffer.cpp WebServ_helpers.cpp \
-			http_routes.cpp CgiWrapper.cpp Chronometer.cpp
+			http_routes.cpp CgiWrapper.cpp Chronometer.cpp \
+			WebServ_read_methods.cpp WebServ_proc_header.cpp \
+			WebServ_operator_out.cpp WebServ_ports.cpp WebServ.cpp
 SRCS1	=	main.cpp
 SRCS2	=	main_cgi.cpp
 HEAD	=	Makefile header.hpp \
@@ -95,11 +97,13 @@ k1:
 	-pkill $(NAME1)
 k2:
 	-pkill $(NAME2)
-ft:
+ft: youpi
 	@echo "Please run \`make ftcgi\` on another terminal.";
 	@echo "";
-	echo 'Initial YoupiBanane/youpi.bla' > unit/confs/html4242/YoupiBanane/youpi.bla
 	unit/ubuntu_tester http://0.0.0.0:4242
+youpi:
+	echo 'Initial YoupiBanane/youpi.bla' > unit/confs/html4242/YoupiBanane/youpi.bla
+	ls -l unit/confs/html4242/YoupiBanane/youpi.bla
 
 .PHONY: webserv
 webserv:	ws
