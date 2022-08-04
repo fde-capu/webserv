@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/04 13:09:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/04 14:04:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int ws_server_instance::read_more_general()
 {
 	if (is_chunked() && is_multipart())
 		return 422;
-	if (!is_chunked() || !is_multipart())
+	if (!is_chunked() && !is_multipart())
 		read_more_plain();
 	if (is_chunked())
 		read_more_chunked();
