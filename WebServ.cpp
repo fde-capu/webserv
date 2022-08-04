@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 13:46:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/04 12:56:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	out_body = "";
 
 	if (PUT_mock(si)) return ; // 200 but mocked.
-	if (is_501(si)) return ; // Is it not implemented? (PUT)
+	if (is_501(si)) return ; // Is it not implemented?
 	if (is_301(si)) return ; // Redirect.
 	if (is_403(si)) return ; // Forbidden.
 	if (is_405(si)) return ; // Bad method.

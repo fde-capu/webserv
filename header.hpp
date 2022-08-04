@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 16:37:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/04 12:51:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@
 # define DEFAULT_SERVER_NAME "fde-capu's webserv"
 # define DEFAULT_WELCOME_MESSAGE "Welcome!"
 # define DEFAULT_BYE "Bye!"
-# define DEFAULT_MAX_BODY_SIZE 242
+# define DEFAULT_MAX_BODY_SIZE 0
 
 # define TIME_OUT_SECONDS 1.25 
 

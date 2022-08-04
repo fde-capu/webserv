@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 13:46:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/04 12:52:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,8 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 
 int ws_reply_instance::is_cgi(ws_server_instance& si)
 {
-	verbose(1) << "(is_cgi) " << si << std::endl;
+//	verbose(1) << "(is_cgi) " << si << std::endl;
+(void)si;
 	return 0;
 }
 

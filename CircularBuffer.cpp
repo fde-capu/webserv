@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 13:36:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/04 13:42:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,20 +65,22 @@ bool CircularBuffer::checkLimits() const
 
 std::string& CircularBuffer::receive_at_most(size_t max)
 {
-	static int V(2);
+	static int V(1);
 	static int O_LIM(15);
+
 	size_t in_size;
 	int bytes;
 
 	while (checkLimits() || true)
 	{
+	BREAK
 		verbose(V) << "(receive_at_most) " << max << \
 			", Length: " << length() << \
 			", capacity: " << output.capacity() << std::endl;
 
 		in_size = max < size ? max : size;
 		in_size = max > length() && max - length() < in_size ? \
-			max - length() : in_size;
+				  max - length() : in_size;
 
 		verbose(V) << \
 			"(receive_at_most) Actually receiving " << in_size << std::endl;
@@ -90,18 +92,18 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 
 		verbose(V) << "(receive_at_most) got " << bytes << \
 			", called " << in_size << ", max " << max << ", have " \
-			<< length();
+			<< length() << std::endl;
+
 		if (bytes > 0 && bytes <= O_LIM)
 		{
-			verbose(V) << "\t(" << std::string(memory).substr(0, bytes) << ")";
+			verbose(V) << "\t(" << std::string(memory).substr(0, bytes) << ")" \
+				<< std::endl;
 		}
 		else if (bytes > 0 && bytes > O_LIM)
 		{
 			verbose(V) << "\t(" << std::string(memory).substr(0, O_LIM) << \
-				"...) len " << bytes;	
+				"...) len " << bytes << std::endl;	
 		}
-		verbose(1) << "\r" << length() << "\t" << (errno & EWOULDBLOCK);
-		verbose(V) << std::endl;
 
 		if (bytes == -1)
 		{

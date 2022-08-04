@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/03 13:42:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/04 13:09:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void ws_server_instance::read_more_plain()
 	size_t next_load;
 	CircularBuffer buf(fd);
 
-	if (in_body.length() > max_size)
+	if (in_header.method == "GET" || in_body.length() > max_size)
 		return ;
 	do
 	{
