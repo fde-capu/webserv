@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/04 16:05:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/05 12:49:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,10 @@ void WebServ::respond_timeout(int fd)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 	close(fd);
 	remove_from_poll(fd);
+}
+
+void ws_server_instance::mount_chunked()
+{
 }
 
 void ws_server_instance::mount_multipart()
