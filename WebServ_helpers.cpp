@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/05 12:49:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/05 14:46:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,8 +142,50 @@ void WebServ::respond_timeout(int fd)
 	remove_from_poll(fd);
 }
 
+void ws_server_instance::get_chunked_length(size_t& total, size_t& diff)
+{
+	std::vector<size_t> n_point;
+	size_t line(0);
+	size_t val(0);
+	size_t sum(0);
+	size_t char_count(0);
+	
+	n_point.push_back(line);
+	while (1)
+	{
+		line = in_body.find("\r\n", line);
+		if (line == std::string::npos)
+		{
+			verbose(V) << "(get_chunked_length) Incomplete data." << std::endl;
+			total = sum;
+			diff = char_count;
+			return ;
+		}
+		if (line == 0)
+		{
+			verbose(V) << "(get_chunked_length) End of chunk stream." << std::endl;
+			end_of_chunk_stream = true;
+			return ;
+		}
+		val = atoi(in_body.substr(n_point.last(), line - n_point.last()));
+		sum += val;
+		line += val + 4;
+	}
+
+	n_point.push_back(line);
+	
+}
+
 void ws_server_instance::mount_chunked()
 {
+	static int V(1);
+	end_of_chunk_stream(false);
+	size_t total_length(0);
+	size_t char_diff(0);
+
+	get_chunked_length(total_length, char_diff);
+	if (total_length > chunked_content.length())
+		append_chunks();
 }
 
 void ws_server_instance::mount_multipart()

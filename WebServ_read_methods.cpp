@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/05 12:48:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/05 13:18:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void ws_server_instance::read_more_chunked()
 		next_load = max_size - chunked_content.length();
 		in_body = buf.receive_at_most(next_load);
 		mount_chunked();
-		if (chunked_ended)
+		if (end_of_chunk_stream)
 		{
 			verbose(V) << "(read_more_chunked) End of chunked stream." << std::endl;
 			break ;

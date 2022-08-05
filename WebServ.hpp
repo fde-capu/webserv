@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/04 16:05:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/05 13:18:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,14 @@ struct ws_server_instance
 	size_t payload_start, payload_end;
 	size_t body_start, body_end;
 	bool exceeded_limit;
+	bool end_of_chunk_stream;
 
 	int read_more_general();
 	void read_more_plain();
 	void read_more_chunked();
 	void read_more_multipart();
 	void mount_multipart();
+	void mount_chunked();
 
 	DataFold get_location_config() const;
 	bool is_multipart() const;
