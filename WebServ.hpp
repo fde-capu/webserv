@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/05 13:18:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/08 15:21:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ struct ws_server_instance
 	const DataFold operator[] (std::string) const;
 	std::string val(std::string) const;
 
-	// Maybe put on another struct.
 	std::string multipart_type;
 	std::string multipart_content;
 	std::string multipart_content_disposition;
@@ -63,6 +62,8 @@ struct ws_server_instance
 	std::string multipart_content_type;
 
 	std::string chunked_content;
+	void get_chunked_length(size_t&, size_t&);
+	void append_chunks();
 
 	void set_sizes();
 	std::string boundary;
