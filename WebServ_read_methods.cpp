@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/08 22:03:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/08 22:55:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ void ws_server_instance::read_more_chunked()
 
 	if (in_header.method == "GET" || chunked_content.length() > max_size)
 		return ;
+
 
 	verbose(V) << "(read_more_chunked) max_size: " << max_size << std::endl;
 	verbose(V) << "(read_more_chunked) Finished with body " << in_body.length() \
