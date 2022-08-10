@@ -390,8 +390,6 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce Large_Uploads_2 \
 \
 	'Not large, but shows "uri /large_upload" is working. 42B. 202' \
@@ -447,17 +445,19 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce Large_Uploads_6 \
 \
-	'How about 114MiB?\n
-	Testing on 42SP Workspace, it gets Oom Kill if larger than that.' \
+	'How about 50MB?\n
+	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
 \
 ; } 2> /dev/null
 
-head -c 114MiB /dev/urandom > ${MYDIR}/file.noise
+head -c 50MB /dev/urandom > ${MYDIR}/file.noise
 curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 

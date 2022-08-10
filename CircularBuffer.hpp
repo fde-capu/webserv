@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 12:31:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 14:10:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <vector>
 
 # define CIRCULARBUFFER_SIZE (1048576 * 1)
-# define CIRCULARBUFFER_LIMIT (1048576 * 100)
+# define CIRCULARBUFFER_LIMIT (1048576 * 50)
 
 class CircularBuffer
 {

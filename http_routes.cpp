@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 13:08:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 13:34:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 int ws_reply_instance::is_413_507(ws_server_instance& si)
 {
 	static int V(1);
+	static int VPRINTLIM(40);
 	int pos_status(0);
 
 	verbose(V) << "(is_413_507) max_size: " << si.max_size << "." \
@@ -149,15 +150,12 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		return 422;
 	}
 
-	verbose(V) << "(is_413_507) Multipart content accounts for " \
-		<< si.multipart_content.length() << " bytes." \
-		<< std::endl;
-	verbose(V) << "(is_413_507) Non-multipart accounts for " \
-		<< si.in_body.length() << " bytes." << std::endl;
-	verbose(V) << "(is_413_507) in_body >>" << si.in_body << "<<" \
-		<< std::endl;
+	verbose(V) << "(is_413_507) in_body >>" << \
+		si.in_body.substr(0, VPRINTLIM) << "<< len: " << si.in_body.length() << \
+		std::endl;
 	verbose(V) << "(is_413_507) multipart_content >>" << \
-		si.multipart_content << "<<" << std::endl;
+		si.multipart_content.substr(0, VPRINTLIM) << "<< len: " << \
+		si.multipart_content.length() << std::endl;
 
 	si.set_sizes();
 	if (si.exceeded_limit)

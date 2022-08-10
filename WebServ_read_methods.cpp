@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 13:04:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 13:39:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,8 @@ void ws_server_instance::read_more_multipart()
 
 	if (multipart_content.length() >= static_cast<size_t>(in_header.content_length))
 		return ;
-	do
+	set_sizes();
+	while (!exceeded_limit && !buf.ended())
 	{
 		verbose(V) << "(read_more_multipart) in_h_conlen: " << in_header.content_length << std::endl;
 		verbose(V) << "(read_more_multipart) in_b_len: " << in_body.length() << std::endl;
@@ -98,7 +99,6 @@ void ws_server_instance::read_more_multipart()
 		in_body.append(buf.receive_exactly(next_load));
 		mount_multipart();
 	}
-	while (!exceeded_limit && !buf.ended());
 
 	verbose(V) << "(read_more_multipart) Finished with body " << in_body.length() << \
 		" and multipart-content " << multipart_content.length() << "." << \

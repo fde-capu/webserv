@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/04 12:56:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 14:05:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,7 +245,7 @@ void WebServ::respond_connection_from(int fd)
 	{
 		raw_data += get_raw_data(fd);
 		in_header = get_header(raw_data);
-		if (time_out > TIME_OUT_SECONDS)
+		if (time_out > TIME_OUT_MSEC)
 		{
 			verbose(1) << "(respond_connection_from) Timeout! << " << time_out << \
 				" > Incomplete header:" << \
