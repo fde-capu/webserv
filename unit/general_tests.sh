@@ -445,8 +445,6 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce Large_Uploads_6 \
 \
 	'How about 50MB?\n
@@ -461,6 +459,8 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce Large_Uploads_7 \
 \
 	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
@@ -471,7 +471,7 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 head -c 200MiB /dev/urandom > ${MYDIR}/file.noise
 curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 

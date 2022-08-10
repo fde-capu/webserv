@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 13:34:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 15:18:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,13 +132,11 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		return 413;
 	}
 
-	try
+	pos_status = si.read_more_general();
+
+	if (si.insufficient_resources)
 	{
-		pos_status = si.read_more_general();
-	}
-	catch (std::exception& e)
-	{
-		set_code(507, "Insufficient Storage");
+		set_code(507, "Insufficient Resources");
 		out_body = "BODY FOR 507";
 		return 507;
 	}

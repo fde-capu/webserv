@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 14:10:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 15:20:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 # include <sys/socket.h>
 # include <vector>
 
-# define CIRCULARBUFFER_SIZE (1048576 * 1)
-# define CIRCULARBUFFER_LIMIT (1048576 * 50)
+# define CIRCULARBUFFER_SIZE (1024 * 1)
+# define CIRCULARBUFFER_LIMIT (1048576 * 100)
 
 class CircularBuffer
 {
@@ -32,6 +32,7 @@ class CircularBuffer
 		const char* memory;
 		char* head;
 		bool eof;
+		bool success;
 
 		CircularBuffer();
 		void mountMemory();
@@ -50,6 +51,7 @@ class CircularBuffer
 		int getFd() const;
 		bool ended() const;
 		size_t length() const;
+		bool fail() const;
 
 		std::string& receive_until_eof();
 		std::string& receive_at_most(size_t);

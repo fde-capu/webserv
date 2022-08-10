@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 12:45:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 15:20:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,16 @@
 # include <errno.h>
 
 CircularBuffer::CircularBuffer(int u_fd)
-: fd(u_fd), size(CIRCULARBUFFER_SIZE), limit(CIRCULARBUFFER_LIMIT), eof(false)
+: fd(u_fd), size(CIRCULARBUFFER_SIZE), limit(CIRCULARBUFFER_LIMIT), \
+	eof(false), success(true)
 {
 	mountMemory();
 	return ;
 }
 
 CircularBuffer::CircularBuffer(CircularBuffer const & src)
-: fd(src.getFd()), size(src.getSize()), limit(CIRCULARBUFFER_LIMIT), eof(false)
+: fd(src.getFd()), size(src.getSize()), limit(CIRCULARBUFFER_LIMIT), \
+	eof(false), success(true)
 {
 	*this = src;
 	return ;
@@ -53,13 +55,18 @@ std::string& CircularBuffer::unfinished()
 {
 	resetMemory();
 	verbose(2) << "(CircularBuffer) Returning unfinished." << std::endl;
-	return output;
+	success = false;
+	return set_eof();
 }
 
 bool CircularBuffer::checkLimits() const
 {
 	if (length() > limit)
-		throw std::length_error("(CircularBuffer) Is limited.");
+	{
+		verbose(1) << "(CircularBuffer) Is limited so refuses to read more." << \
+			std::endl;
+		return false;
+	}
 	return true;
 }
 
@@ -71,9 +78,15 @@ std::string& CircularBuffer::receive_exactly(size_t nbytes)
 	size_t size_fin(size_ini + nbytes);
 	int rbytes;
 
+	if (checkLimits())
+		output.reserve(length() + nbytes);
+	else
+		return unfinished();
 	while (size_cur < size_fin)
 	{
-		std::cout << "(receive_exactly) \r" << length();
+		if (!checkLimits())
+			return unfinished();
+		std::cout << "\r(receive_exactly) " << length();
 		rbytes = read(fd, const_cast<char *>(memory), size);
 		if (rbytes == -1)
 			continue ;
@@ -98,7 +111,7 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 
 	while (checkLimits() || true)
 	{
-		std::cout << "(receive_at_most) \r" << length();
+		std::cout << "\r(receive_at_most) " << length();
 		verbose(V) << "(receive_at_most) " << max << \
 			", Length: " << length() << \
 			", capacity: " << output.capacity() << std::endl;
@@ -162,9 +175,10 @@ std::string& CircularBuffer::receive_until_eof()
 {
 	int bytes;
 
-	while (checkLimits() || true)
+	while (1)
 	{
-		checkLimits();
+		if (!checkLimits())
+			return unfinished();
 		bytes = read(fd, const_cast<char *>(memory), size);
 
 		verbose(2) << "(receive_until_eof) ->" << fd << ": bytes " << bytes << \
@@ -231,6 +245,9 @@ int CircularBuffer::getFd() const
 
 bool CircularBuffer::ended() const
 { return eof; }
+
+bool CircularBuffer::fail() const
+{ return !success; }
 
 size_t CircularBuffer::length() const
 { return output.length(); }

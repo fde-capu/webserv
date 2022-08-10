@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 13:39:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 15:22:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ void ws_server_instance::read_more_multipart()
 	size_t next_load;
 	CircularBuffer buf(fd);
 
-	if (multipart_content.length() >= static_cast<size_t>(in_header.content_length))
-		return ;
 	set_sizes();
 	while (!exceeded_limit && !buf.ended())
 	{
@@ -97,8 +95,10 @@ void ws_server_instance::read_more_multipart()
 		next_load = in_header.content_length - in_body.length();
 		verbose(V) << "(read_more_multipart) next_load: " << next_load << std::endl;
 		in_body.append(buf.receive_exactly(next_load));
-		mount_multipart();
+		set_sizes();
 	}
+	insufficient_resources = buf.fail();
+	mount_multipart();
 
 	verbose(V) << "(read_more_multipart) Finished with body " << in_body.length() << \
 		" and multipart-content " << multipart_content.length() << "." << \
