@@ -459,7 +459,115 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
+{ anounce Large_Uploads_7 \
+\
+	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
+	Server should not crash, so 507 Insufficient Storage.' \
+\
+; } 2> /dev/null
+
+head -c 200MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Clean uploaded files  ################################################################
+
+{ anounce Clean_Uploads \
+\
+	'All large uploads were multipart/form-data.\n
+	Now reset test ll again using chunked encoding.' \
+\
+; } 2> /dev/null
+{ ${MYDIR}/clean_uploads.sh; }
+
+## Large Uploads ################################################################
+
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce Large_Uploads_1 \
+\
+	'Testing 1MiB.noise. This should be reject by 413 because exceeds max_size.' \
+\
+; } 2> /dev/null
+
+head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
+curl -v -H "Expect:" -H "Transfer-Encoding: chunked" -d "@${MYDIR}/file.noise" http://$name_server:4242/post_body
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+
+exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+
+## Large Uploads ################################################################
+
+{ anounce Large_Uploads_2 \
+\
+	'Not large, but shows "uri /large_upload" is working. 42B. 202' \
+\
+; } 2> /dev/null
+
+head -c 42 /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Large Uploads ################################################################
+
+{ anounce Large_Uploads_3 \
+\
+	'Now POSTing 1MiB.noise.\n
+	This shall NOT be accepted, because curl will expect 100-continue,\n
+	but webserv must always close the connection. Chose 424 for answer.' \
+\
+; } 2> /dev/null
+
+head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Large Uploads ################################################################
+
+{ anounce Large_Uploads_4 \
+\
+	'Again 1MiB.noise, this time sending the file right away.\n
+	This SHALL BE accepted and saved.' \
+\
+; } 2> /dev/null
+
+head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Large Uploads ################################################################
+
+{ anounce Large_Uploads_5 \
+\
+	'Now 2MiB.noise, alse sending the file right away.' \
+\
+; } 2> /dev/null
+
+head -c 2MiB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Large Uploads ################################################################
+
+{ anounce Large_Uploads_6 \
+\
+	'How about 50MB?\n
+	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
+\
+; } 2> /dev/null
+
+head -c 50MB /dev/urandom > ${MYDIR}/file.noise
+curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Large Uploads ################################################################
 
 { anounce Large_Uploads_7 \
 \
@@ -473,7 +581,6 @@ curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large
 rm ${MYDIR}/file.noise
 ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
-exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ## Stress ################################################################
 
