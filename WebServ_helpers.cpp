@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/08 22:03:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 13:07:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ void ws_server_instance::set_sizes()
 		multipart_name = StringTools::query_for("name", in_body);
 		multipart_filename = StringTools::query_for("filename", in_body);
 		multipart_content_type = StringTools::query_for("Content-Type", in_body);
-		exceeded_limit = multipart_content.length() > max_size;
+		exceeded_limit = max_size && multipart_content.length() > max_size;
 	}
 	else if (is_chunked())
 	{

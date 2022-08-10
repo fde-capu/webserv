@@ -363,6 +363,7 @@ rm ${MYDIR}/file.noise
 ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## LB ###############################################################
+
 { anounce LB_4th \
 \
 	'4th) 101B.noise should not pass because of max_size is set for 100. 413' \
@@ -388,6 +389,8 @@ rm ${MYDIR}/file.noise
 ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce Large_Uploads_2 \
 \
@@ -444,8 +447,6 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce Large_Uploads_6 \
 \
 	'How about 114MiB?\n
@@ -457,8 +458,6 @@ head -c 114MiB /dev/urandom > ${MYDIR}/file.noise
 curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
 ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
-
-exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ## Large Uploads ################################################################
 
@@ -473,6 +472,8 @@ head -c 200MiB /dev/urandom > ${MYDIR}/file.noise
 curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
 ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+
+exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ## Stress ################################################################
 

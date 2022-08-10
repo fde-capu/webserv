@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/08 22:55:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 13:04:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,26 +87,18 @@ void ws_server_instance::read_more_multipart()
 	size_t next_load;
 	CircularBuffer buf(fd);
 
-	if (in_body.length() > static_cast<size_t>(in_header.content_length))
+	if (multipart_content.length() >= static_cast<size_t>(in_header.content_length))
 		return ;
 	do
 	{
+		verbose(V) << "(read_more_multipart) in_h_conlen: " << in_header.content_length << std::endl;
+		verbose(V) << "(read_more_multipart) in_b_len: " << in_body.length() << std::endl;
 		next_load = in_header.content_length - in_body.length();
-		in_body = buf.receive_at_most(next_load);
+		verbose(V) << "(read_more_multipart) next_load: " << next_load << std::endl;
+		in_body.append(buf.receive_exactly(next_load));
 		mount_multipart();
-		if (exceeded_limit)
-		{
-			verbose(V) << "(read_more_multipart) Multipart content exceeded limit." \
-				<< std::endl;
-			break ;
-		}
-		if (buf.ended())
-		{
-			verbose(V) << "(read_more_multipart) No more data." << std::endl;
-			break ;
-		}
 	}
-	while (buf.length() < next_load);
+	while (!exceeded_limit && !buf.ended());
 
 	verbose(V) << "(read_more_multipart) Finished with body " << in_body.length() << \
 		" and multipart-content " << multipart_content.length() << "." << \
@@ -120,7 +112,6 @@ void ws_server_instance::read_more_chunked()
 
 	if (in_header.method == "GET" || chunked_content.length() > max_size)
 		return ;
-
 
 	verbose(V) << "(read_more_chunked) max_size: " << max_size << std::endl;
 	verbose(V) << "(read_more_chunked) Finished with body " << in_body.length() \

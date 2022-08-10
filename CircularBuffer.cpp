@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/08 21:54:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/10 12:45:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,31 @@ bool CircularBuffer::checkLimits() const
 	return true;
 }
 
+std::string& CircularBuffer::receive_exactly(size_t nbytes)
+{
+//	static int V(1);
+	size_t size_ini(output.length());
+	size_t size_cur(0);
+	size_t size_fin(size_ini + nbytes);
+	int rbytes;
+
+	while (size_cur < size_fin)
+	{
+		std::cout << "(receive_exactly) \r" << length();
+		rbytes = read(fd, const_cast<char *>(memory), size);
+		if (rbytes == -1)
+			continue ;
+		if (rbytes == 0)
+			return set_eof();
+		if (static_cast<size_t>(rbytes) <= size)
+		{
+			output.append(memory, rbytes);
+			size_cur += rbytes;
+		}
+	}
+	return set_eof();
+}
+
 std::string& CircularBuffer::receive_at_most(size_t max)
 {
 	static int V(2);
@@ -73,7 +98,7 @@ std::string& CircularBuffer::receive_at_most(size_t max)
 
 	while (checkLimits() || true)
 	{
-		std::cout << "\r" << length();
+		std::cout << "(receive_at_most) \r" << length();
 		verbose(V) << "(receive_at_most) " << max << \
 			", Length: " << length() << \
 			", capacity: " << output.capacity() << std::endl;
