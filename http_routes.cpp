@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 15:18:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 15:09:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,9 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 	verbose(V) << "(is_413_507) multipart_content >>" << \
 		si.multipart_content.substr(0, VPRINTLIM) << "<< len: " << \
 		si.multipart_content.length() << std::endl;
+	verbose(V) << "(is_413_507) chunked_content >>" << \
+		si.chunked_content.substr(0, VPRINTLIM) << "<< len: " << \
+		si.chunked_content.length() << std::endl;
 
 	si.set_sizes();
 	if (si.exceeded_limit)

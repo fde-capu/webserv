@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 13:03:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 15:14:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,20 +61,19 @@ struct ws_server_instance
 	std::string multipart_name;
 	std::string multipart_filename;
 	std::string multipart_content_type;
+	std::string boundary;
 
 	std::string chunked_content;
 
-	void set_sizes();
-	void set_props();
-	std::string boundary;
 	size_t max_size;
-	size_t payload_start, payload_end;
 	size_t body_start, body_end;
 	bool exceeded_limit;
-	bool end_of_chunk_stream;
+
+	void set_sizes();
+	void set_props();
 
 	int read_more_general();
-	void read_more_plain();
+	void read_more_plain(const size_t&);
 	void read_more_chunked();
 	void read_more_multipart();
 	void mount_multipart();

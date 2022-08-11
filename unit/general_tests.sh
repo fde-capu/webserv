@@ -133,8 +133,6 @@ curl -v http://$name_server:3490 -H 'Host: rootless'
 
 ## Basic_5 ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce Basic_5 \
 \
 	'POST test. Within limits of client_max_body_size:' \
@@ -379,6 +377,8 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce Large_Uploads_1 \
 \
 	'Testing 1MiB.noise. This should be reject by 413 because exceeds max_size.' \
@@ -478,13 +478,12 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 { anounce Clean_Uploads \
 \
 	'All large uploads were multipart/form-data.\n
-	Now reset test ll again using chunked encoding.' \
+	Now reset test over again for chunked encoding tests.' \
 \
 ; } 2> /dev/null
 { ${MYDIR}/clean_uploads.sh; }
 
 ## Large Uploads ################################################################
-
 
 { anounce Large_Uploads_1 \
 \

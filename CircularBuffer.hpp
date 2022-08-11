@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 15:20:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 15:04:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class CircularBuffer
 		std::string& set_eof();
 		std::string& unfinished();
 		bool checkLimits() const;
+		bool checkLimits(size_t&) const;
 
 	public:
 		CircularBuffer(int);
@@ -54,7 +55,6 @@ class CircularBuffer
 		bool fail() const;
 
 		std::string& receive_until_eof();
-		std::string& receive_at_most(size_t);
 		std::string& receive_exactly(size_t);
 		std::string output;
 

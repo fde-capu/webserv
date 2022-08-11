@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 13:26:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 14:24:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,11 @@ void WebServ::respond_timeout(int fd)
 void ws_server_instance::mount_multipart()
 {
 	set_sizes();
+	multipart_content_disposition = StringTools::query_for( \
+			"Content-Disposition", in_body);
+	multipart_name = StringTools::query_for("name", in_body);
+	multipart_filename = StringTools::query_for("filename", in_body);
+	multipart_content_type = StringTools::query_for("Content-Type", in_body);
 	multipart_content.reserve(body_end - body_start);
 	multipart_content = in_body.substr(body_start, body_end - body_start);
 }
@@ -171,6 +176,7 @@ void ws_server_instance::set_props()
 void ws_server_instance::set_sizes()
 {
 	static int V(1);
+	size_t payload_start, payload_end;
 
 	if (is_multipart())
 	{
@@ -187,12 +193,6 @@ void ws_server_instance::set_sizes()
 		body_start = body_start == std::string::npos ? 0 : body_start;
 		body_start += body_start ? 4 : 0;
 		body_end = payload_end;
-		multipart_content_disposition = StringTools::query_for( \
-				"Content-Disposition", in_body);
-		multipart_name = StringTools::query_for("name", in_body);
-		multipart_filename = StringTools::query_for("filename", in_body);
-		multipart_content_type = \
-			StringTools::query_for("Content-Type", in_body);
 
 		verbose(V) << "(set_sizes:multipart) " << max_size << " " \
 			<< multipart_content.length() << " " << in_body.length() << " " \

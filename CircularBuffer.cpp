@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 15:20:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 15:02:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,17 @@ std::string& CircularBuffer::unfinished()
 	return set_eof();
 }
 
+bool CircularBuffer::checkLimits(size_t& plus) const
+{
+	if (length() + plus > limit)
+	{
+		verbose(1) << "(CircularBuffer) Is limited so refuses to read more." << \
+			std::endl;
+		return false;
+	}
+	return true;
+}
+
 bool CircularBuffer::checkLimits() const
 {
 	if (length() > limit)
@@ -72,13 +83,12 @@ bool CircularBuffer::checkLimits() const
 
 std::string& CircularBuffer::receive_exactly(size_t nbytes)
 {
-//	static int V(1);
 	size_t size_ini(output.length());
 	size_t size_cur(0);
 	size_t size_fin(size_ini + nbytes);
 	int rbytes;
 
-	if (checkLimits())
+	if (checkLimits(nbytes))
 		output.reserve(length() + nbytes);
 	else
 		return unfinished();
@@ -99,76 +109,6 @@ std::string& CircularBuffer::receive_exactly(size_t nbytes)
 		}
 	}
 	return set_eof();
-}
-
-std::string& CircularBuffer::receive_at_most(size_t max)
-{
-	static int V(2);
-	static int O_LIM(15);
-
-	size_t in_size;
-	int bytes;
-
-	while (checkLimits() || true)
-	{
-		std::cout << "\r(receive_at_most) " << length();
-		verbose(V) << "(receive_at_most) " << max << \
-			", Length: " << length() << \
-			", capacity: " << output.capacity() << std::endl;
-
-		in_size = max < size ? max : size;
-		in_size = max > length() && max - length() < in_size ? \
-				  max - length() : in_size;
-
-		verbose(V) << \
-			"(receive_at_most) Actually receiving " << in_size << std::endl;
-
-		if (length() >= max)
-			return set_eof();
-
-		bytes = read(fd, const_cast<char *>(memory), in_size);
-
-		verbose(V) << "(receive_at_most) got " << bytes << \
-			", called " << in_size << ", max " << max << ", have " \
-			<< length() << std::endl;
-		if (bytes > 0 && bytes <= O_LIM)
-		{
-			verbose(V) << "\t(" << std::string(memory).substr(0, bytes) << ")" \
-				<< std::endl;
-		}
-		else if (bytes > 0 && bytes > O_LIM)
-		{
-			verbose(V) << "\t(" << std::string(memory).substr(0, O_LIM) << \
-				"...) len " << bytes << std::endl;	
-		}
-
-		if (bytes == -1)
-		{
-			verbose(V) << "(receive_at_most) Try again: " << \
-				strerror(errno) << "." << std::endl;
-			continue ;
-		}
-		if (bytes == 0)
-		{
-			verbose(V) << "(receive_at_most) Zero bytes, EOF." << std::endl;
-			return set_eof();
-		}
-		if (static_cast<size_t>(bytes) < in_size)
-		{
-			verbose(V) << \
-				"(receive_at_most) Buffer less than expected, come again." \
-				<< std::endl;
-			output.append(memory, bytes);
-			continue ;
-		}
-		if (static_cast<size_t>(bytes) == in_size)
-		{
-			verbose(V) << \
-				"(receive_at_most) Buffer full, come again." << std::endl;
-			output.append(memory, bytes);
-			continue ;
-		}
-	}
 }
 
 std::string& CircularBuffer::receive_until_eof()
