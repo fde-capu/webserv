@@ -133,6 +133,8 @@ curl -v http://$name_server:3490 -H 'Host: rootless'
 
 ## Basic_5 ################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce Basic_5 \
 \
 	'POST test. Within limits of client_max_body_size:' \
@@ -483,7 +485,6 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce Large_Uploads_1 \
 \

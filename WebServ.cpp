@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 12:58:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 13:17:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,14 +237,13 @@ void WebServ::respond_connection_from(int fd)
 	std::string body;
 	ws_header in_header;
 	Chronometer time_out;
+	CircularBuffer raw(fd);
 
 	verbose(2) << "(respond_connection_from) Getting data from fd " << fd \
 		<< "." << std::endl;
 
 	while (!in_header.is_valid)
 	{
-		raw_data += get_raw_data(fd);
-		in_header = get_header(raw_data);
 		if (time_out > TIME_OUT_MSEC)
 		{
 			verbose(1) << "(respond_connection_from) Timeout! << " << time_out << \
@@ -252,13 +251,15 @@ void WebServ::respond_connection_from(int fd)
 				std::endl << in_header << std::endl;
 			return respond_timeout(fd);
 		}
+		raw.receive_until_eof();
+		in_header = get_header(raw.output);
 	}
 
 	verbose(2) << "(respond_connection_from) Got header:" << std::endl << \
 		in_header << std::endl;
 
 	si = choose_instance(in_header, fd_to_port[fd]);
-	si.in_body = get_body(raw_data);
+	si.in_body = get_body(raw.output);
 	si.set_props();
 	si.set_sizes();
 	si.fd = fd;
