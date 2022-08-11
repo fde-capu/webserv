@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 15:19:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 13:03:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,9 @@ struct ws_server_instance
 	std::string multipart_content_type;
 
 	std::string chunked_content;
-	void get_chunked_length(size_t&, size_t&);
-	void append_chunks();
 
 	void set_sizes();
+	void set_props();
 	std::string boundary;
 	size_t max_size;
 	size_t payload_start, payload_end;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 15:22:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 13:07:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 std::string WebServ::get_raw_data(int fd)
 {
+	static int V(4);
 	static size_t PRINT_LIMIT(80);
-	static int V(1);
 	CircularBuffer buffer(fd);
 
 	buffer.receive_until_eof();
@@ -90,8 +90,6 @@ void ws_server_instance::read_more_multipart()
 	set_sizes();
 	while (!exceeded_limit && !buf.ended())
 	{
-		verbose(V) << "(read_more_multipart) in_h_conlen: " << in_header.content_length << std::endl;
-		verbose(V) << "(read_more_multipart) in_b_len: " << in_body.length() << std::endl;
 		next_load = in_header.content_length - in_body.length();
 		verbose(V) << "(read_more_multipart) next_load: " << next_load << std::endl;
 		in_body.append(buf.receive_exactly(next_load));
@@ -108,42 +106,21 @@ void ws_server_instance::read_more_multipart()
 void ws_server_instance::read_more_chunked()
 {
 	static int V(1);
+	size_t next_load;
 	CircularBuffer buf(fd);
 
-	if (in_header.method == "GET" || chunked_content.length() > max_size)
-		return ;
+	set_sizes();
+	while (!exceeded_limit && !buf.ended())
+	{
+		next_load = in_header.content_length - in_body.length();
+		verbose(V) << "(read_more_chunked) next_load: " << next_load << std::endl;
+		in_body.append(buf.receive_exactly(next_load));
+		set_sizes();
+	}
+	insufficient_resources = buf.fail();
+	mount_chunked();
 
-	verbose(V) << "(read_more_chunked) max_size: " << max_size << std::endl;
-	verbose(V) << "(read_more_chunked) Finished with body " << in_body.length() \
-		<< " and chunked_content " << chunked_content.length() << "." \
-		<< std::endl;
-}
-
-void ws_server_instance::get_chunked_length(size_t& total, size_t& diff)
-{
-	static int V(1);
-	(void)total;
-	(void)diff;
-	verbose(V) << "(get_chunked_length)" << std::endl;
-}
-
-void ws_server_instance::append_chunks()
-{
-	static int V(1);
-	verbose(V) << "(append_chunks)" << std::endl;
-}
-
-void ws_server_instance::mount_chunked()
-{
-	static int V(1);
-	end_of_chunk_stream = false;
-	size_t total_length(0);
-	size_t char_diff(0);
-
-	get_chunked_length(total_length, char_diff);
-	verbose(V) << "(mount_chunked) len: " << total_length << \
-		" received: " << chunked_content.length() << \
-		" char_diff: " << char_diff << std::endl;
-	if (total_length > chunked_content.length())
-		append_chunks();
+	verbose(V) << "(read_more_chunked) Finished with body " << in_body.length() << \
+		" and multipart-content " << multipart_content.length() << "." << \
+		std::endl;
 }

@@ -492,7 +492,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ; } 2> /dev/null
 
 head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -v -H "Expect:" -H "Transfer-Encoding: chunked" -d "@${MYDIR}/file.noise" http://$name_server:4242/post_body
+curl -v -H "Expect:" -H "Content-Type: test/file" -H "Transfer-Encoding: chunked" -d "@${MYDIR}/file.noise" http://$name_server:4242/post_body
 rm ${MYDIR}/file.noise
 ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 

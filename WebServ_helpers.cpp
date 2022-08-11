@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 15:21:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 13:09:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,10 +149,14 @@ void ws_server_instance::mount_multipart()
 	multipart_content = in_body.substr(body_start, body_end - body_start);
 }
 
-void ws_server_instance::set_sizes()
+void ws_server_instance::mount_chunked()
 {
-	static int V(1);
+	set_sizes();
+	// ...
+}
 
+void ws_server_instance::set_props()
+{
 	max_size = std::atoi(location_get_single("client_max_body_size", \
 				itoa(DEFAULT_MAX_BODY_SIZE)).c_str());
 	if (is_multipart())
@@ -161,6 +165,21 @@ void ws_server_instance::set_sizes()
 				in_header.content_type.find("/") + 1);
 		boundary = in_header.content_type.substr( \
 				(in_header.content_type.find("boundary=") + 9));
+		multipart_content_disposition = StringTools::query_for( \
+				"Content-Disposition", in_body);
+		multipart_name = StringTools::query_for("name", in_body);
+		multipart_filename = StringTools::query_for("filename", in_body);
+		multipart_content_type = \
+			StringTools::query_for("Content-Type", in_body);
+	}
+}
+
+void ws_server_instance::set_sizes()
+{
+	static int V(1);
+
+	if (is_multipart())
+	{
 		payload_start = in_body.find(boundary);
 		if (payload_start == std::string::npos)
 			payload_start = 0;
@@ -174,15 +193,10 @@ void ws_server_instance::set_sizes()
 		body_start = body_start == std::string::npos ? 0 : body_start;
 		body_start += body_start ? 4 : 0;
 		body_end = payload_end;
-		multipart_content_disposition = StringTools::query_for( \
-				"Content-Disposition", in_body);
-		multipart_name = StringTools::query_for("name", in_body);
-		multipart_filename = StringTools::query_for("filename", in_body);
-		multipart_content_type = StringTools::query_for("Content-Type", in_body);
 
-		verbose(V) << "(set_sizes:multipart) " << max_size << " " << multipart_content.length() << \
-			" " << in_body.length() << " " << \
-			static_cast<size_t>(in_header.content_length) << std::endl;
+		verbose(V) << "(set_sizes:multipart) " << max_size << " " \
+			<< multipart_content.length() << " " << in_body.length() << " " \
+			<< static_cast<size_t>(in_header.content_length) << std::endl;
 
 		exceeded_limit = max_size && body_end - body_start > max_size;
 		exceeded_limit = exceeded_limit || \
@@ -192,7 +206,10 @@ void ws_server_instance::set_sizes()
 	{
 		verbose(V) << "(set_sizes) chunked_content length: " \
 			<< chunked_content.length() << std::endl;
-		exceeded_limit = chunked_content.length() > max_size;
+		exceeded_limit = max_size && chunked_content.length() > max_size;
+		exceeded_limit = exceeded_limit || \
+			in_header.content_length && \
+			in_body.length() > static_cast<size_t>(in_header.content_length);
 	}
 	else
 	{
@@ -200,7 +217,9 @@ void ws_server_instance::set_sizes()
 		payload_end = in_body.length();
 		body_start = payload_start;
 		body_end = payload_end;
-		exceeded_limit = in_body.length() > max_size;
+		exceeded_limit = max_size && in_body.length() > max_size;
+		exceeded_limit = exceeded_limit || \
+			in_body.length() > static_cast<size_t>(in_header.content_length);
 	}
 }
 

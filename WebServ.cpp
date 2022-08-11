@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 14:05:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 12:58:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,6 +259,7 @@ void WebServ::respond_connection_from(int fd)
 
 	si = choose_instance(in_header, fd_to_port[fd]);
 	si.in_body = get_body(raw_data);
+	si.set_props();
 	si.set_sizes();
 	si.fd = fd;
 	ws_reply_instance respond(si); // ...oonn...

@@ -21,5 +21,5 @@ echo 'You should not see any file listed above this line.'
 echo 'Initial YoupiBanane/youpi.bla' > ${MYDIR}/confs/html4242/YoupiBanane/youpi.bla
 ls -l ${MYDIR}/confs/html4242/YoupiBanane/youpi.bla
 
-echo 'Abouve should be confs/html4242/YoupiBanane/youpi.bla as 30B.'
+echo 'Above should be confs/html4242/YoupiBanane/youpi.bla as 30B.'
 
