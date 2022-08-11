@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 15:15:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 16:06:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void ws_server_instance::read_more_plain(const size_t& max)
 	while (!exceeded_limit && !buf.ended())
 	{
 		next_load = max - in_body.length();
-		in_body.append(buf.receive_exactly(next_load));
+		in_body = buf.receive_exactly(1);
 		set_sizes();
 	}
 	insufficient_resources = buf.fail();
@@ -69,7 +69,6 @@ void ws_server_instance::read_more_plain(const size_t& max)
 void ws_server_instance::read_more_multipart()
 {
 	static int V(1);
-
 	verbose(V) << "(read_more_multipart) Calling read_more_plain." << std::endl;
 	read_more_plain(in_header.content_length);
 	mount_multipart();

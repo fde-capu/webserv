@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 15:02:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/11 16:10:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,12 @@ std::string& CircularBuffer::set_eof()
 
 std::string& CircularBuffer::unfinished()
 {
-	resetMemory();
-	verbose(2) << "(CircularBuffer) Returning unfinished." << std::endl;
+	return output;
+}
+
+std::string& CircularBuffer::out_of_resource()
+{
+	verbose(2) << "(CircularBuffer) Returning out_of_resource." << std::endl;
 	success = false;
 	return set_eof();
 }
@@ -91,11 +95,11 @@ std::string& CircularBuffer::receive_exactly(size_t nbytes)
 	if (checkLimits(nbytes))
 		output.reserve(length() + nbytes);
 	else
-		return unfinished();
+		return out_of_resource();
 	while (size_cur < size_fin)
 	{
 		if (!checkLimits())
-			return unfinished();
+			return out_of_resource();
 		std::cout << "\r(receive_exactly) " << length();
 		rbytes = read(fd, const_cast<char *>(memory), size);
 		if (rbytes == -1)
@@ -108,7 +112,7 @@ std::string& CircularBuffer::receive_exactly(size_t nbytes)
 			size_cur += rbytes;
 		}
 	}
-	return set_eof();
+	return unfinished();
 }
 
 std::string& CircularBuffer::receive_until_eof()
@@ -118,7 +122,7 @@ std::string& CircularBuffer::receive_until_eof()
 	while (1)
 	{
 		if (!checkLimits())
-			return unfinished();
+			return out_of_resource();
 		bytes = read(fd, const_cast<char *>(memory), size);
 
 		verbose(2) << "(receive_until_eof) ->" << fd << ": bytes " << bytes << \
@@ -133,23 +137,17 @@ std::string& CircularBuffer::receive_until_eof()
 		{
 			verbose(2) << "(receive_until_eof) Encontered an error, treated " << \
 				"as warning (" << errno << "): " << strerror(errno) << std::endl;
-			return unfinished();
+			return out_of_resource();
 		}
 		if (bytes == 0)
 		{
 			verbose(2) << "(receive_until_eof) 0" << std::endl;
 			return set_eof();
 		}
-		if (static_cast<size_t>(bytes) < size)
+		if (static_cast<size_t>(bytes) <= size)
 		{
-			verbose(2) << "(receive_until_eof) " << bytes << " < " << size << std::endl;
+			verbose(2) << "(receive_until_eof) " << bytes << " <= " << size << std::endl;
 			output.append(memory, bytes);
-			continue ;
-		}
-		if (static_cast<size_t>(bytes) == size)
-		{
-			verbose(2) << "(receive_until_eof) " << bytes << " == " << size << std::endl;
-			output.append(memory, size);
 			continue ;
 		}
 	}
