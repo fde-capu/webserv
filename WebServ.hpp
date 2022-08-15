@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 15:14:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/15 15:35:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,10 @@ struct ws_server_instance
 	size_t max_size;
 	size_t body_start, body_end;
 	bool exceeded_limit;
+	bool reached_limit;
 
 	void set_sizes();
+	bool check_socket_stream(CircularBuffer&);
 	void set_props();
 
 	int read_more_general();
@@ -77,7 +79,6 @@ struct ws_server_instance
 	void read_more_chunked();
 	void read_more_multipart();
 	void mount_multipart();
-	void mount_chunked();
 
 	DataFold get_location_config() const;
 	bool is_multipart() const;

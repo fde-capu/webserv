@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 16:09:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/15 16:04:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@
 # include <cstdlib>
 # include <sys/socket.h>
 # include <vector>
+# include "Chronometer.hpp"
 
+# define CIRCULARBUFFER_TIMEOUT_MSEC 250
 # define CIRCULARBUFFER_SIZE (1024 * 1)
 # define CIRCULARBUFFER_LIMIT (1048576 * 100)
 
@@ -56,7 +58,7 @@ class CircularBuffer
 		bool fail() const;
 
 		std::string& receive_until_eof();
-		std::string& receive_exactly(size_t);
+		std::string& receive_at_least(size_t = CIRCULARBUFFER_SIZE);
 		std::string output;
 
 		operator std::string();

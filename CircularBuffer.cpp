@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 16:10:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/15 16:06:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,13 @@ bool CircularBuffer::checkLimits() const
 	return true;
 }
 
-std::string& CircularBuffer::receive_exactly(size_t nbytes)
+std::string& CircularBuffer::receive_at_least(size_t nbytes)
 {
 	size_t size_ini(output.length());
 	size_t size_cur(0);
 	size_t size_fin(size_ini + nbytes);
 	int rbytes;
+	Chronometer time_out;
 
 	if (checkLimits(nbytes))
 		output.reserve(length() + nbytes);
@@ -98,10 +99,13 @@ std::string& CircularBuffer::receive_exactly(size_t nbytes)
 		return out_of_resource();
 	while (size_cur < size_fin)
 	{
+		if (time_out > CIRCULARBUFFER_TIMEOUT_MSEC)
+			return unfinished();
 		if (!checkLimits())
 			return out_of_resource();
-		std::cout << "\r(receive_exactly) " << length();
+
 		rbytes = read(fd, const_cast<char *>(memory), size);
+
 		if (rbytes == -1)
 			continue ;
 		if (rbytes == 0)
@@ -118,35 +122,25 @@ std::string& CircularBuffer::receive_exactly(size_t nbytes)
 std::string& CircularBuffer::receive_until_eof()
 {
 	int bytes;
+	Chronometer time_out;
 
 	while (1)
 	{
+		if (time_out > CIRCULARBUFFER_TIMEOUT_MSEC)
+			return unfinished();
 		if (!checkLimits())
 			return out_of_resource();
+
 		bytes = read(fd, const_cast<char *>(memory), size);
 
-		verbose(2) << "(receive_until_eof) ->" << fd << ": bytes " << bytes << \
-			" size " << size << "\t(" << std::string(memory).substr(0, bytes) \
-			<< ")" << std::endl;
-
 		if (bytes == -1 && fd == 0) // stdin
-		{
 			return set_eof();
-		}
 		if (bytes == -1)
-		{
-			verbose(2) << "(receive_until_eof) Encontered an error, treated " << \
-				"as warning (" << errno << "): " << strerror(errno) << std::endl;
-			return out_of_resource();
-		}
+			continue ;
 		if (bytes == 0)
-		{
-			verbose(2) << "(receive_until_eof) 0" << std::endl;
 			return set_eof();
-		}
 		if (static_cast<size_t>(bytes) <= size)
 		{
-			verbose(2) << "(receive_until_eof) " << bytes << " <= " << size << std::endl;
 			output.append(memory, bytes);
 			continue ;
 		}

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 15:09:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/15 15:18:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,8 +121,6 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		<< std::endl;
 	verbose(V) << "(is_413_507) content_type: " << \
 		si.in_header.content_type << std::endl;
-	verbose(V) << "(is_413_507) transfer_encoding: " \
-		<< si.in_header.transfer_encoding << std::endl;
 
 	si.set_sizes();
 	if (si.exceeded_limit)

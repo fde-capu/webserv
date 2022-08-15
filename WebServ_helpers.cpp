@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 14:24:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/15 15:26:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,12 +154,6 @@ void ws_server_instance::mount_multipart()
 	multipart_content = in_body.substr(body_start, body_end - body_start);
 }
 
-void ws_server_instance::mount_chunked()
-{
-	set_sizes();
-	// ...
-}
-
 void ws_server_instance::set_props()
 {
 	max_size = std::atoi(location_get_single("client_max_body_size", \
@@ -194,13 +188,17 @@ void ws_server_instance::set_sizes()
 		body_start += body_start ? 4 : 0;
 		body_end = payload_end;
 
-		verbose(V) << "(set_sizes:multipart) " << max_size << " " \
-			<< multipart_content.length() << " " << in_body.length() << " " \
+		verbose(V) << "(set_sizes:multipart) max_size:" << max_size << \
+			" multipart len:" \
+			<< multipart_content.length() << \
+			" body len:" << in_body.length() << \
+			" declared len:" \
 			<< static_cast<size_t>(in_header.content_length) << std::endl;
 
 		exceeded_limit = max_size && body_end - body_start > max_size;
 		exceeded_limit = exceeded_limit || \
 			in_body.length() > static_cast<size_t>(in_header.content_length);
+		reached_limit = in_body.length() == static_cast<size_t>(in_header.content_length);
 	}
 	else if (is_chunked())
 	{
@@ -210,6 +208,7 @@ void ws_server_instance::set_sizes()
 		exceeded_limit = exceeded_limit || \
 			(in_header.content_length && \
 			in_body.length() > static_cast<size_t>(in_header.content_length));
+		reached_limit = in_body.length() == static_cast<size_t>(in_header.content_length);
 	}
 	else
 	{
@@ -220,6 +219,7 @@ void ws_server_instance::set_sizes()
 		exceeded_limit = max_size && in_body.length() > max_size;
 		exceeded_limit = exceeded_limit || \
 			in_body.length() > static_cast<size_t>(in_header.content_length);
+		reached_limit = in_body.length() == static_cast<size_t>(in_header.content_length);
 	}
 }
 

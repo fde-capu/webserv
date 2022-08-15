@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/11 16:06:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/15 15:38:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,22 @@ void ws_server_instance::read_more_plain(const size_t& max)
 
 	if (in_header.method == "GET")
 		return ;
-	set_sizes();
-	while (!exceeded_limit && !buf.ended())
+	while (check_socket_stream(buf))
 	{
 		next_load = max - in_body.length();
-		in_body = buf.receive_exactly(1);
-		set_sizes();
+		in_body = buf.receive_at_least(next_load);
 	}
+}
+
+bool ws_server_instance::check_socket_stream(CircularBuffer& buf)
+{
+	set_sizes();
 	insufficient_resources = buf.fail();
+	return \
+		!exceeded_limit && \
+		!reached_limit && \
+		!buf.ended() && \
+		!insufficient_resources;
 }
 
 void ws_server_instance::read_more_multipart()
@@ -85,7 +93,7 @@ void ws_server_instance::read_more_chunked()
 //		in_body.append(buf.receive_until("\r\n"));
 //
 //	set_sizes();
-//	while (!exceeded_limit && !buf.ended())
+//	while (!exceeded_limit && !reached_limit && !buf.ended())
 //	{
 //		verbose(V) << "(read_more_chunked) : " << << std::endl;
 //		set_sizes();
