@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/28 17:01:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/16 15:28:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,10 +188,12 @@ std::string StringTools::itos(int i) const
 	return std::string(s.str());
 }
 
-std::string substitute_all_ret(const std::string dst, std::string before, std::string after)
+std::string substitute_all_ret(const std::string dst, std::string before, \
+	std::string after)
 { return stool.substitute_all_ret(dst, before, after); }
 
-std::string StringTools::substitute_all_ret(const std::string dst, std::string before, std::string after) const
+std::string StringTools::substitute_all_ret(const std::string dst, \
+	std::string before, std::string after) const
 {
 	std::string out(static_cast<std::string>(dst));
 	out = substitute_all(out, before, after);

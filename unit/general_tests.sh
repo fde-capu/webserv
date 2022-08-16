@@ -70,6 +70,26 @@ anounce()
 	{ echo '-------------------------------------------------'; } 2> /dev/null
 }
 
+getcode()
+{
+	eval "$1 -o /dev/null -s -w '%{http_code}'";
+}
+
+getbodyandcode()
+{
+	eval "$1 -s -w '%{http_code}'";
+}
+
+colorprint()
+{
+	echo -n "$1 ";
+	if [ "$2" = "$3" ]; then
+		echo "\033[0;32m [ OK ]\033[0;37m";
+	else
+		echo "\033[0;31m [ KO ] \033[0;37m";
+	fi
+}
+
 for i in 1 2 3 4 5 6 7 8 9 10
 do
 	{ divider "#"; } 2> /dev/null
@@ -85,6 +105,7 @@ if false; then
 #################################################################### Begin
 
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ## Basic_1 ################################################################
 
@@ -96,10 +117,24 @@ if false; then
 \
 ; } 2> /dev/null
 
-if ! curl -v http://$name_server:3490; then
+{ set +x; } 2> /dev/null
+
+cmd="curl http://$name_server:3490";
+out=`getbodyandcode "$cmd"`;
+
+if [ "$out" = "" ]; then
 	 { anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
 	 exit 1;
 fi
+
+echo ">$out<"
+t="`cat $MYDIR/confs/html/index.htm`\n200";
+echo "t >$t<";
+
+{
+	colorprint "?" \
+		"$out" "$t"
+} 2> /dev/null
 
 ## Basic_2 ################################################################
 
@@ -109,7 +144,15 @@ fi
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3490 -H 'Host: wtf_server'
+cmd="curl http://$name_server:3490 -H 'Host: wtf_server'"
+out=`eval "$cmd -v"`;
+
+{
+	colorprint "Returns 200" \
+		`getcode "$cmd"` 200;
+	colorprint "Is the expected file" \
+		"$out" "`cat $MYDIR/confs/html/index.htm`"
+} 2> /dev/null
 
 ## Basic_3 ################################################################
 
@@ -121,6 +164,15 @@ curl -v http://$name_server:3490 -H 'Host: wtf_server'
 
 curl -v http://$name_server:3490 -H 'Host: krazything'
 
+{
+	colorprint "Returns 200" \
+		`curl -o /dev/null -s -w "%{http_code}" http://$name_server:3490 \
+		-H 'Host: krazything'` 200;
+	colorprint "Is the expected file" \
+		"`curl http://$name_server:3490 -H 'Host: krazything'`" "`cat \
+		$MYDIR/confs/html-custom-server-name/index.html`"
+} 2> /dev/null
+
 ## Basic_4 ################################################################
 
 { anounce Basic_4 \
@@ -131,37 +183,15 @@ curl -v http://$name_server:3490 -H 'Host: krazything'
 
 curl -v http://$name_server:3490 -H 'Host: rootless'
 
-## Basic_5 ################################################################
+{
+	colorprint "Returns 403" \
+		`curl -o /dev/null -s -w "%{http_code}" http://$name_server:3490 \
+		-H 'Host: rootless'` 403;
+} 2> /dev/null
+
+# Basic_5 ################################################################
 
 { anounce Basic_5 \
-\
-	'POST test. Within limits of client_max_body_size:' \
-\
-; } 2> /dev/null
-
-curl -D- --trace-ascii log -F "file=@${MYDIR}/99B.words" \
-	http://$name_server:3490 && cat log && rm log
-
-ls -l ${MYDIR}/confs/html/99B.words;
-cat ${MYDIR}/confs/html/99B.words;
-
-## Basic_6 ################################################################
-
-{ anounce Basic_6 \
-\
-	'POST test. 99B again, noise this time.' \
-\
-; } 2> /dev/null
-
-head -c 99 /dev/urandom > ${MYDIR}/file.noise
-curl -D- --trace-ascii log -F "file=@${MYDIR}/file.noise" \
-	http://$name_server:3490 && cat log && rm log
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html/file.noise;
-
-# B ################################################################
-
-{ anounce B \
 \
 	'Accepts subdirectory calls. \n
 	-L tells curl to follow redirect. \n
@@ -172,9 +202,9 @@ ls -l ${MYDIR}/confs/html/file.noise;
 
 curl -vL http://$name_server:3490/somesub
 
-# C ################################################################
+# Basic_6 ################################################################
 
-{ anounce C \
+{ anounce Basic_6 \
 \
 	"Subdirectory ending with '/' has the same effect. \n
 	This time, curl -L is not required." \
@@ -182,8 +212,6 @@ curl -vL http://$name_server:3490/somesub
 ; } 2> /dev/null
 
 curl -v http://$name_server:3490/somesub/
-
-# D ################################################################
 
 # E ################################################################
 
@@ -262,6 +290,34 @@ curl -v http://$name_server:3493 -L
 ; } 2> /dev/null
 
 curl -v http://$name_server:3493
+
+## POST_1  ################################################################
+
+{ anounce POST_1 \
+\
+	'POST test. Within limits of client_max_body_size:' \
+\
+; } 2> /dev/null
+
+curl -D- --trace-ascii log -F "file=@${MYDIR}/99B.words" \
+	http://$name_server:3490 && cat log && rm log
+
+ls -l ${MYDIR}/confs/html/99B.words;
+cat ${MYDIR}/confs/html/99B.words;
+
+## POST_2 ################################################################
+
+{ anounce POST_2 \
+\
+	'POST test. 99B again, noise this time.' \
+\
+; } 2> /dev/null
+
+head -c 99 /dev/urandom > ${MYDIR}/file.noise
+curl -D- --trace-ascii log -F "file=@${MYDIR}/file.noise" \
+	http://$name_server:3490 && cat log && rm log
+rm ${MYDIR}/file.noise
+ls -l ${MYDIR}/confs/html/file.noise;
 
 # J ################################################################
 
@@ -483,7 +539,6 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce Large_Uploads_1 \
 \

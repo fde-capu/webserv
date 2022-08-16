@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/16 01:59:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/16 15:05:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 	verbose(V) << "(is_413_507) content_type: " << \
 		si.in_header.content_type << std::endl;
 
+	pos_status = si.read_more_general();
 	si.set_sizes();
 	if (si.exceeded_limit)
 	{
@@ -129,16 +130,12 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		out_body = "BODY FOR 413";
 		return 413;
 	}
-
-	pos_status = si.read_more_general();
-
 	if (pos_status == 507)
 	{
 		set_code(507, "Insufficient Resources");
 		out_body = "BODY FOR 507";
 		return 507;
 	}
-
 	if (pos_status == 422)
 	{
 		set_code(422, "Unprocessable Entity");
@@ -156,14 +153,7 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		si.chunked_content.substr(0, VPRINTLIM) << "<< len: " << \
 		si.chunked_content.length() << std::endl;
 
-	if (pos_status == 413)
-	{
-		set_code(413, "Payload Too Large (Deceptive Declaration or Excess)");
-		out_body = "BODY FOR 413";
-		return 413;
-	}
-	else
-		return 0;
+	return 0;
 }
 
 int ws_reply_instance::is_424(ws_server_instance& si)
