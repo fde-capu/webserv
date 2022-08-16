@@ -83,7 +83,7 @@ getbodyandcode()
 colorprint()
 {
 	echo -n "$1 ";
-	if [ "$2" = "$3" ]; then
+	if [[ $2 = $3 ]]; then
 		echo "\033[0;32m [ OK ]\033[0;37m";
 	else
 		echo "\033[0;31m [ KO ] \033[0;37m";
@@ -117,7 +117,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 \
 ; } 2> /dev/null
 
-{ set +x; } 2> /dev/null
+#{ set +x; } 2> /dev/null
 
 cmd="curl http://$name_server:3490";
 out=`getbodyandcode "$cmd"`;
@@ -128,11 +128,11 @@ if [ "$out" = "" ]; then
 fi
 
 echo ">$out<"
-t="`cat $MYDIR/confs/html/index.htm`\n200";
+t="`cat $MYDIR/confs/html/index.htm` 200";
 echo "t >$t<";
 
 {
-	colorprint "?" \
+	colorprint "Output test:" \
 		"$out" "$t"
 } 2> /dev/null
 
