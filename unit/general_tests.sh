@@ -495,10 +495,10 @@ head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
 
 curl -v -H "Expect:" -H "Content-Type: test/file" -H \
 	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/post_body
+	"@${MYDIR}/file.noise" http://$name_server:4242/post_body/file.noise
 
 rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
@@ -512,10 +512,10 @@ head -c 42 /dev/urandom > ${MYDIR}/file.noise
 
 curl -v -H "Expect:" -H "Content-Type: test/file" -H \
 	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
 
 rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
@@ -529,7 +529,7 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
 curl -v -H "Expect:" -H "Content-Type: test/file" -H \
 	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
 rm ${MYDIR}/file.noise
 ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
@@ -544,7 +544,7 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 head -c 2MiB /dev/urandom > ${MYDIR}/file.noise
 curl -v -H "Expect:" -H "Content-Type: test/file" -H \
 	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
 rm ${MYDIR}/file.noise
 ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
@@ -560,9 +560,9 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 head -c 50MB /dev/urandom > ${MYDIR}/file.noise
 curl -v -H "Expect:" -H "Content-Type: test/file" -H \
 	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
 rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
@@ -576,9 +576,9 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 head -c 200MiB /dev/urandom > ${MYDIR}/file.noise
 curl -v -H "Expect:" -H "Content-Type: test/file" -H \
 	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
 rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
 exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
