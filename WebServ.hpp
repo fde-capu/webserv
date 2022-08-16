@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/15 15:35:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/16 01:34:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ struct ws_server_instance
 	size_t body_start, body_end;
 	bool exceeded_limit;
 	bool reached_limit;
+	int status;
 
 	void set_sizes();
 	bool check_socket_stream(CircularBuffer&);

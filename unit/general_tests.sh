@@ -377,8 +377,6 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce Large_Uploads_1 \
 \
 	'Testing 1MiB.noise. This should be reject by 413 because exceeds max_size.' \
@@ -485,6 +483,8 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce Large_Uploads_1 \
 \
 	'Testing 1MiB.noise. This should be reject by 413 because exceeds max_size.' \
@@ -492,11 +492,13 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 ; } 2> /dev/null
 
 head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -v -H "Expect:" -H "Content-Type: test/file" -H "Transfer-Encoding: chunked" -d "@${MYDIR}/file.noise" http://$name_server:4242/post_body
+
+curl -v -H "Expect:" -H "Content-Type: test/file" -H \
+	"Transfer-Encoding: chunked" -d \
+	"@${MYDIR}/file.noise" http://$name_server:4242/post_body
+
 rm ${MYDIR}/file.noise
 ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
-
-exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ## Large Uploads ################################################################
 
@@ -507,7 +509,11 @@ exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 ; } 2> /dev/null
 
 head -c 42 /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+
+curl -v -H "Expect:" -H "Content-Type: test/file" -H \
+	"Transfer-Encoding: chunked" -d \
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+
 rm ${MYDIR}/file.noise
 ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
@@ -515,28 +521,30 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 { anounce Large_Uploads_3 \
 \
-	'Now POSTing 1MiB.noise.\n
-	This shall NOT be accepted, because curl will expect 100-continue,\n
-	but webserv must always close the connection. Chose 424 for answer.' \
-\
-; } 2> /dev/null
-
-head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/large_upload
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
-
-## Large Uploads ################################################################
-
-{ anounce Large_Uploads_4 \
-\
-	'Again 1MiB.noise, this time sending the file right away.\n
+	'1MiB.noise.\n
 	This SHALL BE accepted and saved.' \
 \
 ; } 2> /dev/null
 
 head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+curl -v -H "Expect:" -H "Content-Type: test/file" -H \
+	"Transfer-Encoding: chunked" -d \
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
+rm ${MYDIR}/file.noise
+ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+
+## Large Uploads ################################################################
+
+{ anounce Large_Uploads_4 \
+\
+	'Now 2MiB.noise.' \
+\
+; } 2> /dev/null
+
+head -c 2MiB /dev/urandom > ${MYDIR}/file.noise
+curl -v -H "Expect:" -H "Content-Type: test/file" -H \
+	"Transfer-Encoding: chunked" -d \
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
 ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
@@ -544,32 +552,21 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
 { anounce Large_Uploads_5 \
 \
-	'Now 2MiB.noise, alse sending the file right away.' \
-\
-; } 2> /dev/null
-
-head -c 2MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
-rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
-
-## Large Uploads ################################################################
-
-{ anounce Large_Uploads_6 \
-\
 	'How about 50MB?\n
 	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
 \
 ; } 2> /dev/null
 
 head -c 50MB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+curl -v -H "Expect:" -H "Content-Type: test/file" -H \
+	"Transfer-Encoding: chunked" -d \
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
 ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
 ## Large Uploads ################################################################
 
-{ anounce Large_Uploads_7 \
+{ anounce Large_Uploads_6 \
 \
 	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
 	Server should not crash, so 507 Insufficient Storage.' \
@@ -577,10 +574,13 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 ; } 2> /dev/null
 
 head -c 200MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
+curl -v -H "Expect:" -H "Content-Type: test/file" -H \
+	"Transfer-Encoding: chunked" -d \
+	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload
 rm ${MYDIR}/file.noise
 ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 
+exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ## Stress ################################################################
 

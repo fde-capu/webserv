@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/15 15:38:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/16 01:56:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,21 +46,7 @@ int ws_server_instance::read_more_general()
 		read_more_chunked();
 	if (is_multipart())
 		read_more_multipart();
-	return 0;
-}
-
-void ws_server_instance::read_more_plain(const size_t& max)
-{
-	size_t next_load;
-	CircularBuffer buf(fd);
-
-	if (in_header.method == "GET")
-		return ;
-	while (check_socket_stream(buf))
-	{
-		next_load = max - in_body.length();
-		in_body = buf.receive_at_least(next_load);
-	}
+	return status;
 }
 
 bool ws_server_instance::check_socket_stream(CircularBuffer& buf)
@@ -74,6 +60,24 @@ bool ws_server_instance::check_socket_stream(CircularBuffer& buf)
 		!insufficient_resources;
 }
 
+void ws_server_instance::read_more_plain(const size_t& max)
+{
+	static int V(1);
+	size_t next_load;
+	CircularBuffer buf(fd);
+
+	if (in_header.method == "GET")
+		return ;
+	while (check_socket_stream(buf))
+	{
+		if (max <= in_body.length())
+			return ;
+		next_load = max - in_body.length();
+		verbose(V) << "(read_more_plain) max " << max << std::endl;
+		in_body = buf.receive_at_least(next_load);
+	}
+}
+
 void ws_server_instance::read_more_multipart()
 {
 	static int V(1);
@@ -85,21 +89,15 @@ void ws_server_instance::read_more_multipart()
 void ws_server_instance::read_more_chunked()
 {
 	static int V(1);
-//	CircularBuffer buf(fd);
-//	size_t p;
-//	
-//	p = in_body.find("\r\n");
-//	if (p == std::string::npos)
-//		in_body.append(buf.receive_until("\r\n"));
-//
-//	set_sizes();
-//	while (!exceeded_limit && !reached_limit && !buf.ended())
-//	{
-//		verbose(V) << "(read_more_chunked) : " << << std::endl;
-//		set_sizes();
-//	}
-//	insufficient_resources = buf.fail();
-//	mount_chunked();
+	verbose(V) << "(read_more_chunked) Calling read_more_plain." << \
+		std::endl;
+	verbose(V) << "(read_more_chunked) max_size " << max_size << std::endl;
+
+	read_more_plain(max_size);
+	chunked_content = in_body;
+	set_sizes();
+	if (exceeded_limit)
+		status = 413;
 
 	verbose(V) << "(read_more_chunked) Finished with body " \
 		<< in_body.length() << " and chunked-content " \
