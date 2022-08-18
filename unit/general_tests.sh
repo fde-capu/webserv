@@ -77,13 +77,30 @@ getcode()
 
 getbodyandcode()
 {
-	eval "$1 -s -w '%{http_code}'";
+	eval "$1 -s -w '%{http_code}' -v";
+}
+
+unittest()
+{
+	set -x;
+	out=`$2 -s -v -w '%{http_code}'`;
+	{ set +x; } 2> /dev/null
+
+	if [ "$out" = "000" ]; then
+		{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
+		exit 1;
+	fi
+	tfile=`cat $4`;
+	tfile="$tfile\n$3"
+	colorprint "$1" "$out" "$tfile"
 }
 
 colorprint()
 {
+	a=`echo "$2" | hd`;
+	b=`echo "$3" | hd`;
 	echo -n "$1 ";
-	if [[ $2 = $3 ]]; then
+	if [ "$a" = "$b" ] ; then
 		echo "\033[0;32m [ OK ]\033[0;37m";
 	else
 		echo "\033[0;31m [ KO ] \033[0;37m";
@@ -99,11 +116,9 @@ done
 
 { set +x; } 2> /dev/null
 if false; then
-	echo 'foo';
-
+	echo 'Stablish Jump and End lines.';
 
 #################################################################### Begin
-
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
@@ -116,25 +131,28 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 	Must receive 200 OK and some html body from html/index.html.' \
 \
 ; } 2> /dev/null
-
-#{ set +x; } 2> /dev/null
+{ set +x; } 2> /dev/null
 
 cmd="curl http://$name_server:3490";
-out=`getbodyandcode "$cmd"`;
+file="$MYDIR/confs/html/index.htm";
+code="200";
+unittest "Basic 1" "$cmd" "$code" "$file";
 
-if [ "$out" = "" ]; then
-	 { anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
-	 exit 1;
-fi
+#out=`getbodyandcode "$cmd"`;
 
-echo ">$out<"
-t="`cat $MYDIR/confs/html/index.htm` 200";
-echo "t >$t<";
+#if [ "$out" = "" ]; then
+#	 { anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
+#	 exit 1;
+#fi
 
-{
-	colorprint "Output test:" \
-		"$out" "$t"
-} 2> /dev/null
+#t="`cat $MYDIR/confs/html/index.htm`";
+#r="200";
+#t="$t\n$r"
+
+#{
+#	colorprint "Output test:" \
+#		"$out" "$t"
+#} 2> /dev/null
 
 ## Basic_2 ################################################################
 
