@@ -133,7 +133,6 @@ if false; then
 
 #################################################################### Begin
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ## Basic_1 ################################################################
 
@@ -187,15 +186,8 @@ unittest "Basic 3" "$cmd" "$code" "$file";
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3490 -H 'Host: rootless'";
-file="";
 code="403";
-unittest "Basic 4" "$cmd" "$code" "$file";
-
-#{
-#	colorprint "Returns 403" \
-#		`curl -o /dev/null -s -w "%{http_code}" http://$name_server:3490 \
-#		-H 'Host: rootless'` 403;
-#} 2> /dev/null
+unittest "Basic 4" "$cmd" "$code";
 
 # Basic_5 ################################################################
 
@@ -208,9 +200,13 @@ unittest "Basic 4" "$cmd" "$code" "$file";
 \
 ; } 2> /dev/null
 
-curl -vL http://$name_server:3490/somesub
+cmd="curl -vL http://$name_server:3490/somesub"
+code="200"
+file="$MYDIR/confs/html/somesub/index.htm";
+unittest "Basic 5" "$cmd" "$code" "$file";
 
 # Basic_6 ################################################################
+
 
 { anounce Basic_6 \
 \
@@ -219,28 +215,39 @@ curl -vL http://$name_server:3490/somesub
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3490/somesub/
+cmd="curl -vL http://$name_server:3490/somesub/"
+code="200"
+file="$MYDIR/confs/html/somesub/index.htm";
+unittest "Basic 6" "$cmd" "$code" "$file";
 
-# E ################################################################
+# Basic_7 ################################################################
 
-{ anounce E \
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce Basic_7 \
 \
 	'Unexistent servername defaults to :3490 first declaration.' \
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3490 -H 'Host: unexistent_servername'
+cmd="curl http://$name_server:3490 -H 'Host: unexistent_servername'";
+file="$MYDIR/confs/html/index.htm";
+code="200";
+unittest "Basic 7" "$cmd" "$code" "$file";
 
-# FA ###############################################################
+# Basic_8 ################################################################
 
-{ anounce FA \
+{ anounce Basic_8 \
 \
 	':3491, another port, another server, another folder: \n
 	root ./unit/confs/html-3491.' \
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3491
+cmd="curl http://$name_server:3491"
+file="$MYDIR/confs/html-3491/index.html";
+code="200";
+unittest "Basic 8" "$cmd" "$code" "$file";
 
 # FB ###############################################################
 
