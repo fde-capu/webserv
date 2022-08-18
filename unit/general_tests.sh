@@ -68,6 +68,7 @@ anounce()
 	{ divider $1; } 2> /dev/null
 	echo $2
 	{ echo '-------------------------------------------------'; } 2> /dev/null
+	{ set +x; } 2> /dev/null
 }
 
 getcode()
@@ -82,16 +83,28 @@ getbodyandcode()
 
 unittest()
 {
-	set -x;
-	out=`$2 -s -v -w '%{http_code}'`;
-	{ set +x; } 2> /dev/null
-
+	fullcmd="set -x; $2 -sSvw '%{http_code}'";
+	if [ "$4" = "" ] ; then
+		fullcmd="$fullcmd -o tmp_response";
+		tfile="$3";
+	fi
+	out=`eval "$fullcmd"`;
 	if [ "$out" = "000" ]; then
 		{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
 		exit 1;
 	fi
-	tfile=`cat $4`;
-	tfile="$tfile\n$3"
+
+	if [ "$4" = "" ] ; then
+		cat tmp_response;
+		echo -n " ";
+		rm tmp_response;
+	fi
+	echo $out;
+
+	if [ "$4" != "" ] ; then
+		tfile=`cat $4`;
+		tfile="$tfile\n$3"
+	fi;
 	colorprint "$1" "$out" "$tfile"
 }
 
@@ -131,28 +144,11 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 	Must receive 200 OK and some html body from html/index.html.' \
 \
 ; } 2> /dev/null
-{ set +x; } 2> /dev/null
 
 cmd="curl http://$name_server:3490";
 file="$MYDIR/confs/html/index.htm";
 code="200";
 unittest "Basic 1" "$cmd" "$code" "$file";
-
-#out=`getbodyandcode "$cmd"`;
-
-#if [ "$out" = "" ]; then
-#	 { anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
-#	 exit 1;
-#fi
-
-#t="`cat $MYDIR/confs/html/index.htm`";
-#r="200";
-#t="$t\n$r"
-
-#{
-#	colorprint "Output test:" \
-#		"$out" "$t"
-#} 2> /dev/null
 
 ## Basic_2 ################################################################
 
@@ -162,17 +158,13 @@ unittest "Basic 1" "$cmd" "$code" "$file";
 \
 ; } 2> /dev/null
 
-cmd="curl http://$name_server:3490 -H 'Host: wtf_server'"
-out=`eval "$cmd -v"`;
-
-{
-	colorprint "Returns 200" \
-		`getcode "$cmd"` 200;
-	colorprint "Is the expected file" \
-		"$out" "`cat $MYDIR/confs/html/index.htm`"
-} 2> /dev/null
+cmd="curl http://$name_server:3490 -H 'Host: wtf_server'";
+file="$MYDIR/confs/html/index.htm";
+code="200";
+unittest "Basic 2" "$cmd" "$code" "$file";
 
 ## Basic_3 ################################################################
+
 
 { anounce Basic_3 \
 \
@@ -180,18 +172,13 @@ out=`eval "$cmd -v"`;
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3490 -H 'Host: krazything'
-
-{
-	colorprint "Returns 200" \
-		`curl -o /dev/null -s -w "%{http_code}" http://$name_server:3490 \
-		-H 'Host: krazything'` 200;
-	colorprint "Is the expected file" \
-		"`curl http://$name_server:3490 -H 'Host: krazything'`" "`cat \
-		$MYDIR/confs/html-custom-server-name/index.html`"
-} 2> /dev/null
+cmd="curl http://$name_server:3490 -H 'Host: krazything'";
+file="$MYDIR/confs/html-custom-server-name/index.html";
+code="200";
+unittest "Basic 3" "$cmd" "$code" "$file";
 
 ## Basic_4 ################################################################
+
 
 { anounce Basic_4 \
 \
@@ -199,13 +186,16 @@ curl -v http://$name_server:3490 -H 'Host: krazything'
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3490 -H 'Host: rootless'
+cmd="curl http://$name_server:3490 -H 'Host: rootless'";
+file="";
+code="403";
+unittest "Basic 4" "$cmd" "$code" "$file";
 
-{
-	colorprint "Returns 403" \
-		`curl -o /dev/null -s -w "%{http_code}" http://$name_server:3490 \
-		-H 'Host: rootless'` 403;
-} 2> /dev/null
+#{
+#	colorprint "Returns 403" \
+#		`curl -o /dev/null -s -w "%{http_code}" http://$name_server:3490 \
+#		-H 'Host: rootless'` 403;
+#} 2> /dev/null
 
 # Basic_5 ################################################################
 
