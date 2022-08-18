@@ -39,6 +39,9 @@ name_server="127.0.0.1";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
+ok_count=0;
+ko_count=0;
+tot_count=0;
 
 enterkey()
 {
@@ -83,29 +86,68 @@ getbodyandcode()
 
 unittest()
 {
-	fullcmd="set -x; $2 -sSvw '%{http_code}'";
-	if [ "$4" = "" ] ; then
+	if [ "$noise" != "" ] ; then
+		head -c $noise /dev/urandom > ${MYDIR}/file.noise
+	fi;
+	
+	fullcmd="set -x; $cmd -sSvw '%{http_code}'";
+	if [ "$file" = "" ] ; then
 		fullcmd="$fullcmd -o tmp_response";
-		tfile="$3";
+		tfile="$code";
 	fi
 	out=`eval "$fullcmd"`;
+
 	if [ "$out" = "000" ]; then
 		{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
 		exit 1;
 	fi
 
-	if [ "$4" = "" ] ; then
+	if [ "$file" = "" ] ; then
 		cat tmp_response;
 		echo -n " ";
 		rm tmp_response;
 	fi
 	echo $out;
 
-	if [ "$4" != "" ] ; then
-		tfile=`cat $4`;
-		tfile="$tfile\n$3"
+	if [ "$file" != "" ] ; then
+		tfile=`cat $file`;
+		tfile="$tfile\n$code"
 	fi;
 	colorprint "$1" "$out" "$tfile"
+
+	if [ "$noise" != "" ] ; then
+		if [ "$file" != "" ] ; then
+			colorprint "Noise" "`cat ${MYDIR}/file.noise`" "`cat $file`";
+		fi
+		rm ${MYDIR}/file.noise;
+		if [ "$file" != "" ] ; then
+			ls -l $file;
+			cat $file;
+		fi
+	fi
+
+	cmd="";
+	code="";
+	file="";
+	noise="";
+}
+
+finish()
+{
+	{ anounce FINISHED \
+	\
+		'..........now........\n
+		\t......the.....\n\t\t....results......' \
+	\
+	; } 2> /dev/null
+	echo " Total:\t\t $tot_count";
+	echo "\033[0;32m [ OK ] \t $ok_count \033[0;37m";
+	if [ "$ko_count" = "0" ] ; then
+		echo "\033[0;32m Nice! \033[0;37m\n";
+	else
+		echo "\033[0;31m [ KO ] \t $ko_count \t:(\033[0;37m";
+	fi;
+	exit 0;
 }
 
 colorprint()
@@ -115,9 +157,12 @@ colorprint()
 	echo -n "$1 ";
 	if [ "$a" = "$b" ] ; then
 		echo "\033[0;32m [ OK ]\033[0;37m";
+		ok_count=$((ok_count+1));
 	else
 		echo "\033[0;31m [ KO ] \033[0;37m";
+		ko_count=$((ko_count+1));
 	fi
+	tot_count=$((tot_count+1));
 }
 
 for i in 1 2 3 4 5 6 7 8 9 10
@@ -133,6 +178,7 @@ if false; then
 
 #################################################################### Begin
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ## Basic_1 ################################################################
 
@@ -147,7 +193,7 @@ if false; then
 cmd="curl http://$name_server:3490";
 file="$MYDIR/confs/html/index.htm";
 code="200";
-unittest "Basic 1" "$cmd" "$code" "$file";
+unittest "Basic 1";
 
 ## Basic_2 ################################################################
 
@@ -160,7 +206,7 @@ unittest "Basic 1" "$cmd" "$code" "$file";
 cmd="curl http://$name_server:3490 -H 'Host: wtf_server'";
 file="$MYDIR/confs/html/index.htm";
 code="200";
-unittest "Basic 2" "$cmd" "$code" "$file";
+unittest "Basic 2";
 
 ## Basic_3 ################################################################
 
@@ -174,7 +220,7 @@ unittest "Basic 2" "$cmd" "$code" "$file";
 cmd="curl http://$name_server:3490 -H 'Host: krazything'";
 file="$MYDIR/confs/html-custom-server-name/index.html";
 code="200";
-unittest "Basic 3" "$cmd" "$code" "$file";
+unittest "Basic 3";
 
 ## Basic_4 ################################################################
 
@@ -187,7 +233,7 @@ unittest "Basic 3" "$cmd" "$code" "$file";
 
 cmd="curl http://$name_server:3490 -H 'Host: rootless'";
 code="403";
-unittest "Basic 4" "$cmd" "$code";
+unittest "Basic 4";
 
 # Basic_5 ################################################################
 
@@ -203,7 +249,7 @@ unittest "Basic 4" "$cmd" "$code";
 cmd="curl -vL http://$name_server:3490/somesub"
 code="200"
 file="$MYDIR/confs/html/somesub/index.htm";
-unittest "Basic 5" "$cmd" "$code" "$file";
+unittest "Basic 5";
 
 # Basic_6 ################################################################
 
@@ -218,11 +264,10 @@ unittest "Basic 5" "$cmd" "$code" "$file";
 cmd="curl -vL http://$name_server:3490/somesub/"
 code="200"
 file="$MYDIR/confs/html/somesub/index.htm";
-unittest "Basic 6" "$cmd" "$code" "$file";
+unittest "Basic 6";
 
 # Basic_7 ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce Basic_7 \
 \
@@ -233,7 +278,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 cmd="curl http://$name_server:3490 -H 'Host: unexistent_servername'";
 file="$MYDIR/confs/html/index.htm";
 code="200";
-unittest "Basic 7" "$cmd" "$code" "$file";
+unittest "Basic 7";
 
 # Basic_8 ################################################################
 
@@ -247,34 +292,39 @@ unittest "Basic 7" "$cmd" "$code" "$file";
 cmd="curl http://$name_server:3491"
 file="$MYDIR/confs/html-3491/index.html";
 code="200";
-unittest "Basic 8" "$cmd" "$code" "$file";
+unittest "Basic 8";
 
-# FB ###############################################################
+##################################################################
 
-{ anounce FB \
+
+
+{ anounce Not_allowed_1 \
 \
 	':3491 accepts only GET. Testing POST is not allowed. 405' \
 \
 ; } 2> /dev/null
 
-head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -v -F "file=@${MYDIR}/file.noise" http://$name_server:3491
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html-3491/file.noise;
+cmd="curl -F \"file=@${MYDIR}/file.noise\" http://$name_server:3491";
+code="405";
+noise="1MiB";
 
-# FC ###############################################################
+unittest "Not allowed 1";
 
-{ anounce FC \
+##################################################################
+
+{ anounce Not_allowed_2 \
 \
 	':3491 accepts only GET. Testing DELETE is not allowed. 405' \
 \
 ; } 2> /dev/null
 
-curl -v -X DELETE http://$name_server:3491
+cmd="curl -X DELETE http://$name_server:3491";
+code="405";
+unittest "Not allowed 2";
 
-# G ################################################################
+##################################################################
 
-{ anounce G \
+{ anounce Forbidden \
 \
 	':3492 is solenly a `server { listen 3492; }`, \n
 	this is an open port, but forbidden serverside, \n
@@ -282,31 +332,39 @@ curl -v -X DELETE http://$name_server:3491
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3492
-#
-## H ################################################################
-#
-{ anounce H \
-\
-	':3493 server redirects 301 to :3490. \n
-	- client redirecting:' \
-\
-; } 2> /dev/null
+cmd="curl -v http://$name_server:3492"
+code="403";
+unittest "Forbidden";
 
-curl -v http://$name_server:3493 -L
+##################################################################
 
-# I ################################################################
-
-{ anounce I \
+{ anounce Dumb_client \
 \
 	' - client NOT redirecting (gets 301):\n
 	(dumb test, this is client-side).' \
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:3493
+cmd="curl http://$name_server:3493"
+code="301";
+unittest "Client not redirecting";
+
+##################################################################
+
+{ anounce Redirect \
+\
+	':3493 server redirects 301 to :3490. \n
+	- client redirecting:' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3493 -L"
+file="$MYDIR/confs/html/index.htm";
+code="200";
+unittest "Client redirecting made two calls";
 
 ## POST_1  ################################################################
+
 
 { anounce POST_1 \
 \
@@ -314,13 +372,17 @@ curl -v http://$name_server:3493
 \
 ; } 2> /dev/null
 
-curl -D- --trace-ascii log -F "file=@${MYDIR}/99B.words" \
-	http://$name_server:3490 && cat log && rm log
-
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+cmd="curl -F \"file=@${MYDIR}/99B.words\" http://$name_server:3490";
+code="201";
+unittest "Simple post";
+colorprint "Compare files" "`cat ${MYDIR}/99B.words`" "`cat ${MYDIR}/confs/html/99B.words`";
+rm ${MYDIR}/99B.words
 ls -l ${MYDIR}/confs/html/99B.words;
 cat ${MYDIR}/confs/html/99B.words;
 
 ## POST_2 ################################################################
+
 
 { anounce POST_2 \
 \
@@ -329,11 +391,14 @@ cat ${MYDIR}/confs/html/99B.words;
 ; } 2> /dev/null
 
 head -c 99 /dev/urandom > ${MYDIR}/file.noise
-curl -D- --trace-ascii log -F "file=@${MYDIR}/file.noise" \
-	http://$name_server:3490 && cat log && rm log
+cmd="curl -F \"file=@${MYDIR}/file.noise\" http://$name_server:3490";
+code="201";
+file="$MYDIR/confs/html/file.noise";
+unittest "Simple post with noise";
 rm ${MYDIR}/file.noise
 ls -l ${MYDIR}/confs/html/file.noise;
 
+finish;
 # J ################################################################
 
 { anounce J \
@@ -708,3 +773,5 @@ curl -F "file=@${MYDIR}/99B.words" \
 #curl -vLD- http://$name_server:4242/directory/youpi.bla
 
 #################################################################
+
+finish
