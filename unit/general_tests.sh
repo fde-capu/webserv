@@ -55,7 +55,6 @@ div()
 {
 	{ set +x; } 2> /dev/null
 	echo "\n\n # # # # # #\n"
-	set -x
 }
 
 divider()
@@ -300,8 +299,6 @@ unittest "Basic 8";
 
 ##################################################################
 
-
-
 { anounce Not_allowed_1 \
 \
 	':3491 accepts only GET. Testing POST is not allowed. 405' \
@@ -371,7 +368,6 @@ unittest "Client redirecting made two calls";
 
 ## POST_1  ################################################################
 
-
 { anounce POST_1 \
 \
 	'POST test. Within limits of client_max_body_size:' \
@@ -390,7 +386,6 @@ cat ${MYDIR}/confs/html/99B.words;
 
 ## POST_2 ################################################################
 
-
 { anounce POST_2 \
 \
 	'POST test. 99B again, noise this time.' \
@@ -398,16 +393,13 @@ cat ${MYDIR}/confs/html/99B.words;
 ; } 2> /dev/null
 
 noise="99"
-outdir="${MYDIR}/confs/html/";
+outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
 unittest "Simple post with noise";
 
-finish;
-
 # J ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 { anounce J \
 \
 	'Testing :4242 specifics. Will now use location. \n
@@ -421,16 +413,18 @@ unittest "Location GET /";
 
 # KA ###############################################################
 
+
 { anounce KA \
 \
 	'POST :4242 at root (/) should fail, 405 not allowed.' \
 \
 ; } 2> /dev/null
 
-head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vL -F "file=@${MYDIR}/file.noise" http://$name_server:4242 
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/file.noise;
+noise="1MiB"
+cmd="curl http://$name_server:4242 "
+code="405";
+fail="true";
+unittest "Post fail"
 
 ## KB ###############################################################
 
@@ -440,7 +434,9 @@ ls -l ${MYDIR}/confs/html4242/file.noise;
 \
 ; } 2> /dev/null
 
-curl -vL -X PUT -d faa=fee -d fii=foo http://$name_server:4242
+cmd="curl -vL -X PUT -d faa=fee -d fii=foo http://$name_server:4242"
+code="200"
+unittest "Put (accepted but mocked)"
 
 ## KC ###############################################################
 
@@ -450,7 +446,9 @@ curl -vL -X PUT -d faa=fee -d fii=foo http://$name_server:4242
 \
 ; } 2> /dev/null
 
-curl -vL -X DELETE http://$name_server:4242
+cmd="curl -vL -X DELETE http://$name_server:4242"
+code="405"
+unittest "Delete reject"
 
 ## LA ###############################################################
 
@@ -460,9 +458,15 @@ curl -vL -X DELETE http://$name_server:4242
 \
 ; } 2> /dev/null
 
-curl -vD- -X GET http://$name_server:4242/post_body
+cmd="curl -X GET http://$name_server:4242/post_body"
+code="405"
+unittest "Reject GET"
+
 { div; } 2> /dev/null
-curl -vD- -X DELETE http://$name_server:4242/post_body
+
+cmd="curl -X DELETE http://$name_server:4242/post_body"
+code="405"
+unittest "Reject GET"
 
 ## LB ###############################################################
 
@@ -474,10 +478,15 @@ curl -vD- -X DELETE http://$name_server:4242/post_body
 \
 ; } 2> /dev/null
 
-curl -D- --trace-ascii log -F "file=@${MYDIR}/99B.words" \
-	http://$name_server:4242/post_body && cat log && rm log
-ls -l ${MYDIR}/confs/html4242/uploads/99B.words
-cat ${MYDIR}/confs/html4242/uploads/99B.words
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:4242/post_body -F \"file=@${MYDIR}/99B.words\"";
+outdir="${MYDIR}/confs/html4242/uploads";
+file="99B.words" 
+code="201";
+unittest "Post to 4242 uploads";
+ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
+rm ${MYDIR}/99B.words
+cat ${MYDIR}/confs/html4242/uploads/99B.words;
 
 ## LB ###############################################################
 
@@ -487,11 +496,11 @@ cat ${MYDIR}/confs/html4242/uploads/99B.words
 \
 ; } 2> /dev/null
 
-head -c 99 /dev/urandom > ${MYDIR}/file.noise
-curl -D- --trace-ascii log -F "file=@${MYDIR}/file.noise" \
-	http://$name_server:4242/post_body && cat log && rm log
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+noise="99"
+cmd="curl http://$name_server:4242/post_body"
+outdir="${MYDIR}/confs/html4242/uploads";
+code="201"
+unittest "Noise 99"
 
 ## LB ###############################################################
 
@@ -502,10 +511,11 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 \
 ; } 2> /dev/null
 
-head -c 100 /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/post_body
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+noise="100"
+cmd="curl http://$name_server:4242/post_body"
+outdir="${MYDIR}/confs/html4242/uploads";
+code="201"
+unittest "Noise 100"
 
 ## LB ###############################################################
 
@@ -515,36 +525,26 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 \
 ; } 2> /dev/null
 
-head -c 101 /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/post_body
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
-
-## Large Uploads ################################################################
-
-{ anounce Large_Uploads_1 \
-\
-	'Testing 1MiB.noise. This should be reject by 413 because exceeds max_size.' \
-\
-; } 2> /dev/null
-
-head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/post_body
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+noise="101"
+cmd="curl http://$name_server:4242/post_body"
+outdir="${MYDIR}/confs/html4242/uploads";
+code="413"
+fail="true"
+unittest "Noise 101"
 
 ## Large Uploads ################################################################
 
 { anounce Large_Uploads_2 \
 \
-	'Not large, but shows "uri /large_upload" is working. 42B. 202' \
+	'Not large, but shows "uri /large_upload" is working. 42B. 201' \
 \
 ; } 2> /dev/null
 
-head -c 42 /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/large_upload
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+noise="42"
+cmd="curl http://$name_server:4242/large_upload"
+outdir="${MYDIR}/confs/html4242/uploads";
+code="201"
+unittest "Noise to large_upload 42B"
 
 ## Large Uploads ################################################################
 
@@ -556,10 +556,11 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 \
 ; } 2> /dev/null
 
-head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" http://$name_server:4242/large_upload
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+noise="1MiB"
+cmd="curl http://$name_server:4242/large_upload"
+code="424"
+fail="true"
+unittest "webserv must close connection"
 
 ## Large Uploads ################################################################
 
@@ -570,10 +571,11 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 \
 ; } 2> /dev/null
 
-head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
-rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+noise="1MiB"
+cmd="curl -H \"Expect:\" http://$name_server:4242/large_upload"
+code="201"
+outdir="${MYDIR}/confs/html4242/uploads";
+unittest "1MiB success"
 
 ## Large Uploads ################################################################
 
@@ -583,10 +585,11 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 \
 ; } 2> /dev/null
 
-head -c 2MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
-rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+noise="2MiB"
+cmd="curl -H \"Expect:\" http://$name_server:4242/large_upload"
+code="201"
+outdir="${MYDIR}/confs/html4242/uploads";
+unittest "2MiB success"
 
 ## Large Uploads ################################################################
 
@@ -597,12 +600,15 @@ ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 \
 ; } 2> /dev/null
 
-head -c 50MB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+noise="50MB"
+cmd="curl -H \"Expect:\" http://$name_server:4242/large_upload"
+code="201"
+outdir="${MYDIR}/confs/html4242/uploads";
+unittest "50MB success"
 
 ## Large Uploads ################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce Large_Uploads_7 \
 \
@@ -611,10 +617,12 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 \
 ; } 2> /dev/null
 
-head -c 200MiB /dev/urandom > ${MYDIR}/file.noise
-curl -vF "file=@${MYDIR}/file.noise" -H "Expect:" http://$name_server:4242/large_upload
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
+noise="200MB"
+cmd="curl -H \"Expect:\" http://$name_server:4242/large_upload"
+code="507"
+outdir="${MYDIR}/confs/html4242/uploads";
+fail="true"
+unittest "200MB rejection (out of resources)"
 
 ## Clean uploaded files  ################################################################
 
@@ -625,6 +633,8 @@ ls -l ${MYDIR}/confs/html4242/uploads/file.noise;
 \
 ; } 2> /dev/null
 { ${MYDIR}/clean_uploads.sh; }
+
+finish;
 
 ## Large Uploads ################################################################
 

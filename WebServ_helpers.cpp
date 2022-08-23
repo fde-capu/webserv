@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/16 15:45:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/23 15:29:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,6 +294,9 @@ std::string ws_server_instance::location_path(const std::string& default_file) c
 	std::string full_path;
 	size_t h;
 
+	if (uri2root != html_dir)
+		uri2root = html_dir + "/" + uri2root;
+
 	verbose(V) << "(location_path) sys_dir: " << sys_dir << std::endl;
 	verbose(V) << "(location_path) html_dir: " << html_dir << std::endl;
 	verbose(V) << "(location_path) uri2root: " << uri2root << std::endl;
@@ -306,7 +309,7 @@ std::string ws_server_instance::location_path(const std::string& default_file) c
 
 	verbose(V) << "(location_path) trunk: " << trunk << std::endl;
 
-	full_path = sys_dir + "/" + uri2root + "/" + trunk;
+	full_path = sys_dir + "/" + uri2root;
 
 	verbose(V) << "(location_path) full: " << full_path << std::endl;
 
