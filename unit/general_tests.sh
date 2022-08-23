@@ -90,7 +90,7 @@ unittest()
 	if [ "$noise" != "" ] ; then
 		tfile="${MYDIR}/file.noise"
 		head -c $noise /dev/urandom > "$tfile"
-		if [ "$chunked" != "" ] ; then
+		if [ "$chunked" == "" ] ; then
 			fullcmd="$fullcmd -F \"file=@$tfile\"";
 		else
 			fullcmd="$fullcmd -d \"file=@$tfile\"";
