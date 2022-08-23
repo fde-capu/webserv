@@ -371,7 +371,6 @@ unittest "Client redirecting made two calls";
 
 ## POST_1  ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce POST_1 \
 \
@@ -408,6 +407,7 @@ finish;
 
 # J ################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 { anounce J \
 \
 	'Testing :4242 specifics. Will now use location. \n
@@ -415,7 +415,9 @@ finish;
 \
 ; } 2> /dev/null
 
-curl -v http://$name_server:4242
+cmd="curl http://$name_server:4242"
+code="200"
+unittest "Location GET /";
 
 # KA ###############################################################
 
