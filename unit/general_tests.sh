@@ -86,15 +86,20 @@ getbodyandcode()
 
 unittest()
 {
-	if [ "$noise" != "" ] ; then
-		head -c $noise /dev/urandom > ${MYDIR}/file.noise
-	fi;
-	
 	fullcmd="set -x; $cmd -sSvw '%{http_code}'";
-	if [ "$file" = "" ] ; then
-		fullcmd="$fullcmd -o tmp_response";
-		tfile="$code";
+
+	if [ "$noise" != "" ] ; then
+		tfile="${MYDIR}/file.noise"
+		head -c $noise /dev/urandom > "$tfile"
+		fullcmd="$fullcmd -F \"file=@$tfile\"";
+	else
+		if [ "$file" != "" ]; then
+			tfile="$file";
+		fi
 	fi
+
+	fullcmd="$fullcmd -o tmp_response";
+	
 	out=`eval "$fullcmd"`;
 
 	if [ "$out" = "000" ]; then
@@ -102,34 +107,33 @@ unittest()
 		exit 1;
 	fi
 
-	if [ "$file" = "" ] ; then
-		cat tmp_response;
-		echo -n " ";
-		rm tmp_response;
-	fi
-	echo $out;
+	colorprint "$1 Code expect $code, got $out" "$out" "$code"
 
 	if [ "$file" != "" ] ; then
-		tfile=`cat $file`;
-		tfile="$tfile\n$code"
-	fi;
-	colorprint "$1" "$out" "$tfile"
-
-	if [ "$noise" != "" ] ; then
-		if [ "$file" != "" ] ; then
-			colorprint "Noise" "`cat ${MYDIR}/file.noise`" "`cat $file`";
-		fi
-		rm ${MYDIR}/file.noise;
-		if [ "$file" != "" ] ; then
-			ls -l $file;
-			cat $file;
+		if [ "$fail" = "" ] ; then
+			if [ "$outdir" = "" ]; then
+				colorprint "$1 Compare ouput" "`cat tmp_response`" "`cat $tfile`";
+			else
+				colorprint "$1 Compare files" "`cat $outdir/$file`" "`cat $tfile`";
+			fi
 		fi
 	fi
+
+	if [ "$noise" != "" ] ; then
+		if [ "$fail" = "" ] ; then
+			colorprint "$1 Compare noise" "`cat $outdir/file.noise`" "`cat $tfile`";
+			rm $tfile;
+		fi
+	fi
+
+	rm tmp_response;
 
 	cmd="";
 	code="";
 	file="";
 	noise="";
+	fail="";
+	outdir="";
 }
 
 finish()
@@ -174,11 +178,11 @@ done
 
 { set +x; } 2> /dev/null
 if false; then
-	echo 'Stablish Jump and End lines.';
+	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 
 ## Basic_1 ################################################################
 
@@ -304,10 +308,10 @@ unittest "Basic 8";
 \
 ; } 2> /dev/null
 
-cmd="curl -F \"file=@${MYDIR}/file.noise\" http://$name_server:3491";
+cmd="curl http://$name_server:3491";
 code="405";
 noise="1MiB";
-
+fail="true";
 unittest "Not allowed 1";
 
 ##################################################################
@@ -320,6 +324,7 @@ unittest "Not allowed 1";
 
 cmd="curl -X DELETE http://$name_server:3491";
 code="405";
+fail="true";
 unittest "Not allowed 2";
 
 ##################################################################
@@ -334,6 +339,7 @@ unittest "Not allowed 2";
 
 cmd="curl -v http://$name_server:3492"
 code="403";
+fail="true";
 unittest "Forbidden";
 
 ##################################################################
@@ -365,6 +371,7 @@ unittest "Client redirecting made two calls";
 
 ## POST_1  ################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce POST_1 \
 \
@@ -373,12 +380,13 @@ unittest "Client redirecting made two calls";
 ; } 2> /dev/null
 
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
-cmd="curl -F \"file=@${MYDIR}/99B.words\" http://$name_server:3490";
+cmd="curl http://$name_server:3490 -F \"file=@${MYDIR}/99B.words\"";
+outdir="${MYDIR}/confs/html/";
+file="99B.words" 
 code="201";
 unittest "Simple post";
-colorprint "Compare files" "`cat ${MYDIR}/99B.words`" "`cat ${MYDIR}/confs/html/99B.words`";
-rm ${MYDIR}/99B.words
 ls -l ${MYDIR}/confs/html/99B.words;
+rm ${MYDIR}/99B.words
 cat ${MYDIR}/confs/html/99B.words;
 
 ## POST_2 ################################################################
@@ -390,15 +398,14 @@ cat ${MYDIR}/confs/html/99B.words;
 \
 ; } 2> /dev/null
 
-head -c 99 /dev/urandom > ${MYDIR}/file.noise
-cmd="curl -F \"file=@${MYDIR}/file.noise\" http://$name_server:3490";
+noise="99"
+outdir="${MYDIR}/confs/html/";
+cmd="curl http://$name_server:3490";
 code="201";
-file="$MYDIR/confs/html/file.noise";
 unittest "Simple post with noise";
-rm ${MYDIR}/file.noise
-ls -l ${MYDIR}/confs/html/file.noise;
 
 finish;
+
 # J ################################################################
 
 { anounce J \
@@ -715,7 +722,7 @@ curl -v -H "Expect:" -H "Content-Type: test/file" -H \
 rm ${MYDIR}/file.noise
 ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
 
-exit; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ## Stress ################################################################
 
