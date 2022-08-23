@@ -90,7 +90,12 @@ unittest()
 	if [ "$noise" != "" ] ; then
 		tfile="${MYDIR}/file.noise"
 		head -c $noise /dev/urandom > "$tfile"
-		fullcmd="$fullcmd -F \"file=@$tfile\"";
+		if [ "$chunked" != "" ] ; then
+			fullcmd="$fullcmd -F \"file=@$tfile\"";
+		else
+			fullcmd="$fullcmd -d \"file=@$tfile\"";
+			fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
+		fi
 	else
 		if [ "$file" != "" ]; then
 			tfile="$file";
@@ -133,6 +138,7 @@ unittest()
 	noise="";
 	fail="";
 	outdir="";
+	chunked="";
 }
 
 finish()
@@ -631,24 +637,57 @@ unittest "200MB rejection (out of resources)"
 ; } 2> /dev/null
 { ${MYDIR}/clean_uploads.sh; }
 
-## Large Uploads ################################################################
+###################################################################
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
-{ anounce Large_Uploads_1 \
+{ anounce Chunk_1 \
 \
-	'Testing 1MiB.noise. This should be reject by 413 because exceeds max_size.' \
+	'99B using noise file.' \
 \
 ; } 2> /dev/null
 
-head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
+noise="99"
+chunked="true"
+cmd="curl http://$name_server:4242/post_body"
+outdir="${MYDIR}/confs/html4242/uploads";
+code="201"
+unittest "Noise 99"
 
-curl -v -H "Expect:" -H "Content-Type: test/file" -H \
-	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/post_body/file.noise
+## LB ###############################################################
 
-rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
+{ anounce Chunk_2 \
+\
+	'Same, with 100B.noise. Max is at 100B, this passes. \n
+	Same file name, so it overwrites.'\
+\
+; } 2> /dev/null
+
+noise="100"
+chunked="true"
+cmd="curl http://$name_server:4242/post_body"
+outdir="${MYDIR}/confs/html4242/uploads";
+code="201"
+unittest "Noise 100"
+
+## LB ###############################################################
+
+{ anounce Chunk_3 \
+\
+	'101B.noise should not pass because of max_size is set for 100. 413' \
+\
+; } 2> /dev/null
+
+noise="101"
+chunked="true"
+cmd="curl http://$name_server:4242/post_body"
+code="413"
+fail="true"
+unittest "Noise 101"
+
+###################################################################
+
+finish
 
 ## Large Uploads ################################################################
 
