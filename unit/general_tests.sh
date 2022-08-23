@@ -213,7 +213,6 @@ unittest "Basic 2";
 
 ## Basic_3 ################################################################
 
-
 { anounce Basic_3 \
 \
 	'If server_name is existent on another root: 200' \
@@ -430,7 +429,7 @@ unittest "Post fail"
 
 { anounce KB \
 \
-	'PUT :4242 at root (/) also should fail. 405' \
+	'PUT is not implemented, just mocked (200).' \
 \
 ; } 2> /dev/null
 
@@ -608,8 +607,6 @@ unittest "50MB success"
 
 ## Large Uploads ################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce Large_Uploads_7 \
 \
 	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
@@ -634,10 +631,9 @@ unittest "200MB rejection (out of resources)"
 ; } 2> /dev/null
 { ${MYDIR}/clean_uploads.sh; }
 
-finish;
-
 ## Large Uploads ################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce Large_Uploads_1 \
 \
