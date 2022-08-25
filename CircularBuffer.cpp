@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/16 01:39:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/25 15:45:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ bool CircularBuffer::checkLimits() const
 	return true;
 }
 
-std::string& CircularBuffer::receive_at_least(size_t nbytes)
+std::string& CircularBuffer::try_to_receive(size_t nbytes)
 {
 	size_t size_ini(output.length());
 	size_t size_cur(0);

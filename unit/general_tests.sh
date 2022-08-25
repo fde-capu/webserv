@@ -7,8 +7,7 @@ name_server="127.0.0.1";
 
 # On 42SP Workspace, there are opened:
 
-#	tcp 	0	0.0.0.0:5901	0.0.0.0:*	LISTEN	-	(VNC server)
-#	tcp6	0	:::5901	:::*	LISTEN	-		
+#	tcp 	0	0.0.0.0:5901	0.0.0.0:*	LISTEN	-	(VNC server) #	tcp6	0	:::5901	:::*	LISTEN	-		
 #	tcp 	0	0.0.0.0:2222	0.0.0.0:*	LISTEN	-	(SSH)
 #	tcp6	0	:::2222	:::*	LISTEN	-		
 #	tcp 	0	0.0.0.0:8080	0.0.0.0:*	LISTEN	-	(./login)		
@@ -42,6 +41,58 @@ MYDIR="${MYSELF%/*}"
 ok_count=0;
 ko_count=0;
 tot_count=0;
+resetvars;
+
+unittest()
+{
+	fullcmd="set -x; $cmd -sSvw '%{http_code}'";
+
+	if [ "$noise" != "" ] ; then
+		upfile="file.noise";
+		head -c $noise /dev/urandom > "${MYDIR}/$upfile";
+	fi
+
+	if [ "$upfile" != "" ] ; then
+		if [ "$chunked" = "" ] ; then
+			fullcmd="$fullcmd -F \"file=@${MYDIR}/$upfile\"";
+		else
+			fullcmd="$fullcmd -d \"file=@${MYDIR}/$upfile\"";
+			fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
+		fi
+	fi
+
+	fullcmd="$fullcmd -o tmp_response";
+	
+	out=`eval "$fullcmd"`;
+
+	if [ "$out" = "000" ]; then
+		{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
+		exit 1;
+	fi
+
+	colorprint "$1 Code expect $code, got $out" "$out" "$code"
+
+	if [ "$fail" = "" ] ; then
+		[ "$testfile" != "" ] && colorprint "$1 Compare ouput" "`cat tmp_response`" "`cat $testfile`";
+		[ "$upfile" != "" ] && colorprint "$1 Compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
+	fi
+
+	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
+	rm tmp_response;
+	resetvars;
+}
+
+resetvars()
+{
+	cmd="";
+	code="";
+	testfile="";
+	upfile="";
+	noise="";
+	fail="";
+	outdir="";
+	chunked="";
+}
 
 enterkey()
 {
@@ -81,64 +132,6 @@ getcode()
 getbodyandcode()
 {
 	eval "$1 -s -w '%{http_code}' -v";
-}
-
-unittest()
-{
-	fullcmd="set -x; $cmd -sSvw '%{http_code}'";
-
-	if [ "$noise" != "" ] ; then
-		tfile="${MYDIR}/file.noise"
-		head -c $noise /dev/urandom > "$tfile"
-		if [ "$chunked" == "" ] ; then
-			fullcmd="$fullcmd -F \"file=@$tfile\"";
-		else
-			fullcmd="$fullcmd -d \"file=@$tfile\"";
-			fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
-		fi
-	else
-		if [ "$file" != "" ]; then
-			tfile="$file";
-		fi
-	fi
-
-	fullcmd="$fullcmd -o tmp_response";
-	
-	out=`eval "$fullcmd"`;
-
-	if [ "$out" = "000" ]; then
-		{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
-		exit 1;
-	fi
-
-	colorprint "$1 Code expect $code, got $out" "$out" "$code"
-
-	if [ "$file" != "" ] ; then
-		if [ "$fail" = "" ] ; then
-			if [ "$outdir" = "" ]; then
-				colorprint "$1 Compare ouput" "`cat tmp_response`" "`cat $tfile`";
-			else
-				colorprint "$1 Compare files" "`cat $outdir/$file`" "`cat $tfile`";
-			fi
-		fi
-	fi
-
-	if [ "$noise" != "" ] ; then
-		if [ "$fail" = "" ] ; then
-			colorprint "$1 Compare noise" "`cat $outdir/file.noise`" "`cat $tfile`";
-			rm $tfile;
-		fi
-	fi
-
-	rm tmp_response;
-
-	cmd="";
-	code="";
-	file="";
-	noise="";
-	fail="";
-	outdir="";
-	chunked="";
 }
 
 finish()
@@ -188,7 +181,6 @@ if false; then
 #################################################################### Begin
 
 
-
 ## Basic_1 ################################################################
 
 { anounce Basic_1 \
@@ -200,7 +192,7 @@ if false; then
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3490";
-file="$MYDIR/confs/html/index.htm";
+testfile="$MYDIR/confs/html/index.htm";
 code="200";
 unittest "Basic 1";
 
@@ -213,7 +205,7 @@ unittest "Basic 1";
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3490 -H 'Host: wtf_server'";
-file="$MYDIR/confs/html/index.htm";
+testfile="$MYDIR/confs/html/index.htm";
 code="200";
 unittest "Basic 2";
 
@@ -226,7 +218,7 @@ unittest "Basic 2";
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3490 -H 'Host: krazything'";
-file="$MYDIR/confs/html-custom-server-name/index.html";
+testfile="$MYDIR/confs/html-custom-server-name/index.html";
 code="200";
 unittest "Basic 3";
 
@@ -256,7 +248,7 @@ unittest "Basic 4";
 
 cmd="curl -vL http://$name_server:3490/somesub"
 code="200"
-file="$MYDIR/confs/html/somesub/index.htm";
+testfile="$MYDIR/confs/html/somesub/index.htm";
 unittest "Basic 5";
 
 # Basic_6 ################################################################
@@ -271,7 +263,7 @@ unittest "Basic 5";
 
 cmd="curl -vL http://$name_server:3490/somesub/"
 code="200"
-file="$MYDIR/confs/html/somesub/index.htm";
+testfile="$MYDIR/confs/html/somesub/index.htm";
 unittest "Basic 6";
 
 # Basic_7 ################################################################
@@ -284,7 +276,7 @@ unittest "Basic 6";
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3490 -H 'Host: unexistent_servername'";
-file="$MYDIR/confs/html/index.htm";
+testfile="$MYDIR/confs/html/index.htm";
 code="200";
 unittest "Basic 7";
 
@@ -298,7 +290,7 @@ unittest "Basic 7";
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3491"
-file="$MYDIR/confs/html-3491/index.html";
+testfile="$MYDIR/confs/html-3491/index.html";
 code="200";
 unittest "Basic 8";
 
@@ -359,6 +351,19 @@ unittest "Client not redirecting";
 
 ##################################################################
 
+{ anounce J \
+\
+	'Testing :4242 specifics. Will now use location. \n
+	GET on / should be ok.' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:4242"
+code="200"
+unittest "Location GET /";
+
+##################################################################
+
 { anounce Redirect \
 \
 	':3493 server redirects 301 to :3490. \n
@@ -367,22 +372,22 @@ unittest "Client not redirecting";
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3493 -L"
-file="$MYDIR/confs/html/index.htm";
+testfile="$MYDIR/confs/html/index.htm";
 code="200";
 unittest "Client redirecting made two calls";
 
-## POST_1  ################################################################
+##################################################################
 
-{ anounce POST_1 \
+{ anounce POST_MULTIPART_1 \
 \
-	'POST test. Within limits of client_max_body_size:' \
+	'POST multipart/formdata tests. Within limits of client_max_body_size:' \
 \
 ; } 2> /dev/null
 
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:3490 -F \"file=@${MYDIR}/99B.words\"";
+cmd="curl http://$name_server:3490";
 outdir="${MYDIR}/confs/html/";
-file="99B.words" 
+upfile="99B.words" 
 code="201";
 unittest "Simple post";
 ls -l ${MYDIR}/confs/html/99B.words;
@@ -403,21 +408,7 @@ cmd="curl http://$name_server:3490";
 code="201";
 unittest "Simple post with noise";
 
-# J ################################################################
-
-{ anounce J \
-\
-	'Testing :4242 specifics. Will now use location. \n
-	GET on / should be ok.' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:4242"
-code="200"
-unittest "Location GET /";
-
 # KA ###############################################################
-
 
 { anounce KA \
 \
@@ -431,7 +422,7 @@ code="405";
 fail="true";
 unittest "Post fail"
 
-## KB ###############################################################
+#####################################################################
 
 { anounce KB \
 \
@@ -443,7 +434,7 @@ cmd="curl -vL -X PUT -d faa=fee -d fii=foo http://$name_server:4242"
 code="200"
 unittest "Put (accepted but mocked)"
 
-## KC ###############################################################
+#####################################################################
 
 { anounce KC \
 \
@@ -455,7 +446,7 @@ cmd="curl -vL -X DELETE http://$name_server:4242"
 code="405"
 unittest "Delete reject"
 
-## LA ###############################################################
+#####################################################################
 
 { anounce LA \
 \
@@ -473,7 +464,7 @@ cmd="curl -X DELETE http://$name_server:4242/post_body"
 code="405"
 unittest "Reject GET"
 
-## LB ###############################################################
+#####################################################################
 
 { anounce LB_1st \
 \
@@ -484,20 +475,20 @@ unittest "Reject GET"
 ; } 2> /dev/null
 
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:4242/post_body -F \"file=@${MYDIR}/99B.words\"";
+cmd="curl http://$name_server:4242/post_body";
 outdir="${MYDIR}/confs/html4242/uploads";
-file="99B.words" 
+upfile="99B.words" 
 code="201";
 unittest "Post to 4242 uploads";
 ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
 rm ${MYDIR}/99B.words
 cat ${MYDIR}/confs/html4242/uploads/99B.words;
 
-## LB ###############################################################
+#####################################################################
 
 { anounce LB_2nd \
 \
-	'2nd) The same, using noise file.' \
+	'2nd) The same, using noise upfile.' \
 \
 ; } 2> /dev/null
 
@@ -507,7 +498,7 @@ outdir="${MYDIR}/confs/html4242/uploads";
 code="201"
 unittest "Noise 99"
 
-## LB ###############################################################
+#####################################################################
 
 { anounce LB_3rd \
 \
@@ -522,7 +513,7 @@ outdir="${MYDIR}/confs/html4242/uploads";
 code="201"
 unittest "Noise 100"
 
-## LB ###############################################################
+#####################################################################
 
 { anounce LB_4th \
 \
@@ -537,7 +528,7 @@ code="413"
 fail="true"
 unittest "Noise 101"
 
-## Large Uploads ################################################################
+#####################################################################
 
 { anounce Large_Uploads_2 \
 \
@@ -551,7 +542,7 @@ outdir="${MYDIR}/confs/html4242/uploads";
 code="201"
 unittest "Noise to large_upload 42B"
 
-## Large Uploads ################################################################
+#####################################################################
 
 { anounce Large_Uploads_3 \
 \
@@ -567,7 +558,7 @@ code="424"
 fail="true"
 unittest "webserv must close connection"
 
-## Large Uploads ################################################################
+#####################################################################
 
 { anounce Large_Uploads_4 \
 \
@@ -582,7 +573,7 @@ code="201"
 outdir="${MYDIR}/confs/html4242/uploads";
 unittest "1MiB success"
 
-## Large Uploads ################################################################
+#####################################################################
 
 { anounce Large_Uploads_5 \
 \
@@ -596,7 +587,7 @@ code="201"
 outdir="${MYDIR}/confs/html4242/uploads";
 unittest "2MiB success"
 
-## Large Uploads ################################################################
+#####################################################################
 
 { anounce Large_Uploads_6 \
 \
@@ -611,11 +602,15 @@ code="201"
 outdir="${MYDIR}/confs/html4242/uploads";
 unittest "50MB success"
 
-## Large Uploads ################################################################
+#####################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce Large_Uploads_7 \
 \
-	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
+	'How about 200MiB? Wait a little, but this would get OOM KILL\n
+	by Workspace. Set CIRCULARBUFFER_LIMIT for this.\n
+	Found safe to stick to 1048576 \* 100.\n
 	Server should not crash, so 507 Insufficient Storage.' \
 \
 ; } 2> /dev/null
@@ -637,9 +632,27 @@ unittest "200MB rejection (out of resources)"
 ; } 2> /dev/null
 { ${MYDIR}/clean_uploads.sh; }
 
-###################################################################
+## ###############################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce Words_chunk \
+\
+	'Test sending a text file in chunked mode' \
+\
+; } 2> /dev/null
+
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+chunked="true"
+cmd="curl http://$name_server:4242/post_body -F \"file=@${MYDIR}/99B.words\"";
+outdir="${MYDIR}/confs/html4242/uploads";
+upfile="99B.words" 
+code="201";
+unittest "Post to 4242 uploads";
+ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
+rm ${MYDIR}/99B.words
+cat ${MYDIR}/confs/html4242/uploads/99B.words;
+
+###################################################################
 
 { anounce Chunk_1 \
 \

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/16 01:34:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/25 15:47:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,6 @@ class WebServ
 		ws_server_instance dftosi(DataFold);
 		struct pollfd stdin_to_pollfd();
 		void exit_gracefully();
-		std::string get_raw_data(int);
 		static bool validate_header_entry(std::vector<std::string>&, size_t, bool&);
 		static bool validate_header_1st_line(std::string&, size_t, bool&);
 		static bool read_1st_line(std::string&, ws_header&, bool&);
