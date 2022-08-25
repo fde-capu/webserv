@@ -604,8 +604,6 @@ unittest "50MB success"
 
 #####################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce Large_Uploads_7 \
 \
 	'How about 200MiB? Wait a little, but this would get OOM KILL\n
@@ -633,6 +631,8 @@ unittest "200MB rejection (out of resources)"
 { ${MYDIR}/clean_uploads.sh; }
 
 ## ###############################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 
 { anounce Words_chunk \
