@@ -56,11 +56,12 @@ unittest()
 		if [ "$chunked" = "" ] ; then
 			fullcmd="$fullcmd -F \"file=@${MYDIR}/$upfile\"";
 		else
-			fullcmd="$fullcmd -d \"file=@${MYDIR}/$upfile\"";
+			fullcmd="$fullcmd -d \"@${MYDIR}/$upfile\"";
 			fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
 		fi
 	fi
 
+	[ "$trace" != "" ] && fullcmd="$fullcmd --trace-ascii tmp_trace_ascii";
 	fullcmd="$fullcmd -o tmp_response";
 	
 	out=`eval "$fullcmd"`;
@@ -79,6 +80,8 @@ unittest()
 
 	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
 	rm tmp_response;
+	[ "$trace" != "" ] && cat tmp_trace_ascii
+
 	resetvars;
 }
 
@@ -92,6 +95,7 @@ resetvars()
 	fail="";
 	outdir="";
 	chunked="";
+	trace="";
 }
 
 enterkey()
@@ -634,7 +638,6 @@ unittest "200MB rejection (out of resources)"
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
-
 { anounce Words_chunk \
 \
 	'Test sending a text file in chunked mode' \
@@ -643,10 +646,11 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
 chunked="true"
-cmd="curl http://$name_server:4242/post_body -F \"file=@${MYDIR}/99B.words\"";
+cmd="curl http://$name_server:4242/post_body";
 outdir="${MYDIR}/confs/html4242/uploads";
 upfile="99B.words" 
 code="201";
+trace="true"
 unittest "Post to 4242 uploads";
 ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
 rm ${MYDIR}/99B.words
