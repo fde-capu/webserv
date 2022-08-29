@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 17:32:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 22:01:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,19 +140,6 @@ void WebServ::respond_timeout(int fd)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 	close(fd);
 	remove_from_poll(fd);
-}
-
-void ws_server_instance::mount_multipart()
-{
-	set_sizes();
-	multipart_content_disposition = StringTools::query_for( \
-			"Content-Disposition", in_body);
-	multipart_name = StringTools::query_for("name", in_body);
-	multipart_filename = StringTools::query_for("filename", in_body);
-	multipart_content_type = StringTools::query_for("Content-Type", in_body);
-	multipart_content.reserve(body_end - body_start);
-	multipart_content = in_body.substr(body_start, body_end - body_start);
-	set_sizes();
 }
 
 void ws_server_instance::set_props()

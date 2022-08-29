@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 19:24:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 21:45:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,9 +173,9 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_403(si)) return ; // Forbidden.
 	if (is_405(si)) return ; // Bad method.
 	if (is_404(si)) return ; // Not found. GET.
+	if (is_424(si)) return ; // Not met dependency. Used when client expects 100-continue.
 	if (read_limits(si)) return ; // 413 Too Large, 507 No resource, 422 Unprocessable.
 	if (is_cgi(si)) return ; // Runs CGI and returns accordingly.
-	if (is_424(si)) return ; // Not met dependency. Used when client expects 100-continue.
 	if (is_200(si)) return ; // Ok (GET) and loads file.
 	if (is_201(si)) return ; // Accepted (POST) and saves data.
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/25 16:49:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 22:11:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,8 @@ void ws_server_instance::read_more_plain(const size_t& max)
 		verbose(V) << "(read_more_plain) max " << max << " next_load " \
 			<< next_load << std::endl;
 
-		verbose(V) << "in_body A " << in_body.substr(0, 100) << std::endl;
 		in_body += buf.try_to_receive(next_load);
-		verbose(V) << "in_body B " << in_body.substr(0, 100) << std::endl;
+		verbose(V) << "in_body " << SHORT(in_body) << std::endl;
 	}
 }
 
@@ -43,6 +42,13 @@ void ws_server_instance::read_more_chunked()
 	if (exceeded_limit)
 		status = 413;
 
+//	std::vector<std::string> chunk;
+//	chunk = StringTools::split(in_body, "\r\n");
+//	for (size_t i = 0; i < chunk.size(); i++)
+//	{
+//		verbose(V) << "(read_more_chunked) " i << ": " << \
+//			SHORT(chunk[i]) << std::endl;
+//	}
 	verbose(V) << "(read_more_chunked) Finished with body " \
 		<< in_body.length() << " and chunked-content " \
 		<< chunked_content.length() << "." << std::endl;
@@ -57,6 +63,19 @@ bool ws_server_instance::check_socket_stream(CircularBuffer& buf)
 		!reached_limit && \
 		!buf.ended() && \
 		!insufficient_resources;
+}
+
+void ws_server_instance::mount_multipart()
+{
+	set_sizes();
+	multipart_content_disposition = StringTools::query_for( \
+			"Content-Disposition", in_body);
+	multipart_name = StringTools::query_for("name", in_body);
+	multipart_filename = StringTools::query_for("filename", in_body);
+	multipart_content_type = StringTools::query_for("Content-Type", in_body);
+	multipart_content.reserve(body_end - body_start);
+	multipart_content = in_body.substr(body_start, body_end - body_start);
+	set_sizes();
 }
 
 void ws_server_instance::read_more_multipart()
@@ -82,4 +101,49 @@ int ws_server_instance::read_more_general()
 		read_more_multipart();
 	}
 	return status;
+}
+
+int ws_reply_instance::read_limits(ws_server_instance& si)
+{
+	static int V(1);
+	static int VPRINTLIM(40);
+	int pos_status(0);
+
+	verbose(V) << "(read_limits) max_size: " << si.max_size << "." \
+		<< std::endl;
+	verbose(V) << "(read_limits) content_type: " << \
+		si.in_header.content_type << std::endl;
+
+	pos_status = si.read_more_general();
+	si.set_sizes();
+	if (si.exceeded_limit)
+	{
+		set_code(413, "Payload Too Large (Declared Size)");
+		out_body = "BODY FOR 413";
+		return 413;
+	}
+	if (pos_status == 507)
+	{
+		set_code(507, "Insufficient Resources");
+		out_body = "BODY FOR 507";
+		return 507;
+	}
+	if (pos_status == 422)
+	{
+		set_code(422, "Unprocessable Entity");
+		out_body = "BODY FOR 422";
+		return 422;
+	}
+
+	verbose(V) << "(read_limits) in_body >>" << \
+		si.in_body.substr(0, VPRINTLIM) << "<< len: " << si.in_body.length() << \
+		std::endl;
+	verbose(V) << "(read_limits) multipart_content >>" << \
+		si.multipart_content.substr(0, VPRINTLIM) << "<< len: " << \
+		si.multipart_content.length() << std::endl;
+	verbose(V) << "(read_limits) chunked_content >>" << \
+		si.chunked_content.substr(0, VPRINTLIM) << "<< len: " << \
+		si.chunked_content.length() << std::endl;
+
+	return 0;
 }

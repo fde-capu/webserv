@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 20:47:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 21:45:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,16 +115,19 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		close(pipe_pc[1]);
 		close(pipe_cp[0]);
 		close(pipe_cp[1]);
-		args[0] = (char *)program.c_str();
+		args[0] = const_cast<char *>(program.c_str());
 		setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
 		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
 		setenv("PATH_INFO", program.c_str(), 1);
-		execvp(program.c_str(), args);
+		execv(args[0], args);
 		exit(502);
 	}
 	else // Parent.
 	{
-		write(pipe_pc[1], si.in_body.c_str(), si.in_body.length());
+		size_t wr = write(pipe_pc[1], static_cast<const void *>(si.in_body.c_str()), si.in_body.length());
+		verbose(V) << "(execute_cgi) wr = " << wr << std::endl;
+//		write(pipe_pc[1], 0, 1);
+//		write(pipe_pc[1], "TtEeSsTtAaNnDdOo", 16);
 		close(pipe_pc[0]);
 		close(pipe_pc[1]);
 		close(pipe_cp[1]);
@@ -132,6 +135,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		if (wait_pid < 0)
 			throw std::domain_error("(execute_cgi) Coudn't wait.");
 		out_body = CircularBuffer(pipe_cp[0]);
+		close(pipe_cp[0]);
 		verbose(V) << "(execute_cgi) Got >>>" << out_body << "<<<" << std::endl;
 		static_cast<void>(WIFEXITED(child_status));
 	}
@@ -175,51 +179,6 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	set_code(404, "File Not Found");
 	out_body = "BODY FOR 404";
 	return 404;
-}
-
-int ws_reply_instance::read_limits(ws_server_instance& si)
-{
-	static int V(1);
-	static int VPRINTLIM(40);
-	int pos_status(0);
-
-	verbose(V) << "(read_limits) max_size: " << si.max_size << "." \
-		<< std::endl;
-	verbose(V) << "(read_limits) content_type: " << \
-		si.in_header.content_type << std::endl;
-
-	pos_status = si.read_more_general();
-	si.set_sizes();
-	if (si.exceeded_limit)
-	{
-		set_code(413, "Payload Too Large (Declared Size)");
-		out_body = "BODY FOR 413";
-		return 413;
-	}
-	if (pos_status == 507)
-	{
-		set_code(507, "Insufficient Resources");
-		out_body = "BODY FOR 507";
-		return 507;
-	}
-	if (pos_status == 422)
-	{
-		set_code(422, "Unprocessable Entity");
-		out_body = "BODY FOR 422";
-		return 422;
-	}
-
-	verbose(V) << "(read_limits) in_body >>" << \
-		si.in_body.substr(0, VPRINTLIM) << "<< len: " << si.in_body.length() << \
-		std::endl;
-	verbose(V) << "(read_limits) multipart_content >>" << \
-		si.multipart_content.substr(0, VPRINTLIM) << "<< len: " << \
-		si.multipart_content.length() << std::endl;
-	verbose(V) << "(read_limits) chunked_content >>" << \
-		si.chunked_content.substr(0, VPRINTLIM) << "<< len: " << \
-		si.chunked_content.length() << std::endl;
-
-	return 0;
 }
 
 int ws_reply_instance::is_424(ws_server_instance& si)
