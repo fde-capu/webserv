@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 18:21:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 19:35:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -381,12 +381,12 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 	while (config.loop())
 	{
 		verbose(3) << "  config > " << config.key << " :=: " << config.val << \
-			" (" << config.type << ")" << nl;
+			" (" << config.type << ")" << std::endl;
 		valid = false;
 		board.loop_reset();
 		while (board.loop())
 		{
-			verbose(3) << "  board > " << board.key << " :=: " << board.val << nl;
+			verbose(3) << "  board > " << board.key << " :=: " << board.val << std::endl;
 
 			if (config.type & DF_TYPE_SUB)
 			{

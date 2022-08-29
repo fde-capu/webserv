@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/26 14:07:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/22 12:24:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 19:59:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ do_it_again:
 //	(void)void*foo; // Why did it parse, then? Why did it even read?
 
 //	// Make up some response.
-	ws_cgi_reply body_from (executable, body);
+	ws_cgi_reply body_from(executable, body);
 	verbose(5) << "[CGI>>" << body_from.out_body << "<<CGI]" << std::endl;
 //	if (send(newfd, body_from.out_body.c_str(), body_from.out_body.length(), 0) == -1)
 	if (send(newfd, body_from.encapsulate().c_str(), body_from.package_length, 0) == -1)

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 17:40:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 19:35:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -468,7 +468,7 @@ void DataFold::push_back(std::string key, std::string val)
 		entry.val = "";
 		for (size_t i = 0; i < spl.size(); i++)
 		{
-			if (StringTools::find_outside_quotes(spl[i], " ") == nopos)
+			if (StringTools::find_outside_quotes(spl[i], " ") == std::string::npos)
 				entry.val += spl[i];
 			else
 				entry.val += "\"" + escape_char(spl[i], "\"") + "\"";
@@ -571,18 +571,18 @@ DataFold DataFold::parse_only_val(const datafold_t &df)
 	}
 }
 
-DF DF::parse_data(const str_t jstr)
+DataFold DataFold::parse_data(const std::string jstr)
 {
-	DF out;
-	str_t ops = jstr;
+	DataFold out;
+	std::string ops = jstr;
 	size_t div_p;
 	bool pass;
-	str_t key;
-	str_t val;
+	std::string key;
+	std::string val;
 	size_t p[4];
 
 	clean_before_parse(ops);
-	verbose(4) << nl << "Parsing: " << ops << nl;
+	verbose(4) << std::endl << "Parsing: " << ops << std::endl;
 
 	pass = false;
 	while (!pass)
@@ -594,10 +594,10 @@ DF DF::parse_data(const str_t jstr)
 		p[3] = StringTools::find_outside_quotes_set(ops, "\n");
 
 		verbose(5)	<< p[0] << ", " << p[1] << ", " \
-					<< p[2] << ", " << p[3] << nl;
+					<< p[2] << ", " << p[3] << std::endl;
 
 //		word value && not single word && not subgroup
-		if (p[0] < p[1] && p[0] != nopos && p[1] != p[0] + 1)
+		if (p[0] < p[1] && p[0] != std::string::npos && p[1] != p[0] + 1)
 		{
 			pass = false;
 			key = ops.substr(0, p[0]);
@@ -613,7 +613,7 @@ DF DF::parse_data(const str_t jstr)
 		}
 
 //		subgroup && not single word
-		if (p[1] < p[0] && p[1] != nopos)
+		if (p[1] < p[0] && p[1] != std::string::npos)
 		{
 			pass = false;
 			key = ops.substr(0, p[1]);
@@ -626,7 +626,7 @@ DF DF::parse_data(const str_t jstr)
 		}
 
 //		has ; && does not have divisor && is not subgroup && does not break line	
-		if (p[2] != nopos && p[0] == nopos && p[1] == nopos && p[3] == nopos)
+		if (p[2] != std::string::npos && p[0] == std::string::npos && p[1] == std::string::npos && p[3] == std::string::npos)
 		{
 			pass = false;
 			key = ops.substr(0, p[2]);
@@ -638,7 +638,7 @@ DF DF::parse_data(const str_t jstr)
 
 	}
 
-	verbose(4) << "Parsed: " << static_cast<std::string>(out) << nl << nl;
+	verbose(4) << "Parsed: " << static_cast<std::string>(out) << std::endl << std::endl;
 	return out;
 }
 

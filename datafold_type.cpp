@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:42:06 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 19:42:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 19:36:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,9 +57,9 @@ datavec::operator std::string() const
 datafold_t::operator int() const
 {
 	if (type & DF_TYPE_ARRAY)
-		throw bad_arg(DF_ERR_IS_ARRAY DF_ERR_CANT_CONVERT_TO_INT);
+		throw std::invalid_argument(DF_ERR_IS_ARRAY DF_ERR_CANT_CONVERT_TO_INT);
 	if (!(type & DF_TYPE_NUMBER))
-		throw bad_arg(DF_ERR_NOT_NUMBER);
+		throw std::invalid_argument(DF_ERR_NOT_NUMBER);
 	return std::atoi(val.c_str());
 }
 

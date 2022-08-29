@@ -6,9 +6,13 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/08/29 18:21:46 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/29 19:41:47 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+# Test 2
+# make ft
+# t2 : Tests cgi-wrapper (made based on webserv).
 
 NAME1	=	webserv
 ARGS1	=	unit/webserv-unit.conf
@@ -98,7 +102,7 @@ k1:
 k2:
 	-pkill $(NAME2)
 ft: youpi
-	@echo "Please run \`make ftcgi\` on another terminal.";
+	@echo "Please run \`make ftcgi\` (aka t2) on another terminal.";
 	@echo "";
 	unit/ubuntu_tester http://0.0.0.0:4242
 youpi:

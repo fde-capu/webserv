@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 18:47:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 20:47:37 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,13 +89,57 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	int V(1);
 	verbose(V) << "(execute_cgi) si = " << si << std::endl;
 	verbose(V) << "(execute_cgi) WILL HAPPEN HERE!!!" << std::endl;
+	program = si.root_config.getValStr("root") + "/" + si.config.getValStr("root") + "/" + program;
 	verbose(V) << "(execute_cgi) Program is: " << program << std::endl;
+
+	pid_t child_pid = -1;
+	pid_t wait_pid = -1;
+	int child_status = -1;
+	char* args[2] = {0, 0};
+	int pipe_pc[2] = {0, 0};
+	int pipe_cp[2] = {0, 0};
+
+	if (pipe(pipe_pc) == -1)
+		throw std::domain_error("(execute_cgi) Cannot pipe for cgi (parent->child).");
+	if (pipe(pipe_cp) == -1)
+		throw std::domain_error("(execute_cgi) Cannot pipe for cgi (child->parent).");
+
+	child_pid = fork();
+	if (child_pid < 0)
+		throw std::domain_error("(execute_cgi) Forking went wrong.");
+	if (child_pid == 0) // Child.
+	{
+		dup2(pipe_pc[0], STDIN_FILENO);
+		dup2(pipe_cp[1], STDOUT_FILENO);
+		close(pipe_pc[0]);
+		close(pipe_pc[1]);
+		close(pipe_cp[0]);
+		close(pipe_cp[1]);
+		args[0] = (char *)program.c_str();
+		setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
+		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
+		setenv("PATH_INFO", program.c_str(), 1);
+		execvp(program.c_str(), args);
+		exit(502);
+	}
+	else // Parent.
+	{
+		write(pipe_pc[1], si.in_body.c_str(), si.in_body.length());
+		close(pipe_pc[0]);
+		close(pipe_pc[1]);
+		close(pipe_cp[1]);
+		wait_pid = wait(&child_status);
+		if (wait_pid < 0)
+			throw std::domain_error("(execute_cgi) Coudn't wait.");
+		out_body = CircularBuffer(pipe_cp[0]);
+		verbose(V) << "(execute_cgi) Got >>>" << out_body << "<<<" << std::endl;
+		static_cast<void>(WIFEXITED(child_status));
+	}
 	return 1;
 }
 
 int ws_reply_instance::is_cgi(ws_server_instance& si)
 {
-	int V(1);
 	std::vector<std::string> cgi(si.config.get_vector_str("cgi"));
 	std::vector<std::string> cgi_accept(si.config.get_vector_str("cgi_accept"));
 	std::string cgi_extension = cgi[0];
@@ -103,11 +147,8 @@ int ws_reply_instance::is_cgi(ws_server_instance& si)
 	std::string call_method = si.in_header.method;
 	bool good_method = false;
 	for (size_t i = 0; i < cgi_accept.size(); i++)
-	{
-		verbose(V) << "(is_cgi) call: " << call_method << ", test " << cgi_accept[i] << std::endl;
 		if (cgi_accept[i] == call_method)
 			good_method = true;
-	}
 	if (!good_method)
 		return 0;
 	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
@@ -136,15 +177,15 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	return 404;
 }
 
-int ws_reply_instance::is_413_507(ws_server_instance& si)
+int ws_reply_instance::read_limits(ws_server_instance& si)
 {
 	static int V(1);
 	static int VPRINTLIM(40);
 	int pos_status(0);
 
-	verbose(V) << "(is_413_507) max_size: " << si.max_size << "." \
+	verbose(V) << "(read_limits) max_size: " << si.max_size << "." \
 		<< std::endl;
-	verbose(V) << "(is_413_507) content_type: " << \
+	verbose(V) << "(read_limits) content_type: " << \
 		si.in_header.content_type << std::endl;
 
 	pos_status = si.read_more_general();
@@ -168,13 +209,13 @@ int ws_reply_instance::is_413_507(ws_server_instance& si)
 		return 422;
 	}
 
-	verbose(V) << "(is_413_507) in_body >>" << \
+	verbose(V) << "(read_limits) in_body >>" << \
 		si.in_body.substr(0, VPRINTLIM) << "<< len: " << si.in_body.length() << \
 		std::endl;
-	verbose(V) << "(is_413_507) multipart_content >>" << \
+	verbose(V) << "(read_limits) multipart_content >>" << \
 		si.multipart_content.substr(0, VPRINTLIM) << "<< len: " << \
 		si.multipart_content.length() << std::endl;
-	verbose(V) << "(is_413_507) chunked_content >>" << \
+	verbose(V) << "(read_limits) chunked_content >>" << \
 		si.chunked_content.substr(0, VPRINTLIM) << "<< len: " << \
 		si.chunked_content.length() << std::endl;
 
