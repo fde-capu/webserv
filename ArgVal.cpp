@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/28 14:35:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 18:21:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,10 +240,9 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			if (set_flags & AGF_FIXED_LEN)
 			{
 				foo = con.get_val();
-				if ((con.is_single_array() && foo.size() != fixed_len)
-					)
+				if (foo.size() != fixed_len)
 				{
-					verbose(1) << "(ArgVal) " << con.string() << " has incorrect number of parameters." << std::endl;
+					verbose(1) << "(ArgVal) " << con.string() << " has incorrect number of parameters (wants array of " << fixed_len << ")." << std::endl;
 					return false;
 				}
 			}
