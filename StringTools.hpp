@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/27 16:38:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 18:38:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,12 +78,13 @@ class StringTools
 		std::string					itos(int) const;
 		std::string					apply_quotes(std::string) const;
 		std::string					apply_quotes(std::string, std::string) const;
-		std::vector<std::string>	split(const std::string, const std::string) const;
+		static std::vector<std::string>	split(const std::string, const std::string);
 		std::vector<std::string>	split_trim(const std::string, const std::string) const;
 		std::vector<std::string>	splitOutsideQuotes(std::string) const;
 		std::string					itoa(int) const;
 		bool						isFileName(std::string) const;
 		std::string					remove_filename_from_path(std::string) const;
+		static std::string			get_file_extension(const std::string);
 		bool						is_size_t(std::string) const;
 		bool						is_int(std::string) const;
 		bool						isUri(std::string) const;
@@ -140,7 +141,6 @@ bool isBoolStr(std::string);
 std::string itos(int);
 std::string apply_quotes(std::string);
 std::string apply_quotes(std::string, std::string);
-std::vector<std::string> split(const std::string, const std::string);
 std::vector<std::string> split_trim(const std::string, const std::string);
 std::vector<std::string> splitOutsideQuotes(std::string);
 std::string itoa(int);

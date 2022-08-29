@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/25 16:55:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 17:36:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 # define CIRCULARBUFFER_TIMEOUT_MSEC 250
 # define CIRCULARBUFFER_SIZE (1024 * 1)
-# define CIRCULARBUFFER_LIMIT (1048576 * 100)
+# define CIRCULARBUFFER_LIMIT (1070000 * 100)
 
 class CircularBuffer
 {

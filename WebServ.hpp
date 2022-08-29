@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/25 15:47:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 18:30:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ struct ws_reply_instance
 	int PUT_mock(ws_server_instance&); // So it proceeds for 42 ubuntu_tester.
 	int is_501(ws_server_instance&); // Refuses if something is not implemented.
 	int is_cgi(ws_server_instance&); // Run!
+	int execute_cgi(ws_server_instance&, std::string);
 	int is_301(ws_server_instance&); // Redirect.
 	int is_403(ws_server_instance&); // Forbidden.
 	int is_405(ws_server_instance&); // Method Not Allowed.

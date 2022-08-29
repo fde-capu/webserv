@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/23 16:23:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 17:32:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,16 +300,19 @@ std::string ws_server_instance::location_path(const std::string& default_file) c
 	verbose(V) << "(location_path) default_file: " << default_file << std::endl;
 	verbose(V) << "(location_path) get_request: " << get_request << std::endl;
 
-	h = trunk.find("/", 0);
+	h = trunk.find("/", 1);
 	if (h != std::string::npos)
-		trunk = trunk.substr(1, h - 1);
+		trunk = trunk.substr(h + 1);
+	else
+		trunk = "";
 
 	verbose(V) << "(location_path) trunk: " << trunk << std::endl;
 
 	if (uri2root == html_dir)
-		full_path = sys_dir + "/" + uri2root + "/" + trunk;
+		full_path = sys_dir + "/" + html_dir;
 	else
-		full_path = sys_dir + "/" + html_dir + "/" + uri2root;
+		full_path = sys_dir + "/" + html_dir + "/" + uri2root + "/" + trunk;
+
 
 	verbose(V) << "(location_path) full location: " << full_path << std::endl;
 

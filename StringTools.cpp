@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/16 15:28:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 18:39:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -403,7 +403,7 @@ bool StringTools::isBoolStr(std::string w) const
 std::vector<std::string> split(const std::string str, const std::string sep)
 { return stool.split(str, sep); }
 
-std::vector<std::string> StringTools::split(const std::string str, const std::string sep) const
+std::vector<std::string> StringTools::split(const std::string str, const std::string sep)
 {
 	std::vector<std::string> out;
 	std::string crop = str;
@@ -529,6 +529,14 @@ bool StringTools::is_size_t(std::string sts) const
 	if (isAllNumber(sts) && 1 == std::sscanf(sts.c_str(), "%zu", &st_test))
 		return true;
 	return false;
+}
+
+std::string StringTools::get_file_extension(const std::string fpath)
+{
+	std::vector<std::string> e = split(fpath, ".");
+	if (e.size() <= 1)
+		return "";
+	return "." + e[e.size() - 1];
 }
 
 bool isFileName(std::string fn)

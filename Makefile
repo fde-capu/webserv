@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/08/04 16:09:26 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/29 18:21:46 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ SRCS	=	FileString.cpp DataFold.cpp \
 			WebServ_operator_out.cpp WebServ_ports.cpp WebServ.cpp
 SRCS1	=	main.cpp
 SRCS2	=	main_cgi.cpp
-HEAD	=	Makefile header.hpp \
+HEAD	=	Makefile argval_ws.conf argval_cgi.conf header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
 			CircularBuffer.hpp CgiWrapper.hpp Chronometer.hpp

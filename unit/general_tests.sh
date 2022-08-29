@@ -649,6 +649,7 @@ chunked="true"
 cmd="curl http://$name_server:4242/post_body";
 outdir="${MYDIR}/confs/html4242/uploads";
 upfile="99B.words" 
+#upfile="Alice.txt" 
 code="201";
 trace="true"
 unittest "Post to 4242 uploads";

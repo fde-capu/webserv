@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/16 15:05:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 18:47:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,35 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	return 405;
 }
 
+int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
+{
+	int V(1);
+	verbose(V) << "(execute_cgi) si = " << si << std::endl;
+	verbose(V) << "(execute_cgi) WILL HAPPEN HERE!!!" << std::endl;
+	verbose(V) << "(execute_cgi) Program is: " << program << std::endl;
+	return 1;
+}
+
 int ws_reply_instance::is_cgi(ws_server_instance& si)
 {
-//	verbose(1) << "(is_cgi) " << si << std::endl;
-(void)si;
+	int V(1);
+	std::vector<std::string> cgi(si.config.get_vector_str("cgi"));
+	std::vector<std::string> cgi_accept(si.config.get_vector_str("cgi_accept"));
+	std::string cgi_extension = cgi[0];
+	std::string cgi_children = cgi[1];
+	std::string call_method = si.in_header.method;
+	bool good_method = false;
+	for (size_t i = 0; i < cgi_accept.size(); i++)
+	{
+		verbose(V) << "(is_cgi) call: " << call_method << ", test " << cgi_accept[i] << std::endl;
+		if (cgi_accept[i] == call_method)
+			good_method = true;
+	}
+	if (!good_method)
+		return 0;
+	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
+	if (call_extension == cgi_extension)
+		return execute_cgi(si, cgi_children);
 	return 0;
 }
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/10 14:04:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/29 18:36:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <cstdlib>
 # include <fstream>
 # include "bladefs.hpp"
+# include "StringTools.hpp"
 # include "FileString.hpp"
 # include "ArgVal.hpp"
 # include "DataFold.hpp"
