@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 18:39:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 12:48:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -702,4 +702,45 @@ std::string& StringTools::trim(std::string& str, std::string set)
 	while (isInSet(str.at(end), set)) end--;
 	str = str.substr(start, end - start + 1);
 	return str;
+}
+
+std::string StringTools::consume_delims_ff(std::string& src, const std::string delim_set)
+{
+	size_t h(0);
+	std::string ret;
+
+	while (src.length() && h < src.length() - 1 && !isInSet(src.at(h), delim_set))
+		h++;
+	if (h >= src.length() - 1)
+	{
+		ret = src;
+		src = "";
+		return ret;
+	}
+	ret = src.substr(0, h);
+	while (src.length() && h < src.length() - 1 && isInSet(src.at(h), delim_set))
+		h++;
+	src = src.substr(h);
+	return ret;
+}
+
+std::string StringTools::get_after_first(const std::string& src, const std::string phrase)
+{
+	size_t h(src.find(phrase));
+	if (h == std::string::npos)
+		return "";
+	return src.substr(h + phrase.length());
+}
+
+std::string StringTools::get_before_first(const std::string& src, const std::string phrase)
+{
+	size_t h(src.find(phrase));
+	if (h == std::string::npos)
+		return src;
+	return src.substr(0, h);
+}
+
+size_t StringTools::strhex2size_t(const std::string src)
+{
+	return static_cast<size_t>(strtoul(src.c_str(), NULL, 16));
 }

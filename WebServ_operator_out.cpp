@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:48:34 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/04 15:50:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 13:20:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,6 @@ std::ostream& operator<< (std::ostream & o, ws_server_instance const & wssi)
 	o << "ws_server_instance | config      | " << wssi.config << std::endl;
 	o << "ws_server_instance | in_header   :" << std::endl << wssi.in_header \
 		<< std::endl;
-	if (wssi.in_body.length() < 512)
-	{
-		o << "ws_server_instance | in_body     :" << std::endl << ">>" << \
-			wssi.in_body << "<<" << std::endl;
-	}
-	else
-	{
-		o << "ws_server_instance | in_body     :" << std::endl << ">>" << \
-			wssi.in_body.substr(0, 500) << "(...)<< len " \
-			<< wssi.in_body.length() << "." << std::endl;
-	}
 	o << "ws_server_instance | multipart_type | " << wssi.multipart_type \
 		<< std::endl;
 	o << "ws_server_instance | multipart_content_disposition | " << \
@@ -55,6 +44,12 @@ std::ostream& operator<< (std::ostream & o, ws_server_instance const & wssi)
 		<< wssi.multipart_content_type << std::endl;
 	o << "ws_server_instance | boundary >>" << wssi.boundary << "<<" << std::endl;
 	o << "ws_server_instance | max_size | " << wssi.max_size << std::endl;
+	o << "ws_server_instance | in_body     :" << std::endl << ">>" << \
+		SHORT(wssi.in_body) << "<<" << std::endl;
+	o << "ws_server_instance | multipart_content     :" << std::endl << ">>" << \
+		SHORT(wssi.multipart_content) << "<<" << std::endl;
+	o << "ws_server_instance | chunked_content     :" << std::endl << ">>" << \
+		SHORT(wssi.chunked_content) << "<<" << std::endl;
 	return o;
 }
 

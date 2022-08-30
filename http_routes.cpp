@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 21:45:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 13:21:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,13 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	}
 	else // Parent.
 	{
-		size_t wr = write(pipe_pc[1], static_cast<const void *>(si.in_body.c_str()), si.in_body.length());
+		size_t wr;
+		if (si.is_chunked())
+			wr = write(pipe_pc[1], static_cast<const void *>(si.chunked_content.c_str()), si.chunked_content.length());
+		else if (si.is_multipart())
+			wr = write(pipe_pc[1], static_cast<const void *>(si.multipart_content.c_str()), si.multipart_content.length());
+		else
+			wr = write(pipe_pc[1], static_cast<const void *>(si.in_body.c_str()), si.in_body.length());
 		verbose(V) << "(execute_cgi) wr = " << wr << std::endl;
 //		write(pipe_pc[1], 0, 1);
 //		write(pipe_pc[1], "TtEeSsTtAaNnDdOo", 16);

@@ -6,11 +6,28 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 22:11:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 13:17:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+
+int ws_server_instance::read_more_general()
+{
+	if (is_chunked() && is_multipart())
+		return 422;
+	if (!is_chunked() && !is_multipart())
+		read_more_plain(max_size);
+	if (is_chunked())
+		read_more_chunked();
+	if (is_multipart())
+	{
+		if (in_header.content_length > CIRCULARBUFFER_LIMIT)
+			return 507;
+		read_more_multipart();
+	}
+	return status;
+}
 
 void ws_server_instance::read_more_plain(const size_t& max)
 {
@@ -34,21 +51,38 @@ void ws_server_instance::read_more_plain(const size_t& max)
 void ws_server_instance::read_more_chunked()
 {
 	static int V(1);
+	size_t length;
+	std::string chunk_size_hex;
+	std::string chunk_extension;
+	std::string chunk_data;
+	size_t chunk_size_bytes;
 
-	read_more_plain(max_size);
+	read_more_plain(in_header.content_length);
+	verbose(1) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
 
-	verbose(1) << "(read_more_chunked)" << std::endl;
-	set_sizes();
-	if (exceeded_limit)
-		status = 413;
-
-//	std::vector<std::string> chunk;
-//	chunk = StringTools::split(in_body, "\r\n");
-//	for (size_t i = 0; i < chunk.size(); i++)
-//	{
-//		verbose(V) << "(read_more_chunked) " i << ": " << \
-//			SHORT(chunk[i]) << std::endl;
-//	}
+	if (in_header.method == "GET")
+		return ;
+	length = 0;
+	chunk_size_hex = StringTools::consume_delims_ff(in_body, "\r\n");
+	verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
+	chunk_extension = StringTools::get_after_first(chunk_size_hex, ";");
+	chunk_size_hex = StringTools::get_before_first(chunk_size_hex, ";");
+	chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
+	verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
+	verbose(V) << "(read_more_chunked) chunk_extension " << SHORT(chunk_extension) << std::endl;
+	verbose(V) << "(read_more_chunked) chunk_size_bytes " << chunk_size_bytes << std::endl;
+	while (chunk_size_bytes > 0)
+	{
+		verbose(V) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
+		chunk_data = StringTools::consume_delims_ff(in_body, "\r\n");
+		chunked_content += chunk_data;
+		length += chunk_size_bytes;
+		chunk_size_hex = StringTools::consume_delims_ff(in_body, "\r\n");
+		chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
+		verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
+		verbose(V) << "(read_more_chunked) chunk_size_bytes " << chunk_size_bytes << std::endl;
+		verbose(V) << "(read_more_chunked) length " << length << std::endl;
+	}
 	verbose(V) << "(read_more_chunked) Finished with body " \
 		<< in_body.length() << " and chunked-content " \
 		<< chunked_content.length() << "." << std::endl;
@@ -84,23 +118,6 @@ void ws_server_instance::read_more_multipart()
 	verbose(V) << "(read_more_multipart) Calling read_more_plain." << std::endl;
 	read_more_plain(in_header.content_length);
 	mount_multipart();
-}
-
-int ws_server_instance::read_more_general()
-{
-	if (is_chunked() && is_multipart())
-		return 422;
-	if (!is_chunked() && !is_multipart())
-		read_more_plain(max_size);
-	if (is_chunked())
-		read_more_chunked();
-	if (is_multipart())
-	{
-		if (in_header.content_length > CIRCULARBUFFER_LIMIT)
-			return 507;
-		read_more_multipart();
-	}
-	return status;
 }
 
 int ws_reply_instance::read_limits(ws_server_instance& si)
