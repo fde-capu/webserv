@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 16:54:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 17:12:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,22 +140,22 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			wr = write(pipe_pc[1], static_cast<const void*>(si.in_body.c_str()),\
 				si.in_body.length());
 		}
-
-//		wr = write(pipe_pc[1], "TtEeSsTtAaNnDdOo", 16);
-//		write(pipe_pc[1], "\r\n\r\n", 4);
-//		write(pipe_pc[1], 0, 1);
-
 		verbose(V) << "(execute_cgi) wr = " << wr << std::endl;
 		close(pipe_pc[0]);
 		close(pipe_cp[1]);
 		close(pipe_pc[1]);
+
 //		wait_pid = wait(&child_status);
 //		if (wait_pid < 0)
 //			throw std::domain_error("(execute_cgi) Coudn't wait.");
 (void)wait_pid;
+
 		out_body = CircularBuffer(pipe_cp[0]);
 		close(pipe_cp[0]);
 		verbose(V) << "(execute_cgi) Got >>>" << SHORT(out_body) << "<<<" << std::endl;
+
+		ws_header cgi_header = WebServ::get_header("POST / HTTP/1.1\r\n" + out_body);
+		verbose(V) << "(execute_cgi) cgi_header: " << cgi_header << std::endl;
 //		set_code(201, "Accepted");
 		set_code(200, "OK");
 		static_cast<void>(WIFEXITED(child_status));

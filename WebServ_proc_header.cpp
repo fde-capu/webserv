@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:37:23 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/04 15:50:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 17:11:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 	line = split_trim(h_block, "\r\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
-		verbose(V) << "(webserv) LINE >>" << line[i] << "<<" << std::endl;
+		verbose(V) << "(get_header) LINE >>" << line[i] << "<<" << std::endl;
 		if (ignore_empty(line[i])) continue ;
 		if (i == 0 && read_1st_line(line[i], header, is_valid)) continue ;
 		if (host_from_header(line[i], header, is_valid)) continue ;
