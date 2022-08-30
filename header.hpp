@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 22:04:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 16:45:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@
 #  define VERBOSE 0
 # endif
 
-# define VLIM 20
+# define VLIM 60
 
 # define DEFAULT_INDEX "bliblib.html boblob.htm"
 # define DEFAULT_ACCEPTED_METHODS "GET"

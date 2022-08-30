@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/29 21:45:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 16:57:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_404(si)) return ; // Not found. GET.
 	if (is_424(si)) return ; // Not met dependency. Used when client expects 100-continue.
 	if (read_limits(si)) return ; // 413 Too Large, 507 No resource, 422 Unprocessable.
-	if (is_cgi(si)) return ; // Runs CGI and returns accordingly.
+	if (is_cgi_exec(si)) return ; // Runs CGI and returns accordingly.
 	if (is_200(si)) return ; // Ok (GET) and loads file.
 	if (is_201(si)) return ; // Accepted (POST) and saves data.
 
@@ -264,9 +264,18 @@ void WebServ::respond_connection_from(int fd)
 	si.set_sizes();
 	si.fd = fd;
 	ws_reply_instance respond(si); // ...oonn...
-	if (send(fd, respond.encapsulate().c_str(),
-		respond.package_length, 0) == -1)
-		throw std::domain_error("(webserv) Sending response went wrong.");
+	if (si.is_cgi())
+	{
+		if (send(fd, respond.out_body.c_str(),
+			respond.out_body.length(), 0) == -1)
+			throw std::domain_error("(webserv) Sending response went wrong.");
+	}
+	else
+	{
+		if (send(fd, respond.encapsulate().c_str(),
+			respond.package_length, 0) == -1)
+			throw std::domain_error("(webserv) Sending response went wrong.");
+	}
 	close(fd);
 	remove_from_poll(fd);
 }

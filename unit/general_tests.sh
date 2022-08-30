@@ -634,9 +634,32 @@ unittest "200MB rejection (out of resources)"
 ; } 2> /dev/null
 { ${MYDIR}/clean_uploads.sh; }
 
-## ###############################################################
+#################################################################
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce CGI_1 \
+\
+	'Test CGI.' \
+\
+; } 2> /dev/null
+
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+upfile="99B.words" 
+chunked="true"
+cmd="curl http://$name_server:4242/directory/youpi.bla"
+code="201"
+trace="true"
+outdir="${MYDIR}/confs/html4242/uploads";
+fail="true"
+unittest "First CGI"
+ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
+rm ${MYDIR}/99B.words
+cat ${MYDIR}/confs/html4242/uploads/99B.words;
+
+finish;
+
+#################################################################
 
 { anounce Words_chunk \
 \
@@ -645,10 +668,10 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ; } 2> /dev/null
 
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+upfile="99B.words" 
 chunked="true"
 cmd="curl http://$name_server:4242/post_body";
 outdir="${MYDIR}/confs/html4242/uploads";
-upfile="99B.words" 
 #upfile="Alice.txt" 
 code="201";
 trace="true"

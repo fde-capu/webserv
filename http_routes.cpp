@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 13:21:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 16:54:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
 	int V(1);
+	size_t wr(0);
 	verbose(V) << "(execute_cgi) si = " << si << std::endl;
 	verbose(V) << "(execute_cgi) WILL HAPPEN HERE!!!" << std::endl;
 	program = si.root_config.getValStr("root") + "/" + si.config.getValStr("root") + "/" + program;
@@ -124,31 +125,48 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	}
 	else // Parent.
 	{
-		size_t wr;
 		if (si.is_chunked())
-			wr = write(pipe_pc[1], static_cast<const void *>(si.chunked_content.c_str()), si.chunked_content.length());
+		{
+			wr = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()),\
+				si.chunked_content.length());
+		}
 		else if (si.is_multipart())
-			wr = write(pipe_pc[1], static_cast<const void *>(si.multipart_content.c_str()), si.multipart_content.length());
+		{
+			wr = write(pipe_pc[1], static_cast<const void*>(si.multipart_content.c_str()),\
+				si.multipart_content.length());
+		}
 		else
-			wr = write(pipe_pc[1], static_cast<const void *>(si.in_body.c_str()), si.in_body.length());
-		verbose(V) << "(execute_cgi) wr = " << wr << std::endl;
+		{
+			wr = write(pipe_pc[1], static_cast<const void*>(si.in_body.c_str()),\
+				si.in_body.length());
+		}
+
+//		wr = write(pipe_pc[1], "TtEeSsTtAaNnDdOo", 16);
+//		write(pipe_pc[1], "\r\n\r\n", 4);
 //		write(pipe_pc[1], 0, 1);
-//		write(pipe_pc[1], "TtEeSsTtAaNnDdOo", 16);
+
+		verbose(V) << "(execute_cgi) wr = " << wr << std::endl;
 		close(pipe_pc[0]);
-		close(pipe_pc[1]);
 		close(pipe_cp[1]);
-		wait_pid = wait(&child_status);
-		if (wait_pid < 0)
-			throw std::domain_error("(execute_cgi) Coudn't wait.");
+		close(pipe_pc[1]);
+//		wait_pid = wait(&child_status);
+//		if (wait_pid < 0)
+//			throw std::domain_error("(execute_cgi) Coudn't wait.");
+(void)wait_pid;
 		out_body = CircularBuffer(pipe_cp[0]);
 		close(pipe_cp[0]);
-		verbose(V) << "(execute_cgi) Got >>>" << out_body << "<<<" << std::endl;
+		verbose(V) << "(execute_cgi) Got >>>" << SHORT(out_body) << "<<<" << std::endl;
+//		set_code(201, "Accepted");
+		set_code(200, "OK");
 		static_cast<void>(WIFEXITED(child_status));
 	}
-	return 1;
+	return 201;
 }
 
-int ws_reply_instance::is_cgi(ws_server_instance& si)
+bool ws_server_instance::is_cgi() const
+{ return cgi_flag; }
+
+int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
 	std::vector<std::string> cgi(si.config.get_vector_str("cgi"));
 	std::vector<std::string> cgi_accept(si.config.get_vector_str("cgi_accept"));
@@ -163,7 +181,11 @@ int ws_reply_instance::is_cgi(ws_server_instance& si)
 		return 0;
 	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
 	if (call_extension == cgi_extension)
+	{
+		si.cgi_flag = true;
 		return execute_cgi(si, cgi_children);
+	}
+	si.cgi_flag = false;
 	return 0;
 }
 
