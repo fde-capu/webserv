@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 17:12:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 21:25:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	{
 		if (si.is_chunked())
 		{
+			si.chunked_content = si.chunked_content.substr(0, 100);
 			wr = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()),\
 				si.chunked_content.length());
 		}
@@ -145,20 +146,28 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		close(pipe_cp[1]);
 		close(pipe_pc[1]);
 
-//		wait_pid = wait(&child_status);
-//		if (wait_pid < 0)
-//			throw std::domain_error("(execute_cgi) Coudn't wait.");
-(void)wait_pid;
+		wait_pid = wait(&child_status);
+		if (wait_pid < 0)
+			throw std::domain_error("(execute_cgi) Coudn't wait.");
+//(void)wait_pid;
 
 		out_body = CircularBuffer(pipe_cp[0]);
-		close(pipe_cp[0]);
+//		close(pipe_cp[0]);
 		verbose(V) << "(execute_cgi) Got >>>" << SHORT(out_body) << "<<<" << std::endl;
 
-		ws_header cgi_header = WebServ::get_header("POST / HTTP/1.1\r\n" + out_body);
-		verbose(V) << "(execute_cgi) cgi_header: " << cgi_header << std::endl;
-//		set_code(201, "Accepted");
 		set_code(200, "OK");
-		static_cast<void>(WIFEXITED(child_status));
+		out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
+		out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
+		out_header.content_type = StringTools::query_for("Content-Type", out_body);
+		out_header.charset = StringTools::query_for("charset", out_body);
+
+		size_t h_body = out_body.find("\r\n\r\n");
+		if (h_body != std::string::npos)
+			out_body = out_body.substr(h_body + 4);
+
+		verbose(V) << "(execute_cgi) out_body " << SHORT(out_body) << std::endl;
+//		verbose(V) << "(execute_cgi) WIFEXITED(child_status) " << WIFEXITED(child_status) << std::endl;
+//		static_cast<void>(WIFEXITED(child_status));
 	}
 	return 201;
 }

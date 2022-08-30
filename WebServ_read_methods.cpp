@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 16:17:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 21:21:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void ws_server_instance::read_more_plain(const size_t& max)
 
 void ws_server_instance::read_more_chunked()
 {
-	static int V(1);
+	static int V(2);
 	size_t length;
 	std::string chunk_size_hex;
 	std::string chunk_extension;

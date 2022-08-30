@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 17:07:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 20:53:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,13 +103,20 @@ std::string ws_reply_instance::encapsulate()
 	std::string out = "";
 
 	out += out_header.protocol + " ";
-	out += itoa(out_header.status) + " " + out_header.status_msg + "\n";
+	out += itoa(out_header.status) + " " + out_header.status_msg + "\r\n";
 	if (out_header.connection != "")
-		out += "Connection: " + out_header.connection + "\n";
-	out += "Content-Length: " + itoa(out_body.length()) + "\n";
+		out += "Connection: " + out_header.connection + "\r\n";
+	out += "Content-Length: " + itoa(out_body.length()) + "\r\n";
 	if (out_header.location != "")
-		out += "Location: " + out_header.location + "\n";
-	out += "\n";
+		out += "Location: " + out_header.location + "\r\n";
+	if (out_header.content_type != "")
+	{
+		out += "Content-Type: " + out_header.content_type;
+		if (out_header.charset != "")
+			out += "; charset=" + out_header.charset;
+		out += "\r\n";
+	}
+	out += "\r\n";
 	out += out_body;
 	package_length = out.length();
 	return out;

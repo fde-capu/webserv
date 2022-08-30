@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 16:54:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 20:53:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ struct ws_header
 	int			content_length;
 	std::string	content_type;
 	std::string transfer_encoding;
+	std::string charset;
 	std::string expect;
 
 	bool		is_valid;
