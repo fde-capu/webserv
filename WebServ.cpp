@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 17:13:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 21:45:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void WebServ::set_non_blocking(int sock)
 int WebServ::bind_socket_to_local(int u_port)
 {
 	struct addrinfo hints;
-	struct addrinfo *result, *rp;
+	struct addrinfo *result, *rp; // rp = read pointer
 	int sfd, s;
 	int yes = 1;
 
@@ -65,25 +65,25 @@ int WebServ::bind_socket_to_local(int u_port)
 	hints.ai_socktype = SOCK_STREAM;
 	s = getaddrinfo(NULL, itoa(u_port).c_str(), &hints, &result);
 	if (s != 0)
-		throw std::domain_error("(webserv) getaddrinfo failed: " + std::string(gai_strerror(s)));
+		throw std::domain_error("(bind_socket_to_local) getaddrinfo failed: " + std::string(gai_strerror(s)));
 
 	for (rp = result; rp != NULL; rp = rp->ai_next)
 	{
 		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if (sfd == -1)
-			throw std::domain_error("(webserv) Socket creation failed.");
+			throw std::domain_error("(bind_socket_to_local) Socket creation failed.");
 		if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
-			throw std::domain_error("(webserv) Could not unlock the socket.");
+			throw std::domain_error("(bind_socket_to_local) Could not unlock the socket.");
 		set_non_blocking(sfd);
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 		close(sfd);
 	}
 	if (rp == NULL)
-		throw std::domain_error("(webserv) Socket locked.");
+		throw std::domain_error("(bind_socket_to_local) Socket locked.");
 
 	freeaddrinfo(result);
-	verbose(1) << "(webserv) Bound fd " << sfd << " to port " << u_port << "." << std::endl;
+	verbose(1) << "(bind_socket_to_local) Bound fd " << sfd << " to port " << u_port << "." << std::endl;
 	return sfd;
 }
 
@@ -267,7 +267,7 @@ void WebServ::respond_connection_from(int fd)
 	if (send(fd, respond.encapsulate().c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
-	close(fd);
+//	close(fd);
 	remove_from_poll(fd);
 }
 

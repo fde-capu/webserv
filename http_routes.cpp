@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 21:36:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/30 21:46:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,9 +127,9 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	{
 		if (si.is_chunked())
 		{
-			si.chunked_content = si.chunked_content.substr(0, 5);
-			wr = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()),\
-				si.chunked_content.length());
+//			si.chunked_content = si.chunked_content.substr(0, 5);
+//			wr = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()),\
+//				si.chunked_content.length());
 			wr = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()),\
 				si.chunked_content.length());
 		}
@@ -148,10 +148,11 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		close(pipe_cp[1]);
 		close(pipe_pc[1]);
 
-		wait_pid = wait(&child_status);
-		if (wait_pid < 0)
-			throw std::domain_error("(execute_cgi) Coudn't wait.");
-//(void)wait_pid;
+//		wait_pid = wait(&child_status);
+//		if (wait_pid < 0)
+//			throw std::domain_error("(execute_cgi) Coudn't wait.");
+(void)wait_pid;
+(void)child_status;
 
 		out_body = CircularBuffer(pipe_cp[0]);
 //		close(pipe_cp[0]);
