@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/07 20:55:24 by fde-capu          #+#    #+#              #
-#    Updated: 2022/08/31 17:22:40 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/31 18:28:37 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,10 +19,7 @@ all:	$(BIN)
 $(BIN):
 	@[ ! -d nginx-src ] && make -s unpack || :
 	echo "Nginx configure..."
-	@cd nginx-src && \
-	`./configure --prefix=$(PWD)/sandbox --with-pcre=$(PWD)/pcre \
-		--with-http_dav_module > /dev/null` \
-	&& \
+	@-cd nginx-src && ./configure --prefix=$(PWD)/sandbox --with-pcre=$(PWD)/pcre --with-http_dav_module > tmp_out 2>&1 && \
 	make -s && \
 	make -s install
 
