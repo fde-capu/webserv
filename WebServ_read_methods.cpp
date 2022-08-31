@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 21:21:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/31 14:26:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,56 +29,75 @@ int ws_server_instance::read_more_general()
 	return status;
 }
 
-void ws_server_instance::read_more_plain(const size_t& max)
+bool ws_server_instance::read_more_plain(const size_t& max)
 {
 	static int V(1);
 	size_t next_load;
 	CircularBuffer buf(fd);
+	bool data_was_read(false);
+	size_t len;
 
 	if (in_header.method == "GET")
-		return ;
+		return false;
 	while (check_socket_stream(buf) && in_body.length() < max)
 	{
 		next_load = max - in_body.length();
+
 		verbose(V) << "(read_more_plain) max " << max << " next_load " \
 			<< next_load << std::endl;
 
+		len = in_body.length();
 		in_body += buf.try_to_receive(next_load);
+		data_was_read = data_was_read || len != in_body.length();
+
 		verbose(V) << "in_body " << SHORT(in_body) << std::endl;
 	}
+	return data_was_read;
 }
 
 void ws_server_instance::read_more_chunked()
 {
-	static int V(2);
+	static int V(1);
 	size_t length;
 	std::string chunk_size_hex;
 	std::string chunk_extension;
 	std::string chunk_data;
 	size_t chunk_size_bytes;
+	Chronometer chrono;
 
-	read_more_plain(in_header.content_length);
-	verbose(1) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
+	while (chrono < 1000)
+	{
+		if (chrono > 999.9)
+			verbose(V) << "(read_more_chunked) chrono: " << chrono << std::endl;
+		if (read_more_plain(in_header.content_length))
+			chrono.btn_reset();
+	}
+
+	verbose(V) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
 
 	if (in_header.method == "GET")
 		return ;
 	length = 0;
 	chunk_size_hex = StringTools::consume_delims_ff(in_body, "\r\n");
-	verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
 	chunk_extension = StringTools::get_after_first(chunk_size_hex, ";");
 	chunk_size_hex = StringTools::get_before_first(chunk_size_hex, ";");
 	chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
+	
+	verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
 	verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
 	verbose(V) << "(read_more_chunked) chunk_extension " << SHORT(chunk_extension) << std::endl;
 	verbose(V) << "(read_more_chunked) chunk_size_bytes " << chunk_size_bytes << std::endl;
+
 	while (chunk_size_bytes > 0)
 	{
 		verbose(V) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
+
 		chunk_data = StringTools::consume_delims_ff(in_body, "\r\n");
 		chunked_content += chunk_data;
 		length += chunk_data.length();
 		chunk_size_hex = StringTools::consume_delims_ff(in_body, "\r\n");
 		chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
+
 		verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
 		verbose(V) << "(read_more_chunked) chunk_size_bytes " << chunk_size_bytes << std::endl;
 		verbose(V) << "(read_more_chunked) length " << length << std::endl;

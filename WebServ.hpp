@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 20:53:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/08/31 14:17:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ struct ws_server_instance
 	void set_props();
 
 	int read_more_general();
-	void read_more_plain(const size_t&);
+	bool read_more_plain(const size_t&);
 	void read_more_chunked();
 	void read_more_multipart();
 	void mount_multipart();
