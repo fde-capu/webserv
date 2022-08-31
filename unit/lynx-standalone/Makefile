@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/12 11:38:34 by fde-capu          #+#    #+#              #
-#    Updated: 2022/02/17 13:56:15 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/31 16:27:57 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,19 +17,19 @@ BIN		=	$(PWD)/lynx $(PWD)/lynx.cfg $(PWD)/lynx.lss
 all:	$(BIN)
 
 $(BIN):
-	mkdir -p $(PWD)/src
-	tar -zxvf lynx2.8.9rel.1.tar.gz -C src --strip 1
+	@[ ! -d $(PWD)/src ] && mkdir -p $(PWD)/src && \
+		tar -zxf lynx2.8.9rel.1.tar.gz -C src --strip 1
 	cd src && \
 	./configure --sysconfdir=$(PWD) && \
-	make
+	make -s
 	mv src/lynx .
 	mv src/samples/lynx.lss .
 	sed src/lynx.cfg -e "s/^STARTFILE:.*/STARTFILE:http:\/\/localhost:3490\//" > ./lynx.cfg
 
 clean:
-	rm -rf $(PWD)/src
+	@rm -rf $(PWD)/src
 
 fclean:	clean
-	-rm $(BIN)
+	@rm -f $(BIN)
 
 re: fclean all

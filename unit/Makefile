@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/06/22 15:43:42 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/31 16:37:14 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ VALFLAG	=	--tool=memcheck \
 			--show-reachable=yes
 NGINX	=	$(PWD)/nginx-standalone/sandbox/sbin/nginx
 RUNCGI	=	@echo "Please \`make ftcgi\` on another terminal.";
-SS		=	netstat -tnlp || ss -tnlp
+SS		=	netstat -tnl || ss -tnl
 MAKEFLAGS =	--no-print-directory
 
 all:		nginx lynx
@@ -61,8 +61,7 @@ webserv:	webserv-k webserv-build $(WEBSERV_C) nginx-k
 	../webserv $(PWD)/$(WEBSERV_C)
 webserv-r:	webserv
 webserv-k:
-	-pkill webserv
-	$(SS)
+	-pkill webserv && ( $(SS) )
 $(WEBSERV_C): webserv-r
 webserv-t:	webserv
 webserv-gt:
@@ -71,11 +70,11 @@ webserv-rt:	webserv-r webserv-t
 webserv-tc:	$(WEBSERV_C)
 	@echo 'Test without running (like -t option on nginx) not implemented.';
 webserv-clean:
-	cd .. && \
-	make clean
+	@cd .. && \
+	make -s clean
 webserv-fclean:
-	cd .. && \
-	make fclean
+	@cd .. && \
+	make -s fclean
 webserv-re:
 	cd .. && \
 	make re
@@ -91,26 +90,21 @@ wst:	webserv-t
 ####### :: nginx :: #######
 ####### ::::::::::: #######
 
-NGXUNPCKME	=	echo '=========> You need to `make nginx-pre-build` before actually building. (Do it if not already.) <=========='
-NGXSRCME	=	echo '=========> Please run: `source ./source-me-after-install-rc`. <============'
+NGXSRCME	=	echo -e "\n\n=========> Please run: 'source ./source-me-after-install-rc'. <============\n\n"
 
 $(NGINX):
-nginx-pre-build: $(NGINX)
-	-@cd nginx-standalone && \
-	make unpack
 nginx-build:
-	@$(NGXUNPCKME)
-	@echo 'nginx: '
+	@echo 'Building nginx standalone...'
 	-@cd nginx-standalone && \
-	make
+	make -s
 nginx-up:	nginx
 nginx:		nginx-k nginx-build $(NGINX_C) nginx-tc webserv-k
 	$(NGINX) -c $(NGINX_C)
 	$(SS)
 nginx-k:
-	-pkill nginx
-	$(SS)
-$(NGINX_C):	nginx-r
+	@pkill nginx && ( $(SS) ) || echo -n ;
+$(NGINX_C):
+	make nginx-r
 nginx-t:	nginx
 	$(TESTSH)
 nginx-r:	nginx
@@ -118,11 +112,11 @@ nginx-rt:	nginx-r nginx-t
 nginx-tc:	$(NGINX_C)
 	@-$(NGINX) -c $(NGINX_C) -t || $(NGXSRCME)
 nginx-clean:
-	cd nginx-standalone && \
-	make clean
+	@cd nginx-standalone && \
+	make -s clean
 nginx-fclean:
-	cd nginx-standalone && \
-	make fclean
+	@cd nginx-standalone && \
+	make -s fclean
 nginx-re:
 	cd nginx-standalone && \
 	make re
@@ -143,13 +137,13 @@ nginx-tlog: nginx-relog nginx-t nginx-catlog
 lynx:
 	@echo 'lynx: '
 	@-cd lynx-standalone && \
-	make
+	make -s
 lynx-fclean:
-	cd lynx-standalone && \
-	make fclean
+	@cd lynx-standalone && \
+	make -s fclean
 lynx-clean:
-	cd lynx-standalone && \
-	make clean
+	@cd lynx-standalone && \
+	make -s clean
 lynx-re:
 	cd lynx-standalone && \
 	make re

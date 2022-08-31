@@ -37,8 +37,9 @@ Run `webserv webserv-unit.conf` or `nginx nginx-as-webserv.conf`.
 # curl -vD- $SP:$P -H 'Host: krazything'	// krazything exists.
 # curl -vD- $SP:$P -H 'Host: unxistent'		// Defaults to first server:3490 on .conf file.
 
-#
-#
+
+
+### Util commands:
 
 ## List machine IPs:
 # `getent hosts`
