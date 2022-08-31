@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/08/31 17:22:39 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/31 17:32:39 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -110,6 +110,7 @@ nginx-t:	nginx
 nginx-r:	nginx
 nginx-rt:	nginx-r nginx-t
 nginx-tc:	$(NGINX_C)
+	@[ "$WEBSERV_UNIT_SOURCED" = "1" ] || $(NGXSRCME) && exit 1
 	@-$(NGINX) -c $(NGINX_C) -t || $(NGXSRCME)
 nginx-clean:
 	@cd nginx-standalone && \

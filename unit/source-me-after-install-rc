@@ -6,12 +6,11 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/12 17:04:34 by fde-capu          #+#    #+#              #
-#    Updated: 2022/05/20 19:38:45 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/31 17:28:11 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # nginx related:
-
 sed -i 's/80;/3491;/' $PWD/nginx-standalone/sandbox/conf/nginx.conf
 alias nginx=$PWD/nginx-standalone/sandbox/sbin/nginx
 rm -rf $PWD/nginx-standalone/sandbox/html
@@ -19,9 +18,11 @@ ln -fs $PWD/confs/* $PWD/nginx-standalone/sandbox
 ln -fs $PWD/nginx-as-webserv.conf $PWD/nginx-standalone/sandbox
 
 # lynx related:
-
 alias lynx=$PWD/lynx-standalone/lynx
 
 # Chain of instruction:
 echo 'Sourcing ok. Remember to turn the server up if not already:';
 echo 'Run: ./check-n-ginx.sh';
+
+# Env-check:
+export WEBSERV_UNIT_SOURCED=1
