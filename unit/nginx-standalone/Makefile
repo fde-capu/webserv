@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/07 20:55:24 by fde-capu          #+#    #+#              #
-#    Updated: 2022/08/31 16:33:20 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/31 17:22:40 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,17 +17,18 @@ DIRS	=	nginx-src pcre
 all:	$(BIN)
 
 $(BIN):
-	@[ ! -d nginx-src ] && make unpack
-#echo -e "\n\nRun 'make unpack' before making all (first time only).\n\n" && exit 1;
-	cd nginx-src && \
-	./configure --prefix=$(PWD)/sandbox --with-pcre=$(PWD)/pcre \
-		--with-http_dav_module > /dev/null \
+	@[ ! -d nginx-src ] && make -s unpack || :
+	echo "Nginx configure..."
+	@cd nginx-src && \
+	`./configure --prefix=$(PWD)/sandbox --with-pcre=$(PWD)/pcre \
+		--with-http_dav_module > /dev/null` \
 	&& \
-	@make -s && \
-	@make -s install
+	make -s && \
+	make -s install
 
 $(DIRS):
 unpack: $(DIRS)
+	echo "Unpacking nginx..."
 	mkdir -p $(PWD)/sandbox
 	mkdir -p $(PWD)/pcre
 	tar -xzf pcre-8.45.tar.gz -C pcre --strip 1

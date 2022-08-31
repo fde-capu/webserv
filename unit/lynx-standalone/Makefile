@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/12 11:38:34 by fde-capu          #+#    #+#              #
-#    Updated: 2022/08/31 16:27:57 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/08/31 17:22:28 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,9 +18,10 @@ all:	$(BIN)
 
 $(BIN):
 	@[ ! -d $(PWD)/src ] && mkdir -p $(PWD)/src && \
-		tar -zxf lynx2.8.9rel.1.tar.gz -C src --strip 1
+		tar -zxf lynx2.8.9rel.1.tar.gz -C src --strip 1 || :
+	echo "Lynx configure..."
 	cd src && \
-	./configure --sysconfdir=$(PWD) && \
+	./configure --sysconfdir=$(PWD) > /dev/null && \
 	make -s
 	mv src/lynx .
 	mv src/samples/lynx.lss .
