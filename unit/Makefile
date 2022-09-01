@@ -6,10 +6,9 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/10 01:00:04 by fde-capu          #+#    #+#              #
-#    Updated: 2022/08/31 17:32:39 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/01 14:08:32 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
 
 ####### :::::::::: #######
 ####### :: unit :: #######
@@ -61,7 +60,7 @@ webserv:	webserv-k webserv-build $(WEBSERV_C) nginx-k
 	../webserv $(PWD)/$(WEBSERV_C)
 webserv-r:	webserv
 webserv-k:
-	-pkill webserv && ( $(SS) )
+	@pkill webserv && ( $(SS) ) ||:
 $(WEBSERV_C): webserv-r
 webserv-t:	webserv
 webserv-gt:
@@ -90,19 +89,19 @@ wst:	webserv-t
 ####### :: nginx :: #######
 ####### ::::::::::: #######
 
-NGXSRCME	=	echo -e "\n\n=========> Please run: 'source ./source-me-after-install-rc'. <============\n\n"
+NGXSRCME	=	echo -e "\n\n=========> Please run: 'source ./source-me-nginx-setup-rc'.\n=========> Then, run 'make' again.\n\n"
 
 $(NGINX):
 nginx-build:
 	@echo 'Building nginx standalone...'
 	-@cd nginx-standalone && \
-	make -s
+	make -s > /dev/null
 nginx-up:	nginx
 nginx:		nginx-k nginx-build $(NGINX_C) nginx-tc webserv-k
-	$(NGINX) -c $(NGINX_C)
-	$(SS)
+	@echo -e "\n ======> Run: ./check-n-ginx.sh";
+	@echo ;
 nginx-k:
-	@pkill nginx && ( $(SS) ) || :
+	@pkill nginx && ( $(SS) ) ||:
 $(NGINX_C):
 	make nginx-r
 nginx-t:	nginx
@@ -110,8 +109,8 @@ nginx-t:	nginx
 nginx-r:	nginx
 nginx-rt:	nginx-r nginx-t
 nginx-tc:	$(NGINX_C)
-	@[ "$WEBSERV_UNIT_SOURCED" = "1" ] || $(NGXSRCME) && exit 1
-	@-$(NGINX) -c $(NGINX_C) -t || $(NGXSRCME)
+	@[ "$(WEBSERV_UNIT_SOURCED)" = "1" ] || $(NGXSRCME);
+	@[ "$(WEBSERV_UNIT_SOURCED)" = "1" ] || exit 1;
 nginx-clean:
 	@cd nginx-standalone && \
 	make -s clean
@@ -136,9 +135,9 @@ nginx-tlog: nginx-relog nginx-t nginx-catlog
 ####### :::::::::: #######
 
 lynx:
-	@echo 'lynx: '
+	@echo 'Building lynx standalone...'
 	@-cd lynx-standalone && \
-	make -s
+	make -s > /dev/null 2> /dev/null
 lynx-fclean:
 	@cd lynx-standalone && \
 	make -s fclean

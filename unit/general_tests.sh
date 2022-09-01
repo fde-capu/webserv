@@ -382,9 +382,11 @@ unittest "Client redirecting made two calls";
 
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce POST_MULTIPART_1 \
 \
-	'POST multipart/formdata tests. Within limits of client_max_body_size:' \
+	'POST multipart/form-data tests. Within limits of client_max_body_size:' \
 \
 ; } 2> /dev/null
 
@@ -393,6 +395,7 @@ cmd="curl http://$name_server:3490";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 code="201";
+trace="true";
 unittest "Simple post";
 ls -l ${MYDIR}/confs/html/99B.words;
 rm ${MYDIR}/99B.words
@@ -636,7 +639,6 @@ unittest "200MB rejection (out of resources)"
 
 #################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CGI_1 \
 \
