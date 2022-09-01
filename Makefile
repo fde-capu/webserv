@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/09/01 16:46:10 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/01 17:38:51 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@
 # t2 : Tests cgi-wrapper (made based on webserv).
 
 NAME1	=	webserv
-ARGS1	=	unit/webserv-unit.conf
+XARGS1	=	unit/webserv-unit.conf
 
 NAME2	=	cgi_webserv
 ARGS2	=	./unit/ubuntu_cgi_tester 9000
@@ -38,8 +38,8 @@ HEAD	=	Makefile argval_ws.conf argval_cgi.conf header.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
 			CircularBuffer.hpp CgiWrapper.hpp Chronometer.hpp
 SHELL	=	/bin/sh
-CC		=	c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(DEBUG) $(ENVS)
-CCFLAGS	=	-Wall -Werror -Wextra -g -O0 -fno-limit-debug-info
+CC		=	@c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(DEBUG) $(ENVS)
+CCFLAGS	=	-Wall -Werror -Wextra -g -O0
 OBJS	=	$(SRCS:.cpp=.o)
 OBJS1	=	$(SRCS1:.cpp=.o)
 OBJS2	=	$(SRCS2:.cpp=.o)
@@ -49,11 +49,15 @@ VALFLAG	=	--tool=memcheck \
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--show-reachable=yes
+DOT		=	@echo -n ".";
 all:		line $(NAME1) $(NAME2) lynx
 ws:			line $(NAME1)
 cgi:		line $(NAME2)
 1:			ws
 2:			cgi
+intro:		line
+	@echo "Using CC CCFLAGS = $(CC) $(CCFLAGS)"
+outro:		line
 line:
 	@echo "\n************************\n"
 $(NAME1):	$(OBJS1)
@@ -61,18 +65,21 @@ $(NAME1):	$(OBJS1)
 $(NAME2):	$(OBJS2)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS2) -o $(NAME2)
 $(OBJS):	%.o : %.cpp $(HEAD)
+	$(DOT)
 	$(CC) $(CCFLAGS) -o $@ -c $<
-$(OBJS1):	$(OBJS)
+$(OBJS1):	intro $(OBJS) outro
+	$(DOT)
 	$(CC) $(CCFLAGS) -o $(OBJS1) -c $(SRCS1)
-$(OBJS2):	$(OBJS)
+$(OBJS2):	intro $(OBJS) outro
+	$(DOT)
 	$(CC) $(CCFLAGS) -o $(OBJS2) -c $(SRCS2)
 clean:		lynx-clean
-	-rm -f $(OBJS)
-	-rm -f $(OBJS1)
-	-rm -f $(OBJS2)
+	-@rm -f $(OBJS)
+	-@rm -f $(OBJS1)
+	-@rm -f $(OBJS2)
 fclean:		clean lynx-fclean
-	-rm -f $(NAME1)
-	-rm -f $(NAME2)
+	-@rm -f $(NAME1)
+	-@rm -f $(NAME2)
 re:			fclean all
 rt:			re t
 v1:			1
@@ -86,25 +93,12 @@ vf2:		2
 t1:			1
 	@echo '=======> Please run unit/general_tests.sh on another terminal <======='
 	./$(NAME1) $(ARGS1)
-t2:			2
-	./$(NAME2) $(ARGS2)
-ftcgi:		t2
 g1:			1
 	gdb --args ./$(NAME1) $(ARGS1)
-g2:			2
-	gdb --args ./$(NAME2) $(ARGS2)
-gt1:
-	$(TEST_SH)
-gt2:
-	./cgi_test.sh
 k1:
 	-pkill $(NAME1)
 k2:
 	-pkill $(NAME2)
-ft: youpi
-	@echo "Please run \`make ftcgi\` (aka t2) on another terminal.";
-	@echo "";
-	unit/ubuntu_tester http://0.0.0.0:4242
 youpi:
 	echo 'Initial YoupiBanane/youpi.bla' > unit/confs/html4242/YoupiBanane/youpi.bla
 	ls -l unit/confs/html4242/YoupiBanane/youpi.bla
@@ -114,12 +108,15 @@ youpi:
 ####### :::::::::: #######
 
 lynx:
-	@echo 'Building lynx standalone...'
+	@[ -f lynx ] && exit 0 ||:
+	@echo "\nBuilding lynx standalone..."
 	@-cd lynx-standalone && \
 	make -s > /dev/null 2> /dev/null
+	@mv lynx-standalone/lynx .
 lynx-fclean:
 	@cd lynx-standalone && \
 	make -s fclean
+	@rm -f lynx
 lynx-clean:
 	@cd lynx-standalone && \
 	make -s clean
@@ -130,7 +127,6 @@ lynx-re:
 ####### :::::::::: #######
 
 .PHONY: webserv
-webserv:	ws
 webserv-up:	ws
 gws:		g1
 ws-t:		t1

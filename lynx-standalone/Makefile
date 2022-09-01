@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/02/12 11:38:34 by fde-capu          #+#    #+#              #
-#    Updated: 2022/09/01 13:31:53 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/01 17:22:58 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ BIN		=	$(PWD)/lynx $(PWD)/lynx.cfg $(PWD)/lynx.lss
 all:	$(BIN)
 
 $(BIN):
-	@[ ! -d $(PWD)/src ] && make -s unpack || :
+	@[ ! -d $(PWD)/src ] && make -s unpack ||:
 	echo "Lynx configure..."
 	cd src && \
 	./configure --sysconfdir=$(PWD) && \

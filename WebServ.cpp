@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 21:45:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/01 17:54:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,7 +267,7 @@ void WebServ::respond_connection_from(int fd)
 	if (send(fd, respond.encapsulate().c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
-//	close(fd);
+	close(fd);
 	remove_from_poll(fd);
 }
 

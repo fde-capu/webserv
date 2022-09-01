@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:37:23 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 17:11:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/01 17:45:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,11 @@ bool WebServ::validate_header_entry
 {
 	is_valid = is_valid && test.size() == expected_size;
 	return is_valid;
+}
+
+ws_server_instance::ws_server_instance()
+{
+	status = 0;
 }
 
 ws_header::ws_header()

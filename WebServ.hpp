@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/31 14:17:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/01 17:48:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 # define WEBSERV_HPP
 
 # include "header.hpp"
-
-# define HELLO_WORLD "HTTP/1.1 200 OK\nConnection: close\nContent-Length: 14\n\nHello, world!\n"
 
 struct ws_header
 {
@@ -44,6 +42,7 @@ std::ostream & operator<< (std::ostream & o, ws_header const &);
 
 struct ws_server_instance
 {
+	ws_server_instance();
 	ws_header in_header;
 	std::string in_body;
 	std::vector<int> port;

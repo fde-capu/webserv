@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 21:46:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/01 17:52:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,6 +181,8 @@ bool ws_server_instance::is_cgi() const
 int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
 	std::vector<std::string> cgi(si.config.get_vector_str("cgi"));
+	if (cgi.empty())
+		return 0;
 	std::vector<std::string> cgi_accept(si.config.get_vector_str("cgi_accept"));
 	std::string cgi_extension = cgi[0];
 	std::string cgi_children = cgi[1];
@@ -239,14 +241,15 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 
 int ws_reply_instance::is_200(ws_server_instance& si)
 {
+	int V(1);
+
 	if (si.in_header.method != "GET")
 		return 0;
-
 	FileString from_file(file_name.c_str());
 	out_body = from_file.content();
 	if (from_file.exists())
 	{
-		verbose(2) << "(is_200) out_body >" << out_body << "<" \
+		verbose(V) << "(is_200) out_body >" << SHORT(out_body) << "<" \
 			<< std::endl;
 		set_code(200, "OK");
 		return 200;

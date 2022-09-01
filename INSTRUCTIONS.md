@@ -13,8 +13,6 @@ Run `webserv webserv-unit.conf` or `nginx nginx-as-webserv.conf`.
 
 #
 # make
-# (make clean)
-#-> source source-me-after-install-rc
 # netstat -tnl					// --tcp --numeric --listening // Nothing shows.
 # (ps aux)						// all, show users, x = show parents
 # (pkill nginx)
@@ -47,21 +45,6 @@ Run `webserv webserv-unit.conf` or `nginx nginx-as-webserv.conf`.
 ## See all open ports?
 # `netstat -tnl` --tcp --numeric --listening
 
-## nginx with specific `.conf`; `-t` for testing.
-# `nginx -c /home/coder/webserv/confs/nginx.conf -t`
-
 ## curl showing everything about the negotiation and package
 ## (request and response headers):
 # `curl --verbose -D-` # or better: `-vD-`
-
-## nginx reload (uses the same configuration file previous given by -c)
-# `nginx -s reload`
-
-## curl POST
-#  `export REQUEST_METHOD="POST" && export SERVER_PROTOCOL="HTTP/1.1" && export PATH_INFO="/home/coder/webserv/unit/confs/html4242" && ./confs/html4242/ubuntu_cgi_tester` 
-#  `make nginx-relog && make nginx-r && curl -vL -X POST -F 'file=@1MiB.noise' http://127.0.0.1:4242/directory/youpi.bla && make nginx-catlog`
-#  `make nginx-relog && make nginx-r && curl -vL -X POST --output cgi_returned_file -F "a=@100MB.noise" http://127.0.0.1:4242/directory/youpi.bla && make nginx-catlog`
-
-## generate random file
-# `head -c 1MB /dev/urandom > file`
-# `head -c 100 /dev/urandom > 100B.noise`
