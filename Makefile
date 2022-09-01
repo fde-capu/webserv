@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/08/29 19:41:47 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/01 16:46:10 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ VALFLAG	=	--tool=memcheck \
 			--show-leak-kinds=all \
 			--track-origins=yes \
 			--show-reachable=yes
-all:		line $(NAME1) $(NAME2)
+all:		line $(NAME1) $(NAME2) lynx
 ws:			line $(NAME1)
 cgi:		line $(NAME2)
 1:			ws
@@ -66,11 +66,11 @@ $(OBJS1):	$(OBJS)
 	$(CC) $(CCFLAGS) -o $(OBJS1) -c $(SRCS1)
 $(OBJS2):	$(OBJS)
 	$(CC) $(CCFLAGS) -o $(OBJS2) -c $(SRCS2)
-clean:
+clean:		lynx-clean
 	-rm -f $(OBJS)
 	-rm -f $(OBJS1)
 	-rm -f $(OBJS2)
-fclean:		clean
+fclean:		clean lynx-fclean
 	-rm -f $(NAME1)
 	-rm -f $(NAME2)
 re:			fclean all
@@ -108,6 +108,26 @@ ft: youpi
 youpi:
 	echo 'Initial YoupiBanane/youpi.bla' > unit/confs/html4242/YoupiBanane/youpi.bla
 	ls -l unit/confs/html4242/YoupiBanane/youpi.bla
+
+####### :::::::::: #######
+####### :: lynx :: #######
+####### :::::::::: #######
+
+lynx:
+	@echo 'Building lynx standalone...'
+	@-cd lynx-standalone && \
+	make -s > /dev/null 2> /dev/null
+lynx-fclean:
+	@cd lynx-standalone && \
+	make -s fclean
+lynx-clean:
+	@cd lynx-standalone && \
+	make -s clean
+lynx-re:
+	cd lynx-standalone && \
+	make re
+
+####### :::::::::: #######
 
 .PHONY: webserv
 webserv:	ws

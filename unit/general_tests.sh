@@ -386,7 +386,9 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce POST_MULTIPART_1 \
 \
-	'POST multipart/form-data tests. Within limits of client_max_body_size:' \
+	'POST multipart/form-data tests. \n
+	Nginx does not support this and will fail all POST tests.\n
+	Within limits of client_max_body_size:' \
 \
 ; } 2> /dev/null
 
@@ -395,7 +397,6 @@ cmd="curl http://$name_server:3490";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 code="201";
-trace="true";
 unittest "Simple post";
 ls -l ${MYDIR}/confs/html/99B.words;
 rm ${MYDIR}/99B.words
@@ -433,7 +434,8 @@ unittest "Post fail"
 
 { anounce KB \
 \
-	'PUT is not implemented, just mocked (200).' \
+	'PUT is not implemented, just mocked (200).\n
+	Nginx regects 405. webserv returns 200 so it can go on 42 ubuntu_tester.' \
 \
 ; } 2> /dev/null
 
