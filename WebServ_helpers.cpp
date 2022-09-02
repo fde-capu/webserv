@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/02 13:46:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 17:05:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,8 @@ std::string ws_reply_instance::encapsulate()
 			out += "; charset=" + out_header.charset;
 		out += "\r\n";
 	}
+	else
+		out += "Content-Type: text/html; charset=utf-8\r\n";
 	out += "\r\n";
 	out += out_body;
 	package_length = out.length();
