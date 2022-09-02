@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/02 17:49:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 17:56:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,7 +232,7 @@ DataFold ws_server_instance::get_location_config() const
 	return locations;
 }
 
-DataFold ws_server_instance::server_root_path(const std::string& key, \
+DataFold ws_server_instance::server_location_config(const std::string& key, \
 	std::string u_default) const
 {
 	static int V(1);
@@ -241,16 +241,16 @@ DataFold ws_server_instance::server_root_path(const std::string& key, \
 	DataFold out;
 
 	out = std::string(key + ":" + u_default);
-	verbose(V) << "(server_root_path) default: " << out << std::endl;
+	verbose(V) << "(server_location_config) default: " << out << std::endl;
 	if (root_config.getValStr(key) != "")
 	{
 		out = root_config.get(key);
-		verbose(V) << "(server_root_path) root_config: " << out << std::endl;
+		verbose(V) << "(server_location_config) root_config: " << out << std::endl;
 	}
 	if (config.get(key) != "")
 	{
 		out = config.get(key);
-		verbose(V) << "(server_root_path) config.get: " << out << std::endl;
+		verbose(V) << "(server_location_config) config.get: " << out << std::endl;
 	}
 
 	while (locations.loop())
@@ -263,18 +263,18 @@ DataFold ws_server_instance::server_root_path(const std::string& key, \
 				if (loc.key == key)
 				{
 					out = loc.get(key);
-					verbose(V) << "(server_root_path) location: " << out << std::endl;
+					verbose(V) << "(server_location_config) location: " << out << std::endl;
 				}
 		}
 	}
-	verbose(V) << "(server_root_path) Return: " << out << std::endl;
+	verbose(V) << "(server_location_config) Return: " << out << std::endl;
 	return out;
 }
 
 std::string ws_server_instance::location_get_single \
 	(const std::string& key, std::string u_default) const
 {
-	DataFold x(server_root_path(key, u_default));
+	DataFold x(server_location_config(key, u_default));
 	if (x.loop())
 		return x.val.c_str();
 	return 0;

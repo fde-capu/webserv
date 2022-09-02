@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/02 17:09:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 17:59:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	*this = ws_reply_instance();
 	out_body = "";
 
+	// Order matters.
 	if (PUT_mock(si)) return ; // 200 but mocked.
 	if (is_501(si)) return ; // Is it not implemented?
 	if (is_301(si)) return ; // Redirect.
@@ -176,8 +177,8 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_424(si)) return ; // Not met dependency. Used when client expects 100-continue.
 	if (read_limits(si)) return ; // 413 Too Large, 507 No resource, 422 Unprocessable.
 	if (is_cgi_exec(si)) return ; // Runs CGI and returns accordingly.
-	if (is_200(si)) return ; // Ok (GET) and loads file.
 	if (is_201(si)) return ; // Accepted (POST) and saves data.
+	if (is_200(si)) return ; // Ok (GET) and loads file.
 
 	set_code(420, "Enhance Your Calm");
 	out_body = "BODY FOR 420";

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/02 16:55:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 18:35:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 {
 	bool method_accepted(false);
 
-	DataFold accepted_methods = si.server_root_path(
+	DataFold accepted_methods = si.server_location_config(
 		"accepted_request_methods",
 		DEFAULT_ACCEPTED_METHODS
 	);
@@ -217,7 +217,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 	if (FileString::is_dir(request))
 	{
-		indexes = si.server_root_path("index");
+		indexes = si.server_location_config("index");
 		while (indexes.loop())
 		{
 			file_name = si.location_path(indexes.val);
@@ -265,7 +265,7 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 
 	if (FileString::is_dir(request))
 	{
-		indexes = si.server_root_path("index");
+		indexes = si.server_location_config("index");
 		while (indexes.loop())
 		{
 			file_name = si.location_path(indexes.val);
@@ -290,12 +290,10 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 
 int ws_reply_instance::is_201(ws_server_instance& si)
 {
-	static size_t O_LIM(15);
 	static int V(1);
 
 	std::string full_path;
 	std::string mp_block;
-	std::string data_simple;
 	std::string* data;
 
 	if (si.in_header.method == "POST")
@@ -306,9 +304,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 		else
 			data = &si.in_body;
 
-		data_simple = data->length() <= O_LIM ? *data : \
-			data->substr(0, O_LIM) + "... (len " + itoa(data->length()) + ")";
-		verbose(V) << "(webserv) >" << data_simple << \
+		verbose(V) << "(webserv) >" << SHORT((*data)) << \
 			"< will be saved into " << full_path << \
 			"." << std::endl;
 
