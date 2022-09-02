@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/31 14:26:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 13:41:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void ws_server_instance::read_more_multipart()
 
 int ws_reply_instance::read_limits(ws_server_instance& si)
 {
-	static int V(1);
+	static int V(2);
 	static int VPRINTLIM(40);
 	int pos_status(0);
 

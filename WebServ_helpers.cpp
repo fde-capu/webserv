@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/01 17:19:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 13:46:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,25 +230,25 @@ DataFold ws_server_instance::get_location_config() const
 	return locations;
 }
 
-DataFold ws_server_instance::location_get(const std::string& key, \
+DataFold ws_server_instance::server_root_path(const std::string& key, \
 	std::string u_default) const
 {
-	static int V(2);
+	static int V(1);
 	DataFold locations(config.get<DataFold>("location"));
 	DataFold loc;
 	DataFold out;
 
 	out = std::string(key + ":" + u_default);
-	verbose(V) << "(location_get) default: " << out << std::endl;
+	verbose(V) << "(server_root_path) default: " << out << std::endl;
 	if (root_config.getValStr(key) != "")
 	{
 		out = root_config.get(key);
-		verbose(V) << "(location_get) root_config: " << out << std::endl;
+		verbose(V) << "(server_root_path) root_config: " << out << std::endl;
 	}
 	if (config.get(key) != "")
 	{
 		out = config.get(key);
-		verbose(V) << "(location_get) config.get: " << out << std::endl;
+		verbose(V) << "(server_root_path) config.get: " << out << std::endl;
 	}
 
 	while (locations.loop())
@@ -261,24 +261,24 @@ DataFold ws_server_instance::location_get(const std::string& key, \
 				if (loc.key == key)
 				{
 					out = loc.get(key);
-					verbose(V) << "(location_get) location: " << out << std::endl;
+					verbose(V) << "(server_root_path) location: " << out << std::endl;
 				}
 		}
 	}
-	verbose(V) << "(location_get) Return: " << out << std::endl;
+	verbose(V) << "(server_root_path) Return: " << out << std::endl;
 	return out;
 }
 
 std::string ws_server_instance::location_get_single \
 	(const std::string& key, std::string u_default) const
 {
-	DataFold x(location_get(key, u_default));
+	DataFold x(server_root_path(key, u_default));
 	if (x.loop())
 		return x.val.c_str();
 	return 0;
 }
 
-std::string ws_server_instance::location_path(const std::string& default_file) const
+std::string ws_server_instance::location_path(const std::string default_file) const
 {
 	static int V(1);
 
@@ -296,7 +296,7 @@ std::string ws_server_instance::location_path(const std::string& default_file) c
 	verbose(V) << "(location_path) default_file: " << default_file << std::endl;
 	verbose(V) << "(location_path) get_request: " << get_request << std::endl;
 
-	h = trunk.find("/", 1);
+	h = trunk.rfind("/");
 	if (h != std::string::npos)
 		trunk = trunk.substr(h + 1);
 	else
@@ -305,7 +305,7 @@ std::string ws_server_instance::location_path(const std::string& default_file) c
 	verbose(V) << "(location_path) trunk: " << trunk << std::endl;
 
 	if (uri2root == html_dir)
-		full_path = sys_dir + "/" + html_dir;
+		full_path = sys_dir + "/" + html_dir + "/" + trunk;
 	else
 		full_path = sys_dir + "/" + html_dir + "/" + uri2root + "/" + trunk;
 

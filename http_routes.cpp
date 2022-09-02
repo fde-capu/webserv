@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/02 13:01:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 13:51:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 {
 	bool method_accepted(false);
 
-	DataFold accepted_methods = si.location_get(
+	DataFold accepted_methods = si.server_root_path(
 		"accepted_request_methods",
 		DEFAULT_ACCEPTED_METHODS
 	);
@@ -205,17 +205,31 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 
 int ws_reply_instance::is_404(ws_server_instance& si)
 {
+	int V(1);
+	std::string request;
 	DataFold indexes;
 
 	if (si.in_header.method != "GET")
 		return 0;
-	indexes = si.location_get("index");
-	while (indexes.loop())
+	request = si.location_path();
+
+	verbose(V) << "(is_404) request: " << request << std::endl;
+
+	if (FileString::is_dir(request))
 	{
-		file_name = si.location_path(indexes.val);
-		verbose(1) << "(is_404) Fetching " << file_name \
-			<< std::endl;
-		if (FileString::exists(file_name))
+		indexes = si.server_root_path("index");
+		while (indexes.loop())
+		{
+			file_name = si.location_path(indexes.val);
+			verbose(1) << "(is_404) Fetching " << file_name \
+				<< std::endl;
+			if (FileString::exists(file_name))
+				return 0;
+		}
+	}
+	else
+	{
+		if (FileString::exists(request))
 			return 0;
 	}
 	set_code(404, "File Not Found");
@@ -243,8 +257,6 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 {
 	int V(1);
 
-	if (si.in_header.method != "GET")
-		return 0;
 	FileString from_file(file_name.c_str());
 	out_body = from_file.content();
 	if (from_file.exists())

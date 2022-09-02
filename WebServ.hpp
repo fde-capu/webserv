@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/01 17:48:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 13:37:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,8 @@ struct ws_server_instance
 	bool is_chunked() const;
 	bool is_cgi() const;
 	bool cgi_flag;
-	std::string location_path(const std::string&) const;
-	DataFold location_get(const std::string&, std::string = "") const;
+	std::string location_path(const std::string = "") const;
+	DataFold server_root_path(const std::string&, std::string = "") const;
 	std::string location_get_single(const std::string&, std::string = "") const;
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
