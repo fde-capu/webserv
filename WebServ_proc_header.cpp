@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:37:23 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/01 17:45:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 12:58:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ bool WebServ::host_from_header(std::string& line, ws_header& header, bool& is_va
 
 struct ws_header WebServ::get_header(const std::string& full_file)
 {
-	static int V(1);
+	static int V(2);
 	ws_header header;
 	std::vector<std::string> line;
 	std::vector<std::string> carrier;
@@ -100,7 +100,7 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 	line = split_trim(h_block, "\r\n");
 	for (size_t i = 0; i < line.size(); i++)
 	{
-		verbose(V) << "(get_header) LINE >>" << line[i] << "<<" << std::endl;
+		verbose(1) << "< " << line[i] << std::endl;
 		if (ignore_empty(line[i])) continue ;
 		if (i == 0 && read_1st_line(line[i], header, is_valid)) continue ;
 		if (host_from_header(line[i], header, is_valid)) continue ;

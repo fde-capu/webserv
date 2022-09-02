@@ -3,8 +3,14 @@ by fde-capu
 
 # Instructions
 
-## Build
-`make` | `webserv` and `cgi_webserv`
+`make`
+`make clean`
+`ls`
+	webserv: program
+	cgi_webserv: simple cgi wrapper
+	lynx: web browser
+`curl http://localhost:3490`
+`lynx http://localhost:3490`
 
 ## Tests
 
