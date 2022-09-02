@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/09/02 17:29:25 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/02 17:36:48 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,8 @@
 # make ft
 # t2 : Tests cgi-wrapper (made based on webserv).
 
-MAKESILENT = 
+MAKESILENT = @
+TRACKMAKEFILE = 
 
 NAME1	=	webserv
 XARGS1	=	unit/webserv-unit.conf
@@ -35,7 +36,7 @@ SRCS	=	FileString.cpp DataFold.cpp \
 			WebServ_operator_out.cpp WebServ_ports.cpp WebServ.cpp
 SRCS1	=	main.cpp
 SRCS2	=	main_cgi.cpp
-HEAD	=	argval_ws.conf argval_cgi.conf header.hpp \
+HEAD	=	$(TRACKMAKEFILE) argval_ws.conf argval_cgi.conf header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
 			CircularBuffer.hpp CgiWrapper.hpp Chronometer.hpp
@@ -53,7 +54,8 @@ VALFLAG	=	--tool=memcheck \
 			--show-reachable=yes
 DOT		=	@echo -n ".";
 
-all:		line $(NAME1) $(NAME2)
+all:		intro line $(NAME1) $(NAME2)
+	@echo "\n************************\n"
 ws:			line $(NAME1)
 cgi:		line $(NAME2)
 1:			ws
@@ -68,6 +70,7 @@ $(NAME1):	$(OBJS1) $(OBJS)
 $(NAME2):	$(OBJS2) $(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS2) -o $(NAME2)
 $(OBJS):	%.o : %.cpp $(HEAD)
+	$(DOT)
 	$(CC) $(CCFLAGS) -o $@ -c $<
 $(OBJS1):	%.o : %.cpp
 	$(DOT)
