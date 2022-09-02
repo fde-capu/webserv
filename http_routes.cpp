@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/02 13:51:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 15:29:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,17 +256,36 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 int ws_reply_instance::is_200(ws_server_instance& si)
 {
 	int V(1);
+	std::string request;
+	DataFold indexes;
 
-	FileString from_file(file_name.c_str());
-	out_body = from_file.content();
-	if (from_file.exists())
+	request = si.location_path();
+
+	verbose(V) << "(is_200) request: " << request << std::endl;
+
+	if (FileString::is_dir(request))
 	{
-		verbose(V) << "(is_200) out_body" << std::endl \
-			<< SHORT(out_body) << std::endl;
-		set_code(200, "OK");
-		return 200;
+		indexes = si.server_root_path("index");
+		while (indexes.loop())
+		{
+			file_name = si.location_path(indexes.val);
+			if (FileString::exists(file_name))
+				break ;
+		}
 	}
-	return 0;
+	else
+	{
+		file_name = request;
+	}
+	if (!FileString::exists(file_name))
+		return 0;
+
+	set_code(200, "OK");
+	out_body = FileString(file_name.c_str()).content();
+
+	verbose(V) << "(is_200) out_body" << std::endl << SHORT(out_body) << std::endl;
+
+	return 200;
 }
 
 int ws_reply_instance::is_201(ws_server_instance& si)
