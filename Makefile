@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/09/02 17:36:48 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/02 17:48:40 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,10 +15,10 @@
 # t2 : Tests cgi-wrapper (made based on webserv).
 
 MAKESILENT = @
-TRACKMAKEFILE = 
+TRACKMAKEFILE = Makefile
 
 NAME1	=	webserv
-XARGS1	=	unit/webserv-unit.conf
+ARGS1	=	unit/webserv-unit.conf
 
 NAME2	=	cgi_webserv
 ARGS2	=	./unit/ubuntu_cgi_tester 9000
@@ -78,12 +78,6 @@ $(OBJS1):	%.o : %.cpp
 $(OBJS2):	%.o : %.cpp
 	$(DOT)
 	$(CC) $(CCFLAGS) -o $@ -c $<
-
-#$(OBJS1):	intro $(OBJS) outro
-#	$(CC) $(CCFLAGS) -o $(OBJS1) -c $(SRCS1)
-#$(OBJS2):	intro $(OBJS) outro
-#	$(CC) $(CCFLAGS) -o $(OBJS2) -c $(SRCS2)
-
 clean:		lynx-clean
 	-@rm -f $(OBJS)
 	-@rm -f $(OBJS1)

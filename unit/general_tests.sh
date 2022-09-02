@@ -184,6 +184,7 @@ if false; then
 
 #################################################################### Begin
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ## Basic_1 ################################################################
 
@@ -257,7 +258,6 @@ unittest "Basic 5";
 
 # Basic_6 ################################################################
 
-
 { anounce Basic_6 \
 \
 	"Subdirectory ending with '/' has the same effect. \n
@@ -271,7 +271,6 @@ testfile="$MYDIR/confs/html/somesub/index.htm";
 unittest "Basic 6";
 
 # Basic_7 ################################################################
-
 
 { anounce Basic_7 \
 \
@@ -355,19 +354,6 @@ unittest "Client not redirecting";
 
 ##################################################################
 
-{ anounce J \
-\
-	'Testing :4242 specifics. Will now use location. \n
-	GET on / should be ok.' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:4242"
-code="200"
-unittest "Location GET /";
-
-##################################################################
-
 { anounce Redirect \
 \
 	':3493 server redirects 301 to :3490. \n
@@ -381,8 +367,6 @@ code="200";
 unittest "Client redirecting made two calls";
 
 ##################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce POST_MULTIPART_1 \
 \
@@ -415,6 +399,20 @@ outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
 unittest "Simple post with noise";
+
+##################################################################
+
+{ anounce 42_ununtu_test_specifics \
+\
+	'Testing :4242 specifics. Will now use location. \n
+	GET on / should be ok.' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:4242"
+code="200"
+testfile="$MYDIR/confs/html4242/index.html";
+unittest "Location GET /";
 
 # KA ###############################################################
 
