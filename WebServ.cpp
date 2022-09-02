@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/02 16:37:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/02 17:09:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,12 +265,8 @@ void WebServ::respond_connection_from(int fd)
 	si.set_sizes();
 	si.fd = fd;
 	ws_reply_instance respond(si); // ...oonn...
-	encapsulated = respond.encapsulate();
-	verbose(1) << "(respond_connection_from) encap: " << encapsulated << std::endl;
-	verbose(1) << "(respond_connection_from) " << encapsulated.length() << std::endl;
-
-	if (send(fd, encapsulated.c_str(),
-		encapsulated.length(), 0) == -1)
+	if (send(fd, respond.encapsulate().c_str(),
+		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 	close(fd);
 	remove_from_poll(fd);

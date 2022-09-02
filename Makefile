@@ -6,13 +6,15 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/09/01 17:38:51 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/02 17:29:25 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Test 2
 # make ft
 # t2 : Tests cgi-wrapper (made based on webserv).
+
+MAKESILENT = 
 
 NAME1	=	webserv
 XARGS1	=	unit/webserv-unit.conf
@@ -33,12 +35,12 @@ SRCS	=	FileString.cpp DataFold.cpp \
 			WebServ_operator_out.cpp WebServ_ports.cpp WebServ.cpp
 SRCS1	=	main.cpp
 SRCS2	=	main_cgi.cpp
-HEAD	=	Makefile argval_ws.conf argval_cgi.conf header.hpp \
+HEAD	=	argval_ws.conf argval_cgi.conf header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
 			CircularBuffer.hpp CgiWrapper.hpp Chronometer.hpp
 SHELL	=	/bin/sh
-CC		=	@c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(DEBUG) $(ENVS)
+CC		=	$(MAKESILENT) c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(DEBUG) $(ENVS)
 CCFLAGS	=	-Wall -Werror -Wextra -g -O0
 OBJS	=	$(SRCS:.cpp=.o)
 OBJS1	=	$(SRCS1:.cpp=.o)
@@ -50,7 +52,8 @@ VALFLAG	=	--tool=memcheck \
 			--track-origins=yes \
 			--show-reachable=yes
 DOT		=	@echo -n ".";
-all:		line $(NAME1) $(NAME2) lynx
+
+all:		line $(NAME1) $(NAME2)
 ws:			line $(NAME1)
 cgi:		line $(NAME2)
 1:			ws
@@ -60,19 +63,24 @@ intro:		line
 outro:		line
 line:
 	@echo "\n************************\n"
-$(NAME1):	$(OBJS1)
+$(NAME1):	$(OBJS1) $(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS1) -o $(NAME1)
-$(NAME2):	$(OBJS2)
+$(NAME2):	$(OBJS2) $(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS2) -o $(NAME2)
 $(OBJS):	%.o : %.cpp $(HEAD)
+	$(CC) $(CCFLAGS) -o $@ -c $<
+$(OBJS1):	%.o : %.cpp
 	$(DOT)
 	$(CC) $(CCFLAGS) -o $@ -c $<
-$(OBJS1):	intro $(OBJS) outro
+$(OBJS2):	%.o : %.cpp
 	$(DOT)
-	$(CC) $(CCFLAGS) -o $(OBJS1) -c $(SRCS1)
-$(OBJS2):	intro $(OBJS) outro
-	$(DOT)
-	$(CC) $(CCFLAGS) -o $(OBJS2) -c $(SRCS2)
+	$(CC) $(CCFLAGS) -o $@ -c $<
+
+#$(OBJS1):	intro $(OBJS) outro
+#	$(CC) $(CCFLAGS) -o $(OBJS1) -c $(SRCS1)
+#$(OBJS2):	intro $(OBJS) outro
+#	$(CC) $(CCFLAGS) -o $(OBJS2) -c $(SRCS2)
+
 clean:		lynx-clean
 	-@rm -f $(OBJS)
 	-@rm -f $(OBJS1)
@@ -125,9 +133,3 @@ lynx-re:
 	make re
 
 ####### :::::::::: #######
-
-.PHONY: webserv
-webserv-up:	ws
-gws:		g1
-ws-t:		t1
-wst:		t1
