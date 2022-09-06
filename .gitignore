@@ -2,3 +2,6 @@ webserv
 cgi_webserv
 *.o
 *.noise
+lynx
+lynx-standalone/lynx.*
+lynx-standalone/src

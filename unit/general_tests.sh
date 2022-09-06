@@ -29,12 +29,7 @@ name_server="127.0.0.1";
 #	To run the subject tests 42 ubuntu_tester and ubuntu_cgi_tester:
 #	tcp 	0	0.0.0.0:4242	0.0.0.0:*	LISTEN	67/nginx: master pr	
 
-
-
-
-
 # (helpers) #######################################################
-
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -186,7 +181,7 @@ if false; then
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
-## Basic_1 ################################################################
+##################################################################
 
 { anounce Basic_1 \
 \
@@ -201,22 +196,9 @@ testfile="$MYDIR/confs/html/index.htm";
 code="200";
 unittest "Basic 1";
 
-## Basic_2 ################################################################
+##################################################################
 
-{ anounce Basic_2 \
-\
-	'If server_name is unexistent, defaults to previous: 200' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:3490 -H 'Host: wtf_server'";
-testfile="$MYDIR/confs/html/index.htm";
-code="200";
-unittest "Basic 2";
-
-## Basic_3 ################################################################
-
-{ anounce Basic_3 \
+{ anounce Root_by_servername \
 \
 	'If server_name is existent on another root: 200' \
 \
@@ -225,24 +207,11 @@ unittest "Basic 2";
 cmd="curl http://$name_server:3490 -H 'Host: krazything'";
 testfile="$MYDIR/confs/html-custom-server-name/index.html";
 code="200";
-unittest "Basic 3";
+unittest "Root by servername";
 
-## Basic_4 ################################################################
+#################################################################
 
-
-{ anounce Basic_4 \
-\
-	'Existent server_name without root definition. 403' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:3490 -H 'Host: rootless'";
-code="403";
-unittest "Basic 4";
-
-# Basic_5 ################################################################
-
-{ anounce Basic_5 \
+{ anounce Subdirectory \
 \
 	'Accepts subdirectory calls. \n
 	-L tells curl to follow redirect. \n
@@ -254,11 +223,11 @@ unittest "Basic 4";
 cmd="curl -vL http://$name_server:3490/somesub"
 code="200"
 testfile="$MYDIR/confs/html/somesub/index.htm";
-unittest "Basic 5";
+unittest "Subdirectory";
 
-# Basic_6 ################################################################
+#################################################################
 
-{ anounce Basic_6 \
+{ anounce SubdirectorySlash \
 \
 	"Subdirectory ending with '/' has the same effect. \n
 	This time, curl -L is not required." \
@@ -268,24 +237,11 @@ unittest "Basic 5";
 cmd="curl -vL http://$name_server:3490/somesub/"
 code="200"
 testfile="$MYDIR/confs/html/somesub/index.htm";
-unittest "Basic 6";
+unittest "Subdirectory with slash (/)";
 
-# Basic_7 ################################################################
+#################################################################
 
-{ anounce Basic_7 \
-\
-	'Unexistent servername defaults to :3490 first declaration.' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:3490 -H 'Host: unexistent_servername'";
-testfile="$MYDIR/confs/html/index.htm";
-code="200";
-unittest "Basic 7";
-
-# Basic_8 ################################################################
-
-{ anounce Basic_8 \
+{ anounce Another_port \
 \
 	':3491, another port, another server, another folder: \n
 	root ./unit/confs/html-3491.' \
@@ -295,62 +251,7 @@ unittest "Basic 7";
 cmd="curl http://$name_server:3491"
 testfile="$MYDIR/confs/html-3491/index.html";
 code="200";
-unittest "Basic 8";
-
-##################################################################
-
-{ anounce Not_allowed_1 \
-\
-	':3491 accepts only GET. Testing POST is not allowed. 405' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:3491";
-code="405";
-noise="1MiB";
-fail="true";
-unittest "Not allowed 1";
-
-##################################################################
-
-{ anounce Not_allowed_2 \
-\
-	':3491 accepts only GET. Testing DELETE is not allowed. 405' \
-\
-; } 2> /dev/null
-
-cmd="curl -X DELETE http://$name_server:3491";
-code="405";
-fail="true";
-unittest "Not allowed 2";
-
-##################################################################
-
-{ anounce Forbidden \
-\
-	':3492 is solenly a `server { listen 3492; }`, \n
-	this is an open port, but forbidden serverside, \n
-	because it has no location, root, nor redirect. (403)' \
-\
-; } 2> /dev/null
-
-cmd="curl -v http://$name_server:3492"
-code="403";
-fail="true";
-unittest "Forbidden";
-
-##################################################################
-
-{ anounce Dumb_client \
-\
-	' - client NOT redirecting (gets 301):\n
-	(dumb test, this is client-side).' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:3493"
-code="301";
-unittest "Client not redirecting";
+unittest "Port to server";
 
 ##################################################################
 
@@ -367,12 +268,96 @@ code="200";
 unittest "Client redirecting made two calls";
 
 ##################################################################
+##################################################################
+##################################################################
 
-{ anounce POST_MULTIPART_1 \
+{ anounce Faulty_setup \
+\
+	'Existent server_name without root definition. 403' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3490 -H 'Host: rootless'";
+code="403";
+unittest "server_name w/o root (faulty config)";
+
+##################################################################
+
+{ anounce Unknown_servername \
+\
+	'If server_name is unexistent, defaults to previous: 200' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3490 -H 'Host: wtf_server'";
+testfile="$MYDIR/confs/html/index.htm";
+code="200";
+unittest "Unexistent server_name defaults to first";
+
+##################################################################
+
+{ anounce GET_refusal \
+\
+	':3491 accepts only GET. Testing POST is not allowed. 405' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3491";
+code="405";
+noise="1MiB";
+fail="true";
+unittest "POST rejection";
+
+##################################################################
+
+{ anounce DELETE_refusal \
+\
+	':3491 accepts only GET. Testing DELETE is not allowed. 405' \
+\
+; } 2> /dev/null
+
+cmd="curl -X DELETE http://$name_server:3491";
+code="405";
+fail="true";
+unittest "DELETE rejection";
+
+##################################################################
+
+{ anounce Forbidden \
+\
+	':3492 is solenly a `server { listen 3492; }`, \n
+	this is an open port, but forbidden serverside, \n
+	because it has no location, root, nor redirect. (403)' \
+\
+; } 2> /dev/null
+
+cmd="curl -v http://$name_server:3492"
+code="403";
+fail="true";
+unittest "Forbidden (faulty config)";
+
+##################################################################
+
+{ anounce Dumb_client \
+\
+	' - client NOT redirecting (gets 301):\n
+	(dumb test, this is client-side).' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3493"
+code="301";
+unittest "Client not redirecting";
+
+##################################################################
+##################################################################
+##################################################################
+
+{ anounce POST_MULTIPART \
 \
 	'POST multipart/form-data tests. \n
 	Nginx does not support this and will fail all POST tests.\n
-	Within limits of client_max_body_size:' \
+	Within limits of client_max_body_size:\nTraced.' \
 \
 ; } 2> /dev/null
 
@@ -381,14 +366,15 @@ cmd="curl http://$name_server:3490";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 code="201";
+trace="true"
 unittest "Simple post";
 ls -l ${MYDIR}/confs/html/99B.words;
 rm ${MYDIR}/99B.words
 cat ${MYDIR}/confs/html/99B.words;
 
-## POST_2 ################################################################
+##################################################################
 
-{ anounce POST_2 \
+{ anounce MULTIPART \
 \
 	'POST test. 99B again, noise this time.' \
 \
@@ -402,156 +388,95 @@ unittest "Simple post with noise";
 
 ##################################################################
 
-{ anounce 42_ununtu_test_specifics \
+{ anounce MULTIPART \
 \
-	'Testing :4242 specifics. Will now use location. \n
-	GET on / should be ok.' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:4242"
-code="200"
-testfile="$MYDIR/confs/html4242/index.html";
-unittest "Location GET /";
-
-# KA ###############################################################
-
-{ anounce KA \
-\
-	'POST :4242 at root (/) should fail, 405 not allowed.' \
-\
-; } 2> /dev/null
-
-noise="1MiB"
-cmd="curl http://$name_server:4242 "
-code="405";
-fail="true";
-unittest "Post fail"
-
-#####################################################################
-
-{ anounce KB \
-\
-	'PUT is not implemented, just mocked (200).\n
-	Nginx regects 405. webserv returns 200 so it can go on 42 ubuntu_tester.' \
-\
-; } 2> /dev/null
-
-cmd="curl -vL -X PUT -d faa=fee -d fii=foo http://$name_server:4242"
-code="200"
-unittest "Put (accepted but mocked)"
-
-#####################################################################
-
-{ anounce KC \
-\
-	'DELETE :4242 at root (/) also should fail. 405' \
-\
-; } 2> /dev/null
-
-cmd="curl -vL -X DELETE http://$name_server:4242"
-code="405"
-unittest "Delete reject"
-
-#####################################################################
-
-{ anounce LA \
-\
-	'/post_body rejects all but POST (2 tests). 405' \
-\
-; } 2> /dev/null
-
-cmd="curl -X GET http://$name_server:4242/post_body"
-code="405"
-unittest "Reject GET"
-
-{ div; } 2> /dev/null
-
-cmd="curl -X DELETE http://$name_server:4242/post_body"
-code="405"
-unittest "Reject GET"
-
-#####################################################################
-
-{ anounce LB_1st \
-\
-	'- /post_body must answer anything to POST request with a \n
-	maxBody of 100. Many tests.\n
-	- 1st) Post 99B.words into html4242/uploads (as set in config).' \
-\
-; } 2> /dev/null
-
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:4242/post_body";
-outdir="${MYDIR}/confs/html4242/uploads";
-upfile="99B.words" 
-code="201";
-unittest "Post to 4242 uploads";
-ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
-rm ${MYDIR}/99B.words
-cat ${MYDIR}/confs/html4242/uploads/99B.words;
-
-#####################################################################
-
-{ anounce LB_2nd \
-\
-	'2nd) The same, using noise upfile.' \
-\
-; } 2> /dev/null
-
-noise="99"
-cmd="curl http://$name_server:4242/post_body"
-outdir="${MYDIR}/confs/html4242/uploads";
-code="201"
-unittest "Noise 99"
-
-#####################################################################
-
-{ anounce LB_3rd \
-\
-	'3rd) Same, with 100B.noise. Max is at 100B, this passes. \n
-	Same file name, so it overwrites.'\
+	'POST multipart noise 100B.' \
 \
 ; } 2> /dev/null
 
 noise="100"
-cmd="curl http://$name_server:4242/post_body"
-outdir="${MYDIR}/confs/html4242/uploads";
-code="201"
-unittest "Noise 100"
+outdir="${MYDIR}/confs/html";
+cmd="curl http://$name_server:3490";
+code="201";
+unittest "Post noise 100B";
 
-#####################################################################
+##################################################################
 
-{ anounce LB_4th \
+{ anounce MULTIPART \
 \
-	'4th) 101B.noise should not pass because of max_size is set for 100. 413' \
+	'POST multipart noise 101B (fail, since max is 100).' \
 \
 ; } 2> /dev/null
 
 noise="101"
-cmd="curl http://$name_server:4242/post_body"
-outdir="${MYDIR}/confs/html4242/uploads";
-code="413"
-fail="true"
-unittest "Noise 101"
+outdir="${MYDIR}/confs/html";
+cmd="curl http://$name_server:3490";
+code="403";
+unittest "Post noise 101B";
 
-#####################################################################
+##################################################################
 
-{ anounce Large_Uploads_2 \
+{ anounce MULTIPART \
 \
 	'Not large, but shows "uri /large_upload" is working. 42B. 201' \
 \
 ; } 2> /dev/null
 
 noise="42"
-cmd="curl http://$name_server:4242/large_upload"
-outdir="${MYDIR}/confs/html4242/uploads";
+outdir="${MYDIR}/confs/html/uploads_large";
+cmd="curl http://$name_server:3490/large_upload"
 code="201"
 unittest "Noise to large_upload 42B"
 
 #####################################################################
 
-{ anounce Large_Uploads_3 \
+{ anounce MULTIPART \
+\
+	'Again 1MiB.noise, this time sending the file right away.\n
+	This SHALL BE accepted and saved.' \
+\
+; } 2> /dev/null
+
+noise="1MiB"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+outdir="${MYDIR}/confs/html/uploads_large";
+code="201"
+unittest "1MiB success"
+
+#####################################################################
+
+{ anounce MULTIPART \
+\
+	'Now 2MiB.noise, sending the file right away.' \
+\
+; } 2> /dev/null
+
+noise="2MiB"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+outdir="${MYDIR}/confs/html/uploads_large";
+code="201"
+unittest "2MiB success"
+
+#####################################################################
+
+{ anounce MULTIPART \
+\
+	'How about 50MB?\n
+	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
+\
+; } 2> /dev/null
+
+noise="50MB"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+outdir="${MYDIR}/confs/html/uploads_large";
+code="201"
+unittest "50MB success"
+
+#####################################################################
+#####################################################################
+#####################################################################
+
+{ anounce MULTIPART_FAIL \
 \
 	'Now POSTing 1MiB.noise.\n
 	This shall NOT be accepted, because curl will expect 100-continue,\n
@@ -560,58 +485,14 @@ unittest "Noise to large_upload 42B"
 ; } 2> /dev/null
 
 noise="1MiB"
-cmd="curl http://$name_server:4242/large_upload"
+cmd="curl http://$name_server:3490/large_upload"
 code="424"
 fail="true"
 unittest "webserv must close connection"
 
 #####################################################################
 
-{ anounce Large_Uploads_4 \
-\
-	'Again 1MiB.noise, this time sending the file right away.\n
-	This SHALL BE accepted and saved.' \
-\
-; } 2> /dev/null
-
-noise="1MiB"
-cmd="curl -H \"Expect:\" http://$name_server:4242/large_upload"
-code="201"
-outdir="${MYDIR}/confs/html4242/uploads";
-unittest "1MiB success"
-
-#####################################################################
-
-{ anounce Large_Uploads_5 \
-\
-	'Now 2MiB.noise, alse sending the file right away.' \
-\
-; } 2> /dev/null
-
-noise="2MiB"
-cmd="curl -H \"Expect:\" http://$name_server:4242/large_upload"
-code="201"
-outdir="${MYDIR}/confs/html4242/uploads";
-unittest "2MiB success"
-
-#####################################################################
-
-{ anounce Large_Uploads_6 \
-\
-	'How about 50MB?\n
-	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
-\
-; } 2> /dev/null
-
-noise="50MB"
-cmd="curl -H \"Expect:\" http://$name_server:4242/large_upload"
-code="201"
-outdir="${MYDIR}/confs/html4242/uploads";
-unittest "50MB success"
-
-#####################################################################
-
-{ anounce Large_Uploads_7 \
+{ anounce MULTIPART_FAIL \
 \
 	'How about 200MiB? Wait a little, but this would get OOM KILL\n
 	by Workspace. Set CIRCULARBUFFER_LIMIT for this.\n
@@ -621,13 +502,14 @@ unittest "50MB success"
 ; } 2> /dev/null
 
 noise="200MB"
-cmd="curl -H \"Expect:\" http://$name_server:4242/large_upload"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 code="507"
-outdir="${MYDIR}/confs/html4242/uploads";
 fail="true"
 unittest "200MB rejection (out of resources)"
 
-## Clean uploaded files  ################################################################
+##################################################################
+##################################################################
+##################################################################
 
 { anounce Clean_Uploads \
 \
@@ -637,8 +519,176 @@ unittest "200MB rejection (out of resources)"
 ; } 2> /dev/null
 { ${MYDIR}/clean_uploads.sh; }
 
+##################################################################
+##################################################################
+##################################################################
+
+{ anounce POST_CHUNKED \
+\
+	'Test sending a text file in chunked mode. Traced.' \
+\
+; } 2> /dev/null
+
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490";
+outdir="${MYDIR}/confs/html/";
+upfile="99B.words" 
+chunked="true"
+code="201";
+trace="true"
+unittest "Simple post chunked";
+ls -l ${MYDIR}/confs/html/99B.words;
+rm ${MYDIR}/99B.words
+cat ${MYDIR}/confs/html/99B.words;
+
+###################################################################
+
+{ anounce CHUNKED \
+\
+	'99B using noise file.' \
+\
+; } 2> /dev/null
+
+chunked="true";
+noise="99"
+outdir="${MYDIR}/confs/html";
+cmd="curl http://$name_server:3490";
+code="201";
+unittest "Simple post with noise";
+
 #################################################################
 
+{ anounce CHUNKED \
+\
+	'Same, with 100B.noise. Max is at 100B, this passes. \n
+	Same file name, so it overwrites.'\
+\
+; } 2> /dev/null
+
+chunked="true";
+noise="100"
+outdir="${MYDIR}/confs/html";
+cmd="curl http://$name_server:3490";
+code="201";
+unittest "Post noise 100B";
+
+#################################################################
+
+{ anounce CHUNKED \
+\
+	'101B.noise should not pass because of max_size is set for 100. 413' \
+\
+; } 2> /dev/null
+
+chunked="true"
+noise="101"
+outdir="${MYDIR}/confs/html";
+cmd="curl http://$name_server:3490";
+code="403";
+unittest "Post noise 101B";
+
+###################################################################
+
+{ anounce CHUNKED \
+\
+	'Not large, but shows "uri /large_upload" is working. 42B. 202' \
+\
+; } 2> /dev/null
+
+chunked="true";
+noise="42"
+outdir="${MYDIR}/confs/html/uploads_large";
+cmd="curl http://$name_server:3490/large_upload"
+code="201"
+unittest "Noise to large_upload 42B"
+
+###############################################################
+
+{ anounce CHUNKED \
+\
+	'1MiB.noise.\n
+	This SHALL BE accepted and saved.' \
+\
+; } 2> /dev/null
+
+chunked="true"
+noise="1MiB"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+outdir="${MYDIR}/confs/html/uploads_large";
+code="201"
+unittest "1MiB success"
+
+##################################################################
+
+{ anounce CHUNKED \
+\
+	'Now 2MiB.noise.' \
+\
+; } 2> /dev/null
+
+chunked="true";
+noise="2MiB"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+outdir="${MYDIR}/confs/html/uploads_large";
+code="201"
+unittest "2MiB success"
+
+##################################################################
+
+{ anounce CHUNKED \
+\
+	'How about 50MB?\n
+	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
+\
+; } 2> /dev/null
+
+chunked="true";
+noise="50MB"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+outdir="${MYDIR}/confs/html/uploads_large";
+code="201"
+unittest "50MB success"
+
+##################################################################
+#####################################################################
+#####################################################################
+
+{ anounce CHUNKED_FAIL \
+\
+	'Now POSTing 1MiB.noise.\n
+	This shall NOT be accepted, because curl will expect 100-continue,\n
+	but webserv must always close the connection. Chose 424 for answer.' \
+\
+; } 2> /dev/null
+
+chunked="true";
+noise="1MiB"
+cmd="curl http://$name_server:3490/large_upload"
+code="424"
+fail="true"
+unittest "webserv must close connection"
+
+#####################################################################
+
+{ anounce CHUNKED_FAIL \
+\
+	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
+	Server should not crash, so 507 Insufficient Storage.' \
+\
+; } 2> /dev/null
+
+chunked="true";
+noise="200MB"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+code="507"
+fail="true"
+unittest "200MB rejection (out of resources)"
+
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+
+##################################################################
+##################################################################
+##################################################################
 
 { anounce CGI_1 \
 \
@@ -659,162 +709,9 @@ ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
 rm ${MYDIR}/99B.words
 cat ${MYDIR}/confs/html4242/uploads/99B.words;
 
-finish;
-
-#################################################################
-
-{ anounce Words_chunk \
-\
-	'Test sending a text file in chunked mode' \
-\
-; } 2> /dev/null
-
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
-upfile="99B.words" 
-chunked="true"
-cmd="curl http://$name_server:4242/post_body";
-outdir="${MYDIR}/confs/html4242/uploads";
-#upfile="Alice.txt" 
-code="201";
-trace="true"
-unittest "Post to 4242 uploads";
-ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
-rm ${MYDIR}/99B.words
-cat ${MYDIR}/confs/html4242/uploads/99B.words;
-
-###################################################################
-
-{ anounce Chunk_1 \
-\
-	'99B using noise file.' \
-\
-; } 2> /dev/null
-
-noise="99"
-chunked="true"
-cmd="curl http://$name_server:4242/post_body"
-outdir="${MYDIR}/confs/html4242/uploads";
-code="201"
-unittest "Noise 99"
-
-## LB ###############################################################
-
-{ anounce Chunk_2 \
-\
-	'Same, with 100B.noise. Max is at 100B, this passes. \n
-	Same file name, so it overwrites.'\
-\
-; } 2> /dev/null
-
-noise="100"
-chunked="true"
-cmd="curl http://$name_server:4242/post_body"
-outdir="${MYDIR}/confs/html4242/uploads";
-code="201"
-unittest "Noise 100"
-
-## LB ###############################################################
-
-{ anounce Chunk_3 \
-\
-	'101B.noise should not pass because of max_size is set for 100. 413' \
-\
-; } 2> /dev/null
-
-noise="101"
-chunked="true"
-cmd="curl http://$name_server:4242/post_body"
-code="413"
-fail="true"
-unittest "Noise 101"
-
-###################################################################
-
-finish
-
-## Large Uploads ################################################################
-
-{ anounce Large_Uploads_2 \
-\
-	'Not large, but shows "uri /large_upload" is working. 42B. 202' \
-\
-; } 2> /dev/null
-
-head -c 42 /dev/urandom > ${MYDIR}/file.noise
-
-curl -v -H "Expect:" -H "Content-Type: test/file" -H \
-	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
-
-rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
-
-## Large Uploads ################################################################
-
-{ anounce Large_Uploads_3 \
-\
-	'1MiB.noise.\n
-	This SHALL BE accepted and saved.' \
-\
-; } 2> /dev/null
-
-head -c 1MiB /dev/urandom > ${MYDIR}/file.noise
-curl -v -H "Expect:" -H "Content-Type: test/file" -H \
-	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
-rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
-
-## Large Uploads ################################################################
-
-{ anounce Large_Uploads_4 \
-\
-	'Now 2MiB.noise.' \
-\
-; } 2> /dev/null
-
-head -c 2MiB /dev/urandom > ${MYDIR}/file.noise
-curl -v -H "Expect:" -H "Content-Type: test/file" -H \
-	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
-rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
-
-## Large Uploads ################################################################
-
-{ anounce Large_Uploads_5 \
-\
-	'How about 50MB?\n
-	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
-\
-; } 2> /dev/null
-
-head -c 50MB /dev/urandom > ${MYDIR}/file.noise
-curl -v -H "Expect:" -H "Content-Type: test/file" -H \
-	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
-rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
-
-## Large Uploads ################################################################
-
-{ anounce Large_Uploads_6 \
-\
-	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
-	Server should not crash, so 507 Insufficient Storage.' \
-\
-; } 2> /dev/null
-
-head -c 200MiB /dev/urandom > ${MYDIR}/file.noise
-curl -v -H "Expect:" -H "Content-Type: test/file" -H \
-	"Transfer-Encoding: chunked" -d \
-	"@${MYDIR}/file.noise" http://$name_server:4242/large_upload/file.noise
-rm ${MYDIR}/file.noise
-ls -lh ${MYDIR}/confs/html4242/uploads/file.noise;
-
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
-
-## Stress ################################################################
+##################################################################
+##################################################################
+##################################################################
 
 { anounce Stress \
 \
@@ -852,6 +749,126 @@ curl -F "file=@${MYDIR}/99B.words" \
 
 #################################################################
 #################################################################
+#################################################################
+
+#################################################################
+## ubuntu_tester specifics
+##################################################################
+
+{ anounce 42SP \
+\
+	'POST :4242 at root (/) should fail, 405 not allowed.' \
+\
+; } 2> /dev/null
+
+noise="1MiB"
+cmd="curl http://$name_server:4242 "
+code="405";
+fail="true";
+unittest "Post fail"
+
+#####################################################################
+
+{ anounce 42SP \
+\
+	'DELETE :4242 at root (/) also should fail. 405' \
+\
+; } 2> /dev/null
+
+cmd="curl -vL -X DELETE http://$name_server:4242"
+code="405"
+unittest "Delete reject"
+
+#####################################################################
+
+{ anounce 42SP \
+\
+	'/post_body rejects all but POST (2 tests). 405' \
+\
+; } 2> /dev/null
+
+cmd="curl -X GET http://$name_server:4242/post_body"
+code="405"
+unittest "Reject GET"
+
+{ div; } 2> /dev/null
+
+cmd="curl -X DELETE http://$name_server:4242/post_body"
+code="405"
+unittest "Reject GET"
+
+#####################################################################
+
+{ anounce 42SP \
+\
+	'- /post_body must answer anything to POST request with a \n
+	maxBody of 100. Many tests.\n
+	- 1st) Post 99B.words into html4242/uploads (as set in config).' \
+\
+; } 2> /dev/null
+
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:4242/post_body";
+outdir="${MYDIR}/confs/html4242/uploads";
+upfile="99B.words" 
+code="201";
+unittest "Post to 4242 uploads";
+ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
+rm ${MYDIR}/99B.words
+cat ${MYDIR}/confs/html4242/uploads/99B.words;
+
+#####################################################################
+
+{ anounce 42SP \
+\
+	'2nd) The same, using noise upfile.' \
+\
+; } 2> /dev/null
+
+noise="99"
+cmd="curl http://$name_server:4242/post_body"
+outdir="${MYDIR}/confs/html4242/uploads";
+code="201"
+unittest "Noise 99"
+
+#####################################################################
+
+{ anounce 42SP \
+\
+	'3rd) Same, with 100B.noise. Max is at 100B, this passes. \n
+	Same file name, so it overwrites.'\
+\
+; } 2> /dev/null
+
+noise="100"
+cmd="curl http://$name_server:4242/post_body"
+outdir="${MYDIR}/confs/html4242/uploads";
+code="201"
+unittest "Noise 100"
+
+#####################################################################
+
+{ anounce 42SP \
+\
+	'4th) 101B.noise should not pass because of max_size is set for 100. 413' \
+\
+; } 2> /dev/null
+
+noise="101"
+cmd="curl http://$name_server:4242/post_body"
+outdir="${MYDIR}/confs/html4242/uploads";
+code="413"
+fail="true"
+unittest "Noise 101"
+
+#####################################################################
+
+finish
+
+#####################################################################
+#####################################################################
+#####################################################################
+# Util commands:
 
 #curl -v http://$name_server:4242/directory/
 #curl -vLD- http://$name_server:4242/directory/youpi.bla
@@ -868,7 +885,3 @@ curl -F "file=@${MYDIR}/99B.words" \
 
 #curl -vLD- http://$name_server:4242/post_body -F 'file=./1M.noise'
 #curl -vLD- http://$name_server:4242/directory/youpi.bla
-
-#################################################################
-
-finish
