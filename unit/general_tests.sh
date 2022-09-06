@@ -179,7 +179,6 @@ if false; then
 
 #################################################################### Begin
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ##################################################################
 
@@ -408,13 +407,17 @@ unittest "Post noise 100B";
 \
 ; } 2> /dev/null
 
+trace="true";
 noise="101"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
-code="403";
+code="413";
+fail="true";
 unittest "Post noise 101B";
 
 ##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce MULTIPART \
 \
