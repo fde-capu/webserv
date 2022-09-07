@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/07 03:39:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/07 03:47:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,6 +290,7 @@ std::string ws_server_instance::location_path(const std::string default_file) co
 	std::string get_request = in_header.directory;
 	std::string trunk = get_request;
 	std::string full_path;
+	std::string filename;
 	size_t h;
 
 	verbose(V) << "(location_path) sys_dir: " << sys_dir << std::endl;
@@ -312,7 +313,8 @@ std::string ws_server_instance::location_path(const std::string default_file) co
 
 	if (FileString::is_dir(full_path))
 	{
-		full_path += "/" + default_file;
+		filename = default_file != "" ? default_file : "99B.words";
+		full_path += "/" + filename;
 		stool.remove_rep_char(full_path, '/');
 		verbose(V) << "(location_path) Returns (is directory, append file): " \
 			<< full_path << "." << std::endl;

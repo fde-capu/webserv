@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/07 03:24:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/07 03:55:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,10 @@ bool ws_server_instance::read_more_plain(const size_t& max)
 
 void ws_server_instance::read_more_chunked()
 {
-	static int V(2);
+	static int V(1);
 	size_t length;
 	std::string chunk_size_hex;
 	std::string chunk_extension;
-	std::string chunk_data;
 	size_t chunk_size_bytes;
 	Chronometer chrono;
 
@@ -91,9 +90,8 @@ void ws_server_instance::read_more_chunked()
 	{
 		verbose(V) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
 
-		chunk_data = StringTools::consume_delims_ff(in_body, "\r\n");
-		chunked_content += chunk_data;
-		length += chunk_data.length();
+		chunked_content += StringTools::consume_delims_ff(in_body, "\r\n");
+		length = chunked_content.length();
 		chunk_size_hex = StringTools::consume_delims_ff(in_body, "\r\n");
 		chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
 
