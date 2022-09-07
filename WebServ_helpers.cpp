@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/06 02:59:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/07 03:39:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,11 +298,8 @@ std::string ws_server_instance::location_path(const std::string default_file) co
 	verbose(V) << "(location_path) default_file: " << default_file << std::endl;
 	verbose(V) << "(location_path) get_request: " << get_request << std::endl;
 
-	h = trunk.rfind("/", 1);
-	if (h != std::string::npos)
-		trunk = trunk.substr(h + 1);
-	else
-		trunk = "";
+	h = trunk.find("/", 2);
+	trunk = h && h != std::string::npos ? trunk.substr(h + 1) : "";
 
 	verbose(V) << "(location_path) trunk: " << trunk << std::endl;
 

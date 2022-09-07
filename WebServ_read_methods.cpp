@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/02 13:41:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/07 03:24:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ bool ws_server_instance::read_more_plain(const size_t& max)
 
 void ws_server_instance::read_more_chunked()
 {
-	static int V(1);
+	static int V(2);
 	size_t length;
 	std::string chunk_size_hex;
 	std::string chunk_extension;
@@ -83,7 +83,6 @@ void ws_server_instance::read_more_chunked()
 	chunk_size_hex = StringTools::get_before_first(chunk_size_hex, ";");
 	chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
 	
-	verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
 	verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
 	verbose(V) << "(read_more_chunked) chunk_extension " << SHORT(chunk_extension) << std::endl;
 	verbose(V) << "(read_more_chunked) chunk_size_bytes " << chunk_size_bytes << std::endl;
