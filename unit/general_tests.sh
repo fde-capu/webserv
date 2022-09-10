@@ -36,6 +36,19 @@ MYDIR="${MYSELF%/*}"
 ok_count=0;
 ko_count=0;
 tot_count=0;
+
+resetvars()
+{
+	cmd="";
+	code="";
+	testfile="";
+	upfile="";
+	noise="";
+	fail="";
+	outdir="";
+	chunked="";
+	trace="";
+}
 resetvars;
 
 unittest()
@@ -78,19 +91,6 @@ unittest()
 	[ "$trace" != "" ] && cat tmp_trace_ascii
 
 	resetvars;
-}
-
-resetvars()
-{
-	cmd="";
-	code="";
-	testfile="";
-	upfile="";
-	noise="";
-	fail="";
-	outdir="";
-	chunked="";
-	trace="";
 }
 
 enterkey()
@@ -362,7 +362,7 @@ unittest "Client not redirecting";
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!\n" > ${MYDIR}/99B.words
 cmd="curl http://$name_server:3490";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
@@ -526,21 +526,20 @@ unittest "200MB rejection (out of resources)"
 ##################################################################
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce POST_CHUNKED \
 \
-	'Test sending a text file in chunked mode. Traced.' \
+	'Test sending a text file in chunked mode. \n
+	As it is not CGI, webserv refuses (501).' \
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:3490";
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!\n" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490/99B.words";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 chunked="true"
 code="201";
-trace="true"
 unittest "Simple post chunked";
 ls -l ${MYDIR}/confs/html/99B.words;
 rm ${MYDIR}/99B.words
@@ -548,6 +547,27 @@ cat ${MYDIR}/confs/html/99B.words;
 
 ###################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce POST_CHUNKED \
+\
+	'But if the chunk is configured to run some CGI, it should \n
+	run and return the proper body.' \
+\
+; } 2> /dev/null
+
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!\n" > ${MYDIR}/99B.bla
+cmd="curl http://$name_server:3490/99B.bla";
+outdir="${MYDIR}/confs/html/";
+upfile="99B.bla" 
+chunked="true"
+code="201";
+unittest "Simple post chunked calling CGI";
+ls -l ${MYDIR}/confs/html/99B.bla;
+rm ${MYDIR}/99B.bla
+cat ${MYDIR}/confs/html/99B.bla;
+
+###################################################################
 { anounce CHUNKED \
 \
 	'99B using noise file.' \
@@ -701,7 +721,7 @@ finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!\n" > ${MYDIR}/99B.words
 upfile="99B.words" 
 chunked="true"
 cmd="curl http://$name_server:4242/directory/youpi.bla"
@@ -812,7 +832,7 @@ unittest "Reject GET"
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!\n" > ${MYDIR}/99B.words
 cmd="curl http://$name_server:4242/post_body";
 outdir="${MYDIR}/confs/html4242/uploads";
 upfile="99B.words" 

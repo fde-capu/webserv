@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/07 04:01:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/10 02:46:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,9 @@ int ws_reply_instance::PUT_mock(ws_server_instance& si)
 
 int ws_reply_instance::is_501(ws_server_instance& si)
 {
-	if (si.in_header.method == "PUT")
+	if (
+		(si.in_header.method == "PUT")
+	)
 	{
 		set_code(501, "Not Implemented");
 		out_body = "BODY FOR 501";
@@ -88,10 +90,15 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
 	int V(1);
 	size_t wr(0);
-	verbose(V) << "(execute_cgi) si = " << si << std::endl;
-	verbose(V) << "(execute_cgi) WILL HAPPEN HERE!!!" << std::endl;
 	program = si.root_config.getValStr("root") + "/" + si.config.getValStr("root") + "/" + program;
+
 	verbose(V) << "(execute_cgi) Program is: " << program << std::endl;
+	if (!FileString::exists(program))
+	{
+		set_code(502, "Bad Gateway");
+		out_body = "BODY FOR 502";
+		return 502;
+	}
 
 	pid_t child_pid = -1;
 	pid_t wait_pid = -1;
@@ -127,9 +134,6 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	{
 		if (si.is_chunked())
 		{
-//			si.chunked_content = si.chunked_content.substr(0, 5);
-//			wr = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()),\
-//				si.chunked_content.length());
 			wr = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()),\
 				si.chunked_content.length());
 		}
@@ -148,15 +152,13 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		close(pipe_cp[1]);
 		close(pipe_pc[1]);
 
-//		wait_pid = wait(&child_status);
-//		if (wait_pid < 0)
-//			throw std::domain_error("(execute_cgi) Coudn't wait.");
-(void)wait_pid;
-(void)child_status;
+		wait_pid = wait(&child_status);
+		if (wait_pid < 0)
+			throw std::domain_error("(execute_cgi) Coudn't wait.");
 
 		out_body = CircularBuffer(pipe_cp[0]);
-//		close(pipe_cp[0]);
-		verbose(V) << "(execute_cgi) Got >>>" << SHORT(out_body) << "<<<" << std::endl;
+		close(pipe_cp[0]);
+		verbose(V) << "(execute_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 
 		set_code(200, "OK");
 		out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
@@ -169,6 +171,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			out_body = out_body.substr(h_body + 4);
 
 		verbose(V) << "(execute_cgi) out_body " << SHORT(out_body) << std::endl;
+		return 200;
 //		verbose(V) << "(execute_cgi) WIFEXITED(child_status) " << WIFEXITED(child_status) << std::endl;
 //		static_cast<void>(WIFEXITED(child_status));
 	}
@@ -311,7 +314,6 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 			"." << std::endl;
 
 		FileString::write(full_path, *data);
-
 		set_code(201, "Accepted");
 		out_body = "BODY FOR 201";
 		return 201;
