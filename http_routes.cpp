@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/10 02:46:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/12 21:06:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,10 +90,13 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
 	int V(1);
 	size_t wr(0);
-	program = si.root_config.getValStr("root") + "/" + si.config.getValStr("root") + "/" + program;
+	if (program.find(" ") == std::string::npos)
+		program = si.root_config.getValStr("root") + "/" \
+			+ si.config.getValStr("root") + "/" + program;
 
 	verbose(V) << "(execute_cgi) Program is: " << program << std::endl;
-	if (!FileString::exists(program))
+
+	if (!FileString::exists(program.substr(0, program.find(" "))))
 	{
 		set_code(502, "Bad Gateway");
 		out_body = "BODY FOR 502";
@@ -160,7 +163,6 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		close(pipe_cp[0]);
 		verbose(V) << "(execute_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 
-		set_code(200, "OK");
 		out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
 		out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
 		out_header.content_type = StringTools::query_for("Content-Type", out_body);
@@ -171,11 +173,10 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			out_body = out_body.substr(h_body + 4);
 
 		verbose(V) << "(execute_cgi) out_body " << SHORT(out_body) << std::endl;
-		return 200;
 //		verbose(V) << "(execute_cgi) WIFEXITED(child_status) " << WIFEXITED(child_status) << std::endl;
-//		static_cast<void>(WIFEXITED(child_status));
+		set_code(202, "Accepted");
+		return 202;
 	}
-	return 201;
 }
 
 bool ws_server_instance::is_cgi() const
@@ -183,12 +184,13 @@ bool ws_server_instance::is_cgi() const
 
 int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
+	std::string cgi_str(si.config.getValStr("cgi"));
 	std::vector<std::string> cgi(si.config.get_vector_str("cgi"));
 	if (cgi.empty())
 		return 0;
 	std::vector<std::string> cgi_accept(si.config.get_vector_str("cgi_accept"));
 	std::string cgi_extension = cgi[0];
-	std::string cgi_children = cgi[1];
+	std::string cgi_children = cgi_str.substr(cgi_str.find(cgi[0]) + cgi[0].length() + 1);
 	std::string call_method = si.in_header.method;
 	bool good_method = false;
 	for (size_t i = 0; i < cgi_accept.size(); i++)

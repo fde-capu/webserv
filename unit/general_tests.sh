@@ -48,6 +48,7 @@ resetvars()
 	outdir="";
 	chunked="";
 	trace="";
+	show_output="";
 }
 resetvars;
 
@@ -74,8 +75,10 @@ unittest()
 	
 	out=`eval "$fullcmd"`;
 
+	[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
+
 	if [ "$out" = "000" ]; then
-		{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
+		{ anounce ERROR 'Make sure the server is running! (Response 0?)'; } 2> /dev/null;
 		exit 1;
 	fi
 
@@ -561,7 +564,8 @@ cmd="curl http://$name_server:3490/99B.bla";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.bla" 
 chunked="true"
-code="201";
+code="202";
+show_output="true";
 unittest "Simple post chunked calling CGI";
 ls -l ${MYDIR}/confs/html/99B.bla;
 rm ${MYDIR}/99B.bla
