@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/02 17:56:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/12 22:36:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ struct ws_reply_instance
 	int is_424(ws_server_instance&); // Failed Dependency.
 
 	int execute_cgi(ws_server_instance&, std::string);
+	int bad_gateway();
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert

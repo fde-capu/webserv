@@ -2,3 +2,4 @@ lynx-standalone*
 -lynx-standalone/Makefile
 nginx-standalone*
 -nginx-standalone/Makefile
+tmp_*

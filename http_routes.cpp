@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/12 21:06:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/13 04:22:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,29 +86,41 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	return 405;
 }
 
+int ws_reply_instance::bad_gateway()
+{
+	set_code(502, "Bad Gateway");
+	out_body = "BODY FOR 502";
+	return 502;
+}
+
 int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
 	int V(1);
 	size_t wr(0);
-	if (program.find(" ") == std::string::npos)
-		program = si.root_config.getValStr("root") + "/" \
-			+ si.config.getValStr("root") + "/" + program;
-
-	verbose(V) << "(execute_cgi) Program is: " << program << std::endl;
-
-	if (!FileString::exists(program.substr(0, program.find(" "))))
-	{
-		set_code(502, "Bad Gateway");
-		out_body = "BODY FOR 502";
-		return 502;
-	}
-
-	pid_t child_pid = -1;
-	pid_t wait_pid = -1;
 	int child_status = -1;
-	char* args[2] = {0, 0};
 	int pipe_pc[2] = {0, 0};
 	int pipe_cp[2] = {0, 0};
+	pid_t child_pid = -1;
+	pid_t wait_pid = -1;
+	std::vector<std::string> file_test(StringTools::split(program, " "));
+	std::vector<char*> argv(file_test.size() + 1);
+	std::string root_path(si.root_config.getValStr("root") + "/" \
+			+ si.config.getValStr("root") + "/");
+	std::string full_program;
+
+	for (size_t i = 0; i < file_test.size(); i++)
+	{
+		if (FileString::exists(root_path + file_test[i]))
+			file_test[i] = root_path + file_test[i];
+		else if (i || FileString::exists(file_test[i]))
+			file_test[i] = file_test[i];
+		else if (!i)
+			return bad_gateway();
+		argv[i] = &file_test[i][0];
+		full_program += file_test[i] + " ";
+	}
+
+	verbose(V) << "(execute_cgi) Program is: " << full_program << std::endl;
 
 	if (pipe(pipe_pc) == -1)
 		throw std::domain_error("(execute_cgi) Cannot pipe for cgi (parent->child).");
@@ -126,11 +138,10 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		close(pipe_pc[1]);
 		close(pipe_cp[0]);
 		close(pipe_cp[1]);
-		args[0] = const_cast<char *>(program.c_str());
 		setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
 		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
 		setenv("PATH_INFO", program.c_str(), 1);
-		execv(args[0], args);
+		execv(argv[0], argv.data());
 		exit(502);
 	}
 	else // Parent.
@@ -173,7 +184,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			out_body = out_body.substr(h_body + 4);
 
 		verbose(V) << "(execute_cgi) out_body " << SHORT(out_body) << std::endl;
-//		verbose(V) << "(execute_cgi) WIFEXITED(child_status) " << WIFEXITED(child_status) << std::endl;
+		verbose(V) << "(execute_cgi) WIFEXITED(child_status) " << WIFEXITED(child_status) << std::endl;
 		set_code(202, "Accepted");
 		return 202;
 	}
