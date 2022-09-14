@@ -27,12 +27,16 @@ resetvars;
 
 unittest()
 {
-	fullcmd="set -x; $cmd -sSvw '%{http_code}'";
+	fullcmd="$cmd";
+	fullcmd="set -x; $fullcmd -sSvw '%{http_code}'";
 
 	if [ "$noise" != "" ] ; then
 		upfile="file.noise";
 		head -c $noise /dev/urandom > "${MYDIR}/$upfile";
 	fi
+
+#	[ "$chunked" != "" ] && [ "$noise" != "" ] && fullcmd="$fullcmd/file.noise";
+#	[ "$chunked" != "" ] && [ "$noise" = "" ] && [ "$upfile" != "" ] && fullcmd="$fullcmd/$upfile";
 
 	if [ "$upfile" != "" ] ; then
 		if [ "$chunked" = "" ] ; then
@@ -506,8 +510,7 @@ unittest "200MB rejection (out of resources)"
 
 { anounce CHUNK_99_WORDS \
 \
-	'POST multipart/form-data tests. \n
-	Nginx does not support this and will fail all POST tests.\n
+	'POST chunked tests. \n
 	Within limits of client_max_body_size:' \
 \
 ; } 2> /dev/null
