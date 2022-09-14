@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/13 04:22:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/14 13:47:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int ws_reply_instance::bad_gateway()
 
 int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
-	int V(1);
+	int V(2);
 	size_t wr(0);
 	int child_status = -1;
 	int pipe_pc[2] = {0, 0};
@@ -221,7 +221,7 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 
 int ws_reply_instance::is_404(ws_server_instance& si)
 {
-	int V(1);
+	int V(2);
 	std::string request;
 	DataFold indexes;
 
@@ -237,7 +237,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 		while (indexes.loop())
 		{
 			file_name = si.location_path(indexes.val);
-			verbose(1) << "(is_404) Fetching " << file_name \
+			verbose(V) << "(is_404) Fetching " << file_name \
 				<< std::endl;
 			if (FileString::exists(file_name))
 				return 0;
@@ -271,7 +271,7 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 
 int ws_reply_instance::is_200(ws_server_instance& si)
 {
-	int V(1);
+	int V(2);
 	std::string request;
 	DataFold indexes;
 
@@ -306,7 +306,7 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 
 int ws_reply_instance::is_201(ws_server_instance& si)
 {
-	static int V(1);
+	static int V(2);
 
 	std::string full_path;
 	std::string mp_block;

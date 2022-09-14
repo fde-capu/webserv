@@ -1,35 +1,7 @@
 #!/bin/sh
 
-stress_count=30;
-
-#`./webserv`
+stress_count=300;
 name_server="127.0.0.1";
-
-# On 42SP Workspace, there are opened:
-
-#	tcp 	0	0.0.0.0:5901	0.0.0.0:*	LISTEN	-	(VNC server) #	tcp6	0	:::5901	:::*	LISTEN	-		
-#	tcp 	0	0.0.0.0:2222	0.0.0.0:*	LISTEN	-	(SSH)
-#	tcp6	0	:::2222	:::*	LISTEN	-		
-#	tcp 	0	0.0.0.0:8080	0.0.0.0:*	LISTEN	-	(./login)		
-
-# We will open the following ports:
-
-#	Demonstration of implementations:
-#	tcp 	0	0.0.0.0:3490	0.0.0.0:*	LISTEN	67/nginx: master pr	
-
-#	Another server:port pointing to another folder:
-#	tcp 	0	0.0.0.0:3491	0.0.0.0:*	LISTEN	67/nginx: master pr	
-
-#	Lack of `location` gives forbidden all:
-#	tcp 	0	0.0.0.0:3492	0.0.0.0:*	LISTEN	67/nginx: master pr	
-
-#	Redirect 301 to :3490:
-#	tcp 	0	0.0.0.0:3493	0.0.0.0:*	LISTEN	67/nginx: master pr	
-
-#	To run the subject tests 42 ubuntu_tester and ubuntu_cgi_tester:
-#	tcp 	0	0.0.0.0:4242	0.0.0.0:*	LISTEN	67/nginx: master pr	
-
-# (helpers) #######################################################
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -92,6 +64,7 @@ unittest()
 	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
 	rm tmp_response;
 	[ "$trace" != "" ] && cat tmp_trace_ascii
+	[ "$trace" != "" ] && rm tmp_trace_ascii
 
 	resetvars;
 }
@@ -183,6 +156,7 @@ if false; then
 #################################################################### Begin
 
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 
 ##################################################################
@@ -550,7 +524,6 @@ cat ${MYDIR}/confs/html/99B.words;
 
 ###################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce POST_CHUNKED \
 \

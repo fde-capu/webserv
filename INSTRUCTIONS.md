@@ -21,27 +21,23 @@ Run `webserv webserv-unit.conf` or `nginx nginx-as-webserv.conf`.
 # make
 # netstat -tnl					// --tcp --numeric --listening // Nothing shows.
 # (ps aux)						// all, show users, x = show parents
-# (pkill nginx)
-#-> nginx -c webserv.conf		// Listeners opened.
+# ./webserv unit/webserv-unit.conf
 # netstat -tnl					// --tcp --numeric --listening // Nothing shows.
 # (ps aux)						// all, show users, x = show parents
 # lynx localhost:3490
 # curl localhost:3490
-# curl -vD- localhost:3490		// (-vD-: -v verbose, -D- all headers
-#								// to stdout) Got 301.
+# curl -v localhost:3490		// -v verbose
 # cat /etc/hosts				// See: better use 127.0.0.1
 # // Show conf file.
 #-> export S=127.0.0.1			// Server
 #-> export P=3490				// Port
-# curl -vD- $S:$P
+# curl -v $S:$P
 # ls confs/html					// Check index.htm (not html).
-# curl -vD- $S:$P/somesub/		// Subdirectories working.
-# curl -vD- $S:$P/somesub		// 301 (lack of slash "somesub/")
-# curl -LvD- $S:$P/somesub		// 301->200
-# curl -vD- $SP:$P -H 'Host: krazything'	// krazything exists.
-# curl -vD- $SP:$P -H 'Host: unxistent'		// Defaults to first server:3490 on .conf file.
-
-
+# curl -v $S:$P/somesub/		// Subdirectories working.
+# curl -v $S:$P/somesub			// 301 (lack of slash "somesub/")
+# curl -Lv $S:$P/somesub		// 301->200
+# curl -v $SP:$P -H 'Host: krazything'	// krazything exists.
+# curl -v $SP:$P -H 'Host: unxistent'	// Defaults to first server:3490 on .conf file.
 
 ### Util commands:
 

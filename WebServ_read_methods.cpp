@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/07 03:55:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/14 13:45:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int ws_server_instance::read_more_general()
 
 bool ws_server_instance::read_more_plain(const size_t& max)
 {
-	static int V(1);
+	static int V(2);
 	size_t next_load;
 	CircularBuffer buf(fd);
 	bool data_was_read(false);
@@ -57,7 +57,7 @@ bool ws_server_instance::read_more_plain(const size_t& max)
 
 void ws_server_instance::read_more_chunked()
 {
-	static int V(1);
+	static int V(2);
 	size_t length;
 	std::string chunk_size_hex;
 	std::string chunk_extension;
@@ -130,7 +130,7 @@ void ws_server_instance::mount_multipart()
 
 void ws_server_instance::read_more_multipart()
 {
-	static int V(1);
+	static int V(2);
 	verbose(V) << "(read_more_multipart) Calling read_more_plain." << std::endl;
 	read_more_plain(in_header.content_length);
 	mount_multipart();

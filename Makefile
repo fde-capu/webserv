@@ -6,27 +6,25 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/09/02 17:48:40 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/14 13:24:16 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# Test 2
-# make ft
-# t2 : Tests cgi-wrapper (made based on webserv).
+# make, make all, make ws: webserv
+# make t, make test
+# make cgi: cgi_webserv
+# make lynx: lynx
 
-MAKESILENT = @
+MAKESILENT	  = @
 TRACKMAKEFILE = Makefile
+VERBOSE		  =	1
+ENVS		  =	-DAGV_SKIP_CHECK=0
 
 NAME1	=	webserv
 ARGS1	=	unit/webserv-unit.conf
-
-NAME2	=	cgi_webserv
-ARGS2	=	./unit/ubuntu_cgi_tester 9000
-
 TEST_SH	=	./unit/general_tests.sh
 
-DEBUG	=	1
-ENVS	=	-DAGV_SKIP_CHECK=1
+NAME2	=	cgi_webserv
 
 SRCS	=	FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp \
@@ -41,7 +39,7 @@ HEAD	=	$(TRACKMAKEFILE) argval_ws.conf argval_cgi.conf header.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
 			CircularBuffer.hpp CgiWrapper.hpp Chronometer.hpp
 SHELL	=	/bin/sh
-CC		=	$(MAKESILENT) c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(DEBUG) $(ENVS)
+CC		=	$(MAKESILENT) c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(VERBOSE) $(ENVS)
 CCFLAGS	=	-Wall -Werror -Wextra -g -O0
 OBJS	=	$(SRCS:.cpp=.o)
 OBJS1	=	$(SRCS1:.cpp=.o)
@@ -54,7 +52,7 @@ VALFLAG	=	--tool=memcheck \
 			--show-reachable=yes
 DOT		=	@echo -n ".";
 
-all:		intro line $(NAME1) $(NAME2)
+all:		intro line $(NAME1)
 	@echo "\n************************\n"
 ws:			line $(NAME1)
 cgi:		line $(NAME2)
@@ -87,15 +85,12 @@ fclean:		clean lynx-fclean
 	-@rm -f $(NAME2)
 re:			fclean all
 rt:			re t
-v1:			1
+v:			1
 	$(VAL) ./$(NAME1) $(ARGS1)
-v2:			2
-	$(VAL) ./$(NAME2) $(ARGS2)
-vf1:		1
+vf:			1
 	$(VAL) $(VALFLAG) ./$(NAME1) $(ARGS1)
-vf2:		2
-	$(VAL) $(VALFLAG) ./$(NAME2) $(ARGS2)
-t1:			1
+test:		t
+t:			1
 	@echo '=======> Please run unit/general_tests.sh on another terminal <======='
 	./$(NAME1) $(ARGS1)
 g1:			1
