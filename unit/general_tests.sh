@@ -156,7 +156,6 @@ if false; then
 #################################################################### Begin
 
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 
 ##################################################################
@@ -188,6 +187,7 @@ code="200";
 unittest "Root by servername";
 
 #################################################################
+
 
 { anounce Subdirectory \
 \
@@ -249,15 +249,15 @@ unittest "Client redirecting made two calls";
 ##################################################################
 ##################################################################
 
-{ anounce Faulty_setup \
+{ anounce Not_this_directory \
 \
-	'Existent server_name without root definition. 403' \
+	'Forbid existent server_name without root definition. 403' \
 \
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3490 -H 'Host: rootless'";
 code="403";
-unittest "server_name w/o root (faulty config)";
+unittest "server_name w/o root (forbidden)";
 
 ##################################################################
 
@@ -312,7 +312,7 @@ unittest "DELETE rejection";
 cmd="curl -v http://$name_server:3492"
 code="403";
 fail="true";
-unittest "Forbidden (faulty config)";
+unittest "Forbidden";
 
 ##################################################################
 
@@ -344,7 +344,6 @@ cmd="curl http://$name_server:3490";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 code="201";
-trace="true"
 unittest "Simple post";
 ls -l ${MYDIR}/confs/html/99B.words;
 rm ${MYDIR}/99B.words
@@ -362,6 +361,7 @@ noise="99"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
+trace="true";
 unittest "Simple post with noise";
 
 ##################################################################
@@ -386,7 +386,6 @@ unittest "Post noise 100B";
 \
 ; } 2> /dev/null
 
-trace="true";
 noise="101"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
@@ -487,6 +486,25 @@ code="507"
 fail="true"
 unittest "200MB rejection (out of resources)"
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce MULTIPART_CGI \
+\
+	'Test CGI call when posting.' \
+\
+; } 2> /dev/null
+
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!\n" > ${MYDIR}/99B.bla
+cmd="curl http://$name_server:3490/99B.bla";
+outdir="${MYDIR}/confs/html/";
+upfile="99B.bla" 
+code="202";
+show_output="true";
+unittest "Simple post";
+ls -l ${MYDIR}/confs/html/99B.bla;
+rm ${MYDIR}/99B.bla
+cat ${MYDIR}/confs/html/99B.bla;
+
 ##################################################################
 ##################################################################
 ##################################################################
@@ -503,7 +521,6 @@ unittest "200MB rejection (out of resources)"
 ##################################################################
 ##################################################################
 
-
 { anounce POST_CHUNKED \
 \
 	'Test sending a text file in chunked mode. \n
@@ -517,13 +534,13 @@ outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 chunked="true"
 code="201";
+trace="true";
 unittest "Simple post chunked";
 ls -l ${MYDIR}/confs/html/99B.words;
 rm ${MYDIR}/99B.words
 cat ${MYDIR}/confs/html/99B.words;
 
 ###################################################################
-
 
 { anounce POST_CHUNKED \
 \

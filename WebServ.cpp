@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 13:48:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/14 16:04:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,6 +239,7 @@ void WebServ::respond_connection_from(int fd)
 	CircularBuffer raw(fd);
 	std::string encapsulated;
 
+	verbose(1) << " . . . . . . . . . . . . . . . " << std::endl;
 	verbose(2) << "(respond_connection_from) Getting data from fd " << fd \
 		<< "." << std::endl;
 

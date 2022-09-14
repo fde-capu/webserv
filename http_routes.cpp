@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 13:47:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/14 16:37:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	child_pid = fork();
 	if (child_pid < 0)
 		throw std::domain_error("(execute_cgi) Forking went wrong.");
-	if (child_pid == 0) // Child.
+	if (child_pid == 0) // Child
 	{
 		dup2(pipe_pc[0], STDIN_FILENO);
 		dup2(pipe_cp[1], STDOUT_FILENO);
@@ -144,7 +144,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		execv(argv[0], argv.data());
 		exit(502);
 	}
-	else // Parent.
+	else // Parent
 	{
 		if (si.is_chunked())
 		{
@@ -153,6 +153,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		}
 		else if (si.is_multipart())
 		{
+			si.multipart_content += "\r\n\r\n";
 			wr = write(pipe_pc[1], static_cast<const void*>(si.multipart_content.c_str()),\
 				si.multipart_content.length());
 		}
@@ -195,13 +196,13 @@ bool ws_server_instance::is_cgi() const
 
 int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
-	std::string cgi_str(si.config.getValStr("cgi"));
-	std::vector<std::string> cgi(si.config.get_vector_str("cgi"));
-	if (cgi.empty())
+	std::vector<std::string> cgi_vec(si.config.get_vector_str("cgi"));
+	if (cgi_vec.empty())
 		return 0;
+	std::string cgi_str(si.config.getValStr("cgi"));
 	std::vector<std::string> cgi_accept(si.config.get_vector_str("cgi_accept"));
-	std::string cgi_extension = cgi[0];
-	std::string cgi_children = cgi_str.substr(cgi_str.find(cgi[0]) + cgi[0].length() + 1);
+	std::string cgi_extension = cgi_vec[0];
+	std::string cgi_children = cgi_str.substr(cgi_str.find(cgi_vec[0]) + cgi_vec[0].length() + 1);
 	std::string call_method = si.in_header.method;
 	bool good_method = false;
 	for (size_t i = 0; i < cgi_accept.size(); i++)
@@ -210,6 +211,10 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	if (!good_method)
 		return 0;
 	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
+
+	verbose(5) << "(is_cgi_exec) call_extension: " << call_extension << std::endl;
+	verbose(5) << "(is_cgi_exec) cgi_extension: " << cgi_extension << std::endl;
+
 	if (call_extension == cgi_extension)
 	{
 		si.cgi_flag = true;

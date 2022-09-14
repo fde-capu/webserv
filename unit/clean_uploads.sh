@@ -4,6 +4,7 @@ MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
 
 echo 'Cleaning uploaded files.'
+echo '------------------------'
 
 clean()
 {
@@ -15,7 +16,14 @@ clean ${MYDIR}/confs/html/99B.words
 clean ${MYDIR}/confs/html/file.noise
 clean ${MYDIR}/confs/html4242/uploads/99B.words
 clean ${MYDIR}/confs/html4242/uploads/file.noise
+clean ${MYDIR}/confs/html/uploads_large/file.noise
+clean ${MYDIR}/confs/html/99B.bla
 
+find ${MYDIR} | grep noise;
+find ${MYDIR} | grep words;
+find ${MYDIR} | grep 99B.bla;
+
+echo '------------------------'
 echo 'You should not see any file listed above this line.'
 
 echo 'Initial YoupiBanane/youpi.bla' > ${MYDIR}/confs/html4242/YoupiBanane/youpi.bla

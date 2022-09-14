@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/30 12:48:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/14 16:50:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -662,14 +662,14 @@ void StringTools::remove_rep_char(std::string& dst, const char c) const
 }
 
 bool StringTools::isWord(const std::string& str, size_t pos)
-{ return !not_in_word_set(str.at(pos)); }
+{ return pos < str.length() && !not_in_word_set(str.at(pos)); }
 
 std::string StringTools::query_for(std::string query, std::string& src)
 {
 	size_t h = src.find(query);
 	if (h == std::string::npos)
 		return "";
-	while (!isWord(src, h++)) ;
+	while (h < src.length() && !isWord(src, h++)) ;
 	if (h == std::string::npos)
 		return "";
 	std::string tmp = src.substr(h);
@@ -697,7 +697,7 @@ std::string& StringTools::trim(std::string& str, std::string set)
 	size_t start = 0;
 	size_t end;
 
-	while (isInSet(str.at(start), set)) start++;
+	while (start < str.length() && isInSet(str.at(start), set)) start++;
 	end = str.length() - 1;
 	while (isInSet(str.at(end), set)) end--;
 	str = str.substr(start, end - start + 1);
