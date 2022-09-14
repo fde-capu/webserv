@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 16:37:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/14 21:24:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,6 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		}
 		else if (si.is_multipart())
 		{
-			si.multipart_content += "\r\n\r\n";
 			wr = write(pipe_pc[1], static_cast<const void*>(si.multipart_content.c_str()),\
 				si.multipart_content.length());
 		}

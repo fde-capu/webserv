@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 20:22:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/14 22:13:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -697,7 +697,22 @@ std::string& StringTools::trim(std::string& str, std::string set)
 	return str;
 }
 
-std::string StringTools::consume_delims_ff(std::string& src, const std::string delim_set)
+std::string StringTools::consume_until(std::string& src, const std::string delim_str)
+{
+	std::string ret;
+	size_t h(src.find(delim_str));
+	if (h == std::string::npos)
+	{
+		ret = src;
+		src = "";
+		return ret;
+	}
+	ret = src.substr(0, h);
+	src = src.substr(h + delim_str.length());
+	return ret;
+}
+
+std::string StringTools::consume_delims(std::string& src, const std::string delim_set)
 {
 	size_t h(0);
 	std::string ret;

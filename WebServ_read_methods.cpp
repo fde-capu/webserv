@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 13:45:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/14 22:14:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,14 @@ bool ws_server_instance::read_more_plain(const size_t& max)
 
 void ws_server_instance::read_more_chunked()
 {
-	static int V(2);
-	size_t length;
+	static int V(1);
 	std::string chunk_size_hex;
 	std::string chunk_extension;
 	size_t chunk_size_bytes;
 	Chronometer chrono;
 
+	if (in_header.method == "GET")
+		return ;
 	while (chrono < 1000)
 	{
 		if (chrono > 999.9)
@@ -72,33 +73,22 @@ void ws_server_instance::read_more_chunked()
 			chrono.btn_reset();
 	}
 
-	verbose(V) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
-
-	if (in_header.method == "GET")
-		return ;
-	length = 0;
-	chunk_size_hex = StringTools::consume_delims_ff(in_body, "\r\n");
-	chunk_extension = StringTools::get_after_first(chunk_size_hex, ";");
-	chunk_size_hex = StringTools::get_before_first(chunk_size_hex, ";");
-	chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
-	
-	verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
-	verbose(V) << "(read_more_chunked) chunk_extension " << SHORT(chunk_extension) << std::endl;
-	verbose(V) << "(read_more_chunked) chunk_size_bytes " << chunk_size_bytes << std::endl;
-
-	while (chunk_size_bytes > 0)
+	while (1)
 	{
-		verbose(V) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
-
-		chunked_content += StringTools::consume_delims_ff(in_body, "\r\n");
-		length = chunked_content.length();
-		chunk_size_hex = StringTools::consume_delims_ff(in_body, "\r\n");
+		chunk_size_hex = StringTools::consume_until(in_body, "\r\n");
+		chunk_extension = StringTools::get_after_first(chunk_size_hex, ";");
+		chunk_size_hex = StringTools::get_before_first(chunk_size_hex, ";");
 		chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
+		if (chunk_size_bytes <= 0)
+			break ;
+		chunked_content += StringTools::consume_until(in_body, "\r\n");
 
-		verbose(V) << "(read_more_chunked) chunk_size_hex " << SHORT(chunk_size_hex) << std::endl;
+		verbose(V) << "(read_more_chunked) chunked_content " << SHORT(chunked_content) << std::endl;
+		verbose(V) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
+		verbose(V) << "(read_more_chunked) chunk_size_hex " << chunk_size_hex << std::endl;
 		verbose(V) << "(read_more_chunked) chunk_size_bytes " << chunk_size_bytes << std::endl;
-		verbose(V) << "(read_more_chunked) length " << length << std::endl;
 	}
+
 	verbose(V) << "(read_more_chunked) Finished with body " \
 		<< in_body.length() << " and chunked-content " \
 		<< chunked_content.length() << "." << std::endl;
