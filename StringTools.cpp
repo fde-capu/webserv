@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 22:13:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/15 00:46:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -695,6 +695,20 @@ std::string& StringTools::trim(std::string& str, std::string set)
 	while (str.length() && isInSet(str.at(end), set)) end--;
 	str = str.substr(start, end - start + 1);
 	return str;
+}
+
+std::string StringTools::consume_bytes(std::string& src, size_t bytes)
+{
+	std::string ret;
+	if (bytes >= src.length())
+	{
+		ret = src;
+		src = "";
+		return ret;
+	}
+	ret = src.substr(0, bytes);
+	src = src.substr(bytes);
+	return ret;
 }
 
 std::string StringTools::consume_until(std::string& src, const std::string delim_str)

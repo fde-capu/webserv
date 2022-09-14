@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 22:07:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/15 00:37:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ class StringTools
 		static bool					startsWith(const std::string&, const std::string&);
 		static std::string			consume_delims(std::string&, const std::string);
 		static std::string			consume_until(std::string&, const std::string);
+		static std::string			consume_bytes(std::string&, size_t);
 		static std::string			get_after_first(const std::string&, const std::string);
 		static std::string			get_before_first(const std::string&, const std::string);
 		static size_t				strhex2size_t(const std::string);

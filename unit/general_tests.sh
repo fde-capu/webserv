@@ -345,7 +345,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ; } 2> /dev/null
 
 trace="true";
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
 cmd="curl http://$name_server:3490";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
@@ -370,7 +370,7 @@ cat ${MYDIR}/confs/html/99B.words;
 
 trace="true";
 chunked="true"
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
 cmd="curl http://$name_server:3490/99B.words";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
@@ -491,7 +491,7 @@ unittest "50MB success"
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.bla
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
 cmd="curl http://$name_server:3490/99B.bla";
 upfile="99B.bla" 
 code="202";
@@ -665,7 +665,7 @@ unittest "50MB success"
 ; } 2> /dev/null
 
 chunked="true"
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.bla
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
 cmd="curl http://$name_server:3490/99B.bla";
 upfile="99B.bla" 
 code="202";
@@ -721,7 +721,7 @@ finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
 upfile="99B.words" 
 chunked="true"
 cmd="curl http://$name_server:4242/directory/youpi.bla"
@@ -832,7 +832,7 @@ unittest "Reject GET"
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF\n" > ${MYDIR}/99B.words
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
 cmd="curl http://$name_server:4242/post_body";
 outdir="${MYDIR}/confs/html4242/uploads";
 upfile="99B.words" 
