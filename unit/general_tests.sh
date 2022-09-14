@@ -159,6 +159,7 @@ if false; then
 #################################################################### Begin
 
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 
 ##################################################################
@@ -190,7 +191,6 @@ code="200";
 unittest "Root by servername";
 
 #################################################################
-
 
 { anounce Subdirectory \
 \
@@ -334,9 +334,7 @@ unittest "Client not redirecting";
 ##################################################################
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
-{ anounce POST_MULTIPART \
+{ anounce MULTI_99_WORDS \
 \
 	'POST multipart/form-data tests. \n
 	Nginx does not support this and will fail all POST tests.\n
@@ -344,7 +342,6 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 \
 ; } 2> /dev/null
 
-trace="true";
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
 cmd="curl http://$name_server:3490";
 outdir="${MYDIR}/confs/html/";
@@ -356,33 +353,8 @@ rm ${MYDIR}/99B.words
 cat ${MYDIR}/confs/html/99B.words;
 
 ##################################################################
-##################################################################
-{ ${MYDIR}/clean_uploads.sh; }
-##################################################################
-##################################################################
 
-{ anounce POST_CHUNKED \
-\
-	'POST chunked tests. \n
-	Within limits of client_max_body_size:' \
-\
-; } 2> /dev/null
-
-trace="true";
-chunked="true"
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:3490/99B.words";
-outdir="${MYDIR}/confs/html/";
-upfile="99B.words" 
-code="201";
-unittest "Simple post chunked";
-ls -l ${MYDIR}/confs/html/99B.words;
-rm ${MYDIR}/99B.words
-cat ${MYDIR}/confs/html/99B.words;
-
-##################################################################
-
-{ anounce MULTIPART \
+{ anounce MULTI_99_NOISE \
 \
 	'POST test. 99B again, noise this time.' \
 \
@@ -396,7 +368,7 @@ unittest "Simple post with noise";
 
 ##################################################################
 
-{ anounce MULTIPART \
+{ anounce MULTI_100_NOISE \
 \
 	'POST multipart noise 100B.' \
 \
@@ -410,7 +382,7 @@ unittest "Post noise 100B";
 
 ##################################################################
 
-{ anounce MULTIPART \
+{ anounce MULTI_101_NOISE \
 \
 	'POST multipart noise 101B (fail, since max is 100).' \
 \
@@ -425,7 +397,7 @@ unittest "Post noise 101B";
 
 ##################################################################
 
-{ anounce MULTIPART \
+{ anounce MULTI_LARGE_42 \
 \
 	'Not large, but shows "uri /large_upload" is working. 42B. 201' \
 \
@@ -439,7 +411,7 @@ unittest "Noise to large_upload 42B"
 
 #####################################################################
 
-{ anounce MULTIPART \
+{ anounce MULTI_1M_NOISE \
 \
 	'Again 1MiB.noise, this time sending the file right away.\n
 	This SHALL BE accepted and saved.' \
@@ -454,7 +426,7 @@ unittest "1MiB success"
 
 #####################################################################
 
-{ anounce MULTIPART \
+{ anounce MULTI_2M_NOISE \
 \
 	'Now 2MiB.noise, sending the file right away.' \
 \
@@ -468,7 +440,7 @@ unittest "2MiB success"
 
 #####################################################################
 
-{ anounce MULTIPART \
+{ anounce MULTI_50M_NOISE \
 \
 	'How about 50MB?\n
 	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
@@ -480,25 +452,6 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "50MB success"
-
-##################################################################
-##################################################################
-##################################################################
-
-{ anounce MULTIPART_CGI \
-\
-	'Test CGI call when posting.' \
-\
-; } 2> /dev/null
-
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
-cmd="curl http://$name_server:3490/99B.bla";
-upfile="99B.bla" 
-code="202";
-show_output="true";
-message="Check if CGI was properly executed above."
-unittest "Simple post";
-rm ${MYDIR}/99B.bla
 
 #####################################################################
 #####################################################################
@@ -548,8 +501,31 @@ unittest "200MB rejection (out of resources)"
 { ${MYDIR}/clean_uploads.sh; }
 
 ###################################################################
+###################################################################
+###################################################################
 
-{ anounce CHUNKED \
+{ anounce CHUNK_99_WORDS \
+\
+	'POST multipart/form-data tests. \n
+	Nginx does not support this and will fail all POST tests.\n
+	Within limits of client_max_body_size:' \
+\
+; } 2> /dev/null
+
+chunked="true";
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490";
+outdir="${MYDIR}/confs/html/";
+upfile="99B.words" 
+code="201";
+unittest "Simple post";
+ls -l ${MYDIR}/confs/html/99B.words;
+rm ${MYDIR}/99B.words
+cat ${MYDIR}/confs/html/99B.words;
+
+##################################################################
+
+{ anounce CHUNK_99_NOISE \
 \
 	'99B using noise file.' \
 \
@@ -564,7 +540,7 @@ unittest "Simple post with noise";
 
 #################################################################
 
-{ anounce CHUNKED \
+{ anounce CHUNK_100_NOISE \
 \
 	'Same, with 100B.noise. Max is at 100B, this passes. \n
 	Same file name, so it overwrites.'\
@@ -580,7 +556,7 @@ unittest "Post noise 100B";
 
 #################################################################
 
-{ anounce CHUNKED \
+{ anounce CHUNK_101_NOISE \
 \
 	'101B.noise should not pass because of max_size is set for 100. 413' \
 \
@@ -595,7 +571,7 @@ unittest "Post noise 101B";
 
 ###################################################################
 
-{ anounce CHUNKED \
+{ anounce CHUNK_LARGE_42 \
 \
 	'Not large, but shows "uri /large_upload" is working. 42B. 202' \
 \
@@ -610,7 +586,7 @@ unittest "Noise to large_upload 42B"
 
 ###############################################################
 
-{ anounce CHUNKED \
+{ anounce CHUNK_1M_NOISE \
 \
 	'1MiB.noise.\n
 	This SHALL BE accepted and saved.' \
@@ -626,7 +602,7 @@ unittest "1MiB success"
 
 ##################################################################
 
-{ anounce CHUNKED \
+{ anounce CHUNK_2M_NOISE \
 \
 	'Now 2MiB.noise.' \
 \
@@ -641,7 +617,7 @@ unittest "2MiB success"
 
 ##################################################################
 
-{ anounce CHUNKED \
+{ anounce CHUNK_50M_NOISE \
 \
 	'How about 50MB?\n
 	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
@@ -654,25 +630,6 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "50MB success"
-
-###################################################################
-
-{ anounce POST_CHUNKED \
-\
-	'But if the chunk is configured to run some CGI, it should \n
-	run and return the proper body.' \
-\
-; } 2> /dev/null
-
-chunked="true"
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
-cmd="curl http://$name_server:3490/99B.bla";
-upfile="99B.bla" 
-code="202";
-show_output="true";
-message="Check if CGI was properly executed above."
-unittest "Simple post chunked calling CGI";
-rm ${MYDIR}/99B.bla
 
 ##################################################################
 #####################################################################
@@ -709,30 +666,43 @@ code="507"
 fail="true"
 unittest "200MB rejection (out of resources)"
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
-
 ##################################################################
 ##################################################################
 ##################################################################
 
-{ anounce CGI_1 \
+{ anounce MULTIPART_CGI \
 \
-	'Test CGI.' \
+	'Test CGI call when posting.' \
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
-upfile="99B.words" 
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
+cmd="curl http://$name_server:3490/99B.bla";
+upfile="99B.bla" 
+code="202";
+show_output="true";
+message="Check if CGI was properly executed above."
+unittest "Simple post";
+rm ${MYDIR}/99B.bla
+
+###################################################################
+
+{ anounce CHUNKED_CGI \
+\
+	'But if the chunk is configured to run some CGI, it should \n
+	run and return the proper body.' \
+\
+; } 2> /dev/null
+
 chunked="true"
-cmd="curl http://$name_server:4242/directory/youpi.bla"
-code="201"
-trace="true"
-outdir="${MYDIR}/confs/html4242/uploads";
-fail="true"
-unittest "First CGI"
-ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
-rm ${MYDIR}/99B.words
-cat ${MYDIR}/confs/html4242/uploads/99B.words;
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
+cmd="curl http://$name_server:3490/99B.bla";
+upfile="99B.bla" 
+code="202";
+show_output="true";
+message="Check if CGI was properly executed above."
+unittest "Simple post chunked calling CGI";
+rm ${MYDIR}/99B.bla
 
 ##################################################################
 ##################################################################
@@ -888,7 +858,7 @@ unittest "Noise 101"
 
 #####################################################################
 
-finish
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 #####################################################################
 #####################################################################
