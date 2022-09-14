@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 16:50:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/14 20:22:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,6 @@ StringTools & StringTools::operator= (StringTools const & rhs)
 	}
 	return *this;
 }
-
-//std::ostream & operator<< (std::ostream & o, StringTools const & self)
-//{
-//	o << "::StringTools::" << std::endl;
-//	static_cast<void>(self);
-//	return o;
-//}
 
 StringTools::~StringTools()
 {
@@ -699,7 +692,7 @@ std::string& StringTools::trim(std::string& str, std::string set)
 
 	while (start < str.length() && isInSet(str.at(start), set)) start++;
 	end = str.length() - 1;
-	while (isInSet(str.at(end), set)) end--;
+	while (str.length() && isInSet(str.at(end), set)) end--;
 	str = str.substr(start, end - start + 1);
 	return str;
 }
