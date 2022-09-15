@@ -244,7 +244,7 @@ unittest "Port to server";
 \
 ; } 2> /dev/null
 
-cmd="curl http://$name_server:3493 -L"
+cmd="curl -L http://$name_server:3493"
 testfile="$MYDIR/confs/html/index.htm";
 code="200";
 unittest "Client redirecting made two calls";

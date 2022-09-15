@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 21:50:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/15 21:53:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <vector>
 # include "Chronometer.hpp"
 
-# define CIRCULARBUFFER_TIMEOUT_MSEC 5
+# define CIRCULARBUFFER_TIMEOUT_MSEC 250
 # define CIRCULARBUFFER_SIZE (1024 * 1)
 # define CIRCULARBUFFER_LIMIT (1070000 * 100)
 

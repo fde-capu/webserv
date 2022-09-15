@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 20:40:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/15 23:47:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,7 @@ DataFold ws_server_instance::get_location_config() const
 DataFold ws_server_instance::server_location_config(const std::string& key, \
 	std::string u_default) const
 {
-	static int V(6);
+	static int V(1);
 	DataFold locations(config.get<DataFold>("location"));
 	DataFold loc;
 	DataFold out;
@@ -237,8 +237,8 @@ DataFold ws_server_instance::server_location_config(const std::string& key, \
 	verbose(V) << "(server_location_config) default: " << out << std::endl;
 	if (root_config.getValStr(key) != "")
 	{
-		out = root_config.get(key);
-		verbose(V) << "(server_location_config) root_config: " << out << std::endl;
+		out = root_config.getValStr(key);
+		verbose(V) << "(server_location_config) root_config.get(" << key << "): " << out << std::endl;
 	}
 	if (config.get(key) != "")
 	{
@@ -275,7 +275,7 @@ std::string ws_server_instance::location_get_single \
 
 std::string ws_server_instance::location_path(const std::string default_file) const
 {
-	static int V(4);
+	static int V(1);
 	std::string html_dir = config.getValStr("root");
 	std::string uri2root = location_get_single("root", default_file);
 	std::string sys_dir = root_config.getValStr("root");
