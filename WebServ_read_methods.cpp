@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 18:31:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/15 21:22:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int ws_server_instance::read_more_general()
 
 bool ws_server_instance::read_more_plain(const size_t& max)
 {
-	static int V(2);
+	static int V(1);
 	size_t next_load;
 	CircularBuffer buf(fd);
 	bool data_was_read(false);

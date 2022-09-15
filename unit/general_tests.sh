@@ -160,6 +160,7 @@ if false; then
 #################################################################### Begin
 
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 
 ##################################################################
@@ -693,7 +694,6 @@ rm ${MYDIR}/99B.bla
 ##################################################################
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce Stress \
 \
@@ -704,14 +704,17 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 set +x;
 
-stress_count=3;
+stress_count=300;
 rm -f stress_out;
 i=1;
 while [ "$i" -le "$stress_count" ]; do
 	echo -n "\r $i";
-	curl -sv -H "Expect:" http://localhost:3491 2>> stress_out 1> /dev/null;
+	curl -sv http://localhost:3491/ 2>> stress_out 1> /dev/null &
+#	curl -sv -H "Expect:" http://localhost:3491 2>> stress_out 1> /dev/null
+#	curl -sv -H "Connection: keep-alive" -H "Timeout: 60" -H "Expect:" http://localhost:3491 2>> stress_out 1> /dev/null
 	i=$(( i + 1 ));
 done;
+wait;
 stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
 colorprint "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
 rm -f stress_out;
