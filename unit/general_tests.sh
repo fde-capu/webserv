@@ -484,7 +484,7 @@ unittest "webserv must close connection"
 \
 ; } 2> /dev/null
 
-noise="200MB"
+noise="200MiB"
 cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 code="507"
 fail="true"
@@ -638,19 +638,18 @@ unittest "50MB success"
 #####################################################################
 #####################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_FAIL \
 \
-	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
-	Server should not crash, so 507 Insufficient Storage.' \
+	'How about 200MiB? This time, it is accepted as partial upload, \n
+	since curl is set to close and webserv must always close.' \
 \
 ; } 2> /dev/null
 
 chunked="true";
-noise="200MB"
+noise="200MiB"
 cmd="curl http://$name_server:3490/large_upload"
-code="507"
+code="201"
 fail="true"
 unittest "200MB rejection (out of resources)"
 
@@ -658,7 +657,7 @@ unittest "200MB rejection (out of resources)"
 ##################################################################
 ##################################################################
 
-{ anounce MULTIPART_CGI \
+{ anounce CGI_MULTI \
 \
 	'Test CGI call when posting.' \
 \
@@ -675,7 +674,7 @@ rm ${MYDIR}/99B.bla
 
 ###################################################################
 
-{ anounce CHUNKED_CGI \
+{ anounce CGI_CHUNK \
 \
 	'But if the chunk is configured to run some CGI, it should \n
 	run and return the proper body.' \
@@ -695,6 +694,8 @@ rm ${MYDIR}/99B.bla
 ##################################################################
 ##################################################################
 ##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce Stress \
 \

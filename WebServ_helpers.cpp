@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 17:37:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/15 20:40:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,7 +275,7 @@ std::string ws_server_instance::location_get_single \
 
 std::string ws_server_instance::location_path(const std::string default_file) const
 {
-	static int V(1);
+	static int V(4);
 	std::string html_dir = config.getValStr("root");
 	std::string uri2root = location_get_single("root", default_file);
 	std::string sys_dir = root_config.getValStr("root");
