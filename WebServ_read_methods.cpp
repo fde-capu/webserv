@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 17:57:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/15 18:31:37 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,10 @@ bool ws_server_instance::read_more_plain(const size_t& max)
 
 void ws_server_instance::read_more_chunked()
 {
-	static int V(1);
+	static int V(2);
 	std::string chunk_size_hex;
 	std::string chunk_extension;
-	size_t chunk_size_bytes;
+	size_t chunk_size_bytes(1);
 	Chronometer chrono;
 
 	if (in_header.method == "GET")
@@ -73,13 +73,13 @@ void ws_server_instance::read_more_chunked()
 			chrono.btn_reset();
 	}
 
-	while (1)
+	while (!reached_limit && !exceeded_limit)
 	{
 		chunk_size_hex = StringTools::consume_until(in_body, "\r\n");
 		chunk_extension = StringTools::get_after_first(chunk_size_hex, ";");
 		chunk_size_hex = StringTools::get_before_first(chunk_size_hex, ";");
 		chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
-		if (chunk_size_bytes <= 0)
+		if (chunk_size_bytes == 0)
 			break ;
 		chunked_content += StringTools::consume_bytes(in_body, chunk_size_bytes);
 		StringTools::consume_until(in_body, "\r\n");

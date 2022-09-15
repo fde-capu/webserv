@@ -458,7 +458,7 @@ unittest "50MB success"
 #####################################################################
 #####################################################################
 
-{ anounce MULTIPART_FAIL \
+{ anounce MULTI_FAIL \
 \
 	'Now POSTing 1MiB.noise.\n
 	This shall NOT be accepted, because curl will expect 100-continue,\n
@@ -470,12 +470,12 @@ noise="1MiB"
 cmd="curl http://$name_server:3490/large_upload"
 code="424"
 fail="true"
-message="Might have been chosen differently."
+message="Response code might have been chosen differently."
 unittest "webserv must close connection"
 
 #####################################################################
 
-{ anounce MULTIPART_FAIL \
+{ anounce MULTI_FAIL \
 \
 	'How about 200MiB? Wait a little, but this would get OOM KILL\n
 	by Workspace. Set CIRCULARBUFFER_LIMIT for this.\n
@@ -506,7 +506,6 @@ unittest "200MB rejection (out of resources)"
 ###################################################################
 ###################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_99_WORDS \
 \
@@ -515,7 +514,6 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 \
 ; } 2> /dev/null
 
-trace="true"
 chunked="true";
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
 cmd="curl http://$name_server:3490";
@@ -535,7 +533,6 @@ cat ${MYDIR}/confs/html/99B.words;
 \
 ; } 2> /dev/null
 
-trace="true";
 chunked="true";
 noise="99"
 outdir="${MYDIR}/confs/html";
@@ -572,6 +569,7 @@ noise="101"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="413";
+fail="true"
 unittest "Post noise 101B";
 
 ###################################################################
@@ -640,24 +638,9 @@ unittest "50MB success"
 #####################################################################
 #####################################################################
 
-{ anounce CHUNKED_FAIL \
-\
-	'Now POSTing 1MiB.noise.\n
-	This shall NOT be accepted, because curl will expect 100-continue,\n
-	but webserv must always close the connection. Chose 424 for answer.' \
-\
-; } 2> /dev/null
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
-chunked="true";
-noise="1MiB"
-cmd="curl http://$name_server:3490/large_upload"
-code="424"
-fail="true"
-unittest "webserv must close connection"
-
-#####################################################################
-
-{ anounce CHUNKED_FAIL \
+{ anounce CHUNK_FAIL \
 \
 	'How about 200MiB? Wait a little, but this would crash on Workspace!\n
 	Server should not crash, so 507 Insufficient Storage.' \
@@ -666,7 +649,7 @@ unittest "webserv must close connection"
 
 chunked="true";
 noise="200MB"
-cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+cmd="curl http://$name_server:3490/large_upload"
 code="507"
 fail="true"
 unittest "200MB rejection (out of resources)"

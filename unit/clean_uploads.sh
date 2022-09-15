@@ -4,7 +4,7 @@ MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
 
 echo 'Cleaning uploaded files.'
-echo '------------------------'
+echo -e "------------------------\033[0;31m"
 
 clean()
 {
@@ -23,7 +23,7 @@ find ${MYDIR} | grep noise;
 find ${MYDIR} | grep words;
 find ${MYDIR} | grep 99B.bla;
 
-echo '------------------------'
+echo -e "\033[0;37m------------------------"
 echo 'You should not see any file listed above this line.'
 
 echo 'Initial YoupiBanane/youpi.bla' > ${MYDIR}/confs/html4242/YoupiBanane/youpi.bla
