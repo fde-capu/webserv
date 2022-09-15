@@ -1,6 +1,5 @@
 #!/bin/sh
 
-stress_count=300;
 name_server="127.0.0.1";
 
 MYSELF="$(realpath "$0")"
@@ -638,7 +637,6 @@ unittest "50MB success"
 #####################################################################
 #####################################################################
 
-
 { anounce CHUNK_FAIL \
 \
 	'How about 200MiB? This time, it is accepted as partial upload, \n
@@ -676,7 +674,7 @@ rm ${MYDIR}/99B.bla
 
 { anounce CGI_CHUNK \
 \
-	'But if the chunk is configured to run some CGI, it should \n
+	'But if the chunk is configured to run some CGI, it should \n \
 	run and return the proper body.' \
 \
 ; } 2> /dev/null
@@ -706,30 +704,31 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 set +x;
 
-rm -f stress_out
+stress_count=3;
+rm -f stress_out;
 i=1;
 while [ "$i" -le "$stress_count" ]; do
 	echo -n "\r $i";
-	curl -sv -H "Keep-Alive: 60" -H "Connection: keep-alive" http://localhost:3491 2>> stress_out 1> /dev/null
-	i=$(( i + 1 ))
-done
-echo -n "\rCount of '200 OK' responses must be $stress_count, and it is: ";
-cat stress_out | grep HTTP | grep "200 OK" | wc -l;
-rm -f stress_out
+	curl -sv -H "Expect:" http://localhost:3491 2>> stress_out 1> /dev/null;
+	i=$(( i + 1 ));
+done;
+stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
+colorprint "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
+rm -f stress_out;
 set -x;
 
 ## Double_call ################################################################
 
-{ anounce Double_call \
-\
-	'Double test: make two simultaneous calls. Not mandatory.'
-\
-; } 2> /dev/null
-
-curl -F "file=@${MYDIR}/99B.words" \
-	http://$name_server:4242/post_body & \
-curl -F "file=@${MYDIR}/99B.words" \
-	http://$name_server:4242/post_body
+#{ anounce Double_call \
+#\
+#	'Double test: make two simultaneous calls. Not mandatory.'
+#\
+#; } 2> /dev/null
+#
+#curl -F "file=@${MYDIR}/99B.words" \
+#	http://$name_server:4242/post_body & \
+#curl -F "file=@${MYDIR}/99B.words" \
+#	http://$name_server:4242/post_body
 
 #################################################################
 #################################################################
