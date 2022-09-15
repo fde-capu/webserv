@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 15:51:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/15 17:37:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,15 +199,8 @@ void ws_server_instance::set_sizes()
 	}
 	else if (is_chunked())
 	{
-//		verbose(V) << "(set_sizes) chunked_content length: " \
-//			<< chunked_content.length() << std::endl;
-//		exceeded_limit = max_size && chunked_content.length() > max_size;
-//		exceeded_limit = exceeded_limit || \
-//			(in_header.content_length && \
-//			in_body.length() > static_cast<size_t>(in_header.content_length));
-//		reached_limit = in_body.length() == static_cast<size_t>(in_header.content_length);
-		exceeded_limit = false;
-		reached_limit = false;
+		exceeded_limit = max_size && chunked_content.length() > max_size;
+		reached_limit = max_size && chunked_content.length() == max_size;
 	}
 	else
 	{

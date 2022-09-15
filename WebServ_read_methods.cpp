@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 00:44:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/15 17:57:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ void ws_server_instance::read_more_chunked()
 		verbose(V) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;
 		verbose(V) << "(read_more_chunked) chunk_size_hex " << chunk_size_hex << std::endl;
 		verbose(V) << "(read_more_chunked) chunk_size_bytes " << chunk_size_bytes << std::endl;
+
+		set_sizes();
 	}
 
 	verbose(V) << "(read_more_chunked) Finished with body " \

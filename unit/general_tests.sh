@@ -28,21 +28,19 @@ resetvars;
 unittest()
 {
 	fullcmd="$cmd";
-	fullcmd="set -x; $fullcmd -sSvw '%{http_code}'";
 
 	if [ "$noise" != "" ] ; then
 		upfile="file.noise";
 		head -c $noise /dev/urandom > "${MYDIR}/$upfile";
 	fi
 
-#	[ "$chunked" != "" ] && [ "$noise" != "" ] && fullcmd="$fullcmd/file.noise";
-#	[ "$chunked" != "" ] && [ "$noise" = "" ] && [ "$upfile" != "" ] && fullcmd="$fullcmd/$upfile";
+	fullcmd="set -x; $fullcmd/$upfile -sSvw '%{http_code}'";
 
 	if [ "$upfile" != "" ] ; then
 		if [ "$chunked" = "" ] ; then
 			fullcmd="$fullcmd -F \"file=@${MYDIR}/$upfile\"";
 		else
-			fullcmd="$fullcmd -d \"@${MYDIR}/$upfile\"";
+			fullcmd="$fullcmd --data-binary \"@${MYDIR}/$upfile\"";
 			fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
 		fi
 	fi
@@ -163,7 +161,6 @@ if false; then
 #################################################################### Begin
 
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 
 ##################################################################
@@ -473,6 +470,7 @@ noise="1MiB"
 cmd="curl http://$name_server:3490/large_upload"
 code="424"
 fail="true"
+message="Might have been chosen differently."
 unittest "webserv must close connection"
 
 #####################################################################
@@ -508,6 +506,8 @@ unittest "200MB rejection (out of resources)"
 ###################################################################
 ###################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce CHUNK_99_WORDS \
 \
 	'POST chunked tests. \n
@@ -515,6 +515,7 @@ unittest "200MB rejection (out of resources)"
 \
 ; } 2> /dev/null
 
+trace="true"
 chunked="true";
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
 cmd="curl http://$name_server:3490";
@@ -534,6 +535,7 @@ cat ${MYDIR}/confs/html/99B.words;
 \
 ; } 2> /dev/null
 
+trace="true";
 chunked="true";
 noise="99"
 outdir="${MYDIR}/confs/html";
@@ -569,7 +571,7 @@ chunked="true"
 noise="101"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
-code="403";
+code="413";
 unittest "Post noise 101B";
 
 ###################################################################
