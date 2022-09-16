@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/16 05:44:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 18:30:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int ws_server_instance::read_more_general()
 
 bool ws_server_instance::read_more_plain(const size_t& max)
 {
-	static int V(1);
+	static int V(3);
 	size_t next_load;
 	CircularBuffer buf(fd);
 	bool data_was_read(false);
@@ -47,7 +47,7 @@ bool ws_server_instance::read_more_plain(const size_t& max)
 			<< next_load << std::endl;
 
 		len = in_body.length();
-		in_body += buf.try_to_receive(next_load);
+		in_body += buf.try_to_receive(next_load, true);
 		data_was_read = data_was_read || len != in_body.length();
 
 		verbose(V) << "in_body " << SHORT(in_body) << std::endl;

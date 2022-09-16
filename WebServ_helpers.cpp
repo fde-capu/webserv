@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/16 05:46:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 18:30:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ void ws_server_instance::set_props()
 
 void ws_server_instance::set_sizes()
 {
-	static int V(1);
+	static int V(3);
 	size_t payload_start, payload_end;
 
 	if (is_multipart())
@@ -195,7 +195,10 @@ void ws_server_instance::set_sizes()
 		exceeded_limit = max_size && body_end - body_start > max_size;
 		exceeded_limit = exceeded_limit || \
 			in_body.length() > static_cast<size_t>(in_header.content_length);
-		reached_limit = in_body.length() == static_cast<size_t>(in_header.content_length);
+		reached_limit = exceeded_limit || in_body.length() == static_cast<size_t>(in_header.content_length);
+
+		verbose(V) << "(set_sizes:multipart) exceeded_limit: " << exceeded_limit << std::endl;
+		verbose(V) << "(set_sizes:multipart) reached_limit: " << reached_limit << std::endl;
 	}
 	else if (is_chunked())
 	{

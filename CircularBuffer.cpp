@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/25 15:45:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 18:28:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ bool CircularBuffer::checkLimits() const
 	return true;
 }
 
-std::string& CircularBuffer::try_to_receive(size_t nbytes)
+std::string& CircularBuffer::try_to_receive(size_t nbytes, bool slow)
 {
 	size_t size_ini(output.length());
 	size_t size_cur(0);
@@ -100,7 +100,7 @@ std::string& CircularBuffer::try_to_receive(size_t nbytes)
 		return out_of_resource();
 	while (size_cur < size_fin)
 	{
-		if (time_out > CIRCULARBUFFER_TIMEOUT_MSEC)
+		if (time_out > (CIRCULARBUFFER_TIMEOUT_MSEC * (slow ? 5 : 1)))
 			return unfinished();
 		if (!checkLimits())
 			return out_of_resource();
