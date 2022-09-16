@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/16 20:24:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 20:37:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,17 +168,16 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			wr += w;
 			verbose(V) << "(execute_cgi) wr = " << wr << std::endl;
 		}
-//		close(pipe_cp[1]);
+		close(pipe_cp[1]);
 		close(pipe_pc[0]);
 		close(pipe_pc[1]);
 
 		out_body = CircularBuffer(pipe_cp[0]);
+		close(pipe_cp[0]);
 
 		wait_pid = wait(&child_status);
 		if (wait_pid < 0)
 			throw std::domain_error("(execute_cgi) Coudn't wait.");
-
-//		close(pipe_cp[0]);
 
 		verbose(V) << "(execute_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 
@@ -218,10 +217,6 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	if (!good_method)
 		return 0;
 	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
-
-	verbose(5) << "(is_cgi_exec) call_extension: " << call_extension << std::endl;
-	verbose(5) << "(is_cgi_exec) cgi_extension: " << cgi_extension << std::endl;
-
 	if (call_extension == cgi_extension)
 	{
 		si.cgi_flag = true;
