@@ -503,7 +503,6 @@ unittest "200MB rejection (out of resources)"
 ###################################################################
 
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 { anounce CHUNK_99_WORDS \
 \
 	'POST chunked tests. \n
@@ -693,6 +692,7 @@ rm ${MYDIR}/99B.bla
 ##################################################################
 
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 { anounce Stress \
 \
 	"Stress testing $stress_count calls. Wait for it.\n
@@ -702,7 +702,7 @@ rm ${MYDIR}/99B.bla
 
 set +x;
 
-stress_count=300;
+stress_count=100;
 rm -f stress_out;
 i=1;
 while [ "$i" -le "$stress_count" ]; do
