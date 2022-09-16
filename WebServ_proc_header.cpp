@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:37:23 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 21:56:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 04:50:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ bool WebServ::host_from_header(std::string& line, ws_header& header, bool& is_va
 
 struct ws_header WebServ::get_header(const std::string& full_file)
 {
-	static int V(1);
+	static int V(3);
 	ws_header header;
 	std::vector<std::string> line;
 	std::vector<std::string> carrier;
