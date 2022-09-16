@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 21:22:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 05:23:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,9 @@ int ws_reply_instance::read_limits(ws_server_instance& si)
 	si.set_sizes();
 	if (si.exceeded_limit)
 	{
-		set_code(413, "Payload Too Large (Declared Size)");
+		std::cout << "(read_limits) is_multipart " << si.is_multipart() << std::endl;
+		std::cout << "(read_limits) is_chunked " << si.is_chunked() << std::endl;
+		set_code(413, "Payload Too Large");
 		out_body = "BODY FOR 413";
 		return 413;
 	}
