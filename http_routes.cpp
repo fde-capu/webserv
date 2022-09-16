@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 21:24:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 20:24:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int ws_reply_instance::bad_gateway()
 
 int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
-	int V(2);
+	int V(1);
 	size_t wr(0);
 	int child_status = -1;
 	int pipe_pc[2] = {0, 0};
@@ -110,6 +110,9 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 
 	for (size_t i = 0; i < file_test.size(); i++)
 	{
+		verbose(0) << "(execute_cgi) Exists? " << root_path << file_test[i] << std::endl;
+		verbose(0) << " if not, exists? " << file_test[i] << std::endl;
+		verbose(0) << " if not, i == " << i << ", if 0, bad_gateway." << std::endl;
 		if (FileString::exists(root_path + file_test[i]))
 			file_test[i] = root_path + file_test[i];
 		else if (i || FileString::exists(file_test[i]))
@@ -146,32 +149,37 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	}
 	else // Parent
 	{
-		if (si.is_chunked())
+		size_t write_into_child;
+		size_t w;
+
+		write_into_child = si.is_chunked() ? si.chunked_content.length() :
+			si.is_multipart() ? si.multipart_content.length() :
+			si.in_body.length();
+
+		while (write_into_child)
 		{
-			wr = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()),\
-				si.chunked_content.length());
+			if (si.is_chunked())
+				w = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()), write_into_child);
+			else if (si.is_multipart())
+				w = write(pipe_pc[1], static_cast<const void*>(si.multipart_content.c_str()), write_into_child);
+			else
+				w = write(pipe_pc[1], static_cast<const void*>(si.in_body.c_str()), write_into_child);
+			write_into_child -= w < write_into_child ? w : write_into_child;
+			wr += w;
+			verbose(V) << "(execute_cgi) wr = " << wr << std::endl;
 		}
-		else if (si.is_multipart())
-		{
-			wr = write(pipe_pc[1], static_cast<const void*>(si.multipart_content.c_str()),\
-				si.multipart_content.length());
-		}
-		else
-		{
-			wr = write(pipe_pc[1], static_cast<const void*>(si.in_body.c_str()),\
-				si.in_body.length());
-		}
-		verbose(V) << "(execute_cgi) wr = " << wr << std::endl;
+//		close(pipe_cp[1]);
 		close(pipe_pc[0]);
-		close(pipe_cp[1]);
 		close(pipe_pc[1]);
+
+		out_body = CircularBuffer(pipe_cp[0]);
 
 		wait_pid = wait(&child_status);
 		if (wait_pid < 0)
 			throw std::domain_error("(execute_cgi) Coudn't wait.");
 
-		out_body = CircularBuffer(pipe_cp[0]);
-		close(pipe_cp[0]);
+//		close(pipe_cp[0]);
+
 		verbose(V) << "(execute_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 
 		out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
