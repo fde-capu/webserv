@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/09/14 15:34:37 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/16 18:35:03 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -93,7 +93,7 @@ test:		t
 t:			1
 	@echo '=======> Please run unit/general_tests.sh on another terminal <======='
 	./$(NAME1) $(ARGS1)
-g1:			1
+g:			1
 	gdb --args ./$(NAME1) $(ARGS1)
 k1:
 	-pkill $(NAME1)

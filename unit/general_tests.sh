@@ -437,7 +437,6 @@ unittest "2MiB success"
 
 #####################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 { anounce MULTI_50M_NOISE \
 \
 	'How about 50MB?\n
@@ -504,6 +503,7 @@ unittest "200MB rejection (out of resources)"
 ###################################################################
 
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 { anounce CHUNK_99_WORDS \
 \
 	'POST chunked tests. \n
@@ -635,7 +635,6 @@ unittest "50MB success"
 #####################################################################
 #####################################################################
 
-
 { anounce CHUNK_FAIL \
 \
 	'How about 200MiB? This time, it is accepted as partial upload, \n
@@ -648,6 +647,7 @@ noise="200MiB"
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
 fail="true"
+message=`ls -lh ${MYDIR}/confs/html/uploads_large/file.noise`;
 unittest "Accepts, though incomplete"
 
 ##################################################################

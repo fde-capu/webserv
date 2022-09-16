@@ -19,6 +19,7 @@ clean ${MYDIR}/confs/html4242/uploads/file.noise
 clean ${MYDIR}/confs/html/uploads_large/file.noise
 clean ${MYDIR}/confs/html/99B.bla
 clean ${MYDIR}/file.noise
+clean ${MYDIR}/99B.words
 
 find ${MYDIR} | grep noise;
 find ${MYDIR} | grep words;

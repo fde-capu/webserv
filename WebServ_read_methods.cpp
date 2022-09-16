@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/16 18:30:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 18:48:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int ws_server_instance::read_more_general()
 
 bool ws_server_instance::read_more_plain(const size_t& max)
 {
-	static int V(3);
+	static int V(1);
 	size_t next_load;
 	CircularBuffer buf(fd);
 	bool data_was_read(false);
@@ -41,13 +41,15 @@ bool ws_server_instance::read_more_plain(const size_t& max)
 		return false;
 	while (check_socket_stream(buf))
 	{
-		next_load = max - in_body.length();
+		next_load = max > in_body.length() ? max - in_body.length() : 0;
+		if (!next_load)
+			break ;
 
 		verbose(V) << "(read_more_plain) max " << max << " next_load " \
 			<< next_load << std::endl;
 
 		len = in_body.length();
-		in_body += buf.try_to_receive(next_load, true);
+		in_body += buf.try_to_receive(next_load, is_chunked());
 		data_was_read = data_was_read || len != in_body.length();
 
 		verbose(V) << "in_body " << SHORT(in_body) << std::endl;
@@ -144,8 +146,6 @@ int ws_reply_instance::read_limits(ws_server_instance& si)
 	si.set_sizes();
 	if (si.exceeded_limit)
 	{
-		std::cout << "(read_limits) is_multipart " << si.is_multipart() << std::endl;
-		std::cout << "(read_limits) is_chunked " << si.is_chunked() << std::endl;
 		set_code(413, "Payload Too Large");
 		out_body = "BODY FOR 413";
 		return 413;
