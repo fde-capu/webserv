@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/16 05:23:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 05:44:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ bool ws_server_instance::read_more_plain(const size_t& max)
 
 	if (in_header.method == "GET")
 		return false;
-	while (check_socket_stream(buf) && in_body.length() < max)
+	while (check_socket_stream(buf))
 	{
 		next_load = max - in_body.length();
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/16 04:50:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 05:46:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ void ws_server_instance::set_props()
 
 void ws_server_instance::set_sizes()
 {
-	static int V(4);
+	static int V(1);
 	size_t payload_start, payload_end;
 
 	if (is_multipart())
