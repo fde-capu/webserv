@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 23:47:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/16 04:42:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,8 +249,7 @@ DataFold ws_server_instance::server_location_config(const std::string& key, \
 	while (locations.loop())
 	{
 		loc = locations.val;
-		if (StringTools::startsWith(in_header.directory, \
-			loc.getValStr("uri")))
+		if (StringTools::startsWith(in_header.directory, loc.getValStr("uri")))
 		{
 			while (loc.loop())
 				if (loc.key == key)

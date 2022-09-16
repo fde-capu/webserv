@@ -33,7 +33,8 @@ unittest()
 		head -c $noise /dev/urandom > "${MYDIR}/$upfile";
 	fi
 
-	fullcmd="set -x; $fullcmd/$upfile -sSvw '%{http_code}'";
+	[ "$upfile" != "" ] && fullcmd="$fullcmd/$upfile";
+	fullcmd="set -x; $fullcmd -sSvw '%{http_code}'";
 
 	if [ "$upfile" != "" ] ; then
 		if [ "$chunked" = "" ] ; then
@@ -159,8 +160,8 @@ if false; then
 
 #################################################################### Begin
 
-
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 
 
 ##################################################################
