@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/16 20:37:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/18 19:00:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ int ws_reply_instance::bad_gateway()
 
 int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
-	int V(1);
+	int V(3);
 	size_t wr(0);
 	int child_status = -1;
 	int pipe_pc[2] = {0, 0};

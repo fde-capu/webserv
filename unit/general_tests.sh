@@ -1,6 +1,7 @@
 #!/bin/sh
 
 name_server="127.0.0.1";
+step_by_step="";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -76,6 +77,7 @@ unittest()
 
 enterkey()
 {
+	[ "$step_by_step" = "" ] && return;
 	{ set +x; } 2> /dev/null
 	echo -n "\t\t\t\t\t--> Next ";
 	read anything;
@@ -159,6 +161,7 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -737,7 +740,6 @@ set -x;
 ## ubuntu_tester specifics
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 #####################################################################
 
@@ -748,7 +750,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ; } 2> /dev/null
 
 noise="1MiB"
-cmd="curl http://$name_server:4242 "
+cmd="curl http://$name_server:4242"
 code="405";
 fail="true";
 unittest "Post fail"
