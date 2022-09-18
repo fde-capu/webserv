@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/14 16:04:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/18 22:58:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_200(si)) return ; // Ok (GET) and loads file.
 
 	set_code(420, "Enhance Your Calm");
-	out_body = "BODY FOR 420";
+	out_body = TemplateError::page(420);
 }
 
 ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 13:58:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/18 22:49:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,6 @@
 ** int value = conf.get<int>(key);
 ** std::vector<std::string> value = conf.get<std::vector<std::string> >(key);
 ** std::vector<int> value = conf.get<std::vector<int> >(key);
-
-** To get json it used to be like treating as stream:
-** std::cout << conf[key] << std::endl;
-** ...but this feature currently disabled (commented out).
 
 */
 
@@ -59,6 +55,7 @@ class FileString
 	public:
 		FileString();
 		FileString(const char *);
+		FileString(const std::string &);
 		FileString(FileString & src);
 		FileString& operator= (FileString&);
 		FileString& operator= (const std::string&);

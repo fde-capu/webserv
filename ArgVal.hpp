@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:02 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 15:33:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/18 20:47:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,5 +69,4 @@ class ArgVal
 		std::string relative_path(const char *) const;
 };
 
-//std::ostream & operator<< (std::ostream &, ArgVal const &);
 #endif

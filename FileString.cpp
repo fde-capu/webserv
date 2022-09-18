@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/01 13:59:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/18 22:49:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void FileString::load(const char * u_fn)
 	{
 		_read_ok = false;
 		file_read.close();
-		verbose(3) << "(FileString) Failed to load or empty string for file " << u_fn << "." << std::endl;
+		verbose(1) << "(FileString) Failed to load or empty string for file " << u_fn << "." << std::endl;
 		return ;
 	}
 	else
@@ -54,6 +54,15 @@ FileString::FileString(const char * u_file_name)
   key(""), val(""), type(0)
 {
 	_file_name = const_cast<char *>(u_file_name);
+	load();
+}
+
+FileString::FileString(const std::string & u_file_name)
+: _content(""), _processed(""),
+  _read_ok(false), _processed_ok(false),
+  key(""), val(""), type(0)
+{
+	_file_name = const_cast<char *>(u_file_name.c_str());
 	load();
 }
 

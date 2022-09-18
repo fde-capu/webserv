@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 00:46:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/18 22:31:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -500,6 +500,13 @@ std::string StringTools::itoa(int i) const
 	return ss.str();
 }
 
+std::string StringTools::stoa(size_t i)
+{
+	std::stringstream ss;
+	ss << i;
+	return ss.str();
+}
+
 bool is_int(std::string isi)
 { return stool.is_int(isi); }
 
@@ -541,7 +548,7 @@ bool StringTools::isFileName(std::string fn) const
 std::string remove_filename_from_path(std::string fpath)
 { return stool.remove_filename_from_path(fpath); }
 
-std::string StringTools::remove_filename_from_path(std::string fpath) const
+std::string StringTools::remove_filename_from_path(const std::string fpath)
 {
 	std::vector<std::string> path = split(fpath, "/");
 	std::string bpath("");

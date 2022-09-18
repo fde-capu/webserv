@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/15 00:37:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/18 22:31:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,9 @@ class StringTools
 		std::vector<std::string>	split_trim(const std::string, const std::string) const;
 		std::vector<std::string>	splitOutsideQuotes(std::string) const;
 		std::string					itoa(int) const;
+		static std::string			stoa(size_t);
 		bool						isFileName(std::string) const;
-		std::string					remove_filename_from_path(std::string) const;
+		static std::string			remove_filename_from_path(const std::string);
 		static std::string			get_file_extension(const std::string);
 		bool						is_size_t(std::string) const;
 		bool						is_int(std::string) const;
