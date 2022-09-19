@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/18 22:31:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/19 17:07:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ static const StringTools stool = StringTools();
 bool isWordContained(const std::string&, const std::string&);
 void remove_dup_char(std::string&, const char);
 void remove_rep_char(std::string&, const char);
-std::string remove_filename_from_path(std::string);
 std::string to_lower(std::string);
 bool is_equal_insensitive(const std::string, const std::string);
 std::string trim(std::string&);
