@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/18 19:01:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/19 18:01:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,19 +147,19 @@ int ws_reply_instance::read_limits(ws_server_instance& si)
 	if (si.exceeded_limit)
 	{
 		set_code(413, "Payload Too Large");
-		out_body = "BODY FOR 413";
+		out_body = TemplateError::page(413);
 		return 413;
 	}
 	if (pos_status == 507)
 	{
 		set_code(507, "Insufficient Resources");
-		out_body = "BODY FOR 507";
+		out_body = TemplateError::page(507);
 		return 507;
 	}
 	if (pos_status == 422)
 	{
 		set_code(422, "Unprocessable Entity");
-		out_body = "BODY FOR 422";
+		out_body = TemplateError::page(422);
 		return 422;
 	}
 

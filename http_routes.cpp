@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/18 19:00:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/19 17:58:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int ws_reply_instance::is_301(ws_server_instance& si)
 		if (atoi(returns[0].c_str()) == 301)
 		{
 			set_code(301, "Moved Permanently");
-			out_body = "BODY FOR 301";
+			out_body = TemplateError::page(301);
 			set_redirect(returns[1]);
 			return 301;
 		}
@@ -36,7 +36,7 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 	if (locations.empty() && si.val("root") == "")
 	{
 		set_code(403, "Forbidden");
-		out_body = "BODY FOR 403";
+		out_body = TemplateError::page(403);
 		return 403;
 	}
 	return 0;
@@ -60,7 +60,7 @@ int ws_reply_instance::is_501(ws_server_instance& si)
 	)
 	{
 		set_code(501, "Not Implemented");
-		out_body = "BODY FOR 501";
+		out_body = TemplateError::page(501);
 		return 501;
 	}
 	return 0;
@@ -82,14 +82,14 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	if (method_accepted)
 		return 0;
 	set_code(405, "Method Not Allowed");
-	out_body = "BODY FOR 405";
+	out_body = TemplateError::page(405);
 	return 405;
 }
 
 int ws_reply_instance::bad_gateway()
 {
 	set_code(502, "Bad Gateway");
-	out_body = "BODY FOR 502";
+	out_body = TemplateError::page(502);
 	return 502;
 }
 
@@ -256,7 +256,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 			return 0;
 	}
 	set_code(404, "File Not Found");
-	out_body = "BODY FOR 404";
+	out_body = TemplateError::page(404);
 	return 404;
 }
 
@@ -270,7 +270,7 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 			"will return 424 Failed Dependency." << std::endl;
 
 		set_code(424, "Failed Dependency");
-		out_body = "BODY FOR 424";
+		out_body = TemplateError::page(424);
 		return 424;
 	}
 	return 0;
@@ -335,7 +335,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 
 		FileString::write(full_path, *data);
 		set_code(201, "Accepted");
-		out_body = "BODY FOR 201";
+		out_body = TemplateError::page(201);
 		return 201;
 	}
 	return 0;
