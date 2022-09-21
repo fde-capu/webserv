@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/19 22:20:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 16:14:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,6 +256,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 			return 0;
 	}
 	set_code(404, "File Not Found");
+	(void) si.custom_error(404);
 	out_body = TemplateError::page(404);
 	return 404;
 }

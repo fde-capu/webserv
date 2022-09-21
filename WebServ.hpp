@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/18 22:56:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 16:13:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ struct ws_server_instance
 	std::string location_path(const std::string = "") const;
 	DataFold server_location_config(const std::string&, std::string = "") const;
 	std::string location_get_single(const std::string&, std::string = "") const;
+	std::string custom_error(const size_t) const;
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 

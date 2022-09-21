@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/19 22:05:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 16:24:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,10 +228,21 @@ DataFold ws_server_instance::get_location_config() const
 	return locations;
 }
 
+std::string ws_server_instance::custom_error(const size_t code) const
+{
+	size_t V(1);
+	DataFold err;
+
+	verbose(V) << "(custom_error) for " << code << std::endl;
+	err = server_location_config("error_page");
+	verbose(V) << err << std::endl;
+	return "";
+}
+
 DataFold ws_server_instance::server_location_config(const std::string& key, \
 	std::string u_default) const
 {
-	static int V(3);
+	static int V(1);
 	DataFold locations(config.get<DataFold>("location"));
 	DataFold loc;
 	DataFold out;
@@ -241,14 +252,15 @@ DataFold ws_server_instance::server_location_config(const std::string& key, \
 	if (root_config.getValStr(key) != "")
 	{
 		out = root_config.getValStr(key);
-		verbose(V) << "(server_location_config) root_config.get(" << key << "): " << out << std::endl;
+		verbose(V) << "(server_location_config) root_config.get(" << key \
+			<< "): " << out << std::endl;
 	}
 	if (config.get(key) != "")
 	{
 		out = config.get(key);
-		verbose(V) << "(server_location_config) config.get: " << out << std::endl;
+		verbose(V) << "(server_location_config) config.get: " << out \
+			<< std::endl;
 	}
-
 	while (locations.loop())
 	{
 		loc = locations.val;
@@ -258,7 +270,8 @@ DataFold ws_server_instance::server_location_config(const std::string& key, \
 				if (loc.key == key)
 				{
 					out = loc.get(key);
-					verbose(V) << "(server_location_config) location: " << out << std::endl;
+					verbose(V) << "(server_location_config) location: " << \
+						out << std::endl;
 				}
 		}
 	}
