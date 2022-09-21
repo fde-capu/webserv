@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 19:52:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 21:41:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ void WebServ::respond_timeout(int fd)
 {
 	ws_reply_instance respond;
 	respond.set_code(408, "Request Timeout");
-	respond.out_body = TemplateError::page(408);
+	respond.out_body = TemplateError::page(408, si.custom_error(408));
 	if (send(fd, respond.encapsulate().c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
@@ -230,7 +230,7 @@ DataFold ws_server_instance::get_location_config() const
 
 std::string ws_server_instance::custom_error(const size_t code) const
 {
-	size_t V(1);
+	size_t V(4);
 	std::string out;
 	DataFold loop;
 	DataFold err;
@@ -288,8 +288,14 @@ std::string ws_server_instance::custom_error(const size_t code) const
 		}
 		match = false;
 	}
+	if (out == "")
+		return "";
+	out = root_config.getValStr("root") + "/" + location_get_single("root") + "/" + out;
+	if (!FileString::exists(out))
+		return "Internal Server Error: " + code_str + " is set to unexistent response.";
+	out = FileString(out.c_str()).content();
 	verbose(V) << "(custom_error) Return: " << out << std::endl;
-	return "";
+	return out;
 }
 
 DataFold ws_server_instance::server_location_config(const std::string& key, \
@@ -343,7 +349,7 @@ std::string ws_server_instance::location_get_single \
 
 std::string ws_server_instance::location_path(const std::string default_file) const
 {
-	static int V(3);
+	static int V(5);
 	std::string html_dir = config.getValStr("root");
 	std::string uri2root = location_get_single("root", default_file);
 	std::string sys_dir = root_config.getValStr("root");

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 16:14:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 21:37:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 	if (locations.empty() && si.val("root") == "")
 	{
 		set_code(403, "Forbidden");
-		out_body = TemplateError::page(403);
+		out_body = TemplateError::page(403, si.custom_error(403));
 		return 403;
 	}
 	return 0;
@@ -60,7 +60,7 @@ int ws_reply_instance::is_501(ws_server_instance& si)
 	)
 	{
 		set_code(501, "Not Implemented");
-		out_body = TemplateError::page(501);
+		out_body = TemplateError::page(501, si.custom_error(501));
 		return 501;
 	}
 	return 0;
@@ -82,14 +82,14 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	if (method_accepted)
 		return 0;
 	set_code(405, "Method Not Allowed");
-	out_body = TemplateError::page(405);
+	out_body = TemplateError::page(405, si.custom_error(405));
 	return 405;
 }
 
 int ws_reply_instance::bad_gateway()
 {
 	set_code(502, "Bad Gateway");
-	out_body = TemplateError::page(502);
+	out_body = TemplateError::page(502, si.custom_error(502));
 	return 502;
 }
 
@@ -256,8 +256,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 			return 0;
 	}
 	set_code(404, "File Not Found");
-	(void) si.custom_error(404);
-	out_body = TemplateError::page(404);
+	out_body = TemplateError::page(404, si.custom_error(404));
 	return 404;
 }
 
@@ -271,7 +270,7 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 			"will return 424 Failed Dependency." << std::endl;
 
 		set_code(424, "Failed Dependency");
-		out_body = TemplateError::page(424);
+		out_body = TemplateError::page(424, si.custom_error(424));
 		return 424;
 	}
 	return 0;
@@ -303,7 +302,6 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 	}
 	if (!FileString::exists(file_name))
 		return 0;
-
 	set_code(200, "OK");
 	out_body = FileString(file_name.c_str()).content();
 

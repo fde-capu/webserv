@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 20:43:45 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/19 22:07:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 21:27:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,11 @@ TemplateError::TemplateError(const char * executable, const char * u_defaults)
 	verbose(8) << "config: " << config << std::endl;
 }
 
-std::string TemplateError::page(size_t error_code)
+std::string TemplateError::page(size_t error_code, std::string u_content)
 {
+	if (u_content != "")
+		return u_content;
+
 	std::string error_query = StringTools::stoa(error_code);
 	verbose(8) << "error_query: " << error_query << std::endl;
 

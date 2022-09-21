@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 20:43:31 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/19 22:07:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 21:26:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class TemplateError
 		TemplateError();
 	public:
 		TemplateError(const char *, const char *);
-		static std::string page(size_t);
+		static std::string page(size_t, std::string = "");
 };
 
 #endif
