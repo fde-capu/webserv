@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 21:41:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 23:37:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ void WebServ::respond_timeout(int fd)
 {
 	ws_reply_instance respond;
 	respond.set_code(408, "Request Timeout");
-	respond.out_body = TemplateError::page(408, si.custom_error(408));
+	respond.out_body = TemplateError::page(408);
 	if (send(fd, respond.encapsulate().c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");

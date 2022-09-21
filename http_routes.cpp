@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 21:37:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 23:47:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,10 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	return 405;
 }
 
-int ws_reply_instance::bad_gateway()
+int ws_reply_instance::bad_gateway(std::string u_content)
 {
 	set_code(502, "Bad Gateway");
-	out_body = TemplateError::page(502, si.custom_error(502));
+	out_body = TemplateError::page(502, u_content);
 	return 502;
 }
 
@@ -110,15 +110,12 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 
 	for (size_t i = 0; i < file_test.size(); i++)
 	{
-		verbose(0) << "(execute_cgi) Exists? " << root_path << file_test[i] << std::endl;
-		verbose(0) << " if not, exists? " << file_test[i] << std::endl;
-		verbose(0) << " if not, i == " << i << ", if 0, bad_gateway." << std::endl;
 		if (FileString::exists(root_path + file_test[i]))
 			file_test[i] = root_path + file_test[i];
 		else if (i || FileString::exists(file_test[i]))
 			file_test[i] = file_test[i];
 		else if (!i)
-			return bad_gateway();
+			return bad_gateway(si.custom_error(502));
 		argv[i] = &file_test[i][0];
 		full_program += file_test[i] + " ";
 	}

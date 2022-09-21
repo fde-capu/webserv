@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 21:35:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 23:42:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,8 +248,7 @@ void WebServ::respond_connection_from(int fd)
 		if (time_out > TIME_OUT_MSEC)
 		{
 			verbose(1) << "(respond_connection_from) Timeout! << " << time_out << \
-				" > Incomplete header:" << \
-				std::endl << in_header << std::endl;
+				" > Incomplete header" << std::endl;
 			return respond_timeout(fd);
 		}
 		raw.receive_until_eof();
