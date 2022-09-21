@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 16:24:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 19:04:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,18 +231,50 @@ DataFold ws_server_instance::get_location_config() const
 std::string ws_server_instance::custom_error(const size_t code) const
 {
 	size_t V(1);
-	DataFold err;
+	std::string out;
+	DataFold loop;
+	DataFold loc;
 
 	verbose(V) << "(custom_error) for " << code << std::endl;
-	err = server_location_config("error_page");
-	verbose(V) << err << std::endl;
+
+	loop = root_config;
+	while (loop.loop())
+	{
+		if (loop.key == "error_page")
+		{
+			verbose(V) << "(custom_error) root_config: " << loop.val << std::endl;
+		}
+	}
+	loop = config;
+	while (loop.loop())
+	{
+		if (loop.key == "error_page")
+		{
+			verbose(V) << "(custom_error) config: " << loop.val << std::endl;
+		}
+	}
+	loop = config.get<DataFold>("location");
+	while (loop.loop())
+	{
+		loc = loop.val;
+		while (loc.loop())
+		{
+			if (!StringTools::startsWith(in_header.directory, loc.getValStr("uri")))
+				continue ;
+			if (loc.key == "error_page")
+			{
+				verbose(V) << "(custom_error) locations: " << loc.val << std::endl;
+			}
+		}
+	}
+	verbose(V) << "(custom_error) Return: " << out << std::endl;
 	return "";
 }
 
 DataFold ws_server_instance::server_location_config(const std::string& key, \
 	std::string u_default) const
 {
-	static int V(1);
+	static int V(5);
 	DataFold locations(config.get<DataFold>("location"));
 	DataFold loc;
 	DataFold out;
