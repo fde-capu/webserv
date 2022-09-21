@@ -720,20 +720,31 @@ colorprint "\rCount of 200 OK repsponses must be $stress_count, and it is $stres
 rm -f stress_out;
 set -x;
 
-## Double_call ################################################################
 
-#{ anounce Double_call \
-#\
-#	'Double test: make two simultaneous calls. Not mandatory.'
-#\
-#; } 2> /dev/null
-#
-#curl -F "file=@${MYDIR}/99B.words" \
-#	http://$name_server:4242/post_body & \
-#curl -F "file=@${MYDIR}/99B.words" \
-#	http://$name_server:4242/post_body
+{ anounce Custom_Error \
+\
+	':3490 has custom error.' \
+\
+; } 2> /dev/null
 
-#################################################################
+cmd="curl http://$name_server:3490/x"
+code="404"
+testfile="$MYDIR/confs/html/40x.html";
+trace="true"
+unittest "Error 404 width custom configuration"
+
+{ anounce Custom_Error \
+\
+	':3491 does not have custom.' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3491/x"
+code="404"
+testfile="$MYDIR/../default_error_pages/404.html";
+trace="true"
+unittest "Error 404"
+
 #################################################################
 #################################################################
 
@@ -741,6 +752,7 @@ set -x;
 ## ubuntu_tester specifics
 ##################################################################
 
+finish;
 
 #####################################################################
 
