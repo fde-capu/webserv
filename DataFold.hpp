@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:40:12 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/06/21 14:55:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 19:33:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,10 @@ class DataFold
 		template <>
 		std::vector<std::string> get(std::string key, std::string ksub) const
 		{ return get_vector_str(key, ksub); }
+
+		template <typename T>
+		T last() const
+		{ return T(core[index - 1]); } 
 
 		bool loop();
 		void loop_reset();

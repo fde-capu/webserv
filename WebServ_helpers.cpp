@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 19:04:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/21 19:52:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,25 +233,33 @@ std::string ws_server_instance::custom_error(const size_t code) const
 	size_t V(1);
 	std::string out;
 	DataFold loop;
+	DataFold err;
 	DataFold loc;
+	std::string code_str(itoa(code));
+	bool match(false);
 
 	verbose(V) << "(custom_error) for " << code << std::endl;
 
-	loop = root_config;
-	while (loop.loop())
-	{
-		if (loop.key == "error_page")
-		{
-			verbose(V) << "(custom_error) root_config: " << loop.val << std::endl;
-		}
-	}
 	loop = config;
 	while (loop.loop())
 	{
 		if (loop.key == "error_page")
 		{
 			verbose(V) << "(custom_error) config: " << loop.val << std::endl;
+			err = ":" + loop.val;
+			while (err.loop())
+			{
+				verbose(V) << "(custom_error) err: " << err.val << std::endl;
+				if (err.val == code_str)
+				{
+					verbose(V) << "(custom_error) MATCH" << std::endl;
+					match = true;
+				}
+				if (match)
+					out = err.val;
+			}
 		}
+		match = false;
 	}
 	loop = config.get<DataFold>("location");
 	while (loop.loop())
@@ -264,8 +272,21 @@ std::string ws_server_instance::custom_error(const size_t code) const
 			if (loc.key == "error_page")
 			{
 				verbose(V) << "(custom_error) locations: " << loc.val << std::endl;
+				err = ":" + loc.val;
+				while (err.loop())
+				{
+					verbose(V) << "(custom_error) err: " << err.val << std::endl;
+					if (err.val == code_str)
+					{
+						verbose(V) << "(custom_error) MATCH" << std::endl;
+						match = true;
+					}
+				}
+				if (match)
+					out = err.val;
 			}
 		}
+		match = false;
 	}
 	verbose(V) << "(custom_error) Return: " << out << std::endl;
 	return "";
