@@ -131,6 +131,7 @@ finish()
 	else
 		echo "\033[0;31m [ KO ] \t $ko_count \t:(\033[0;37m";
 	fi;
+	{ ${MYDIR}/clean_uploads.sh; }
 	exit 0;
 }
 
