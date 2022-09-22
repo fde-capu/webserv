@@ -1,7 +1,7 @@
 #!/bin/sh
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -719,6 +719,7 @@ colorprint "\rCount of 200 OK repsponses must be $stress_count, and it is $stres
 rm -f stress_out;
 set -x;
 
+#################################################################
 
 { anounce Custom_Error \
 \
@@ -731,6 +732,8 @@ code="404"
 testfile="$MYDIR/confs/html/40x.html";
 trace="true"
 unittest "Error 404 width custom configuration"
+
+#################################################################
 
 { anounce Custom_Error \
 \
@@ -745,16 +748,23 @@ trace="true"
 unittest "Error 404"
 
 #################################################################
-#################################################################
-
-#################################################################
-## ubuntu_tester specifics
-##################################################################
-
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
-#####################################################################
+{ anounce Directory_Listing \
+	'autoindex-demo' \
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3490/autoindex-demo"
+code="200"
+trace="true"
+unittest "Autoindex"
+
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+
+#################################################################
+#################################################################
+#################################################################
 
 { anounce 42SP \
 'POST' \
@@ -766,8 +776,7 @@ cmd="curl -H 'Expect:' http://$name_server:4242/directory"
 upfile="youpi.bla"
 code="202"
 unittest "Test POST /directory/youpi.bla size of 10000000"
-
-finish
+rm "${MYDIR}/youpi.bla"
 
 #####################################################################
 
@@ -879,7 +888,6 @@ unittest "Noise 101"
 
 #####################################################################
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 #####################################################################
 #####################################################################

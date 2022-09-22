@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/22 14:45:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/22 17:48:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,6 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
 		setenv("PATH_INFO", program.c_str(), 1);
 		execv(argv[0], argv.data());
-		exit(502);
 	}
 	else // Parent
 	{
@@ -192,6 +191,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		set_code(202, "Accepted");
 		return 202;
 	}
+	return 0;
 }
 
 bool ws_server_instance::is_cgi() const
@@ -223,11 +223,27 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	return 0;
 }
 
+int ws_reply_instance::list_autoindex(ws_server_instance& si)
+{
+//	dirp = opendir(".");
+//	while ((dp = readdir(dirp)) != NULL)
+//		if (dp->d_namlen == len && !strcmp(dp->d_name, name)) {
+//			(void)closedir(dirp);
+//			return FOUND;
+//		}
+//	(void)closedir(dirp);
+	set_code(200, "OK");
+	out_body = "Body of AUTOINDEX";
+	return 200;
+	(void)si;
+}
+
 int ws_reply_instance::is_404(ws_server_instance& si)
 {
-	int V(2);
+	int V(1);
 	std::string request;
 	DataFold indexes;
+	bool autoindex(false);
 
 	if (si.in_header.method != "GET")
 		return 0;
@@ -241,7 +257,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 		while (indexes.loop())
 		{
 			file_name = si.location_path(indexes.val);
-			verbose(V) << "(is_404) Fetching " << file_name \
+			verbose(V) << "(webserv) Fetching " << file_name \
 				<< std::endl;
 			if (FileString::exists(file_name))
 				return 0;
@@ -252,6 +268,10 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 		if (FileString::exists(request))
 			return 0;
 	}
+	autoindex = si.server_location_config("autoindex").getValStr("autoindex") == "on" ? true : false;
+	if (FileString::is_dir(request) && autoindex)
+		return list_autoindex(si);
+	verbose(V) << "(is_404) autoindex: " << autoindex << std::endl;
 	set_code(404, "File Not Found");
 	out_body = TemplateError::page(404, si.custom_error(404));
 	return 404;
