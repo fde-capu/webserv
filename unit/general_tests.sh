@@ -761,7 +761,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ; } 2> /dev/null
 
 chunked="true"
-head -c 10000000 /dev/urandom > "${MYDIR}/youpi.bla"
+head -c 100000000 /dev/urandom > "${MYDIR}/youpi.bla"
 cmd="curl -H 'Expect:' http://$name_server:4242/directory"
 upfile="youpi.bla"
 code="202"
