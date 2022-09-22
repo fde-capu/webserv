@@ -1,7 +1,7 @@
 #!/bin/sh
 
 name_server="127.0.0.1";
-step_by_step="";
+step_by_step="true";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -118,6 +118,7 @@ getbodyandcode()
 
 finish()
 {
+	{ ${MYDIR}/clean_uploads.sh; }
 	{ anounce FINISHED \
 	\
 		'..........now........\n
@@ -131,7 +132,6 @@ finish()
 	else
 		echo "\033[0;31m [ KO ] \t $ko_count \t:(\033[0;37m";
 	fi;
-	{ ${MYDIR}/clean_uploads.sh; }
 	exit 0;
 }
 
@@ -162,7 +162,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -752,7 +751,23 @@ unittest "Error 404"
 ## ubuntu_tester specifics
 ##################################################################
 
-finish;
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+#####################################################################
+
+{ anounce 42SP \
+'POST' \
+; } 2> /dev/null
+
+chunked="true"
+head -c 10000000 /dev/urandom > "${MYDIR}/youpi.bla"
+cmd="curl -H 'Expect:' http://$name_server:4242/directory/youpi.bla"
+upfile="youpi.bla"
+code="202"
+unittest "Test POST /directory/youpi.bla size of 10000000"
+
+finish
 
 #####################################################################
 
@@ -796,7 +811,7 @@ unittest "Reject GET"
 
 cmd="curl -X DELETE http://$name_server:4242/post_body"
 code="405"
-unittest "Reject GET"
+unittest "Reject DELETE"
 
 #####################################################################
 

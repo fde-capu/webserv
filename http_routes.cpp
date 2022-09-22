@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 23:47:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/22 14:45:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		full_program += file_test[i] + " ";
 	}
 
-	verbose(V) << "(execute_cgi) Program is: " << full_program << std::endl;
+	verbose(1) << "(webserv:execute_cgi) " << full_program << std::endl;
 
 	if (pipe(pipe_pc) == -1)
 		throw std::domain_error("(execute_cgi) Cannot pipe for cgi (parent->child).");
