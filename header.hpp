@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 23:19:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/22 14:53:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@
 # ifndef VERBOSE
 #  define VERBOSE 0
 # endif
+# define VERBOSE_HEADER 1
 
 # define VLIM 60
 

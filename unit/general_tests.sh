@@ -762,7 +762,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 chunked="true"
 head -c 10000000 /dev/urandom > "${MYDIR}/youpi.bla"
-cmd="curl -H 'Expect:' http://$name_server:4242/directory/youpi.bla"
+cmd="curl -H 'Expect:' http://$name_server:4242/directory"
 upfile="youpi.bla"
 code="202"
 unittest "Test POST /directory/youpi.bla size of 10000000"
