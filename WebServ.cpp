@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 23:42:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 22:05:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,11 @@ void WebServ::set_non_blocking(int sock)
 {
 	int opts;
 
-	if ((opts = fcntl(sock, F_GETFL)) == -1)
-		throw std::domain_error("(webserv) Unconsistent socket.");
-	opts |= O_NONBLOCK;
+//	if ((opts = fcntl(sock, F_GETFL)) == -1)
+//		throw std::domain_error("(webserv) Unconsistent socket.");
+//	opts |= O_NONBLOCK;
+//  // Above is more correct than below, but F_GETGL is forbidden (I guess):
+	opts = O_NONBLOCK;
 	if (fcntl(sock, F_SETFL, opts) == -1)
 		throw std::domain_error("(webserv) Could not set non-blocking flag.");
 }

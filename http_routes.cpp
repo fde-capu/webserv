@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 19:35:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 21:53:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,8 @@ int ws_reply_instance::bad_gateway(std::string u_content)
 
 int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
-	int V(3);
-	size_t wr(0);
+	int V(1);
+	size_t written_bytes(0);
 	int child_status = -1;
 	int pipe_pc[2] = {0, 0};
 	int pipe_cp[2] = {0, 0};
@@ -111,14 +111,19 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 
 	for (size_t i = 0; i < file_test.size(); i++)
 	{
-		if (FileString::exists(root_path + file_test[i]))
-			file_test[i] = root_path + file_test[i];
-		else if (i || FileString::exists(file_test[i]))
-			file_test[i] = file_test[i];
-		else if (!i)
-			return bad_gateway(si.custom_error(502));
+		if (!i)
+		{
+			if (FileString::exists(root_path + file_test[i]))
+			{
+				file_test[i] = root_path + file_test[i];
+			}
+			else if (!FileString::exists(file_test[i]))
+			{
+				return bad_gateway(si.custom_error(502));
+			}
+		}
 		argv[i] = &file_test[i][0];
-		full_program += file_test[i] + " ";
+		full_program += std::string(argv[i]) + " ";
 	}
 
 	verbose(1) << "(webserv:execute_cgi) " << full_program << std::endl;
@@ -142,7 +147,9 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
 		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
 		setenv("PATH_INFO", program.c_str(), 1);
+		verbose(V) << "(execute_cgi) Child argv.data(): " << SHORT(std::string(*argv.data())) << std::endl;
 		execv(argv[0], argv.data());
+		throw std::domain_error("This line should never be reached.");
 	}
 	else // Parent
 	{
@@ -152,7 +159,6 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		write_into_child = si.is_chunked() ? si.chunked_content.length() :
 			si.is_multipart() ? si.multipart_content.length() :
 			si.in_body.length();
-
 		while (write_into_child)
 		{
 			if (si.is_chunked())
@@ -162,17 +168,15 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			else
 				w = write(pipe_pc[1], static_cast<const void*>(si.in_body.c_str()), write_into_child);
 			write_into_child -= w < write_into_child ? w : write_into_child;
-			wr += w;
-			verbose(V) << "(execute_cgi) wr = " << wr << std::endl;
+			written_bytes += w;
+			verbose(V) << "(execute_cgi) written_bytes = " << written_bytes << std::endl;
 		}
-		close(pipe_cp[1]);
 		close(pipe_pc[0]);
 		close(pipe_pc[1]);
-
+		close(pipe_cp[1]);
 		out_body = CircularBuffer(pipe_cp[0]);
 		close(pipe_cp[0]);
-
-		wait_pid = wait(&child_status);
+		wait_pid = waitpid(child_pid, &child_status, 0);
 		if (wait_pid < 0)
 			throw std::domain_error("(execute_cgi) Coudn't wait.");
 
@@ -182,13 +186,13 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
 		out_header.content_type = StringTools::query_for("Content-Type", out_body);
 		out_header.charset = StringTools::query_for("charset", out_body);
-
 		size_t h_body = out_body.find("\r\n\r\n");
 		if (h_body != std::string::npos)
 			out_body = out_body.substr(h_body + 4);
 
 		verbose(V) << "(execute_cgi) out_body " << SHORT(out_body) << std::endl;
 		verbose(V) << "(execute_cgi) WIFEXITED(child_status) " << WIFEXITED(child_status) << std::endl;
+
 		set_code(202, "Accepted");
 		return 202;
 	}
@@ -252,7 +256,8 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	int V(2);
 	std::string request;
 	DataFold indexes;
-	bool autoindex(false);
+	std::string \
+		autoindex(si.server_location_config("autoindex").getValStr("autoindex"));
 
 	if (si.in_header.method != "GET")
 		return 0;
@@ -279,12 +284,14 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	}
 	if (FileString::is_dir(request))
 	{
-		autoindex = si.server_location_config("autoindex").getValStr("autoindex") == "on" ? true : false;
-		if (autoindex)
+		if (autoindex == "on")
 			return list_autoindex(request, si);
-		set_code(403, "Forbidden");
-		out_body = TemplateError::page(403, si.custom_error(403));
-		return 403;
+		else if (autoindex != "")
+		{
+			set_code(403, "Forbidden");
+			out_body = TemplateError::page(403, si.custom_error(403));
+			return 403;
+		}
 	}
 	verbose(V) << "(is_404) autoindex: " << autoindex << std::endl;
 	set_code(404, "File Not Found");
