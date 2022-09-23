@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 15:37:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 16:49:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,14 +135,9 @@ class WebServ
 		std::map<int, int> fd_to_port;
 		std::vector<int> taken_ports;
 		bool lit;
-
-		WebServ();
-
 		void hook_it();
-
 		void consider_stdin_because_grace();
 		void give_up_if_empty_configuration();
-
 		ws_server_instance dftosi(DataFold);
 		struct pollfd stdin_to_pollfd();
 		void exit_gracefully();
@@ -163,8 +158,9 @@ class WebServ
 		void load_defaults();
 		static void set_non_blocking(int);
 		static bool ignore_empty(std::string&);
-		WebServ & operator= (WebServ const & rhs);
+		WebServ& operator= (WebServ const & rhs);
 		WebServ(WebServ const & src);
+		WebServ();
 
 	public:
 		WebServ(DataFold&);

@@ -757,8 +757,20 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 cmd="curl http://$name_server:3490/autoindex-demo"
 code="200"
-trace="true"
 unittest "Autoindex"
+
+#################################################################
+
+{ anounce Directory_Listing_OFF \
+	'autoindex-off, existent directory, expect 301' \
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3490/autoindex-off"
+code="301"
+trace="true"
+unittest "Autoindex off"
+
+#################################################################
 
 finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
@@ -888,24 +900,3 @@ unittest "Noise 101"
 
 #####################################################################
 
-
-#####################################################################
-#####################################################################
-#####################################################################
-# Util commands:
-
-#curl -v http://$name_server:4242/directory/
-#curl -vLD- http://$name_server:4242/directory/youpi.bla
-
-#curl -vLD- http://$name_server:3490/.php
-
-#curl -v http://$name_server:4242/directory/unexistent_file
-
-#curl http://$name_server:3490/test.php -v
-#curl http://$name_server:3490/cgi-bin/test.php -v
-
-#curl -vLD- http://127.0.0.1:4242/directory/oulalala
-#curl -vLD- http://$name_server:4242/directory/Yeah
-
-#curl -vLD- http://$name_server:4242/post_body -F 'file=./1M.noise'
-#curl -vLD- http://$name_server:4242/directory/youpi.bla

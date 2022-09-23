@@ -6,11 +6,12 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 15:25:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 17:00:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+DataFold g_config;
 
 DataFold load_configuration(int argc, char **argv, std::string conf_file)
 {
@@ -33,8 +34,8 @@ DataFold load_configuration(int argc, char **argv, std::string conf_file)
 int main(int argc, char **argv)
 {
 	TemplateError load(argv[0], "template_default.conf");
-	DataFold config = load_configuration(argc, argv, WS_ARGVAL);
-	WebServ webserv(config);
+	g_config = load_configuration(argc, argv, WS_ARGVAL);
+	WebServ webserv(g_config);
 	webserv.init();
 	return 0;
 }

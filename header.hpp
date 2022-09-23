@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 14:53:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 17:15:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 # ifndef VERBOSE
 #  define VERBOSE 0
 # endif
-# define VERBOSE_HEADER 1
+# define VERBOSE_HEADER 3
 
 # define VLIM 60
 
@@ -54,9 +54,7 @@
 # define DEFAULT_WELCOME_MESSAGE "Welcome!"
 # define DEFAULT_BYE "Bye!"
 # define DEFAULT_MAX_BODY_SIZE 0
-
 # define TIME_OUT_MSEC 2500
-
 
 typedef std::map<std::string, std::string> maps;
 typedef DataFold::vint vint;

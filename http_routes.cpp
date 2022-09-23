@@ -6,11 +6,12 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 15:42:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 17:02:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+extern DataFold g_config;
 
 int ws_reply_instance::is_301(ws_server_instance& si)
 {
@@ -225,25 +226,24 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 
 int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
 {
-	int V(1);
 	DIR *dp;
 	struct dirent *dirp;
-	std::string out;
+	std::string list;
 	std::string href;
 
-//	verbose(V) << "(list_autoindex) " << si.in_header << std::endl;
 	dp = opendir(dir.c_str());
 	while ((dirp = readdir(dp)) != NULL)
 	{
-		href = dirp->d_name;
+		href = si.in_header.directory + "/" + dirp->d_name;
 		remove_dup_char(href, '/');
-		out += "<a href='" + href + "'>" + dirp->d_name + "</a><br>\n";
+		list += "<a href='" + href + "'>" + dirp->d_name + "</a><br>\n";
 	}
 	closedir(dp);
-	verbose(V) << out << std::endl;
 	set_code(200, "OK");
-	out_body = out;
-	(void) si;
+	out_body = "<html><head><title>" + \
+		g_config.getValStr("server_name") + \
+		"</title><body><h1>" + g_config.getValStr("server_name") + \
+		"</h1>" + list + "</body></html>";
 	return 200;
 }
 
