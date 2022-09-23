@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/22 17:46:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 15:37:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ struct ws_reply_instance
 
 	int execute_cgi(ws_server_instance&, std::string);
 	int bad_gateway(std::string = "");
-	int list_autoindex(ws_server_instance&);
+	int list_autoindex(std::string, ws_server_instance&);
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert

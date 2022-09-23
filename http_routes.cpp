@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/22 17:48:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 15:42:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,24 +223,33 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	return 0;
 }
 
-int ws_reply_instance::list_autoindex(ws_server_instance& si)
+int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
 {
-//	dirp = opendir(".");
-//	while ((dp = readdir(dirp)) != NULL)
-//		if (dp->d_namlen == len && !strcmp(dp->d_name, name)) {
-//			(void)closedir(dirp);
-//			return FOUND;
-//		}
-//	(void)closedir(dirp);
+	int V(1);
+	DIR *dp;
+	struct dirent *dirp;
+	std::string out;
+	std::string href;
+
+//	verbose(V) << "(list_autoindex) " << si.in_header << std::endl;
+	dp = opendir(dir.c_str());
+	while ((dirp = readdir(dp)) != NULL)
+	{
+		href = dirp->d_name;
+		remove_dup_char(href, '/');
+		out += "<a href='" + href + "'>" + dirp->d_name + "</a><br>\n";
+	}
+	closedir(dp);
+	verbose(V) << out << std::endl;
 	set_code(200, "OK");
-	out_body = "Body of AUTOINDEX";
+	out_body = out;
+	(void) si;
 	return 200;
-	(void)si;
 }
 
 int ws_reply_instance::is_404(ws_server_instance& si)
 {
-	int V(1);
+	int V(2);
 	std::string request;
 	DataFold indexes;
 	bool autoindex(false);
@@ -270,7 +279,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	}
 	autoindex = si.server_location_config("autoindex").getValStr("autoindex") == "on" ? true : false;
 	if (FileString::is_dir(request) && autoindex)
-		return list_autoindex(si);
+		return list_autoindex(request, si);
 	verbose(V) << "(is_404) autoindex: " << autoindex << std::endl;
 	set_code(404, "File Not Found");
 	out_body = TemplateError::page(404, si.custom_error(404));
