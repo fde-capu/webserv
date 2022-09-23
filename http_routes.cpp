@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 17:02:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 19:35:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -277,9 +277,15 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 		if (FileString::exists(request))
 			return 0;
 	}
-	autoindex = si.server_location_config("autoindex").getValStr("autoindex") == "on" ? true : false;
-	if (FileString::is_dir(request) && autoindex)
-		return list_autoindex(request, si);
+	if (FileString::is_dir(request))
+	{
+		autoindex = si.server_location_config("autoindex").getValStr("autoindex") == "on" ? true : false;
+		if (autoindex)
+			return list_autoindex(request, si);
+		set_code(403, "Forbidden");
+		out_body = TemplateError::page(403, si.custom_error(403));
+		return 403;
+	}
 	verbose(V) << "(is_404) autoindex: " << autoindex << std::endl;
 	set_code(404, "File Not Found");
 	out_body = TemplateError::page(404, si.custom_error(404));

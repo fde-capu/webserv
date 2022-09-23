@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/22 15:50:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/23 19:37:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ struct pollfd WebServ::make_pollin_fd(int newfd) const
 void WebServ::exit_gracefully()
 {
 	flush_stdin();
-	verbose(1) << "(webserv) Exit gracefully. Thanks!" << std::endl;
+	verbose(1) << "(webserv) Exit gracefully." << std::endl;
 	verbose(1) << config.getValStr("bye_message") << std::endl;
 	lit = false;
 	return ;

@@ -162,6 +162,7 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -709,8 +710,6 @@ i=1;
 while [ "$i" -le "$stress_count" ]; do
 	echo -n "\r $i";
 	curl -sv http://localhost:3491/ 2>> stress_out 1> /dev/null &
-#	curl -sv -H "Expect:" http://localhost:3491 2>> stress_out 1> /dev/null
-#	curl -sv -H "Connection: keep-alive" -H "Timeout: 60" -H "Expect:" http://localhost:3491 2>> stress_out 1> /dev/null
 	i=$(( i + 1 ));
 done;
 wait;
@@ -749,8 +748,6 @@ unittest "Error 404"
 
 #################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce Directory_Listing \
 	'autoindex-demo' \
 ; } 2> /dev/null
@@ -762,17 +759,12 @@ unittest "Autoindex"
 #################################################################
 
 { anounce Directory_Listing_OFF \
-	'autoindex-off, existent directory, expect 301' \
+	'autoindex-off, existent directory, expect 403' \
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3490/autoindex-off"
-code="301"
-trace="true"
+code="403"
 unittest "Autoindex off"
-
-#################################################################
-
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 #################################################################
 #################################################################
@@ -899,4 +891,6 @@ fail="true"
 unittest "Noise 101"
 
 #####################################################################
+
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
