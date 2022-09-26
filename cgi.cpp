@@ -6,13 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/26 21:51:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/26 22:43:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-int ws_reply_instance::cgi_pipe(ws_server_instance& si, std::vector<std::string> argv)
+int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::string>& argv)
 {
 	int V(1);
 	int pipe_pc[2] = {0, 0};
@@ -30,42 +30,25 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, std::vector<std::string>
 		throw std::domain_error("(execute_cgi) Forking went wrong.");
 	if (child_pid == 0) // Child
 	{
-
-argv.clear();
-argv.push_back("/usr/bin/ls");
-argv.push_back("/");
-argv.push_back("-l");
-
 		verbose(V) << "(Child)" << std::endl;
-//		dup2(pipe_pc[0], STDIN_FILENO);
+//		setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
+//		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
+//		setenv("PATH_INFO", argv[0].c_str(), 1);
+
+		std::vector<char*> vec_cp;
+		vec_cp.reserve(argv.size() + 1);
+		for (size_t i = 0; i < argv.size(); i++)
+			vec_cp.push_back(strdup(argv[i].c_str()));
+		vec_cp.push_back(NULL);
+
 		dup2(pipe_cp[1], STDOUT_FILENO);
+		dup2(pipe_pc[0], STDIN_FILENO);
 		close(pipe_pc[0]);
 		close(pipe_pc[1]);
 		close(pipe_cp[0]);
 		close(pipe_cp[1]);
-//		setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
-//		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
-//		setenv("PATH_INFO", argv[0].c_str(), 1);
-//		verbose(V) << "(execute_cgi) Child argv.data(): " << SHORT(std::string(*argv.data())) << std::endl;
-//		execv(argv[0], argv.data());
-char** argl = static_cast<char**>(calloc(argv.size() + 1, 1));
-for (size_t i = 0; i < argv.size(); i++)
-{
-	argl[i] = static_cast<char*>(calloc(argv[i].length() + 1, 1));
-	for (size_t j = 0; j < argv[i].length(); j++)
-	{
-		argl[i][j] = argv[i].at(j);
-	}
-}
 
-size_t i = 0;
-while (*argl[i])
-{
-//	std::cout << "))" << std::string(argl[i]) << "((" << std::endl;
-	i++;
-}
-
-		execv(argl[0], argl);
+		execv(vec_cp[0], vec_cp.data());
 		throw std::domain_error("This line should never be reached.");
 	}
 	else // Parent
@@ -149,10 +132,12 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			argv[i] = root_path + arg_vec[i];
 		else
 			argv[i] = arg_vec[i];
-	verbose(1) << "(webserv:cgi) ";
+	std::string syscall;
 	for (size_t i = 0; i < argv.size(); i++)
-		verbose(1) << argv[i] << " ";
-	verbose(1) << std::endl;
+	{
+		syscall += argv[i] + " ";
+	}
+	verbose(1) << "(webserv:cgi) " << syscall << std::endl;
 	return cgi_pipe(si, argv);
 }
 
