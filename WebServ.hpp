@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 16:49:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/26 18:42:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,12 +111,13 @@ struct ws_reply_instance
 	int is_403(ws_server_instance&); // Forbidden.
 	int is_405(ws_server_instance&); // Method Not Allowed.
 	int is_200(ws_server_instance&); // OK.
-	int is_201(ws_server_instance&); // Accepted.
+	int is_201(ws_server_instance&); // Created.
 	int is_404(ws_server_instance&); // Not Found.
 	int read_limits(ws_server_instance&); // Payload Too Large et.c.
 	int is_424(ws_server_instance&); // Failed Dependency.
 
 	int execute_cgi(ws_server_instance&, std::string);
+	int cgi_pipe(ws_server_instance&, std::vector<std::string>);
 	int bad_gateway(std::string = "");
 	int list_autoindex(std::string, ws_server_instance&);
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 22:05:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/26 15:30:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,8 +178,8 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_404(si)) return ; // Not found. GET. (must be before 2xx)
 	if (is_424(si)) return ; // Not met dependency. Used when client expects 100-continue.
 	if (read_limits(si)) return ; // 413 Too Large, 507 No resource, 422 Unprocessable.
-	if (is_cgi_exec(si)) return ; // Runs CGI and returns accordingly.
-	if (is_201(si)) return ; // Accepted (POST) and saves data.
+	if (is_cgi_exec(si)) return ; // Runs CGI and returns accordingly. 202 Accepted.
+	if (is_201(si)) return ; // Created (POST) and saves data.
 	if (is_200(si)) return ; // Ok (GET) and loads file.
 
 	set_code(420, "Enhance Your Calm");

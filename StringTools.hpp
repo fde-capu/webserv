@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/19 17:07:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/26 20:19:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <sstream>
 # include <vector>
 # include <cstdio>
+# include <string.h>
 
 # define ST_SOFT_TRIM " \t\n\r"
 # define ST_HARD_TRIM " \t"

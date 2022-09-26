@@ -664,6 +664,43 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 \
 ; } 2> /dev/null
 
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.php
+cmd="curl http://$name_server:3490/99B.php";
+upfile="99B.php" 
+code="202";
+show_output="true";
+message="Check if CGI was properly executed above."
+unittest "Simple post";
+rm ${MYDIR}/99B.php
+
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+
+###################################################################
+
+{ anounce CGI_CHUNK \
+\
+	'Should run and return the proper body.' \
+\
+; } 2> /dev/null
+
+chunked="true"
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.php
+cmd="curl http://$name_server:3490/99B.php";
+upfile="99B.php" 
+code="202";
+show_output="true";
+message="Check if CGI was properly executed above."
+unittest "Simple post chunked calling CGI";
+rm ${MYDIR}/99B.php
+
+###################################################################
+
+{ anounce CGI_MULTI \
+\
+	'Test CGI call when posting.' \
+\
+; } 2> /dev/null
+
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
 cmd="curl http://$name_server:3490/99B.bla";
 upfile="99B.bla" 
@@ -677,8 +714,7 @@ rm ${MYDIR}/99B.bla
 
 { anounce CGI_CHUNK \
 \
-	'But if the chunk is configured to run some CGI, it should \n \
-	run and return the proper body.' \
+	'Should run and return the proper body.' \
 \
 ; } 2> /dev/null
 
@@ -692,7 +728,6 @@ message="Check if CGI was properly executed above."
 unittest "Simple post chunked calling CGI";
 rm ${MYDIR}/99B.bla
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ##################################################################
 ##################################################################
