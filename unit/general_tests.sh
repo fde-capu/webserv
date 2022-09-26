@@ -162,7 +162,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -657,6 +656,8 @@ unittest "Accepts, though incomplete"
 ##################################################################
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce CGI_MULTI \
 \
 	'Test CGI call when posting.' \
@@ -690,6 +691,8 @@ show_output="true";
 message="Check if CGI was properly executed above."
 unittest "Simple post chunked calling CGI";
 rm ${MYDIR}/99B.bla
+
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ##################################################################
 ##################################################################
@@ -770,8 +773,9 @@ unittest "Autoindex off"
 #################################################################
 #################################################################
 
+
 { anounce 42SP \
-'POST' \
+'POST test. This gets random errors on Workspace.' \
 ; } 2> /dev/null
 
 chunked="true"
@@ -781,6 +785,7 @@ upfile="youpi.bla"
 code="202"
 unittest "Test POST /directory/youpi.bla size of 10000000"
 rm "${MYDIR}/youpi.bla"
+
 
 #####################################################################
 
@@ -892,5 +897,4 @@ unittest "Noise 101"
 
 #####################################################################
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 

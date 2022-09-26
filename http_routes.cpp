@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 21:53:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/26 14:55:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		size_t write_into_child;
 		size_t w;
 
+
 		write_into_child = si.is_chunked() ? si.chunked_content.length() :
 			si.is_multipart() ? si.multipart_content.length() :
 			si.in_body.length();
@@ -172,8 +173,8 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			verbose(V) << "(execute_cgi) written_bytes = " << written_bytes << std::endl;
 		}
 		close(pipe_pc[0]);
-		close(pipe_pc[1]);
 		close(pipe_cp[1]);
+		close(pipe_pc[1]);
 		out_body = CircularBuffer(pipe_cp[0]);
 		close(pipe_cp[0]);
 		wait_pid = waitpid(child_pid, &child_status, 0);
