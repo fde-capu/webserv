@@ -665,7 +665,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ; } 2> /dev/null
 
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.php
-cmd="curl http://$name_server:3490/99B.php";
+cmd="curl http://$name_server:3490";
 upfile="99B.php" 
 code="202";
 show_output="true";
@@ -684,7 +684,7 @@ rm ${MYDIR}/99B.php
 
 chunked="true"
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.php
-cmd="curl http://$name_server:3490/99B.php";
+cmd="curl http://$name_server:3490";
 upfile="99B.php" 
 code="202";
 show_output="true";
@@ -701,7 +701,7 @@ rm ${MYDIR}/99B.php
 ; } 2> /dev/null
 
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
-cmd="curl http://$name_server:3490/99B.bla";
+cmd="curl http://$name_server:3490";
 upfile="99B.bla" 
 code="202";
 show_output="true";
@@ -719,7 +719,7 @@ rm ${MYDIR}/99B.bla
 
 chunked="true"
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
-cmd="curl http://$name_server:3490/99B.bla";
+cmd="curl http://$name_server:3490";
 upfile="99B.bla" 
 code="202";
 show_output="true";

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/26 22:43:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/26 23:01:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,15 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		throw std::domain_error("(execute_cgi) Cannot pipe for cgi (parent->child).");
 	if (pipe(pipe_cp) == -1)
 		throw std::domain_error("(execute_cgi) Cannot pipe for cgi (child->parent).");
-
 	child_pid = fork();
 	if (child_pid < 0)
 		throw std::domain_error("(execute_cgi) Forking went wrong.");
 	if (child_pid == 0) // Child
 	{
 		verbose(V) << "(Child)" << std::endl;
-//		setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
-//		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
-//		setenv("PATH_INFO", argv[0].c_str(), 1);
+		setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
+		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
+		setenv("PATH_INFO", argv[0].c_str(), 1);
 
 		std::vector<char*> vec_cp;
 		vec_cp.reserve(argv.size() + 1);
@@ -47,9 +46,8 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		close(pipe_pc[1]);
 		close(pipe_cp[0]);
 		close(pipe_cp[1]);
-
 		execv(vec_cp[0], vec_cp.data());
-		throw std::domain_error("This line should never be reached.");
+		throw std::domain_error("(webserv) This line should never be reached.");
 	}
 	else // Parent
 	{
@@ -85,21 +83,20 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		out_body = CircularBuffer(pipe_cp[0]);
 		close(pipe_cp[0]);
 		verbose(V) << "(Parent) Got >>>" << LONG(out_body) << "<<<" << std::endl;
-//
-//		out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
-//		out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
-//		out_header.content_type = StringTools::query_for("Content-Type", out_body);
-//		out_header.charset = StringTools::query_for("charset", out_body);
-//		size_t h_body = out_body.find("\r\n\r\n");
-//		if (h_body != std::string::npos)
-//			out_body = out_body.substr(h_body + 4);
-//
-//		verbose(V) << "(execute_cgi) out_body " << SHORT(out_body) << std::endl;
-//		verbose(V) << "(execute_cgi) WIFEXITED (child_status) " << WIFEXITED(child_status) << std::endl;
-//
-//		set_code(202, "Accepted");
-//		return 202;
-		BREAK;
+
+		out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
+		out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
+		out_header.content_type = StringTools::query_for("Content-Type", out_body);
+		out_header.charset = StringTools::query_for("charset", out_body);
+		size_t h_body = out_body.find("\r\n\r\n");
+		if (h_body != std::string::npos)
+			out_body = out_body.substr(h_body + 4);
+
+		verbose(V) << "(Parent:execute_cgi) out_body " << SHORT(out_body) << std::endl;
+		verbose(V) << "(Parent:execute_cgi) WIFEXITED (child_status) " << WIFEXITED(child_status) << std::endl;
+
+		set_code(202, "Accepted");
+		return 202;
 		(void)si;
 	}
 	return 0;
@@ -118,8 +115,8 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			+ si.config.getValStr("root") + "/");
 	verbose(V) << "(execute_cgi) root_path " << root_path << std::endl;
 	std::string full_program;
-	if (FileString::exists(root_path + file_test))
-		full_program = root_path + file_test;
+	if (FileString::exists(root_path + "/" + file_test))
+		full_program = root_path + "/" + file_test;
 	else if (FileString::exists(file_test))
 		full_program = file_test;
 	else
@@ -134,9 +131,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 			argv[i] = arg_vec[i];
 	std::string syscall;
 	for (size_t i = 0; i < argv.size(); i++)
-	{
 		syscall += argv[i] + " ";
-	}
 	verbose(1) << "(webserv:cgi) " << syscall << std::endl;
 	return cgi_pipe(si, argv);
 }
