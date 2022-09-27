@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/27 11:00:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/27 23:58:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
 
 int ws_reply_instance::is_404(ws_server_instance& si)
 {
-	int V(2);
+	int V(3);
 	std::string request;
 	DataFold indexes;
 	std::string \

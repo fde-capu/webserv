@@ -1,7 +1,7 @@
 #!/bin/sh
 
 name_server="127.0.0.1";
-step_by_step="";
+step_by_step="true";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -669,8 +669,6 @@ code="202";
 show_output="true";
 unittest "GET cgi";
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
-
 ##################################################################
 
 { anounce CGI_MULTI \
@@ -741,6 +739,7 @@ message="Check if CGI was properly executed above."
 unittest "Simple post chunked calling CGI";
 rm ${MYDIR}/99B.bla
 
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ##################################################################
 ##################################################################
