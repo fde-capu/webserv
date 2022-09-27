@@ -6,11 +6,42 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/26 23:01:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/27 11:32:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+
+void ws_reply_instance::cgi_setenv(ws_server_instance& si, std::string path_info)
+{
+	setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
+	setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
+	setenv("PATH_INFO", path_info.c_str(), 1);
+}
+
+void ws_reply_instance::cgi_write_into_child(ws_server_instance& si, int u_pipe)
+{
+	int V(1);
+	size_t written_bytes(0);
+	size_t write_into_child;
+	size_t w;
+
+	write_into_child = si.is_chunked() ? si.chunked_content.length() :
+		si.is_multipart() ? si.multipart_content.length() :
+		si.in_body.length();
+	while (write_into_child)
+	{
+		if (si.is_chunked())
+			w = write(u_pipe, static_cast<const void*>(si.chunked_content.c_str()), write_into_child);
+		else if (si.is_multipart())
+			w = write(u_pipe, static_cast<const void*>(si.multipart_content.c_str()), write_into_child);
+		else
+			w = write(u_pipe, static_cast<const void*>(si.in_body.c_str()), write_into_child);
+		write_into_child -= w < write_into_child ? w : write_into_child;
+		written_bytes += w;
+		verbose(V) << "(cgi_write_into_child) written_bytes = " << written_bytes << std::endl;
+	}
+}
 
 int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::string>& argv)
 {
@@ -18,7 +49,6 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 	int pipe_pc[2] = {0, 0};
 	int pipe_cp[2] = {0, 0};
 	pid_t child_pid = -1;
-//	size_t written_bytes(0);
 
 	if (pipe(pipe_pc) == -1)
 		throw std::domain_error("(execute_cgi) Cannot pipe for cgi (parent->child).");
@@ -29,52 +59,28 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		throw std::domain_error("(execute_cgi) Forking went wrong.");
 	if (child_pid == 0) // Child
 	{
-		verbose(V) << "(Child)" << std::endl;
-		setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
-		setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
-		setenv("PATH_INFO", argv[0].c_str(), 1);
-
-		std::vector<char*> vec_cp;
-		vec_cp.reserve(argv.size() + 1);
-		for (size_t i = 0; i < argv.size(); i++)
-			vec_cp.push_back(strdup(argv[i].c_str()));
-		vec_cp.push_back(NULL);
-
+		cgi_setenv(si, argv[0]);
 		dup2(pipe_cp[1], STDOUT_FILENO);
 		dup2(pipe_pc[0], STDIN_FILENO);
 		close(pipe_pc[0]);
 		close(pipe_pc[1]);
 		close(pipe_cp[0]);
 		close(pipe_cp[1]);
+		std::vector<char*> vec_cp = StringTools::vecstr2veccharp(argv);
 		execv(vec_cp[0], vec_cp.data());
 		throw std::domain_error("(webserv) This line should never be reached.");
 	}
 	else // Parent
 	{
+		verbose(V) << "(Parent)" << std::endl;
+
 		pid_t wait_pid = -1;
 		int child_status = -1;
 
-		verbose(V) << "(Parent)" << std::endl;
-//		size_t write_into_child;
-//		size_t w;
-//
-//		write_into_child = si.is_chunked() ? si.chunked_content.length() :
-//			si.is_multipart() ? si.multipart_content.length() :
-//			si.in_body.length();
-//		while (write_into_child)
-//		{
-//			if (si.is_chunked())
-//				w = write(pipe_pc[1], static_cast<const void*>(si.chunked_content.c_str()), write_into_child);
-//			else if (si.is_multipart())
-//				w = write(pipe_pc[1], static_cast<const void*>(si.multipart_content.c_str()), write_into_child);
-//			else
-//				w = write(pipe_pc[1], static_cast<const void*>(si.in_body.c_str()), write_into_child);
-//			write_into_child -= w < write_into_child ? w : write_into_child;
-//			written_bytes += w;
-//			verbose(V) << "(execute_cgi) written_bytes = " << written_bytes << std::endl;
-//		}
 		close(pipe_pc[0]);
 		close(pipe_cp[1]);
+		if (si.in_header.is_post())
+			cgi_write_into_child(si, pipe_pc[1]);
 		close(pipe_pc[1]);
 		wait_pid = waitpid(child_pid, &child_status, 0);
 		if (wait_pid < 0)
@@ -94,10 +100,8 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 
 		verbose(V) << "(Parent:execute_cgi) out_body " << SHORT(out_body) << std::endl;
 		verbose(V) << "(Parent:execute_cgi) WIFEXITED (child_status) " << WIFEXITED(child_status) << std::endl;
-
 		set_code(202, "Accepted");
 		return 202;
-		(void)si;
 	}
 	return 0;
 }

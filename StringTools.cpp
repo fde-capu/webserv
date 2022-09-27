@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/26 20:19:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/27 10:43:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -769,4 +769,14 @@ std::string StringTools::get_before_first(const std::string& src, const std::str
 size_t StringTools::strhex2size_t(const std::string src)
 {
 	return static_cast<size_t>(strtoul(src.c_str(), NULL, 16));
+}
+
+std::vector<char*> StringTools::vecstr2veccharp(const std::vector<std::string>& argv)
+{
+	std::vector<char*> vec_cp;
+	vec_cp.reserve(argv.size() + 1);
+	for (size_t i = 0; i < argv.size(); i++)
+		vec_cp.push_back(strdup(argv[i].c_str()));
+	vec_cp.push_back(NULL);
+	return vec_cp;
 }

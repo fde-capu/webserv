@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/26 17:28:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/27 11:00:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 	std::string mp_block;
 	std::string* data;
 
-	if (si.in_header.method == "POST")
+	if (si.in_header.is_post())
 	{
 		full_path = si.location_path(si.multipart_filename);
 		if (si.is_multipart())

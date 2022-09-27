@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/26 22:42:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/27 11:24:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ struct ws_header
 	std::string connection;
 	std::string location;
 	void		header500(); // Server error.
+
+	bool is_post();
 };
 std::ostream & operator<< (std::ostream & o, ws_header const &);
 
@@ -118,6 +120,8 @@ struct ws_reply_instance
 
 	int execute_cgi(ws_server_instance&, std::string);
 	int cgi_pipe(ws_server_instance&, const std::vector<std::string>&);
+	void cgi_setenv(ws_server_instance&, std::string);
+	void cgi_write_into_child(ws_server_instance&, int);
 	int bad_gateway(std::string = "");
 	int list_autoindex(std::string, ws_server_instance&);
 
