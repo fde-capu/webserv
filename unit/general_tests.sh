@@ -658,6 +658,15 @@ unittest "Accepts, though incomplete"
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
+{ anouce CGI_GET \
+\
+	'Test CGI with GET method.' \
+\
+; } 2> /dev/null;
+
+
+##################################################################
+
 { anounce CGI_MULTI \
 \
 	'Test CGI call when posting.' \

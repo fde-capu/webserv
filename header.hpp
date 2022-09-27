@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/23 17:15:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/27 20:12:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@
 # include <unistd.h>
 # include <poll.h>
 # include <fcntl.h>
-# include <sys/wait.h>
 # include <sys/types.h>
 # include <dirent.h>
 

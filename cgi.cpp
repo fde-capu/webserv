@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/27 11:32:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/27 21:25:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,24 +72,14 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 	}
 	else // Parent
 	{
-		verbose(V) << "(Parent)" << std::endl;
-
-		pid_t wait_pid = -1;
-		int child_status = -1;
-
 		close(pipe_pc[0]);
 		close(pipe_cp[1]);
 		if (si.in_header.is_post())
 			cgi_write_into_child(si, pipe_pc[1]);
 		close(pipe_pc[1]);
-		wait_pid = waitpid(child_pid, &child_status, 0);
-		if (wait_pid < 0)
-			throw std::domain_error("(execute_cgi) Coudn't wait.");
-		verbose(V) << "(Parent) waited, wait_pid " << wait_pid << ", child_status " << child_status << std::endl;
 		out_body = CircularBuffer(pipe_cp[0]);
 		close(pipe_cp[0]);
 		verbose(V) << "(Parent) Got >>>" << LONG(out_body) << "<<<" << std::endl;
-
 		out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
 		out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
 		out_header.content_type = StringTools::query_for("Content-Type", out_body);
@@ -97,9 +87,7 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		size_t h_body = out_body.find("\r\n\r\n");
 		if (h_body != std::string::npos)
 			out_body = out_body.substr(h_body + 4);
-
 		verbose(V) << "(Parent:execute_cgi) out_body " << SHORT(out_body) << std::endl;
-		verbose(V) << "(Parent:execute_cgi) WIFEXITED (child_status) " << WIFEXITED(child_status) << std::endl;
 		set_code(202, "Accepted");
 		return 202;
 	}

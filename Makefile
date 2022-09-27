@@ -6,14 +6,9 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/09/26 17:27:48 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/09/27 21:23:25 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
-# make, make all, make ws: webserv
-# make t, make test
-# make cgi: cgi_webserv
-# make lynx: lynx
 
 MAKESILENT	  = @
 TRACKMAKEFILE = Makefile
@@ -24,21 +19,18 @@ NAME1	=	webserv
 ARGS1	=	unit/webserv-unit.conf
 TEST_SH	=	./unit/general_tests.sh
 
-NAME2	=	cgi_webserv
-
 SRCS	=	FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp \
 			CircularBuffer.cpp WebServ_helpers.cpp \
-			http_routes.cpp CgiWrapper.cpp Chronometer.cpp \
+			http_routes.cpp Chronometer.cpp \
 			WebServ_read_methods.cpp WebServ_proc_header.cpp \
 			WebServ_operator_out.cpp WebServ_ports.cpp WebServ.cpp \
 			TemplateError.cpp cgi.cpp
 SRCS1	=	main.cpp
-SRCS2	=	main_cgi.cpp
 HEAD	=	$(TRACKMAKEFILE) argval_ws.conf argval_cgi.conf header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
-			CircularBuffer.hpp CgiWrapper.hpp Chronometer.hpp \
+			CircularBuffer.hpp Chronometer.hpp \
 			TemplateError.hpp
 SHELL	=	/bin/sh
 CC		=	$(MAKESILENT) c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(VERBOSE) $(ENVS)
@@ -57,9 +49,7 @@ DOT		=	@echo -n ".";
 all:		intro line $(NAME1)
 	@echo "\n************************\n"
 ws:			line $(NAME1)
-cgi:		line $(NAME2)
 1:			ws
-2:			cgi
 intro:		line
 	@echo "Using CC CCFLAGS = $(CC) $(CCFLAGS)"
 outro:		line
@@ -67,8 +57,6 @@ line:
 	@echo "\n************************\n"
 $(NAME1):	$(OBJS1) $(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS1) -o $(NAME1)
-$(NAME2):	$(OBJS2) $(OBJS)
-	$(CC) $(CCFLAGS) $(OBJS) $(OBJS2) -o $(NAME2)
 $(OBJS):	%.o : %.cpp $(HEAD)
 	$(DOT)
 	$(CC) $(CCFLAGS) -o $@ -c $<
@@ -84,7 +72,6 @@ clean:		lynx-clean
 	-@rm -f $(OBJS2)
 fclean:		clean lynx-fclean
 	-@rm -f $(NAME1)
-	-@rm -f $(NAME2)
 re:			fclean all
 rt:			re t
 v:			1
@@ -99,8 +86,6 @@ g:			1
 	gdb --args ./$(NAME1) $(ARGS1)
 k1:
 	-pkill $(NAME1)
-k2:
-	-pkill $(NAME2)
 youpi:
 	echo 'Initial YoupiBanane/youpi.bla' > unit/confs/html4242/YoupiBanane/youpi.bla
 	ls -l unit/confs/html4242/YoupiBanane/youpi.bla
