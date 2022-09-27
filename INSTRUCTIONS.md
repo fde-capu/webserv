@@ -8,7 +8,6 @@ by fde-capu
 `ls`
 	webserv: program
 	lynx: web browser
-	cgi_webserv: simple cgi wrapper (free bonus)
 `curl http://localhost:3490`
 `lynx http://localhost:3490`
 

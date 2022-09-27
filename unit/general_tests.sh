@@ -664,6 +664,12 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 \
 ; } 2> /dev/null;
 
+cmd="curl http://$name_server:3490/cgi_test.sh"
+code="202";
+show_output="true";
+unittest "GET cgi";
+
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ##################################################################
 
@@ -682,7 +688,6 @@ message="Check if CGI was properly executed above."
 unittest "Simple post";
 rm ${MYDIR}/99B.php
 
-
 ###################################################################
 
 { anounce CGI_CHUNK \
@@ -736,7 +741,6 @@ message="Check if CGI was properly executed above."
 unittest "Simple post chunked calling CGI";
 rm ${MYDIR}/99B.bla
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 ##################################################################
 ##################################################################

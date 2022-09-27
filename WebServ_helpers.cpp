@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/27 11:01:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/27 23:00:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,9 @@ std::string ws_reply_instance::encapsulate()
 	package_length = out.length();
 	return out;
 }
+
+bool ws_header::is_get()
+{ return is_equal_insensitive(method, "GET"); }
 
 bool ws_header::is_post()
 { return is_equal_insensitive(method, "POST"); }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/27 21:25:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/27 23:31:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,24 +80,40 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		out_body = CircularBuffer(pipe_cp[0]);
 		close(pipe_cp[0]);
 		verbose(V) << "(Parent) Got >>>" << LONG(out_body) << "<<<" << std::endl;
-		out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
-		out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
-		out_header.content_type = StringTools::query_for("Content-Type", out_body);
-		out_header.charset = StringTools::query_for("charset", out_body);
-		size_t h_body = out_body.find("\r\n\r\n");
-		if (h_body != std::string::npos)
-			out_body = out_body.substr(h_body + 4);
-		verbose(V) << "(Parent:execute_cgi) out_body " << SHORT(out_body) << std::endl;
+		header_from_body();
 		set_code(202, "Accepted");
 		return 202;
 	}
 	return 0;
 }
 
+void ws_reply_instance::header_from_body()
+{
+	size_t dbreak[3];
+	size_t h_body(std::string::npos);
+	size_t dblen;
+
+	out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
+	out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
+	out_header.content_type = StringTools::query_for("Content-Type", out_body);
+	out_header.charset = StringTools::query_for("charset", out_body);
+	dbreak[0] = out_body.find("\r\n\r\n");
+	dbreak[1] = out_body.find("\n\n");
+	dbreak[2] = out_body.find("\r\r");
+	for (size_t i = 0; i < 3; i++)
+		h_body = h_body > dbreak[i] ? dbreak[i] : h_body;
+	dblen = h_body == dbreak[0] ? 4 : 2;
+	if (h_body != std::string::npos)
+		out_body = out_body.substr(h_body + dblen);
+}
+
 int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
 	int V(1);
 
+//	verbose(V) << "(execute_cgi) in_header " << si.in_header << std::endl;
+//	BREAK;
+	program += " " + si.in_header.directory;
 	verbose(V) << "(execute_cgi) program " << program << std::endl;
 	std::vector<std::string> arg_vec(StringTools::split(program, " "));
 	verbose(V) << "(execute_cgi) arg_vec " << arg_vec.data() << std::endl;
@@ -113,14 +129,20 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		full_program = file_test;
 	else
 		return bad_gateway(si.custom_error(502));
+	stool.remove_dup_char(full_program, '/');
 	verbose(V) << "(execute_cgi) full_program " << full_program << std::endl;
-	std::vector<std::string> argv(arg_vec.size() + 1);
+	std::vector<std::string> argv(arg_vec.size());
 	argv[0] = full_program;
 	for (size_t i = 1; i < arg_vec.size(); i++)
+	{
 		if (FileString::exists(root_path + arg_vec[i]))
+		{
 			argv[i] = root_path + arg_vec[i];
+			stool.remove_dup_char(argv[i], '/');
+		}
 		else
 			argv[i] = arg_vec[i];
+	}
 	std::string syscall;
 	for (size_t i = 0; i < argv.size(); i++)
 		syscall += argv[i] + " ";
