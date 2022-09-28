@@ -58,11 +58,11 @@ unittest()
 		exit 1;
 	fi
 
-	colorprint "$1 Code expect $code, got $out" "$out" "$code"
+	colorprint "$1 | expect $code, got $out" "$out" "$code"
 
 	if [ "$fail" = "" ] ; then
-		[ "$testfile" != "" ] && colorprint "$1 Compare ouput" "`cat tmp_response`" "`cat $testfile`";
-		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorprint "$1 Compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
+		[ "$testfile" != "" ] && colorprint "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
+		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorprint "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
 	fi
 
 	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
@@ -162,7 +162,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -656,7 +655,7 @@ unittest "50MB success"
 #####################################################################
 #####################################################################
 
-{ anounce CHUNK_FAIL \
+{ anounce CHUNK_PARTIAL \
 \
 	'How about 200MiB? This time, it is accepted as partial upload, \n
 	since curl is set to close and webserv must always close.' \
@@ -675,6 +674,8 @@ unittest "Accepts, though incomplete"
 ##################################################################
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce CGI_GET_SH \
 \
 	'Test CGI with GET method, cgi_test.sh.' \
@@ -686,6 +687,44 @@ code="200";
 show_output="true";
 message="There should the output of a script, not the script itself.";
 unittest "Get cgi sh";
+
+##################################################################
+
+{ anounce CGI_GET_NOTFOUND \
+\
+	'Test CGI with GET method, xxxx.sh (unexistent).' \
+\
+; } 2> /dev/null;
+
+cmd="curl http://$name_server:3490/xxxx.sh"
+code="404";
+unittest "Get cgi sh but no";
+
+##################################################################
+
+{ anounce CGI_GET_ON_SOMESUB \
+\
+	'Test CGI with GET on subdirectory calls.' \
+\
+; } 2> /dev/null;
+
+cmd="curl http://$name_server:3490/somesub/hi.sh"
+code="200";
+show_output="true";
+unittest "Get cgi somesub/sh";
+
+##################################################################
+
+{ anounce CGI_GET_ON_URI_SUBSTITUTION \
+\
+	'Test CGI calling /uri_alias/ but getting from location root (uri_substituion).' \
+\
+; } 2> /dev/null;
+
+cmd="curl http://$name_server:3490/uri_alias/hi.sh"
+code="200";
+show_output="true";
+unittest "Get cgi uri_alias/hi.sh";
 
 ##################################################################
 
@@ -728,7 +767,7 @@ rm ${MYDIR}/99B.words
 
 chunked="true"
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:3490/asdono.sh";
+cmd="curl http://$name_server:3490/.sh";
 upfile="99B.words" 
 code="202";
 show_output="true";

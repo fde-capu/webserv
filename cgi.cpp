@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 20:04:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 22:12:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,13 +141,17 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	argv[0] = full_program;
 	for (size_t i = 1; i < arg_vec.size(); i++)
 	{
+		verbose(V) << "(execute_cgi) arg_vec[i] in: " << arg_vec[i] << std::endl;
 		if (FileString::exists(root_path + arg_vec[i]))
 		{
 			argv[i] = root_path + arg_vec[i];
 			stool.remove_dup_char(argv[i], '/');
 		}
 		else
+		{
 			argv[i] = arg_vec[i];
+		}
+		verbose(V) << "(execute_cgi) argv[i] out: " << argv[i] << std::endl;
 	}
 	std::string syscall;
 	for (size_t i = 0; i < argv.size(); i++)
@@ -161,8 +165,12 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	int V(1);
 
 	si.cgi_flag = false;
-	std::string call_method = si.in_header.method;
-	verbose(V) << "(is_cgi_exec) call_method " << call_method << std::endl;
+	if (!FileString::exists(si.location_path()))
+	{
+		set_code(421, "Missdirected Request");
+		out_body = TemplateError::page(421, si.custom_error(421));
+		return 421;
+	}
 	DataFold cgi_vec(si.config.get<DataFold>("cgi"));
 	verbose(V) << "(is_cgi_exec) cgi_vec " << cgi_vec << std::endl;
 	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
