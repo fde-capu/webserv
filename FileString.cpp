@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/19 17:20:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 23:41:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void FileString::load(const char * u_fn)
 {
 	std::fstream file_read;
 	file_read.open(u_fn, std::ios::in);
-	if (!file_read)
+	if (!file_read || !is_file(u_fn))
 	{
 		_read_ok = false;
 		file_read.close();

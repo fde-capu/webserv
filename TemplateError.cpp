@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 20:43:45 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 23:30:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 23:42:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ FileString TemplateError::config;
 
 TemplateError::TemplateError(const char * executable, const char * u_defaults)
 {
-	int V(1);
+	int V(8);
 
 	path = StringTools::remove_filename_from_path(executable);
 	verbose(V) << "(TemplateError) path: " << path << std::endl;
@@ -34,7 +34,7 @@ TemplateError::TemplateError(const char * executable, const char * u_defaults)
 
 std::string TemplateError::page(size_t error_code, std::string u_content)
 {
-	int V(1);
+	int V(8);
 
 	if (u_content != "")
 		return u_content;
@@ -53,6 +53,10 @@ std::string TemplateError::page(size_t error_code, std::string u_content)
 
 	FileString result;
 	result.load(full_t_file.c_str());
+	verbose(V) << "(TemplateError) fail: " << result.fail() << std::endl;
+
+	if (result.fail())
+		return "Error " + itoa(error_code) + "\n";
 
 	verbose(V) << "(TemplateError) result: " << result << std::endl;
 	return result.getContent();

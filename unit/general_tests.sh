@@ -787,12 +787,10 @@ upfile="99B.words"
 code="202";
 show_output="true";
 message="ubuntu_cgi_tester runs and converts all to uppercase."
-unittest "Simple post";
+unittest "Simple cgi post";
 rm ${MYDIR}/99B.words
 
 ###################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CGI_BLA_FAIL \
 \
@@ -805,7 +803,7 @@ cmd="curl http://$name_server:3490/xxxx.bla";
 upfile="99B.words" 
 code="421";
 show_output="true";
-message="ubuntu_cgi_tester runs and converts all to uppercase."
+message="Chose 421 for this type por POST using CGI on bad URL."
 unittest "Simple post";
 rm ${MYDIR}/99B.words
 
@@ -819,7 +817,27 @@ rm ${MYDIR}/99B.words
 
 chunked="true"
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:3490";
+cmd="curl http://$name_server:3490/bla.bla";
+upfile="99B.words" 
+code="202";
+show_output="true";
+message="Check if CGI was properly executed above."
+unittest "Simple post chunked calling CGI";
+rm ${MYDIR}/99B.words
+
+###################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce CGI_CHUNK \
+\
+	'Should run and return the proper body.' \
+\
+; } 2> /dev/null
+
+chunked="true"
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490/";
 upfile="99B.words" 
 code="202";
 show_output="true";
