@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/27 23:31:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 19:37:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,8 +81,16 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		close(pipe_cp[0]);
 		verbose(V) << "(Parent) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 		header_from_body();
-		set_code(202, "Accepted");
-		return 202;
+		if (si.in_header.is_post())
+		{
+			set_code(202, "Accepted");
+			return 202;
+		}
+		else
+		{
+			set_code(200, "OK");
+			return 200;
+		}
 	}
 	return 0;
 }
@@ -153,16 +161,8 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
 	int V(1);
-	std::vector<std::string> cgi_accept(si.config.get_vector_str("cgi_accept"));
-	verbose(V) << "(is_cgi_exec) cgi_accept " << cgi_accept << std::endl;
 	std::string call_method = si.in_header.method;
 	verbose(V) << "(is_cgi_exec) call_method " << call_method << std::endl;
-	bool good_method = false;
-	for (size_t i = 0; i < cgi_accept.size(); i++)
-		if (cgi_accept[i] == call_method)
-			good_method = true;
-	if (!good_method)
-		return 0;
 	DataFold cgi_vec(si.config.get<DataFold>("cgi"));
 	verbose(V) << "(is_cgi_exec) cgi_vec " << cgi_vec << std::endl;
 	verbose(V) << "(is_cgi_exec) .empty() " << cgi_vec.empty() << std::endl;

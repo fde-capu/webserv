@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/27 20:12:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 19:35:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # define WS_DEFAULT_CONFIG "webserv-default.conf"
 # define WS_ARGVAL "argval_ws.conf"
-# define WSCGI_ARGVAL "argval_cgi.conf"
 
 # include <map>
 # include <string>

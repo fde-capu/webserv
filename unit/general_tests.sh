@@ -34,7 +34,7 @@ unittest()
 		head -c $noise /dev/urandom > "${MYDIR}/$upfile";
 	fi
 
-	[ "$upfile" != "" ] && fullcmd="$fullcmd/$upfile";
+###	[ "$upfile" != "" ] && fullcmd="$fullcmd/$upfile";
 	fullcmd="set -x; $fullcmd -sSvw '%{http_code}'";
 
 	if [ "$upfile" != "" ] ; then
@@ -70,7 +70,7 @@ unittest()
 	[ "$trace" != "" ] && cat tmp_trace_ascii
 	[ "$trace" != "" ] && rm tmp_trace_ascii
 
-	[ "$message" != "" ] && echo "\033[0;34m$message\033[0;37m";
+	[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
 
 	resetvars;
 }
@@ -656,20 +656,35 @@ unittest "Accepts, though incomplete"
 ##################################################################
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
-{ anouce CGI_GET \
+{ anounce CGI_GET_SH \
 \
-	'Test CGI with GET method.' \
+	'Test CGI with GET method, cgi_test.sh.' \
 \
 ; } 2> /dev/null;
 
 cmd="curl http://$name_server:3490/cgi_test.sh"
-code="202";
+code="200";
 show_output="true";
-unittest "GET cgi";
+message="There should the output of a script, not the script itself.";
+unittest "Get cgi sh";
 
 ##################################################################
+
+{ anounce CGI_GET_PHP \
+\
+	'Test CGI with GET method, cgi_test.php.' \
+\
+; } 2> /dev/null;
+
+cmd="curl http://$name_server:3490/cgi_test.php"
+code="200";
+show_output="true";
+message="There should the output of a script, not the script itself.";
+unittest "Get cgi php";
+
+##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CGI_MULTI \
 \
@@ -677,14 +692,14 @@ unittest "GET cgi";
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.php
-cmd="curl http://$name_server:3490";
-upfile="99B.php" 
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490/cgi_sort_words.sh";
+upfile="99B.words" 
 code="202";
 show_output="true";
 message="Check if CGI was properly executed above."
 unittest "Simple post";
-rm ${MYDIR}/99B.php
+rm ${MYDIR}/99B.words
 
 ###################################################################
 

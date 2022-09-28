@@ -22,8 +22,8 @@ clean ${MYDIR}/file.noise
 clean ${MYDIR}/99B.words
 clean ${MYDIR}/confs/html4242/YoupiBanane/file.noise
 
-find ${MYDIR} | grep noise;
-find ${MYDIR} | grep words;
+find ${MYDIR} | grep \\.noise;
+find ${MYDIR} | grep \\.words;
 find ${MYDIR} | grep 99B.bla;
 
 echo -e "\033[0;37m------------------------"
@@ -34,3 +34,4 @@ ls -l ${MYDIR}/confs/html4242/YoupiBanane/youpi.bla
 
 echo 'Above should be confs/html4242/YoupiBanane/youpi.bla as 30B.'
 
+echo -e "\033[0;37m------------------------\n\n"
