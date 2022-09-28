@@ -32,9 +32,9 @@ unittest()
 	if [ "$noise" != "" ] ; then
 		upfile="file.noise";
 		head -c $noise /dev/urandom > "${MYDIR}/$upfile";
+		[ "$chunked" != "" ] && fullcmd="$fullcmd/$upfile";
 	fi
 
-###	[ "$upfile" != "" ] && fullcmd="$fullcmd/$upfile";
 	fullcmd="set -x; $fullcmd -sSvw '%{http_code}'";
 
 	if [ "$upfile" != "" ] ; then
@@ -162,6 +162,7 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -505,6 +506,24 @@ unittest "200MB rejection (out of resources)"
 ###################################################################
 ###################################################################
 
+{ anounce CHUNK_99_WORDS_FAIL \
+\
+	'POST chunked tests. \n
+	This rejects, because post does not specify a filename.' \
+\
+; } 2> /dev/null
+
+chunked="true";
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490"; # <------- No file name!
+outdir="${MYDIR}/confs/html/";
+upfile="99B.words" 
+code="400";
+fail="true";
+unittest "Chunked fail 400 Bad Request";
+rm ${MYDIR}/99B.words
+
+##################################################################
 
 { anounce CHUNK_99_WORDS \
 \
@@ -515,7 +534,7 @@ unittest "200MB rejection (out of resources)"
 
 chunked="true";
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:3490";
+cmd="curl http://$name_server:3490/99B.words";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 code="201";
@@ -684,8 +703,6 @@ unittest "Get cgi php";
 
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CGI_MULTI \
 \
 	'Test CGI call when posting.' \
@@ -710,14 +727,14 @@ rm ${MYDIR}/99B.words
 ; } 2> /dev/null
 
 chunked="true"
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.php
-cmd="curl http://$name_server:3490";
-upfile="99B.php" 
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490/asdono.sh";
+upfile="99B.words" 
 code="202";
 show_output="true";
-message="Check if CGI was properly executed above."
+message="ubuntu_cgi_tester runs and converts all to uppercase."
 unittest "Simple post chunked calling CGI";
-rm ${MYDIR}/99B.php
+rm ${MYDIR}/99B.words
 
 ###################################################################
 
@@ -727,14 +744,14 @@ rm ${MYDIR}/99B.php
 \
 ; } 2> /dev/null
 
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
-cmd="curl http://$name_server:3490";
-upfile="99B.bla" 
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490/.bla";
+upfile="99B.words" 
 code="202";
 show_output="true";
 message="Check if CGI was properly executed above."
 unittest "Simple post";
-rm ${MYDIR}/99B.bla
+rm ${MYDIR}/99B.words
 
 ###################################################################
 
@@ -745,16 +762,14 @@ rm ${MYDIR}/99B.bla
 ; } 2> /dev/null
 
 chunked="true"
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.bla
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
 cmd="curl http://$name_server:3490";
-upfile="99B.bla" 
+upfile="99B.words" 
 code="202";
 show_output="true";
 message="Check if CGI was properly executed above."
 unittest "Simple post chunked calling CGI";
-rm ${MYDIR}/99B.bla
-
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+rm ${MYDIR}/99B.words
 
 ##################################################################
 ##################################################################
@@ -959,4 +974,4 @@ unittest "Noise 101"
 
 #####################################################################
 
-
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!

@@ -6,12 +6,36 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/27 23:58:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 21:07:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 extern DataFold g_config;
+
+int ws_reply_instance::PUT_mock(ws_server_instance& si)
+{
+	if (si.in_header.method == "PUT")
+	{
+		set_code(200, "OK, but PUT is mocked.");
+		out_body = "PUT is MOCKED, because it is not mandatory for this project.";
+		return 200;
+	}
+	return 0;
+}
+
+int ws_reply_instance::is_501(ws_server_instance& si)
+{
+	if (
+		(si.in_header.method == "PUT")
+	)
+	{
+		set_code(501, "Not Implemented");
+		out_body = TemplateError::page(501, si.custom_error(501));
+		return 501;
+	}
+	return 0;
+}
 
 int ws_reply_instance::is_301(ws_server_instance& si)
 {
@@ -43,30 +67,6 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 	return 0;
 }
 
-int ws_reply_instance::PUT_mock(ws_server_instance& si)
-{
-	if (si.in_header.method == "PUT")
-	{
-		set_code(200, "OK, but PUT is mocked.");
-		out_body = "PUT is MOCKED, because it is not mandatory for this project.";
-		return 200;
-	}
-	return 0;
-}
-
-int ws_reply_instance::is_501(ws_server_instance& si)
-{
-	if (
-		(si.in_header.method == "PUT")
-	)
-	{
-		set_code(501, "Not Implemented");
-		out_body = TemplateError::page(501, si.custom_error(501));
-		return 501;
-	}
-	return 0;
-}
-
 int ws_reply_instance::is_405(ws_server_instance& si)
 {
 	bool method_accepted(false);
@@ -85,36 +85,6 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	set_code(405, "Method Not Allowed");
 	out_body = TemplateError::page(405, si.custom_error(405));
 	return 405;
-}
-
-int ws_reply_instance::bad_gateway(std::string u_content)
-{
-	set_code(502, "Bad Gateway");
-	out_body = TemplateError::page(502, u_content);
-	return 502;
-}
-
-int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
-{
-	DIR *dp;
-	struct dirent *dirp;
-	std::string list;
-	std::string href;
-
-	dp = opendir(dir.c_str());
-	while ((dirp = readdir(dp)) != NULL)
-	{
-		href = si.in_header.directory + "/" + dirp->d_name;
-		remove_dup_char(href, '/');
-		list += "<a href='" + href + "'>" + dirp->d_name + "</a><br>\n";
-	}
-	closedir(dp);
-	set_code(200, "OK");
-	out_body = "<html><head><title>" + \
-		g_config.getValStr("server_name") + \
-		"</title><body><h1>" + g_config.getValStr("server_name") + \
-		"</h1>" + list + "</body></html>";
-	return 200;
 }
 
 int ws_reply_instance::is_404(ws_server_instance& si)
@@ -165,6 +135,9 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	return 404;
 }
 
+int ws_reply_instance::is_413_507_422(ws_server_instance& si)
+{ return read_limits(si); }
+
 int ws_reply_instance::is_424(ws_server_instance& si)
 {
 	if (is_equal_insensitive(si.in_header.expect, "100-continue"))
@@ -177,6 +150,48 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 		set_code(424, "Failed Dependency");
 		out_body = TemplateError::page(424, si.custom_error(424));
 		return 424;
+	}
+	return 0;
+}
+
+int ws_reply_instance::is_400(ws_server_instance& si)
+{
+	std::string full_path = si.location_path(si.multipart_filename);
+	if (si.is_chunked() && FileString::is_dir(full_path))
+	{
+		set_code(400, "Bad Request");
+		out_body = TemplateError::page(400);
+		return 400;
+	}
+	return 0;
+}
+
+int ws_reply_instance::is_201(ws_server_instance& si)
+{
+	static int V(1);
+
+	std::string full_path;
+	std::string mp_block;
+	std::string* data;
+
+	if (si.in_header.is_post())
+	{
+		full_path = si.location_path(si.multipart_filename);
+		if (si.is_multipart())
+			data = &si.multipart_content;
+		else if (si.is_chunked())
+			data = &si.chunked_content;
+		else
+			data = &si.in_body;
+
+		verbose(V) << "(webserv) >" << SHORT((*data)) << \
+			"< will be saved into " << full_path << \
+			"." << std::endl;
+
+		FileString::write(full_path, *data);
+		set_code(201, "Created");
+		out_body = TemplateError::page(201);
+		return 201;
 	}
 	return 0;
 }
@@ -213,34 +228,4 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 	verbose(V) << "(is_200) out_body" << std::endl << SHORT(out_body) << std::endl;
 
 	return 200;
-}
-
-int ws_reply_instance::is_201(ws_server_instance& si)
-{
-	static int V(2);
-
-	std::string full_path;
-	std::string mp_block;
-	std::string* data;
-
-	if (si.in_header.is_post())
-	{
-		full_path = si.location_path(si.multipart_filename);
-		if (si.is_multipart())
-			data = &si.multipart_content;
-		else if (si.is_chunked())
-			data = &si.chunked_content;
-		else
-			data = &si.in_body;
-
-		verbose(V) << "(webserv) >" << SHORT((*data)) << \
-			"< will be saved into " << full_path << \
-			"." << std::endl;
-
-		FileString::write(full_path, *data);
-		set_code(201, "Created");
-		out_body = TemplateError::page(201);
-		return 201;
-	}
-	return 0;
 }

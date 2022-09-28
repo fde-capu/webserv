@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 19:37:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 20:04:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,8 +119,6 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 {
 	int V(1);
 
-//	verbose(V) << "(execute_cgi) in_header " << si.in_header << std::endl;
-//	BREAK;
 	program += " " + si.in_header.directory;
 	verbose(V) << "(execute_cgi) program " << program << std::endl;
 	std::vector<std::string> arg_vec(StringTools::split(program, " "));
@@ -161,20 +159,21 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
 	int V(1);
+
+	si.cgi_flag = false;
 	std::string call_method = si.in_header.method;
 	verbose(V) << "(is_cgi_exec) call_method " << call_method << std::endl;
 	DataFold cgi_vec(si.config.get<DataFold>("cgi"));
 	verbose(V) << "(is_cgi_exec) cgi_vec " << cgi_vec << std::endl;
-	verbose(V) << "(is_cgi_exec) .empty() " << cgi_vec.empty() << std::endl;
-	if (cgi_vec.empty())
+	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
+	verbose(V) << "(is_cgi_exec) call_extension " << call_extension << std::endl;
+	if (call_extension == "" || cgi_vec.empty())
 		return 0;
 	while (cgi_vec.loop())
 	{
 		std::vector<std::string> cgi_params(StringTools::split(cgi_vec.val, " "));
 		std::string cgi_extension = cgi_params[0];
 		verbose(V) << "(is_cgi_exec) cgi_extension " << cgi_extension << std::endl;
-		std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
-		verbose(V) << "(is_cgi_exec) call_extension " << call_extension << std::endl;
 		if (cgi_extension != call_extension)
 			continue ;
 		std::string cgi_children = cgi_vec.val.substr(cgi_extension.length() + 1);
@@ -182,7 +181,6 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 		si.cgi_flag = true;
 		return execute_cgi(si, cgi_children);
 	}
-	si.cgi_flag = false;
 	return 0;
 }
 

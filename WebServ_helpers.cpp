@@ -6,11 +6,42 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/27 23:00:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 20:33:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+extern DataFold g_config;
+
+int ws_reply_instance::bad_gateway(std::string u_content)
+{
+	set_code(502, "Bad Gateway");
+	out_body = TemplateError::page(502, u_content);
+	return 502;
+}
+
+int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
+{
+	DIR *dp;
+	struct dirent *dirp;
+	std::string list;
+	std::string href;
+
+	dp = opendir(dir.c_str());
+	while ((dirp = readdir(dp)) != NULL)
+	{
+		href = si.in_header.directory + "/" + dirp->d_name;
+		remove_dup_char(href, '/');
+		list += "<a href='" + href + "'>" + dirp->d_name + "</a><br>\n";
+	}
+	closedir(dp);
+	set_code(200, "OK");
+	out_body = "<html><head><title>" + \
+		g_config.getValStr("server_name") + \
+		"</title><body><h1>" + g_config.getValStr("server_name") + \
+		"</h1>" + list + "</body></html>";
+	return 200;
+}
 
 struct pollfd WebServ::stdin_to_pollfd()
 { return make_pollin_fd(0); }
