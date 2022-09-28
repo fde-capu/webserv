@@ -674,8 +674,6 @@ unittest "Accepts, though incomplete"
 ##################################################################
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CGI_GET_SH \
 \
 	'Test CGI with GET method, cgi_test.sh.' \
@@ -742,9 +740,9 @@ unittest "Get cgi php";
 
 ##################################################################
 
-{ anounce CGI_MULTI \
+{ anounce CGI_POST_MULTI \
 \
-	'Test CGI call when posting.' \
+	'Test CGI call when posting multipart.' \
 \
 ; } 2> /dev/null
 
@@ -759,36 +757,55 @@ rm ${MYDIR}/99B.words
 
 ###################################################################
 
-{ anounce CGI_CHUNK \
+{ anounce CGI_POST_CHUNK \
 \
-	'Should run and return the proper body.' \
+	'CGI POST chunked.' \
 \
 ; } 2> /dev/null
 
 chunked="true"
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:3490/.sh";
-upfile="99B.words" 
-code="202";
-show_output="true";
-message="ubuntu_cgi_tester runs and converts all to uppercase."
-unittest "Simple post chunked calling CGI";
-rm ${MYDIR}/99B.words
-
-###################################################################
-
-{ anounce CGI_MULTI \
-\
-	'Test CGI call when posting.' \
-\
-; } 2> /dev/null
-
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:3490/.bla";
+cmd="curl http://$name_server:3490/cgi_sort_words.sh";
 upfile="99B.words" 
 code="202";
 show_output="true";
 message="Check if CGI was properly executed above."
+unittest "Simple post chunked";
+rm ${MYDIR}/99B.words
+
+###################################################################
+
+{ anounce CGI_BLA_OK \
+\
+	'Test CGI call when posting and calling something (existent) .bla.' \
+\
+; } 2> /dev/null
+
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490/bla.bla";
+upfile="99B.words" 
+code="202";
+show_output="true";
+message="ubuntu_cgi_tester runs and converts all to uppercase."
+unittest "Simple post";
+rm ${MYDIR}/99B.words
+
+###################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce CGI_BLA_FAIL \
+\
+	'Test CGI call when posting and calling something (UNexistent) .bla.' \
+\
+; } 2> /dev/null
+
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490/xxxx.bla";
+upfile="99B.words" 
+code="421";
+show_output="true";
+message="ubuntu_cgi_tester runs and converts all to uppercase."
 unittest "Simple post";
 rm ${MYDIR}/99B.words
 

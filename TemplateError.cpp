@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 20:43:45 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 21:27:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 23:30:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,39 +17,43 @@ FileString TemplateError::config;
 
 TemplateError::TemplateError(const char * executable, const char * u_defaults)
 {
+	int V(1);
+
 	path = StringTools::remove_filename_from_path(executable);
-	verbose(8) << "path: " << path << std::endl;
+	verbose(V) << "(TemplateError) path: " << path << std::endl;
 
 	file_name = u_defaults;
-	verbose(8) << "file_name: " << file_name << std::endl;
+	verbose(V) << "(TemplateError) file_name: " << file_name << std::endl;
 
 	full_file_name = path + "/" + file_name;
-	verbose(8) << "full_file_name: " << full_file_name << std::endl;
+	verbose(V) << "(TemplateError) full_file_name: " << full_file_name << std::endl;
 
 	config.load(full_file_name.c_str());
-	verbose(8) << "config: " << config << std::endl;
+	verbose(V) << "(TemplateError) config: " << config << std::endl;
 }
 
 std::string TemplateError::page(size_t error_code, std::string u_content)
 {
+	int V(1);
+
 	if (u_content != "")
 		return u_content;
 
 	std::string error_query = StringTools::stoa(error_code);
-	verbose(8) << "error_query: " << error_query << std::endl;
+	verbose(V) << "(TemplateError) error_query: " << error_query << std::endl;
 
 	DataFold data(config.getDataFold());
-	verbose(8) << "data: " << data << std::endl;
+	verbose(V) << "(TemplateError) data: " << data << std::endl;
 
 	std::string t_file = data.getValStr(error_query);
-	verbose(8) << "t_tile: " << t_file << std::endl;
+	verbose(V) << "(TemplateError) t_tile: " << t_file << std::endl;
 
 	std::string full_t_file = path + "/" + t_file;
-	verbose(8) << "full_t_file: " << full_t_file << std::endl;
+	verbose(V) << "(TemplateError) full_t_file: " << full_t_file << std::endl;
 
 	FileString result;
 	result.load(full_t_file.c_str());
 
-	verbose(8) << "result: " << result << std::endl;
+	verbose(V) << "(TemplateError) result: " << result << std::endl;
 	return result.getContent();
 }

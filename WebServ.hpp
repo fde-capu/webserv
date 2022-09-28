@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 20:31:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 23:12:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ struct ws_reply_instance
 	int read_limits(ws_server_instance&); // Payload Too Large et.c.
 	int is_424(ws_server_instance&); // Failed Dependency.
 
-	int execute_cgi(ws_server_instance&, std::string);
+	int cgi_prepare(ws_server_instance&, std::string);
 	int cgi_pipe(ws_server_instance&, const std::vector<std::string>&);
 	void cgi_setenv(ws_server_instance&, std::string);
 	void cgi_write_into_child(ws_server_instance&, int);

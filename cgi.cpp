@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 22:12:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/28 23:14:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,12 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 	pid_t child_pid = -1;
 
 	if (pipe(pipe_pc) == -1)
-		throw std::domain_error("(execute_cgi) Cannot pipe for cgi (parent->child).");
+		throw std::domain_error("(cgi_pipe) Cannot pipe for cgi (parent->child).");
 	if (pipe(pipe_cp) == -1)
-		throw std::domain_error("(execute_cgi) Cannot pipe for cgi (child->parent).");
+		throw std::domain_error("(cgi_pipe) Cannot pipe for cgi (child->parent).");
 	child_pid = fork();
 	if (child_pid < 0)
-		throw std::domain_error("(execute_cgi) Forking went wrong.");
+		throw std::domain_error("(cgi_pipe) Forking went wrong.");
 	if (child_pid == 0) // Child
 	{
 		cgi_setenv(si, argv[0]);
@@ -115,19 +115,19 @@ void ws_reply_instance::header_from_body()
 		out_body = out_body.substr(h_body + dblen);
 }
 
-int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
+int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 {
 	int V(1);
 
-	program += " " + si.in_header.directory;
-	verbose(V) << "(execute_cgi) program " << program << std::endl;
+	program += " " + si.location_path();
+	verbose(V) << "(cgi_prepare) program " << program << std::endl;
 	std::vector<std::string> arg_vec(StringTools::split(program, " "));
-	verbose(V) << "(execute_cgi) arg_vec " << arg_vec.data() << std::endl;
+	verbose(V) << "(cgi_prepare) arg_vec " << arg_vec.data() << std::endl;
 	std::string file_test(arg_vec[0]);
-	verbose(V) << "(execute_cgi) file_test " << file_test << std::endl;
+	verbose(V) << "(cgi_prepare) file_test " << file_test << std::endl;
 	std::string root_path(si.root_config.getValStr("root") + "/" \
 			+ si.config.getValStr("root") + "/");
-	verbose(V) << "(execute_cgi) root_path " << root_path << std::endl;
+	verbose(V) << "(cgi_prepare) root_path " << root_path << std::endl;
 	std::string full_program;
 	if (FileString::exists(root_path + "/" + file_test))
 		full_program = root_path + "/" + file_test;
@@ -136,12 +136,12 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 	else
 		return bad_gateway(si.custom_error(502));
 	stool.remove_dup_char(full_program, '/');
-	verbose(V) << "(execute_cgi) full_program " << full_program << std::endl;
+	verbose(V) << "(cgi_prepare) full_program " << full_program << std::endl;
 	std::vector<std::string> argv(arg_vec.size());
 	argv[0] = full_program;
 	for (size_t i = 1; i < arg_vec.size(); i++)
 	{
-		verbose(V) << "(execute_cgi) arg_vec[i] in: " << arg_vec[i] << std::endl;
+		verbose(V) << "(cgi_prepare) arg_vec[i] in: " << arg_vec[i] << std::endl;
 		if (FileString::exists(root_path + arg_vec[i]))
 		{
 			argv[i] = root_path + arg_vec[i];
@@ -151,7 +151,7 @@ int ws_reply_instance::execute_cgi(ws_server_instance& si, std::string program)
 		{
 			argv[i] = arg_vec[i];
 		}
-		verbose(V) << "(execute_cgi) argv[i] out: " << argv[i] << std::endl;
+		verbose(V) << "(cgi_prepare) argv[i] out: " << argv[i] << std::endl;
 	}
 	std::string syscall;
 	for (size_t i = 0; i < argv.size(); i++)
@@ -165,6 +165,7 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	int V(1);
 
 	si.cgi_flag = false;
+	verbose(V) << "(is_cgi_exec) si.location " << si.location_path() << std::endl;
 	if (!FileString::exists(si.location_path()))
 	{
 		set_code(421, "Missdirected Request");
@@ -187,7 +188,7 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 		std::string cgi_children = cgi_vec.val.substr(cgi_extension.length() + 1);
 		verbose(V) << "(is_cgi_exec) cgi_children " << cgi_children << std::endl;
 		si.cgi_flag = true;
-		return execute_cgi(si, cgi_children);
+		return cgi_prepare(si, cgi_children);
 	}
 	return 0;
 }
