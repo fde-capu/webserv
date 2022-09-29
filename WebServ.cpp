@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 20:28:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/29 15:15:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,6 @@ void WebServ::give_up_if_empty_configuration()
 void WebServ::set_non_blocking(int sock)
 {
 	int opts;
-
-//	if ((opts = fcntl(sock, F_GETFL)) == -1)
-//		throw std::domain_error("(webserv) Unconsistent socket.");
-//	opts |= O_NONBLOCK;
-//  // Above is more correct than below, but F_GETGL is forbidden (I guess):
 	opts = O_NONBLOCK;
 	if (fcntl(sock, F_SETFL, opts) == -1)
 		throw std::domain_error("(webserv) Could not set non-blocking flag.");
@@ -234,6 +229,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 
 void WebServ::respond_connection_from(int fd)
 {
+	int V(1);
 	ws_server_instance si;
 	std::string raw_data;
 	std::string body;
@@ -243,7 +239,7 @@ void WebServ::respond_connection_from(int fd)
 	std::string encapsulated;
 
 	verbose(1) << " . . . . . . . . . . . . . . . " << std::endl;
-	verbose(2) << "(respond_connection_from) Getting data from fd " << fd \
+	verbose(V) << "(respond_connection_from) Getting data from fd " << fd \
 		<< "." << std::endl;
 
 	while (!in_header.is_valid)
@@ -258,7 +254,7 @@ void WebServ::respond_connection_from(int fd)
 		in_header = get_header(raw.output);
 	}
 
-	verbose(2) << "(respond_connection_from) Got header:" << std::endl << \
+	verbose(V) << "(respond_connection_from) Got header:" << std::endl << \
 		in_header << std::endl;
 
 	si = choose_instance(in_header, fd_to_port[fd]);
@@ -267,7 +263,9 @@ void WebServ::respond_connection_from(int fd)
 	si.set_sizes();
 	si.fd = fd;
 	ws_reply_instance respond(si); // ...oonn...
-	if (send(fd, respond.encapsulate().c_str(),
+	respond.encapsulate();
+	verbose(V) << "(respond_connection_from) respond.package_length " << respond.package_length << std::endl;
+	if (send(fd, respond.out_body.c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 	close(fd);
@@ -276,11 +274,12 @@ void WebServ::respond_connection_from(int fd)
 
 void WebServ::light_up()
 {
+	int V(1);
 	int event;
 
-	verbose(1) << "Light up server: " << \
+	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
-	verbose(1) << config.getValStr("welcome_message") << std::endl;
+	verbose(V) << config.getValStr("welcome_message") << std::endl;
 
 	lit = true;
 	while (lit)

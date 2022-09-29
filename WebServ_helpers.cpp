@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 20:33:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/29 15:32:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,12 @@ void WebServ::load_defaults()
 		config.set("index", DEFAULT_INDEX);
 }
 
-std::string ws_reply_instance::encapsulate()
+void ws_reply_instance::encapsulate()
 {
+	int V(1);
 	std::string out = "";
 
+	verbose(V) << "(encapsulate) out_header:" << std::endl << out_header << std::endl;
 	out += out_header.protocol + " ";
 	out += itoa(out_header.status) + " " + out_header.status_msg + "\r\n";
 	if (out_header.connection != "")
@@ -150,9 +152,12 @@ std::string ws_reply_instance::encapsulate()
 	else
 		out += "Content-Type: text/html; charset=utf-8\r\n";
 	out += "\r\n";
-	out += out_body;
-	package_length = out.length();
-	return out;
+	verbose(V) << "(encapsulate) pre header:" << std::endl << out << std::endl;
+	verbose(V) << "(encapsulate) pre body:" << LONG(out_body) << std::endl;
+	out_body = out + out_body;
+	package_length = out_body.length();
+	verbose(V) << "(encapsulate) package_length " << package_length << std::endl;
+	verbose(V) << "(encapsulate) post body:" << LONG(out_body) << std::endl;
 }
 
 bool ws_header::is_get()
@@ -181,7 +186,8 @@ void WebServ::respond_timeout(int fd)
 	ws_reply_instance respond;
 	respond.set_code(408, "Request Timeout");
 	respond.out_body = TemplateError::page(408);
-	if (send(fd, respond.encapsulate().c_str(),
+	respond.encapsulate();
+	if (send(fd, respond.out_body.c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 	close(fd);

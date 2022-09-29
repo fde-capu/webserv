@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 23:12:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/29 15:09:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ struct ws_reply_instance
 	std::string out_body;
 	size_t package_length;
 	ws_reply_instance();
-	std::string encapsulate();
+	void encapsulate();
 	void set_code(int, const std::string&);
 	void set_redirect(const std::string&);
 	std::string file_name;
