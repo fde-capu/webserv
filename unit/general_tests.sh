@@ -3,9 +3,10 @@
 # TODO template 201 check
 # TODO DELETE
 # TODO investigate zombie cgis
+# TODO check 4242 tests at the end of the file
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -70,7 +71,7 @@ unittest()
 	fi
 
 	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
-	rm tmp_response;
+#	rm tmp_response;
 	[ "$trace" != "" ] && cat tmp_trace_ascii
 	[ "$trace" != "" ] && rm tmp_trace_ascii
 
@@ -166,6 +167,7 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -929,10 +931,9 @@ unittest "Autoindex off"
 #################################################################
 #################################################################
 
-
 { anounce CHUNKED_UBUNTU_42_4096 \
-'POST test. This gets random errors on Workspace. \
- 10000000?! First, 4069:' \
+"POST test. This gets random errors on Workspace. \n
+ 2621330?! First, 4069:" \
 ; } 2> /dev/null
 
 chunked="true"
@@ -948,28 +949,28 @@ rm "${MYDIR}/youpi_expected_result.bla"
 
 #####################################################################
 
-{ anounce CHUNKED_UBUNTU_42_10000000 \
-'POST test. This gets random errors on Workspace. \
- 1000000?! Lets do it!' \
+{ anounce CHUNKED_UBUNTU_42_2621330 \
+"POST test. This gets random errors on Workspace. \n
+ 2621330?! Lets do it!" \
 ; } 2> /dev/null
 
 chunked="true"
-head -c 1000000 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c 1000000 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
+head -c 2621330 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
+head -c 2621330 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
 cmd="curl http://$name_server:4242/directory/youpi.bla"
 upfile="youpi.bla"
 code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
 #fail="true"
-unittest "Test POST /directory/youpi.bla size of 10000000"
+unittest "Test POST /directory/youpi.bla size of 2621330"
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
 
 #####################################################################
 
 { anounce MULTI_UBUNTU_42_4096 \
-'POST test. This gets random errors on Workspace. \
- 10000000?! First, 4069:' \
+"POST test. This gets random errors on Workspace. \n
+ 2621330?! First, 4069:" \
 ; } 2> /dev/null
 
 head -c 4096 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
@@ -984,25 +985,22 @@ rm "${MYDIR}/youpi_expected_result.bla"
 
 #####################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
-{ anounce MULTI_UBUNTU_42_10000000 \
-'POST test. This gets random errors on Workspace. \
- 10000000?! Lets do it!' \
+{ anounce MULTI_UBUNTU_42_2621330 \
+"POST test. This gets random errors on Workspace. \n
+ 2621330?! Lets do it!" \
 ; } 2> /dev/null
 
-head -c 10000000 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c 10000000 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
+head -c 2621330 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
+head -c 2621330 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
 cmd="curl -H 'Expect:' http://$name_server:4242/directory/youpi.bla"
 upfile="youpi.bla"
 code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
 #fail="true"
-unittest "Test POST /directory/youpi.bla size of 10000000"
+unittest "Test POST /directory/youpi.bla size of 2621330"
+enterkey;
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
-
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 #####################################################################
 
@@ -1114,3 +1112,4 @@ unittest "Noise 101"
 
 #####################################################################
 
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
