@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 23:41:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/29 00:33:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,20 @@ void FileString::load(const std::string & str)
 
 void FileString::load(const char * u_fn)
 {
+	int V(1);
+	_read_ok = false;
+
+	std::string fn(u_fn);
+	verbose(V) << "(FileString) file: " << fn << std::endl;
+	verbose(V) << "(FileString) is_file: " << is_file(fn) << std::endl;
+	if (!is_file(fn))
+	{
+		return ;
+	}
 	std::fstream file_read;
 	file_read.open(u_fn, std::ios::in);
-	if (!file_read || !is_file(u_fn))
+	if (!file_read)
 	{
-		_read_ok = false;
 		file_read.close();
 		verbose(1) << "(FileString) Failed to load or empty string for file " << u_fn << "." << std::endl;
 		return ;
