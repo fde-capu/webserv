@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# TODO template 201 check
 # TODO DELETE
 # TODO investigate zombie cgis
 # TODO check 4242 tests at the end of the file
+# TODO remove V(X)
 
 name_server="127.0.0.1";
 step_by_step="";
@@ -71,7 +71,7 @@ unittest()
 	fi
 
 	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
-#	rm tmp_response;
+	rm tmp_response;
 	[ "$trace" != "" ] && cat tmp_trace_ascii
 	[ "$trace" != "" ] && rm tmp_trace_ascii
 
@@ -167,7 +167,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -403,6 +402,8 @@ unittest "Post noise 101B";
 
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce MULTI_LARGE_42 \
 \
 	'Not large, but shows "uri /large_upload" is working. 42B. 201' \
@@ -413,7 +414,10 @@ noise="42"
 outdir="${MYDIR}/confs/html/uploads_large";
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
+show_output="true"
 unittest "Noise to large_upload 42B"
+
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 #####################################################################
 
@@ -901,7 +905,7 @@ unittest "Error 404 width custom configuration"
 
 cmd="curl http://$name_server:3491/x"
 code="404"
-testfile="$MYDIR/../default_error_pages/404.html";
+testfile="$MYDIR/../default_responses/404.html";
 show_output="true"
 unittest "Error 404"
 
@@ -998,7 +1002,6 @@ code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
 #fail="true"
 unittest "Test POST /directory/youpi.bla size of 2621330"
-enterkey;
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
 
@@ -1112,4 +1115,3 @@ unittest "Noise 101"
 
 #####################################################################
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!

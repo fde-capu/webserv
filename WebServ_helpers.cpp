@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/29 15:32:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/29 16:59:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ void ws_reply_instance::encapsulate()
 	out_body = out + out_body;
 	package_length = out_body.length();
 	verbose(V) << "(encapsulate) package_length " << package_length << std::endl;
-	verbose(V) << "(encapsulate) post body:" << LONG(out_body) << std::endl;
+	verbose(V) << "(encapsulate) post body:" << std::endl << LONG(out_body) << std::endl;
 }
 
 bool ws_header::is_get()

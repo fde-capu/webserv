@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/18 20:43:45 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 23:42:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/09/29 16:58:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ std::string TemplateError::page(size_t error_code, std::string u_content)
 	verbose(V) << "(TemplateError) fail: " << result.fail() << std::endl;
 
 	if (result.fail())
-		return "Error " + itoa(error_code) + "\n";
+		return "Response code: " + itoa(error_code) + "\n";
 
 	verbose(V) << "(TemplateError) result: " << result << std::endl;
 	return result.getContent();
