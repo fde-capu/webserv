@@ -1,12 +1,15 @@
 #!/bin/sh
 
+# TODO CHUNK_50M_NOISE is not completing with right size.
+# TODO MULTI_LARGE_42 is saving under the name of large_upload?
 # TODO DELETE
 # TODO investigate zombie cgis
 # TODO check 4242 tests at the end of the file
 # TODO remove V(X)
+# TODO check unittest() for commented lines of rm
 
 name_server="127.0.0.1";
-step_by_step="";
+step_by_step="true";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -70,8 +73,8 @@ unittest()
 		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorprint "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
 	fi
 
-	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
-	rm tmp_response;
+#	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
+#	rm tmp_response;
 	[ "$trace" != "" ] && cat tmp_trace_ascii
 	[ "$trace" != "" ] && rm tmp_trace_ascii
 
@@ -290,7 +293,7 @@ unittest "Unexistent server_name defaults to first";
 
 cmd="curl http://$name_server:3491";
 code="405";
-noise="1MiB";
+noise="1MB";
 fail="true";
 unittest "POST rejection";
 
@@ -402,8 +405,6 @@ unittest "Post noise 101B";
 
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce MULTI_LARGE_42 \
 \
 	'Not large, but shows "uri /large_upload" is working. 42B. 201' \
@@ -417,36 +418,34 @@ code="201"
 show_output="true"
 unittest "Noise to large_upload 42B"
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
-
 #####################################################################
 
 { anounce MULTI_1M_NOISE \
 \
-	'Again 1MiB.noise, this time sending the file right away.\n
+	'Again 1MB.noise, this time sending the file right away.\n
 	This SHALL BE accepted and saved.' \
 \
 ; } 2> /dev/null
 
-noise="1MiB"
+noise="1MB"
 cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
-unittest "1MiB success"
+unittest "1MB success"
 
 #####################################################################
 
 { anounce MULTI_2M_NOISE \
 \
-	'Now 2MiB.noise, sending the file right away.' \
+	'Now 2MB.noise, sending the file right away.' \
 \
 ; } 2> /dev/null
 
-noise="2MiB"
+noise="2MB"
 cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
-unittest "2MiB success"
+unittest "2MB success"
 
 #####################################################################
 
@@ -469,13 +468,13 @@ unittest "50MB success"
 
 { anounce MULTI_FAIL \
 \
-	'Now POSTing 1MiB.noise.\n
+	'Now POSTing 1MB.noise.\n
 	This shall NOT be accepted, because curl will expect 100-continue,\n
 	but webserv must always close the connection. Chose 424 for answer.' \
 \
 ; } 2> /dev/null
 
-noise="1MiB"
+noise="1MB"
 cmd="curl http://$name_server:3490/large_upload"
 code="424"
 fail="true"
@@ -486,14 +485,14 @@ unittest "webserv must close connection"
 
 { anounce MULTI_FAIL \
 \
-	'How about 200MiB? Wait a little, but this would get OOM KILL\n
+	'How about 200MB? Wait a little, but this would get OOM KILL\n
 	by Workspace. Set CIRCULARBUFFER_LIMIT for this.\n
 	Found safe to stick to 1048576 \* 100.\n
 	Server should not crash, so 507 Insufficient Storage.' \
 \
 ; } 2> /dev/null
 
-noise="200MiB"
+noise="200MB"
 cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 code="507"
 fail="true"
@@ -618,34 +617,36 @@ unittest "Noise to large_upload 42B"
 
 { anounce CHUNK_1M_NOISE \
 \
-	'1MiB.noise.\n
+	'1MB.noise.\n
 	This SHALL BE accepted and saved.' \
 \
 ; } 2> /dev/null
 
 chunked="true"
-noise="1MiB"
-cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+noise="1MB"
+cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
-unittest "1MiB success"
+unittest "1MB success"
 
 ##################################################################
 
 { anounce CHUNK_2M_NOISE \
 \
-	'Now 2MiB.noise.' \
+	'Now 2MB.noise.' \
 \
 ; } 2> /dev/null
 
 chunked="true";
-noise="2MiB"
-cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+noise="2MB"
+cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
-unittest "2MiB success"
+unittest "2MB success"
 
 ##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_50M_NOISE \
 \
@@ -656,7 +657,7 @@ unittest "2MiB success"
 
 chunked="true";
 noise="50MB"
-cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "50MB success"
@@ -667,13 +668,13 @@ unittest "50MB success"
 
 { anounce CHUNK_PARTIAL \
 \
-	'How about 200MiB? This time, it is accepted as partial upload, \n
+	'How about 200MB? This time, it is accepted as partial upload, \n
 	since curl is set to close and webserv must always close.' \
 \
 ; } 2> /dev/null
 
 chunked="true";
-noise="200MiB"
+noise="200MB"
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
 fail="true"
@@ -1013,7 +1014,7 @@ rm "${MYDIR}/youpi_expected_result.bla"
 \
 ; } 2> /dev/null
 
-noise="1MiB"
+noise="1MB"
 cmd="curl http://$name_server:4242"
 code="405";
 fail="true";
@@ -1115,3 +1116,4 @@ unittest "Noise 101"
 
 #####################################################################
 
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
