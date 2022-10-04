@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/29 16:27:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/04 20:18:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 
 void WebServ::respond_connection_from(int fd)
 {
-	int V(1);
+	int V(2);
 	ws_server_instance si;
 	std::string raw_data;
 	std::string body;

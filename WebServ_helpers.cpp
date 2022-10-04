@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/29 16:59:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/04 20:17:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ void WebServ::load_defaults()
 
 void ws_reply_instance::encapsulate()
 {
-	int V(1);
+	int V(3);
 	std::string out = "";
 
 	verbose(V) << "(encapsulate) out_header:" << std::endl << out_header << std::endl;

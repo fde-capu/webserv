@@ -66,11 +66,11 @@ unittest()
 		exit 1;
 	fi
 
-	colorprint "$1 | expect $code, got $out" "$out" "$code"
+	colorscore "$1 | expect $code, got $out" "$out" "$code"
 
 	if [ "$fail" = "" ] ; then
-		[ "$testfile" != "" ] && colorprint "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
-		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorprint "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
+		[ "$testfile" != "" ] && colorscore "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
+		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorscore "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
 	fi
 
 #	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
@@ -143,10 +143,10 @@ finish()
 	exit 0;
 }
 
-colorprint()
+colorscore()
 {
-	a=`echo "$2" | hd`;
-	b=`echo "$3" | hd`;
+	a=`echo "$2"`;
+	b=`echo "$3"`;
 	echo -n "$1 ";
 	if [ "$a" = "$b" ] ; then
 		echo "\033[0;32m [ OK ]\033[0;37m";
@@ -644,9 +644,9 @@ outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "2MB success"
 
-##################################################################
-
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+##################################################################
 
 { anounce CHUNK_50M_NOISE \
 \
@@ -662,8 +662,6 @@ outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "50MB success"
 
-##################################################################
-#####################################################################
 #####################################################################
 
 { anounce CHUNK_PARTIAL \
@@ -878,7 +876,7 @@ while [ "$i" -le "$stress_count" ]; do
 done;
 wait;
 stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
-colorprint "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
+colorscore "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
 rm -f stress_out;
 set -x;
 
