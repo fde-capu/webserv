@@ -676,7 +676,6 @@ noise="200MB"
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
 fail="true"
-message=`ls -lh ${MYDIR}/confs/html/uploads_large/file.noise`;
 unittest "Accepts, though incomplete"
 
 ##################################################################

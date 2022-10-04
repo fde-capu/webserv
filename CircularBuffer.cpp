@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/04 21:11:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/04 22:27:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ std::string& CircularBuffer::set_eof()
 
 std::string& CircularBuffer::unfinished()
 {
-	verbose(1) << "(CirularBuffer) Returning unfinished " << length() << std::endl;
+	verbose(1) << "(CirularBuffer) Returning unfinished/unknown " << length() << std::endl;
 	return output;
 }
 
@@ -64,27 +64,16 @@ std::string& CircularBuffer::out_of_resource()
 	return set_eof();
 }
 
-bool CircularBuffer::checkLimits(size_t& plus) const
+bool CircularBuffer::outOfLimits(const size_t& plus) const
 {
 	if (length() + plus > limit)
 	{
 		verbose(1) << "(CircularBuffer) Is limited to " << limit \
 			<< " so refuses to read more (wants " << \
 			plus << ")" << std::endl;
-		return false;
+		return true;
 	}
-	return true;
-}
-
-bool CircularBuffer::checkLimits() const
-{
-	if (length() > limit)
-	{
-		verbose(1) << "(CircularBuffer) Is limited so refuses to read more." << \
-			std::endl;
-		return false;
-	}
-	return true;
+	return false;
 }
 
 std::string& CircularBuffer::try_to_receive(size_t nbytes, bool slow)
@@ -97,7 +86,8 @@ std::string& CircularBuffer::try_to_receive(size_t nbytes, bool slow)
 	Chronometer time_out;
 	size_t time_gap;
 
-	if (checkLimits(nbytes))
+	verbose(V) << "(CircularBuffer) try_to_receive." << std::endl;
+	if (outOfLimits(nbytes))
 		output.reserve(length() + nbytes);
 	else
 	{
@@ -113,15 +103,13 @@ std::string& CircularBuffer::try_to_receive(size_t nbytes, bool slow)
 			verbose(V) << "(CircularBuffer) Timeout! time_gap " << time_gap << std::endl;
 			return unfinished();
 		}
-		if (!checkLimits())
-			return out_of_resource();
-
 		rbytes = read(fd, const_cast<char *>(memory), size);
-
 		if (rbytes <= -1)
 			continue ;
 		if (rbytes == 0)
 			return set_eof();
+		if (outOfLimits(rbytes))
+			return out_of_resource();
 		if (static_cast<size_t>(rbytes) <= size)
 		{
 			verbose(V) << "(CircularBuffer) TRY Appending " << rbytes << "->" << (length() + rbytes) << std::endl;
@@ -140,6 +128,7 @@ std::string& CircularBuffer::receive_until_eof()
 	int rbytes;
 	Chronometer time_out;
 
+	verbose(V) << "(CircularBuffer) receive_until_eof." << std::endl;
 	while (1)
 	{
 		if (time_out > CIRCULARBUFFER_TIMEOUT_MSEC)
@@ -147,17 +136,15 @@ std::string& CircularBuffer::receive_until_eof()
 			verbose(V) << "(CircularBuffer) EOF timeout!" << std::endl;
 			return unfinished();
 		}
-		if (!checkLimits())
-			return out_of_resource();
-
 		rbytes = read(fd, const_cast<char *>(memory), size);
-
 		if (rbytes <= -1 && fd == 0) // stdin
 			return set_eof();
 		if (rbytes <= -1)
 			continue ;
 		if (rbytes == 0)
 			return set_eof();
+		if (outOfLimits(rbytes))
+			return out_of_resource();
 		if (static_cast<size_t>(rbytes) <= size)
 		{
 			verbose(V) << "(CircularBuffer) EOF Appending " << rbytes << "->" << (length() + rbytes) << std::endl;

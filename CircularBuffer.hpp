@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/04 21:09:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/04 22:32:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # include "Chronometer.hpp"
 
 # define CIRCULARBUFFER_TIMEOUT_MSEC 50
-# define CIRCULARBUFFER_SIZE (1024 * 1000)
-# define CIRCULARBUFFER_LIMIT (1048576 * 100)
+# define CIRCULARBUFFER_SIZE 10485760
+# define CIRCULARBUFFER_LIMIT 52428800
 
 class CircularBuffer
 {
@@ -42,8 +42,7 @@ class CircularBuffer
 		std::string& set_eof();
 		std::string& out_of_resource();
 		std::string& unfinished();
-		bool checkLimits() const;
-		bool checkLimits(size_t&) const;
+		bool outOfLimits(const size_t& = 0) const;
 
 	public:
 		CircularBuffer(int);
