@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/29 15:16:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 17:19:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,16 +172,16 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 
 	si.cgi_flag = false;
 	verbose(V) << "(is_cgi_exec) si.location " << si.location_path() << std::endl;
+	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
+	verbose(V) << "(is_cgi_exec) call_extension " << call_extension << std::endl;
+	if (call_extension == "")
+		return 0;
 	if (!si.is_chunked() && !FileString::exists(si.location_path()))
 	{
 		set_code(421, "Missdirected Request");
 		out_body = TemplateError::page(421, si.custom_error(421));
 		return 421;
 	}
-	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
-	verbose(V) << "(is_cgi_exec) call_extension " << call_extension << std::endl;
-	if (call_extension == "")
-		return 0;
 	DataFold cgi_vec(si.config.get<DataFold>("cgi"));
 	verbose(V) << "(is_cgi_exec) cgi_vec " << cgi_vec << std::endl;
 	if (cgi_vec.empty())

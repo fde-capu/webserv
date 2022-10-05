@@ -962,6 +962,19 @@ ls -l "${MYDIR}/confs/html/uploads_large"
 ; } 2> /dev/null
 
 #################################################################
+
+{ anounce DELETE_A_DIRECTORY \
+	'Tries to delete a directory that has DELETE permission. \n
+	 Expect 403 Forbidden, always.' \
+; } 2> /dev/null
+
+#################################################################
+
+{ anounce DELETE_UNEXISTENT_FILE \
+	'Try to delete an unexistent file.' \
+; } 2> /dev/null
+
+#################################################################
 #################################################################
 #################################################################
 

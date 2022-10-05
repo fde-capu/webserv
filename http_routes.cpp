@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 17:04:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 17:29:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,21 +54,6 @@ int ws_reply_instance::is_301(ws_server_instance& si)
 	return 0;
 }
 
-int ws_reply_instance::is_403(ws_server_instance& si)
-{
-	DataFold locations(si.config.get<DataFold>("location"));
-
-	if (	(locations.empty() && si.val("root") == "")		||
-			(si.in_header.method == "DELETE" && FileString::is_dir(si.location_path()))
-		)
-	{
-		set_code(403, "Forbidden");
-		out_body = TemplateError::page(403, si.custom_error(403));
-		return 403;
-	}
-	return 0;
-}
-
 int ws_reply_instance::is_405(ws_server_instance& si)
 {
 	bool method_accepted(false);
@@ -89,6 +74,21 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	return 405;
 }
 
+int ws_reply_instance::is_403(ws_server_instance& si)
+{
+	DataFold locations(si.config.get<DataFold>("location"));
+
+	if (	(locations.empty() && si.val("root") == "")		||
+			(si.in_header.method == "DELETE" && FileString::is_dir(si.location_path()))
+		)
+	{
+		set_code(403, "Forbidden");
+		out_body = TemplateError::page(403, si.custom_error(403));
+		return 403;
+	}
+	return 0;
+}
+
 int ws_reply_instance::is_404(ws_server_instance& si)
 {
 	int V(3);
@@ -97,44 +97,46 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 	std::string \
 		autoindex(si.server_location_config("autoindex").getValStr("autoindex"));
 
-	if (si.in_header.method != "GET")
-		return 0;
 	request = si.location_path();
 
 	verbose(V) << "(is_404) request: " << request << std::endl;
 
-	if (FileString::is_dir(request))
+	if (si.in_header.method == "GET")
 	{
-		indexes = si.server_location_config("index");
-		while (indexes.loop())
+		if (FileString::is_dir(request))
 		{
-			file_name = si.location_path(indexes.val);
-			verbose(V) << "(webserv) Fetching " << file_name \
-				<< std::endl;
-			if (FileString::exists(file_name))
+			indexes = si.server_location_config("index");
+			while (indexes.loop())
+			{
+				file_name = si.location_path(indexes.val);
+				verbose(V) << "(webserv) Fetching " << file_name \
+					<< std::endl;
+				if (FileString::exists(file_name))
+					return 0;
+			}
+		}
+		else
+		{
+			if (FileString::exists(request))
 				return 0;
 		}
-	}
-	else
-	{
-		if (FileString::exists(request))
-			return 0;
-	}
-	if (FileString::is_dir(request))
-	{
-		if (autoindex == "on")
-			return list_autoindex(request, si);
-		else if (autoindex != "")
+		if (FileString::is_dir(request))
 		{
-			set_code(403, "Forbidden");
-			out_body = TemplateError::page(403, si.custom_error(403));
-			return 403;
+			if (autoindex == "on")
+				return list_autoindex(request, si);
+			else if (autoindex != "")
+			{
+				set_code(403, "Forbidden");
+				out_body = TemplateError::page(403, si.custom_error(403));
+				return 403;
+			}
 		}
+		verbose(V) << "(is_404) autoindex: " << autoindex << std::endl;
+		set_code(404, "File Not Found");
+		out_body = TemplateError::page(404, si.custom_error(404));
+		return 404;
 	}
-	verbose(V) << "(is_404) autoindex: " << autoindex << std::endl;
-	set_code(404, "File Not Found");
-	out_body = TemplateError::page(404, si.custom_error(404));
-	return 404;
+	return 0;
 }
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
@@ -219,9 +221,7 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 			}
 		}
 		else
-		{
 			file_name = request;
-		}
 		if (!FileString::exists(file_name))
 			return 0;
 		set_code(200, "OK");
@@ -231,9 +231,10 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 	}
 	if (si.in_header.method == "DELETE")
 	{
-		if (FileString::is_dir(request))
+		if (!FileString::is_file(request))
 		{
 		}
+		verbose(V) << "(is_200) will delete " << request << std::endl;
 	}
 	return 0;
 }
