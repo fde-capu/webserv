@@ -1,10 +1,7 @@
 #!/bin/sh
 
-# TODO remove Alice
-# TODO remove skip validation
-
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
