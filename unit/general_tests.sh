@@ -1,13 +1,12 @@
 #!/bin/sh
 
-# TODO DELETE
 # TODO investigate zombie cgis
 # TODO check 4242 tests at the end of the file
 # TODO check client_max_body_size on .conf file to match server limits
 # TODO remove V(X)
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -170,6 +169,8 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce Basic_1 \
@@ -665,7 +666,8 @@ unittest "50MB success"
 { anounce CHUNK_PARTIAL \
 \
 	'How about 200MB? This time, it is accepted as partial upload, \n
-	since curl is set to close and webserv must always close.' \
+	since curl is set to close and webserv must always close.\n
+	Note: curl is slow on this, and might get oom killed eventualy.' \
 \
 ; } 2> /dev/null
 
@@ -850,33 +852,6 @@ message="Check if CGI was properly executed above."
 unittest "Simple post chunked calling CGI";
 rm ${MYDIR}/99B.words
 
-##################################################################
-##################################################################
-##################################################################
-
-{ anounce Stress \
-\
-	"Stress testing $stress_count calls. Wait for it.\n
-	This can be changed on general_tests.sh:stress_count" \
-\
-; } 2> /dev/null
-
-set +x;
-
-stress_count=100;
-rm -f stress_out;
-i=1;
-while [ "$i" -le "$stress_count" ]; do
-	echo -n "\r $i";
-	curl -sv http://localhost:3491/ 2>> stress_out 1> /dev/null &
-	i=$(( i + 1 ));
-done;
-wait;
-stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
-colorscore "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
-rm -f stress_out;
-set -x;
-
 #################################################################
 ##################################################################
 ##################################################################
@@ -946,14 +921,20 @@ unittest "Another autoindex, now with root rewrite"
 #################################################################
 #################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
-{ anounce DELETE_HARD \
+{ anounce DELETE_HARDFILE \
 	'This deletes a file that was put by the system.' \
 ; } 2> /dev/null
 
-echo 'This file will be deleted.' >> "${MYDIR}/confs/html/uploads_large/file_to_be_deleted"
-ls -l "${MYDIR}/confs/html/uploads_large"
+before="`ls ${MYDIR}/confs/html/uploads_large`";
+echo 'This file will be deleted.' > "${MYDIR}/confs/html/uploads_large/file_to_be_deleted";
+out=`curl -X DELETE http://$name_server:3490/large_upload/file_to_be_deleted -sSvw '%{http_code}' -o foo_out`;
+after="`ls ${MYDIR}/confs/html/uploads_large`";
+echo "ls before DELETE: $before";
+echo "ls after DELETE: $after";
+echo "Got body: `cat foo_out`";
+rm foo_out;
+colorscore "ls must be the same after DELETE call" $before $after;
+colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "$out" "200";
 
 #################################################################
 
@@ -961,12 +942,31 @@ ls -l "${MYDIR}/confs/html/uploads_large"
 	'This POSTs a file, then DELETEs it.' \
 ; } 2> /dev/null
 
+before="`ls ${MYDIR}/confs/html/uploads_large`";
+head -c 142 /dev/urandom > ${MYDIR}/noise_to_delete
+curl http://$name_server:3490/large_uploads -F "file=@${MYDIR}/noise_to_delete"
+during="`ls ${MYDIR}/confs/html/uploads_large`";
+out=`curl -X DELETE http://$name_server:3490/large_upload/noise_to_delete -sSvw '%{http_code}' -o foo_out`;
+after="`ls ${MYDIR}/confs/html/uploads_large`";
+echo "ls before DELETE: $before";
+echo "ls during DELETE: $during";
+echo "ls after DELETE: $after";
+echo "Got body: `cat foo_out`";
+rm foo_out;
+colorscore "ls must be the same after DELETE call" $before $after;
+colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "$out" "200";
+
 #################################################################
 
 { anounce DELETE_A_DIRECTORY \
 	'Tries to delete a directory that has DELETE permission. \n
-	 Expect 403 Forbidden, always.' \
+	 Forcefully implemented 403 Forbidden for all cases.' \
 ; } 2> /dev/null
+
+out=`curl -X DELETE http://$name_server:3490/large_upload -sSvw '%{http_code}' -o foo_out`;
+echo "Got body: `cat foo_out`";
+rm foo_out;
+colorscore "Expect 403" "$out" "403"
 
 #################################################################
 
@@ -974,11 +974,41 @@ ls -l "${MYDIR}/confs/html/uploads_large"
 	'Try to delete an unexistent file.' \
 ; } 2> /dev/null
 
-#################################################################
-#################################################################
-#################################################################
+out=`curl -X DELETE http://$name_server:3490/large_upload/unexistent_file -sSvw '%{http_code}' -o foo_out`;
+echo "Got body: `cat foo_out`";
+rm foo_out;
+colorscore "Expect 404" "$out" "404"
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+#################################################################
+##################################################################
+##################################################################
+
+{ anounce Stress \
+\
+	"Stress testing $stress_count calls. Wait for it.\n
+	This can be changed on general_tests.sh:stress_count" \
+\
+; } 2> /dev/null
+
+set +x;
+
+stress_count=100;
+rm -f stress_out;
+i=1;
+while [ "$i" -le "$stress_count" ]; do
+	echo -n "\r $i";
+	curl -sv http://localhost:3491/ 2>> stress_out 1> /dev/null &
+	i=$(( i + 1 ));
+done;
+wait;
+stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
+colorscore "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
+rm -f stress_out;
+set -x;
+
+##################################################################
+#################################################################
+#################################################################
 
 { anounce CHUNKED_UBUNTU_42_4096 \
 "POST test. This gets random errors on Workspace. \n
@@ -1160,3 +1190,4 @@ unittest "Noise 101"
 
 #####################################################################
 
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!

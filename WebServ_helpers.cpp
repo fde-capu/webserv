@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/04 20:17:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 18:15:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -335,7 +335,7 @@ std::string ws_server_instance::custom_error(const size_t code) const
 		return "";
 	out = root_config.getValStr("root") + "/" + location_get_single("root") + "/" + out;
 	if (!FileString::exists(out))
-		return "Internal Server Error: " + code_str + " is set to unexistent response.";
+		return "";
 	out = FileString(out.c_str()).content();
 	verbose(V) << "(custom_error) Return: " << out << std::endl;
 	return out;
