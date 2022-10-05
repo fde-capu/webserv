@@ -1,15 +1,13 @@
 #!/bin/sh
 
-# TODO CHUNK_50M_NOISE is not completing with right size.
-# TODO MULTI_LARGE_42 is saving under the name of large_upload?
 # TODO DELETE
 # TODO investigate zombie cgis
 # TODO check 4242 tests at the end of the file
 # TODO remove V(X)
-# TODO check unittest() for commented lines of rm
 
 name_server="127.0.0.1";
 step_by_step="true";
+clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -73,12 +71,13 @@ unittest()
 		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorscore "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
 	fi
 
-#	[ "$noise" != "" ] && rm ${MYDIR}/$upfile;
-#	rm tmp_response;
 	[ "$trace" != "" ] && cat tmp_trace_ascii
-	[ "$trace" != "" ] && rm tmp_trace_ascii
 
 	[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
+
+	[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm ${MYDIR}/$upfile;
+	[ "$clean_upfiles_after_test" != "" ] && rm tmp_response;
+	[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm tmp_trace_ascii
 
 	resetvars;
 }
@@ -170,8 +169,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 ##################################################################
 
 { anounce Basic_1 \
@@ -933,6 +930,22 @@ unittest "Autoindex off"
 #################################################################
 #################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce Another_Autoindex \
+	'This shows files that were previously uploaded \n
+	 to large_uploads (root uploads_large).' \
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3490/large_uploads"
+code="200"
+show_output="true"
+unittest "Another autoindex, now with root rewrite"
+
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+
+#################################################################
+
 { anounce CHUNKED_UBUNTU_42_4096 \
 "POST test. This gets random errors on Workspace. \n
  2621330?! First, 4069:" \
@@ -1113,4 +1126,3 @@ unittest "Noise 101"
 
 #####################################################################
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
