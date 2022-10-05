@@ -13,7 +13,7 @@ by fde-capu
 
 ## Tests
 
-Run `webserv webserv-unit.conf` or `nginx nginx-as-webserv.conf`.
+Run `webserv webserv-unit.conf`.
 `general_tests.sh` runs several tests with wichever server is running.
 
 # make
