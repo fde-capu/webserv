@@ -170,6 +170,8 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce Basic_1 \
@@ -643,8 +645,6 @@ cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "2MB success"
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ##################################################################
 

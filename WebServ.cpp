@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/04 20:18:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 04:24:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,7 +250,7 @@ void WebServ::respond_connection_from(int fd)
 				" > Incomplete header" << std::endl;
 			return respond_timeout(fd);
 		}
-		raw.receive_until_eof();
+		raw.receive_until("\r\n\r\n");
 		in_header = get_header(raw.output);
 	}
 
@@ -258,7 +258,7 @@ void WebServ::respond_connection_from(int fd)
 		in_header << std::endl;
 
 	si = choose_instance(in_header, fd_to_port[fd]);
-	si.in_body = get_body(raw.output);
+	si.in_body = get_body(raw.receive_until_eof());
 	si.set_props();
 	si.set_sizes();
 	si.fd = fd;

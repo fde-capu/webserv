@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:52:01 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/04 22:32:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 04:38:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,8 +56,9 @@ class CircularBuffer
 		size_t length() const;
 		bool fail() const;
 
+		std::string& receive_until(const std::string& = "\r\n");
 		std::string& receive_until_eof();
-		std::string& try_to_receive(size_t = CIRCULARBUFFER_SIZE, bool = false);
+		std::string& try_to_receive(const size_t = CIRCULARBUFFER_SIZE, bool = false);
 		std::string output;
 
 		operator std::string();

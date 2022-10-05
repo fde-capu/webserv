@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/04 22:27:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 04:59:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ CircularBuffer::CircularBuffer(int u_fd)
 	eof(false), success(true)
 {
 	mountMemory();
-	return ;
 }
 
 CircularBuffer::CircularBuffer(CircularBuffer const & src)
@@ -28,7 +27,6 @@ CircularBuffer::CircularBuffer(CircularBuffer const & src)
 	eof(false), success(true)
 {
 	*this = src;
-	return ;
 }
 
 void CircularBuffer::mountMemory()
@@ -53,7 +51,7 @@ std::string& CircularBuffer::set_eof()
 
 std::string& CircularBuffer::unfinished()
 {
-	verbose(1) << "(CirularBuffer) Returning unfinished/unknown " << length() << std::endl;
+	verbose(5) << "(CircularBuffer) Returning unfinished/unknown " << length() << std::endl;
 	return output;
 }
 
@@ -76,9 +74,9 @@ bool CircularBuffer::outOfLimits(const size_t& plus) const
 	return false;
 }
 
-std::string& CircularBuffer::try_to_receive(size_t nbytes, bool slow)
+std::string& CircularBuffer::try_to_receive(const size_t nbytes, bool slow)
 {
-	int V(1);
+	int V(3);
 	size_t size_ini(output.length());
 	size_t size_cur(0);
 	size_t size_fin(size_ini + nbytes);
@@ -86,14 +84,13 @@ std::string& CircularBuffer::try_to_receive(size_t nbytes, bool slow)
 	Chronometer time_out;
 	size_t time_gap;
 
-	verbose(V) << "(CircularBuffer) try_to_receive." << std::endl;
+	verbose(V) << "(CircularBuffer) try_to_receive " << nbytes << std::endl;
 	if (outOfLimits(nbytes))
-		output.reserve(length() + nbytes);
-	else
 	{
 		verbose(V) << "(CircularBuffer) " << size_fin << " would extrapolate limits." << std::endl;
 		return out_of_resource();
 	}
+	output.reserve(length() + nbytes);
 	time_gap = CIRCULARBUFFER_TIMEOUT_MSEC * (slow ? 5 : 1);
 	verbose(V) << "(CircularBuffer) Started: " << size_ini << std::endl;
 	while (size_cur < size_fin)
@@ -103,7 +100,7 @@ std::string& CircularBuffer::try_to_receive(size_t nbytes, bool slow)
 			verbose(V) << "(CircularBuffer) Timeout! time_gap " << time_gap << std::endl;
 			return unfinished();
 		}
-		rbytes = read(fd, const_cast<char *>(memory), size);
+		rbytes = read(fd, const_cast<char *>(memory), nbytes);
 		if (rbytes <= -1)
 			continue ;
 		if (rbytes == 0)
@@ -122,9 +119,27 @@ std::string& CircularBuffer::try_to_receive(size_t nbytes, bool slow)
 	return unfinished();
 }
 
+std::string& CircularBuffer::receive_until(const std::string& match)
+{
+	size_t look;
+	Chronometer time_out;
+
+	while (time_out <= CIRCULARBUFFER_TIMEOUT_MSEC)
+	{
+		try_to_receive(1, true);
+		if (output.length() < match.length())
+			continue ;
+		look = output.length() - match.length();
+		if (output.find(match, look) != 0)
+			continue ;
+		break ;
+	}
+	return output;
+}
+
 std::string& CircularBuffer::receive_until_eof()
 {
-	int V(1);
+	int V(3);
 	int rbytes;
 	Chronometer time_out;
 
@@ -158,15 +173,13 @@ std::string& CircularBuffer::receive_until_eof()
 CircularBuffer & CircularBuffer::operator= (CircularBuffer const & rhs)
 {
 	if (this != &rhs)
-	{
 		mountMemory();
-	}
 	return *this;
 }
 
 std::ostream & operator<< (std::ostream & o, CircularBuffer const & self)
 {
-	o << "::CircularBuffer::" << std::endl;
+	o << self.output;
 	static_cast<void>(self);
 	return o;
 }
