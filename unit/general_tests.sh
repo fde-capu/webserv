@@ -3,6 +3,7 @@
 # TODO DELETE
 # TODO investigate zombie cgis
 # TODO check 4242 tests at the end of the file
+# TODO check client_max_body_size on .conf file to match server limits
 # TODO remove V(X)
 
 name_server="127.0.0.1";
@@ -877,6 +878,8 @@ rm -f stress_out;
 set -x;
 
 #################################################################
+##################################################################
+##################################################################
 
 { anounce Custom_Error \
 \
@@ -913,6 +916,7 @@ unittest "Error 404"
 cmd="curl http://$name_server:3490/autoindex-demo"
 code="200"
 show_output="true"
+message="Must receive HTML of directory listing."
 unittest "Autoindex"
 
 #################################################################
@@ -927,12 +931,8 @@ show_output="true"
 unittest "Autoindex off"
 
 #################################################################
-#################################################################
-#################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
-{ anounce Another_Autoindex \
+{ anounce ReRoot_Autoindex \
 	'This shows files that were previously uploaded \n
 	 to large_uploads (root uploads_large).' \
 ; } 2> /dev/null
@@ -942,9 +942,30 @@ code="200"
 show_output="true"
 unittest "Another autoindex, now with root rewrite"
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+#################################################################
+#################################################################
+#################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce DELETE_HARD \
+	'This deletes a file that was put by the system.' \
+; } 2> /dev/null
+
+echo 'This file will be deleted.' >> "${MYDIR}/confs/html/uploads_large/file_to_be_deleted"
+ls -l "${MYDIR}/confs/html/uploads_large"
 
 #################################################################
+
+{ anounce DELETE_A_POST \
+	'This POSTs a file, then DELETEs it.' \
+; } 2> /dev/null
+
+#################################################################
+#################################################################
+#################################################################
+
+finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
 
 { anounce CHUNKED_UBUNTU_42_4096 \
 "POST test. This gets random errors on Workspace. \n

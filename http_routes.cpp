@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/28 21:07:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 17:04:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,9 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 {
 	DataFold locations(si.config.get<DataFold>("location"));
 
-	if (locations.empty() && si.val("root") == "")
+	if (	(locations.empty() && si.val("root") == "")		||
+			(si.in_header.method == "DELETE" && FileString::is_dir(si.location_path()))
+		)
 	{
 		set_code(403, "Forbidden");
 		out_body = TemplateError::page(403, si.custom_error(403));
@@ -198,34 +200,40 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 
 int ws_reply_instance::is_200(ws_server_instance& si)
 {
-	int V(2);
+	int V(1);
 	std::string request;
 	DataFold indexes;
 
 	request = si.location_path();
-
-	verbose(V) << "(is_200) request: " << request << std::endl;
-
-	if (FileString::is_dir(request))
+	verbose(V) << "(is_200) request: " << si.in_header.method << " " << request << std::endl;
+	if (si.in_header.method == "GET")
 	{
-		indexes = si.server_location_config("index");
-		while (indexes.loop())
+		if (FileString::is_dir(request))
 		{
-			file_name = si.location_path(indexes.val);
-			if (FileString::exists(file_name))
-				break ;
+			indexes = si.server_location_config("index");
+			while (indexes.loop())
+			{
+				file_name = si.location_path(indexes.val);
+				if (FileString::exists(file_name))
+					break ;
+			}
+		}
+		else
+		{
+			file_name = request;
+		}
+		if (!FileString::exists(file_name))
+			return 0;
+		set_code(200, "OK");
+		out_body = FileString(file_name.c_str()).content();
+		verbose(V) << "(is_200) out_body" << std::endl << SHORT(out_body) << std::endl;
+		return 200;
+	}
+	if (si.in_header.method == "DELETE")
+	{
+		if (FileString::is_dir(request))
+		{
 		}
 	}
-	else
-	{
-		file_name = request;
-	}
-	if (!FileString::exists(file_name))
-		return 0;
-	set_code(200, "OK");
-	out_body = FileString(file_name.c_str()).content();
-
-	verbose(V) << "(is_200) out_body" << std::endl << SHORT(out_body) << std::endl;
-
-	return 200;
+	return 0;
 }
