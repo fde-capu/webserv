@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:15:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 20:27:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 	std::string syscall;
 	for (size_t i = 0; i < argv.size(); i++)
 		syscall += argv[i] + " ";
-	verbose(1) << "(webserv:cgi) " << syscall << std::endl;
+	verbose(CRITICAL) << "(webserv:cgi) " << syscall << std::endl;
 	return cgi_pipe(si, argv);
 }
 

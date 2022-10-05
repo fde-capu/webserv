@@ -1,13 +1,10 @@
 #!/bin/sh
 
-# TODO investigate zombie cgis
-# TODO check 4242 tests at the end of the file
 # TODO check client_max_body_size on .conf file to match server limits
-# TODO remove V(X)
-# TODO remover skip validation
+# TODO remove skip validation
 
 name_server="127.0.0.1";
-step_by_step="";
+step_by_step="true";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -170,6 +167,7 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -681,8 +679,6 @@ unittest "Accepts, though incomplete"
 ##################################################################
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CGI_GET_SH \
 \
 	'Test CGI with GET method, cgi_test.sh.' \
@@ -1010,185 +1006,5 @@ set -x;
 ##################################################################
 #################################################################
 #################################################################
-
-{ anounce CHUNKED_UBUNTU_42_4096 \
-"POST test. This gets random errors on Workspace. \n
- 2621330?! First, 4069:" \
-; } 2> /dev/null
-
-chunked="true"
-head -c 4096 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c 4096 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
-cmd="curl http://$name_server:4242/directory/youpi.bla"
-upfile="youpi.bla"
-code="202"
-testfile="${MYDIR}/youpi_expected_result.bla"
-unittest "Test POST /directory/youpi.bla size of 4096"
-rm "${MYDIR}/youpi.bla"
-rm "${MYDIR}/youpi_expected_result.bla"
-
-#####################################################################
-
-{ anounce CHUNKED_UBUNTU_42_2621330 \
-"POST test. This gets random errors on Workspace. \n
- 2621330?! Lets do it!" \
-; } 2> /dev/null
-
-chunked="true"
-head -c 2621330 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c 2621330 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
-cmd="curl http://$name_server:4242/directory/youpi.bla"
-upfile="youpi.bla"
-code="202"
-testfile="${MYDIR}/youpi_expected_result.bla"
-#fail="true"
-unittest "Test POST /directory/youpi.bla size of 2621330"
-rm "${MYDIR}/youpi.bla"
-rm "${MYDIR}/youpi_expected_result.bla"
-
-#####################################################################
-
-{ anounce MULTI_UBUNTU_42_4096 \
-"POST test. This gets random errors on Workspace. \n
- 2621330?! First, 4069:" \
-; } 2> /dev/null
-
-head -c 4096 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c 4096 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
-cmd="curl -H 'Expect:' http://$name_server:4242/directory/youpi.bla"
-upfile="youpi.bla"
-code="202"
-testfile="${MYDIR}/youpi_expected_result.bla"
-unittest "Test POST /directory/youpi.bla size of 4096"
-rm "${MYDIR}/youpi.bla"
-rm "${MYDIR}/youpi_expected_result.bla"
-
-#####################################################################
-
-{ anounce MULTI_UBUNTU_42_2621330 \
-"POST test. This gets random errors on Workspace. \n
- 2621330?! Lets do it!" \
-; } 2> /dev/null
-
-head -c 2621330 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c 2621330 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
-cmd="curl -H 'Expect:' http://$name_server:4242/directory/youpi.bla"
-upfile="youpi.bla"
-code="202"
-testfile="${MYDIR}/youpi_expected_result.bla"
-#fail="true"
-unittest "Test POST /directory/youpi.bla size of 2621330"
-rm "${MYDIR}/youpi.bla"
-rm "${MYDIR}/youpi_expected_result.bla"
-
-#####################################################################
-
-{ anounce 42SP \
-\
-	'POST :4242 at root (/) should fail, 405 not allowed.' \
-\
-; } 2> /dev/null
-
-noise="1MB"
-cmd="curl http://$name_server:4242"
-code="405";
-fail="true";
-unittest "Post fail"
-
-#####################################################################
-
-{ anounce 42SP \
-\
-	'DELETE :4242 at root (/) also should fail. 405' \
-\
-; } 2> /dev/null
-
-cmd="curl -vL -X DELETE http://$name_server:4242"
-code="405"
-unittest "Delete reject"
-
-#####################################################################
-
-{ anounce 42SP \
-\
-	'/post_body rejects all but POST (2 tests). 405' \
-\
-; } 2> /dev/null
-
-cmd="curl -X GET http://$name_server:4242/post_body"
-code="405"
-unittest "Reject GET"
-
-{ div; } 2> /dev/null
-
-cmd="curl -X DELETE http://$name_server:4242/post_body"
-code="405"
-unittest "Reject DELETE"
-
-#####################################################################
-
-{ anounce 42SP \
-\
-	'- /post_body must answer anything to POST request with a \n
-	maxBody of 100. Many tests.\n
-	- 1st) Post 99B.words into html4242/uploads (as set in config).' \
-\
-; } 2> /dev/null
-
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:4242/post_body";
-outdir="${MYDIR}/confs/html4242/uploads";
-upfile="99B.words" 
-code="201";
-unittest "Post to 4242 uploads";
-ls -l ${MYDIR}/confs/html4242/uploads/99B.words;
-rm ${MYDIR}/99B.words
-cat ${MYDIR}/confs/html4242/uploads/99B.words;
-
-#####################################################################
-
-{ anounce 42SP \
-\
-	'2nd) The same, using noise upfile.' \
-\
-; } 2> /dev/null
-
-noise="99"
-cmd="curl http://$name_server:4242/post_body"
-outdir="${MYDIR}/confs/html4242/uploads";
-code="201"
-unittest "Noise 99"
-
-#####################################################################
-
-{ anounce 42SP \
-\
-	'3rd) Same, with 100B.noise. Max is at 100B, this passes. \n
-	Same file name, so it overwrites.'\
-\
-; } 2> /dev/null
-
-noise="100"
-cmd="curl http://$name_server:4242/post_body"
-outdir="${MYDIR}/confs/html4242/uploads";
-code="201"
-unittest "Noise 100"
-
-#####################################################################
-
-{ anounce 42SP \
-\
-	'4th) 101B.noise should not pass because of max_size is set for 100. 413' \
-\
-; } 2> /dev/null
-
-noise="101"
-cmd="curl http://$name_server:4242/post_body"
-outdir="${MYDIR}/confs/html4242/uploads";
-code="413"
-fail="true"
-unittest "Noise 101"
-
-#####################################################################
 
 finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!

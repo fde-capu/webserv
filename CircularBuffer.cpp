@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 04:59:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 20:39:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,9 +66,9 @@ bool CircularBuffer::outOfLimits(const size_t& plus) const
 {
 	if (length() + plus > limit)
 	{
-		verbose(1) << "(CircularBuffer) Is limited to " << limit \
-			<< " so refuses to read more (wants " << \
-			plus << ")" << std::endl;
+		verbose(CRITICAL) << "(CircularBuffer) Limited to " << limit \
+			<< ", refuses to read more (wants " << \
+			plus << ")." << std::endl;
 		return true;
 	}
 	return false;

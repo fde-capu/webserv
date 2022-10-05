@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:18:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 20:33:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,5 @@ std::string get_value(std::string line);
 # define CONFIG_OK "Configuration ok."
 # define CONFIG_CHECKING "Checking configuration file."
 # define BYE "Bye!"
-
-# define CRITICAL 1
 
 #endif

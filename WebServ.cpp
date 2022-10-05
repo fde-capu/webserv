@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:19:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 20:28:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int WebServ::bind_socket_to_local(int u_port)
 		throw std::domain_error("(bind_socket_to_local) Socket locked.");
 
 	freeaddrinfo(result);
-	verbose(1) << "(bind_socket_to_local) Bound fd " << sfd << " to port " << u_port << "." << std::endl;
+	verbose(2) << "(bind_socket_to_local) Bound fd " << sfd << " to port " << u_port << "." << std::endl;
 	return sfd;
 }
 
@@ -105,7 +105,7 @@ void WebServ::hook_it()
 				taken_ports.push_back(instance[i].port[j]);
 			}
 			else if (!same_port_another_name(&instance[i]))
-				verbose(1) << "(webserv) Warning: multiple servers configured on same port. Only the first will be used." << std::endl;
+				verbose(2) << "(webserv) Warning: multiple servers configured on same port. Only the first will be used." << std::endl;
 		}
 	}
 	verbose(1) << "(webserv) I'm hooked." << std::endl << std::endl;
@@ -246,7 +246,7 @@ void WebServ::respond_connection_from(int fd)
 	{
 		if (time_out > TIME_OUT_MSEC)
 		{
-			verbose(1) << "(respond_connection_from) Timeout! << " << time_out << \
+			verbose(2) << "(respond_connection_from) Timeout! << " << time_out << \
 				" > Incomplete header" << std::endl;
 			return respond_timeout(fd);
 		}
