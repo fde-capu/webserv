@@ -4,6 +4,7 @@
 # TODO check 4242 tests at the end of the file
 # TODO check client_max_body_size on .conf file to match server limits
 # TODO remove V(X)
+# TODO remover skip validation
 
 name_server="127.0.0.1";
 step_by_step="";
@@ -169,8 +170,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 ##################################################################
 
 { anounce Basic_1 \
@@ -681,6 +680,8 @@ unittest "Accepts, though incomplete"
 ##################################################################
 ##################################################################
 ##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CGI_GET_SH \
 \

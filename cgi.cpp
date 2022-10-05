@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 17:19:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 20:15:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 			cgi_write_into_child(si, pipe_pc[1]);
 		close(pipe_pc[1]);
 		out_body = CircularBuffer(pipe_cp[0]);
+		wait(0);
 		close(pipe_cp[0]);
 		verbose(V) << "(Parent) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 		header_from_body();
