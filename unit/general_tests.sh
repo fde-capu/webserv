@@ -167,6 +167,8 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce Basic_1 \
@@ -646,7 +648,7 @@ unittest "2MB success"
 { anounce CHUNK_50M_NOISE \
 \
 	'How about 50MB?\n
-	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
+	This takes long, because of chunk decoding.' \
 \
 ; } 2> /dev/null
 
@@ -659,13 +661,11 @@ unittest "50MB success"
 
 #####################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CHUNK_PARTIAL \
 \
 	'How about 200MB? This time, it is accepted as partial upload, \n
 	since curl is set to close and webserv must always close.\n
-	Note: curl is slow on this, and might get oom killed eventualy.' \
+	Note: takes long.' \
 \
 ; } 2> /dev/null
 

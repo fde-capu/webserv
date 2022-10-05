@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 21:21:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 21:58:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void ws_server_instance::read_more_chunked()
 		if (chunk_size_bytes == 0)
 			break ;
 		chunked_content += StringTools::consume_bytes(in_body, chunk_size_bytes);
-		StringTools::consume_until(in_body, "\r\n");
+		StringTools::just_consume_until(in_body, "\r\n");
 
 		verbose(V) << "(read_more_chunked) chunked_content " << SHORT(chunked_content) << std::endl;
 		verbose(V) << "(read_more_chunked) in_body " << SHORT(in_body) << std::endl;

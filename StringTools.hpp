@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 04:00:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 21:57:37 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ class StringTools
 #		define beginsWith			startsWith
 		static std::string			consume_delims(std::string&, const std::string);
 		static std::string			consume_until(std::string&, const std::string);
+		static void					just_consume_until(std::string&, const std::string);
 		static std::string			consume_bytes(std::string&, size_t);
 		static std::string			get_after_first(const std::string&, const std::string);
 		static std::string			get_before_first(const std::string&, const std::string);
