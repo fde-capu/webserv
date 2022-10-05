@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:27:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 23:10:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,11 @@
 ArgVal::ArgVal(int argc, char ** argv, const char * u_board_file_name)
 : _fail(false), argc(argc), argv(argv)
 {
+	int V(2);
+
 	std::string path = relative_path(u_board_file_name);
 	_board_file_name = const_cast<char*>(path.c_str());
-	verbose(3) << "(ArgVal) Reading: " << _board_file_name << std::endl;
+	verbose(V) << "(ArgVal) Reading: " << _board_file_name << std::endl;
 	_board.load(_board_file_name);
 	run();
 }
@@ -33,12 +35,10 @@ ArgVal::ArgVal(int argc, char ** argv)
 
 void ArgVal::run()
 {
-	int V(1);
-
 	try {
 		if (_board.get<int>("argc", "fixed") != argc)
 		{
-			verbose(V) << "(ArgVal) argc does not match." << std::endl;
+			verbose(CRITICAL) << "(ArgVal) argc does not match." << std::endl;
 			_fail = true;
 		}
 	} catch(std::exception&){}
@@ -46,7 +46,7 @@ void ArgVal::run()
 	try {
 		if (argc > _board.get<int>("argc", "max"))
 		{
-			verbose(V) << "(ArgVal) Too many arguments." << std::endl;
+			verbose(CRITICAL) << "(ArgVal) Too many arguments." << std::endl;
 			_fail = true;
 		}
 	} catch(std::exception&){}
@@ -54,7 +54,7 @@ void ArgVal::run()
 	try {
 		if (argc < _board.get<int>("argc", "min"))
 		{
-			verbose(V) << "(ArgVal) Needs more arguments." << std::endl;
+			verbose(CRITICAL) << "(ArgVal) Needs more arguments." << std::endl;
 			_fail = true;
 		}
 	} catch(std::exception&){}
@@ -76,16 +76,18 @@ void ArgVal::run()
 			if (vt[i] == "size_t" && !is_size_t(std::string(argv[argi])))
 				_fail = true;
 			if (_fail)
-				verbose(V) << "(ArgVal) " << std::string(argv[argi]) << " failed to " << std::string(vt[i]) << "." << std::endl;
+				verbose(CRITICAL) << "(ArgVal) " << std::string(argv[argi]) << " failed to " << std::string(vt[i]) << "." << std::endl;
 		}
 	}
 }
 
 void ArgVal::load_conditions(char * u_condition_file)
 {
+	int V(2);
+
 	std::string path = relative_path(u_condition_file);
 	_board_file_name = const_cast<char*>(path.c_str());
-	verbose(3) << "(ArgVal) Reading: " << _board_file_name << std::endl;
+	verbose(V) << "(ArgVal) Reading: " << _board_file_name << std::endl;
 	_board.load(_board_file_name);
 	run();
 }
@@ -96,11 +98,11 @@ ArgVal::ArgVal()
 
 bool ArgVal::validate_by_board_key(DataFold board, DataFold config)
 {
-	int V(1);
+	int V(2);
 	DataFold par;
 	size_t count;
 
-	verbose(3) << "-###- vbbk validate_by_board_key" << std::endl;
+	verbose(V) << "-###- vbbk validate_by_board_key" << std::endl;
 
 	while(board.loop())
 	{
@@ -109,7 +111,7 @@ bool ArgVal::validate_by_board_key(DataFold board, DataFold config)
 			par = board.get<DataFold>("accept_unique");
 			while (par.loop())
 			{
-				verbose(4) << "  par   > " << par.val << std::endl;
+				verbose(V) << "  par   > " << par.val << std::endl;
 				count = count_keys(config, par.val);
 				if (count > 1)
 				{
@@ -123,7 +125,7 @@ bool ArgVal::validate_by_board_key(DataFold board, DataFold config)
 			par = board.get<DataFold>("mandatory");
 			while (par.loop())
 			{
-				verbose(4) << "  mandatory   > " << par.val << std::endl;
+				verbose(V) << "  mandatory   > " << par.val << std::endl;
 				count = count_keys(config, par.val);
 				if (!count)
 				{
@@ -138,28 +140,28 @@ bool ArgVal::validate_by_board_key(DataFold board, DataFold config)
 
 bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 {
-	int V(1);
+	int V(2);
 	DataFold par;
 	DataFold con;
 	DataFold foo;
 
-	verbose(3) << "### cap comply_argval_params" << std::endl;
-	verbose(3) << "\\-(board)-> " << board.string() << std::endl;
-	verbose(3) << "\\-(config)-> " << config.string() << std::endl;
+	verbose(V) << "### cap comply_argval_params" << std::endl;
+	verbose(V) << "\\-(board)-> " << board.string() << std::endl;
+	verbose(V) << "\\-(config)-> " << config.string() << std::endl;
 
 	while (board.loop())
 	{
-		verbose(2) << "  cap > " << board.key << " :=: " << board.val << std::endl;
+		verbose(V) << "  cap > " << board.key << " :=: " << board.val << std::endl;
 
 		if (board.type & DF_TYPE_SUB)
 		{
 			con = config.filter(board.key);
 			for (size_t i = 0; i < con.size(); i++)
 			{
-				verbose(2) << "--- " << con[i].key << " : " << con[i].val << std::endl;
+				verbose(V) << "--- " << con[i].key << " : " << con[i].val << std::endl;
 				if (!comply_argval_params(board.get_val(board.key), con[i].val))
 				{
-					verbose(V) << "(ArgVal) Error: " << con[i].key << " : " << con[i].val << std::endl;
+					verbose(CRITICAL) << "(ArgVal) Error: " << con[i].key << " : " << con[i].val << std::endl;
 					return false;
 				}
 			}
@@ -169,7 +171,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 
 	if (!validate_by_board_key(board, config))
 	{
-		verbose(V) << "(ArgVal) Error: validation by board key failed." << std::endl;
+		verbose(CRITICAL) << "(ArgVal) Error: validation by board key failed." << std::endl;
 		return false;
 	}
 
@@ -219,25 +221,25 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 
 		while (con.loop())
 		{
-			verbose(3) << "(Argval) " << con.key << " : " << con.val << " (" << con.type << ")" << std::endl;
+			verbose(V) << "(Argval) " << con.key << " : " << con.val << " (" << con.type << ")" << std::endl;
 			if (set_flags & AGF_NUMBER)
 			{
 				if (!(con.type & DF_TYPE_NUMBER))
 				{
-					verbose(V) << "(ArgVal) " << con.val << " is not a number." << std::endl;
+					verbose(CRITICAL) << "(ArgVal) " << con.val << " is not a number." << std::endl;
 					return false;
 				}
 			}
 			if (set_flags & AGF_WORD && !isWord(con.val))
 			{
-				verbose(V) << "(ArgVal) " << con.val << " is not valid word." << std::endl;
+				verbose(CRITICAL) << "(ArgVal) " << con.val << " is not valid word." << std::endl;
 				return false;
 			}
 			if (set_flags & AGF_ONLY)
 			{
 				if (!isWordInWordSet(con.val, par.get_val().pop()))
 				{
-					verbose(V) << "(ArgVal) " << con.val << " invalid." << std::endl;
+					verbose(CRITICAL) << "(ArgVal) " << con.val << " invalid." << std::endl;
 					return false;
 				}
 			}
@@ -246,7 +248,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				foo = con.get_val();
 				if (foo.size() != fixed_len)
 				{
-					verbose(V) << "(ArgVal) " << con.string() << " has incorrect number of parameters (wants array of " << fixed_len << ")." << std::endl;
+					verbose(CRITICAL) << "(ArgVal) " << con.string() << " has incorrect number of parameters (wants array of " << fixed_len << ")." << std::endl;
 					return false;
 				}
 			}
@@ -257,7 +259,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				{
 					if (!isFileName(foo.val))
 					{
-						verbose(V) << "(ArgVal) " << foo.val << " is not a valid file name." << std::endl;
+						verbose(CRITICAL) << "(ArgVal) " << foo.val << " is not a valid file name." << std::endl;
 						return false;
 					}
 				}
@@ -269,7 +271,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				{
 					if (foo.val.c_str()[0] != '/')
 					{
-						verbose(V) << "(ArgVal) " << con.key << " must be absolute path." << std::endl;
+						verbose(CRITICAL) << "(ArgVal) " << con.key << " must be absolute path." << std::endl;
 						return false;
 					}
 				}
@@ -278,7 +280,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 			{
 				if (!isBoolStr(con.val))
 				{
-					verbose(V) << "(ArgVal) " << con.key << " must be a boolean." << std::endl;
+					verbose(CRITICAL) << "(ArgVal) " << con.key << " must be a boolean." << std::endl;
 					return false;
 				}
 			}
@@ -291,7 +293,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					{
 						if (!isNumber(foo.val))
 						{
-							verbose(V) << "(ArgVal) " << con.key << " " << con.val << " bad syntax." << std::endl;
+							verbose(CRITICAL) << "(ArgVal) " << con.key << " " << con.val << " bad syntax." << std::endl;
 							return false;
 						}
 					}
@@ -299,7 +301,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					{
 						if (!isFileName(foo.val))
 						{
-							verbose(V) << "(ArgVal) " << foo.val << " is not a valid file name." << std::endl;
+							verbose(CRITICAL) << "(ArgVal) " << foo.val << " is not a valid file name." << std::endl;
 							return false;
 						}
 					}
@@ -312,7 +314,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				|| !isNumber(foo[0].val)
 				|| !isUri(foo[1].val))
 				{
-					verbose(V) << "(ArgVal) " << con.key << ": expected number then uri." << std::endl;
+					verbose(CRITICAL) << "(ArgVal) " << con.key << ": expected number then uri." << std::endl;
 					return false;
 				}
 			}
@@ -325,7 +327,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					{
 						if (!isWord(foo.val))
 						{
-							verbose(V) << "(ArgVal) " << con.key << " " << foo.val << " should be a trail word." << std::endl;
+							verbose(CRITICAL) << "(ArgVal) " << con.key << " " << foo.val << " should be a trail word." << std::endl;
 							return false;
 						}
 					}
@@ -333,7 +335,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 					{
 						if (!isNumber(foo.val))
 						{
-							verbose(V) << "(ArgVal) " << foo.val << " should be a number for last element." << std::endl;
+							verbose(CRITICAL) << "(ArgVal) " << foo.val << " should be a number for last element." << std::endl;
 							return false;
 						}
 					}
@@ -346,7 +348,7 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 				{
 					if (!isUri(foo.val))
 					{
-						verbose(V) << "(ArgVal) " << foo.val << " is not a uri." << std::endl;
+						verbose(CRITICAL) << "(ArgVal) " << foo.val << " is not a uri." << std::endl;
 						return false;
 					}
 				}
@@ -355,10 +357,10 @@ bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 	}
 	if (board.empty() && !config.empty())
 	{
-		verbose(V) << "(ArgVal) " << config.string() << " is invalid." << std::endl;
+		verbose(CRITICAL) << "(ArgVal) " << config.string() << " is invalid." << std::endl;
 		return false;
 	}
-	verbose(3) << "> " << config.string() << " is valid." << std::endl;
+	verbose(V) << "> " << config.string() << " is valid." << std::endl;
 	return true;
 }
 
@@ -375,43 +377,49 @@ size_t ArgVal::count_keys(DataFold data, std::string key) const
 
 bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 {
-	int V(1);
+	int V(2);
 	DataFold par;
 	bool valid;
 
-	verbose(3) << "### cck comply_config_keys" << std::endl;
-	verbose(3) << "\\-(board)-> " << board.string() << std::endl;
-	verbose(3) << "\\-(config)-> " << config.string() << std::endl;
+	verbose(V) << "### cck comply_config_keys" << std::endl;
+	verbose(V) << "\\-(board)-> " << board.string() << std::endl;
+	verbose(V) << "\\-(config)-> " << config.string() << std::endl;
 
 	while (config.loop())
 	{
-		verbose(3) << "  config > " << config.key << " :=: " << config.val << \
+		verbose(V) << "  config > " << config.key << " :=: " << config.val << \
 			" (" << config.type << ")" << std::endl;
 		valid = false;
 		board.loop_reset();
 		while (board.loop())
 		{
-			verbose(3) << "  board > " << board.key << " :=: " << board.val << std::endl;
+			verbose(V) << "  board > " << board.key << " :=: " << board.val << std::endl;
 
 			if (config.type & DF_TYPE_SUB)
 			{
+				verbose(1) << " ## board.key val " << board.key << " " << board.val << std::endl;
+				verbose(1) << " ## config.key " << config.key << std::endl;
+				verbose(1) << " ## count " << config.key_count(config.key) << std::endl;
+				DataFold many = config.get_val(config.key);
+				verbose(1) << " ## many.size() " << many.size() << std::endl;
+
 				if (!comply_config_keys(board.get_val(config.key), \
-					config.get_val(config.key)))
+							config.get_val(config.key)))
 				{
-					verbose(V) << "(ArgVal) Note: " << config.key << "." << std::endl;
+					verbose(CRITICAL) << "(ArgVal) Note: " << config.key << "." << std::endl;
 					return false;
 				}
 			}
 			if (count_keys(board.get_val(board.key), config.key))
 			{
-				verbose(3) << "Found " << config.key << " on board." << std::endl;
+				verbose(V) << "Found " << config.key << " on board." << std::endl;
 				valid = true;
 				break;
 			}
 			if ((board.key == "accept" || board.key == "accept_unique" \
 				|| board.key == "mandatory") && count_keys(board.val, config.key))
 			{
-				verbose(3) << "Found " << config.key << " on " << board.key << \
+				verbose(V) << "Found " << config.key << " on " << board.key << \
 					"." << std::endl;
 				valid = true;
 				break;
@@ -422,11 +430,11 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 	}
 	if (valid)
 	{
-		verbose(3) << "> " << config.string() << " is valid." << std::endl;
+		verbose(V) << "> " << config.string() << " is valid." << std::endl;
 	}
 	else
 	{
-		verbose(V) << "> " << config.string() << " is invalid." << std::endl;
+		verbose(CRITICAL) << "> " << config.string() << " is invalid." << std::endl;
 	}
 	return valid;
 }
@@ -438,9 +446,9 @@ bool ArgVal::comply_check(DataFold board, DataFold config)
 
 bool ArgVal::comply(char *u_board_file)
 {
-	int V(1);
+	int V(2);
 	const char * _board_file = u_board_file;
-	verbose(3) << "(ArgVal) Reading: " << _board_file << std::endl;
+	verbose(V) << "(ArgVal) Reading: " << _board_file << std::endl;
 	_config.load(_board_file);
 
 	if (AGV_SKIP_CHECK == 1)
