@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:24:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 21:16:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,7 +246,7 @@ void ws_server_instance::set_sizes()
 	else if (is_chunked())
 	{
 		exceeded_limit = max_size && chunked_content.length() > max_size;
-		reached_limit = max_size && chunked_content.length() == max_size;
+		reached_limit = max_size && chunked_content.length() >= max_size;
 	}
 	else
 	{

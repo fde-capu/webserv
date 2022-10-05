@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# TODO check client_max_body_size on .conf file to match server limits
+# TODO remove Alice
 # TODO remove skip validation
 
 name_server="127.0.0.1";
@@ -167,7 +167,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 ##################################################################
 
 { anounce Basic_1 \
@@ -659,6 +658,8 @@ code="201"
 unittest "50MB success"
 
 #####################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_PARTIAL \
 \

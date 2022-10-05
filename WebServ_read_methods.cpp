@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 21:41:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/05 21:21:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,14 @@ int ws_server_instance::read_more_general()
 	if (!is_chunked() && !is_multipart())
 		read_more_plain(max_size);
 	if (is_chunked())
+	{
+		set_sizes();
+		if (exceeded_limit)
+			return 507;
+		if (reached_limit)
+			return status;
 		read_more_chunked();
+	}
 	if (is_multipart())
 	{
 		if (in_header.content_length > CIRCULARBUFFER_LIMIT)
@@ -59,13 +66,14 @@ bool ws_server_instance::read_more_plain(const size_t& max)
 
 void ws_server_instance::read_more_chunked()
 {
-	static int V(2);
+	static int V(5);
 	std::string chunk_size_hex;
 	std::string chunk_extension;
 	size_t chunk_size_bytes(1);
 	Chronometer chrono;
 
-	if (in_header.method == "GET")
+	set_sizes();
+	if (in_header.method == "GET" || reached_limit || exceeded_limit)
 		return ;
 	while (chrono < 1000)
 	{
@@ -74,7 +82,6 @@ void ws_server_instance::read_more_chunked()
 		if (read_more_plain(in_header.content_length))
 			chrono.btn_reset();
 	}
-
 	while (!reached_limit && !exceeded_limit)
 	{
 		chunk_size_hex = StringTools::consume_until(in_body, "\r\n");
@@ -134,7 +141,6 @@ void ws_server_instance::read_more_multipart()
 int ws_reply_instance::read_limits(ws_server_instance& si)
 {
 	static int V(2);
-	static int VPRINTLIM(40);
 	int pos_status(0);
 
 	verbose(V) << "(read_limits) max_size: " << si.max_size << "." \
@@ -163,15 +169,9 @@ int ws_reply_instance::read_limits(ws_server_instance& si)
 		return 422;
 	}
 
-	verbose(V) << "(read_limits) in_body >>" << \
-		si.in_body.substr(0, VPRINTLIM) << "<< len: " << si.in_body.length() << \
-		std::endl;
-	verbose(V) << "(read_limits) multipart_content >>" << \
-		si.multipart_content.substr(0, VPRINTLIM) << "<< len: " << \
-		si.multipart_content.length() << std::endl;
-	verbose(V) << "(read_limits) chunked_content >>" << \
-		si.chunked_content.substr(0, VPRINTLIM) << "<< len: " << \
-		si.chunked_content.length() << std::endl;
+	verbose(V) << "(read_limits) in_body >>" << SHORT(si.in_body) << "<<" << std::endl;
+	verbose(V) << "(read_limits) multipart_content >>" << SHORT(si.multipart_content) << "<<" << std::endl;
+	verbose(V) << "(read_limits) chunked_content >>" << SHORT(si.chunked_content) << "<<" << std::endl;
 
 	return 0;
 }
