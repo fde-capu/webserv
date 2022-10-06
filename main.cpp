@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:22:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/07 00:06:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@ DataFold g_config;
 
 DataFold load_configuration(int argc, char **argv, std::string conf_file)
 {
-	verbose(CRITICAL) << "Loading configuration..." << std::endl;
+	verbose(1) << "Loading configuration..." << std::endl;
 	char* args[2];
 	args[0] = argv[0];
 	if (argc == 1)

@@ -2,7 +2,7 @@
 
 name_server="127.0.0.1";
 step_by_step="";
-clean_upfiles_after_test="";
+clean_upfiles_after_test="true";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"

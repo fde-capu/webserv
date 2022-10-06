@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:28:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/07 00:14:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,7 +280,7 @@ void WebServ::light_up()
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
-	verbose(CRITICAL) << config.getValStr("welcome_message") << std::endl;
+	verbose(0) << config.getValStr("welcome_message") << std::endl;
 
 	lit = true;
 	while (lit)
