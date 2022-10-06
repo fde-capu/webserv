@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 23:10:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/06 20:59:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -387,7 +387,8 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 
 	while (config.loop())
 	{
-		verbose(V) << "  config > " << config.key << " :=: " << config.val << \
+		V = config.key == "location" ? 1 : 2;
+		verbose(1) << "  config > " << config.key << " :=: " << config.val << \
 			" (" << config.type << ")" << std::endl;
 		valid = false;
 		board.loop_reset();
@@ -397,18 +398,19 @@ bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 
 			if (config.type & DF_TYPE_SUB)
 			{
-				verbose(1) << " ## board.key val " << board.key << " " << board.val << std::endl;
-				verbose(1) << " ## config.key " << config.key << std::endl;
-				verbose(1) << " ## count " << config.key_count(config.key) << std::endl;
-				DataFold many = config.get_val(config.key);
-				verbose(1) << " ## many.size() " << many.size() << std::endl;
+				verbose(V) << " ## board.key val " << board.key << " " << board.val << std::endl;
+				verbose(V) << " ## config.key " << config.key << std::endl;
+				verbose(V) << " ## count " << config.key_count(config.key) << std::endl;
 
-				if (!comply_config_keys(board.get_val(config.key), \
-							config.get_val(config.key)))
-				{
-					verbose(CRITICAL) << "(ArgVal) Note: " << config.key << "." << std::endl;
-					return false;
-				}
+				DataFold many = config.get_val(config.key);
+				verbose(V) << " ## many.size() " << many.size() << std::endl;
+
+//				if (!comply_config_keys(board.get_val(config.key), \
+//							config.get_val(config.key)))
+//				{
+//					verbose(CRITICAL) << "(ArgVal) Note: " << config.key << "." << std::endl;
+//					return false;
+//				}
 			}
 			if (count_keys(board.get_val(board.key), config.key))
 			{
