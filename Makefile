@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/07 00:15:06 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/07 01:25:47 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,6 @@ TRACKMAKEFILE = Makefile
 
 NAME1	=	webserv
 ARGS1	=	unit/webserv-unit.conf
-TEST_SH	=	./unit/general_tests.sh
 
 SRCS	=	FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp \
@@ -57,6 +56,7 @@ line:
 	@echo "\n************************\n"
 $(NAME1):	$(OBJS1) $(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS1) -o $(NAME1)
+	./set_working_directory.sh
 $(OBJS):	%.o : %.cpp $(HEAD)
 	$(DOT)
 	$(CC) $(CCFLAGS) -o $@ -c $<

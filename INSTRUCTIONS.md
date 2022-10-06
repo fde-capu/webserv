@@ -11,14 +11,11 @@ by fde-capu
 `ls`
 	webserv: program
 	lynx: web browser
+
 `curl http://localhost:3490`
 `lynx http://localhost:3490`
 
 ## Tests
-
-#### Edit unit/webserv-unit.conf, replace:
-#### "webserv_directory"
-#### with the correct directory.
 
 Run `webserv unit/webserv-unit.conf`.
 `general_tests.sh` runs several tests with wichever server is running.
