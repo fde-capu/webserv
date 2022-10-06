@@ -3,8 +3,11 @@ by fde-capu
 
 # Instructions
 
-`make`
-`make clean`
+# netstat -tnl					// --tcp --numeric --listening // Nothing shows.
+# (ps aux)						// all, show users, x = show parents
+
+`make webserv`
+`make lynx`
 `ls`
 	webserv: program
 	lynx: web browser
@@ -13,12 +16,13 @@ by fde-capu
 
 ## Tests
 
-Run `webserv webserv-unit.conf`.
+#### Edit unit/webserv-unit.conf, replace:
+#### "webserv_directory"
+#### with the correct directory.
+
+Run `webserv unit/webserv-unit.conf`.
 `general_tests.sh` runs several tests with wichever server is running.
 
-# make
-# netstat -tnl					// --tcp --numeric --listening // Nothing shows.
-# (ps aux)						// all, show users, x = show parents
 # ./webserv unit/webserv-unit.conf
 # netstat -tnl					// --tcp --numeric --listening
 # (ps aux)						// all, show users, x = show parents
