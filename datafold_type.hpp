@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/16 11:46:22 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/07/13 19:42:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/06 23:17:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,4 @@ typedef struct datafold_type
 } datafold_t;
 
 # include "bladefs.hpp"
-
-//ostr & operator<< (ostr & o, df_t const &);
-
 #endif
