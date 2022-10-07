@@ -64,6 +64,8 @@ unittest()
 		exit 1;
 	fi
 
+	[ "$fail" = "" ] && [ "$testfile" != "" ] && echo "File comparison: $testfile";
+
 	colorscore "$1 | expect $code, got $out" "$out" "$code"
 
 	if [ "$fail" = "" ] ; then
@@ -184,6 +186,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 cmd="curl http://$name_server:3490";
 testfile="$MYDIR/confs/html/index.htm";
 code="200";
+show_output="true";
 unittest "Basic 1";
 
 ##################################################################
@@ -197,6 +200,7 @@ unittest "Basic 1";
 cmd="curl http://$name_server:3490 -H 'Host: krazything'";
 testfile="$MYDIR/confs/html-custom-server-name/index.html";
 code="200";
+show_output="true";
 unittest "Root by servername";
 
 #################################################################
@@ -213,6 +217,7 @@ unittest "Root by servername";
 cmd="curl -vL http://$name_server:3490/somesub"
 code="200"
 testfile="$MYDIR/confs/html/somesub/index.htm";
+show_output="true";
 unittest "Subdirectory";
 
 #################################################################
@@ -227,6 +232,7 @@ unittest "Subdirectory";
 cmd="curl -vL http://$name_server:3490/somesub/"
 code="200"
 testfile="$MYDIR/confs/html/somesub/index.htm";
+show_output="true";
 unittest "Subdirectory with slash (/)";
 
 #################################################################
@@ -241,7 +247,21 @@ unittest "Subdirectory with slash (/)";
 cmd="curl http://$name_server:3491"
 testfile="$MYDIR/confs/html-3491/index.html";
 code="200";
+show_output="true";
 unittest "Port to server";
+
+##################################################################
+
+{ anounce Dumb_client \
+\
+	' - client NOT redirecting (gets 301):\n
+	(dumb test, this is client-side).' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3493"
+code="301";
+unittest "Client not redirecting";
 
 ##################################################################
 
@@ -327,26 +347,12 @@ fail="true";
 unittest "Forbidden";
 
 ##################################################################
-
-{ anounce Dumb_client \
-\
-	' - client NOT redirecting (gets 301):\n
-	(dumb test, this is client-side).' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:3493"
-code="301";
-unittest "Client not redirecting";
-
-##################################################################
 ##################################################################
 ##################################################################
 
 { anounce MULTI_99_WORDS \
 \
 	'POST multipart/form-data tests. \n
-	Nginx does not support this and will fail all POST tests.\n
 	Within limits of client_max_body_size:' \
 \
 ; } 2> /dev/null
@@ -667,7 +673,7 @@ unittest "50MB success"
 \
 	'How about 200MB? This time, it is accepted as partial upload, \n
 	since curl is set to close and webserv must always close.\n
-	Note: takes long.' \
+	Note: takes long. You can manually check unit/confs/html/uploads_large' \
 \
 ; } 2> /dev/null
 
@@ -784,7 +790,7 @@ rm ${MYDIR}/99B.words
 
 ###################################################################
 
-{ anounce CGI_BLA_OK \
+{ anounce MULTI_CGI_BLA_OK \
 \
 	'Test CGI call when posting and calling something (existent) .bla.' \
 \
@@ -796,24 +802,7 @@ upfile="99B.words"
 code="202";
 show_output="true";
 message="ubuntu_cgi_tester runs and converts all to uppercase."
-unittest "Simple cgi post";
-rm ${MYDIR}/99B.words
-
-###################################################################
-
-{ anounce CGI_BLA_FAIL \
-\
-	'Test CGI call when posting and calling something (UNexistent) .bla.' \
-\
-; } 2> /dev/null
-
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
-cmd="curl http://$name_server:3490/xxxx.bla";
-upfile="99B.words" 
-code="421";
-show_output="true";
-message="Chose 421 for this type por POST using CGI on bad URL."
-unittest "Simple post";
+unittest "Simple multipart cgi post";
 rm ${MYDIR}/99B.words
 
 ###################################################################
@@ -831,7 +820,24 @@ upfile="99B.words"
 code="202";
 show_output="true";
 message="Check if CGI was properly executed above."
-unittest "Simple post chunked calling CGI";
+unittest "Simple chunked cgi post";
+rm ${MYDIR}/99B.words
+
+###################################################################
+
+{ anounce MULTI_CGI_BLA_FAIL \
+\
+	'Test CGI call when posting and calling something (UNexistent) .bla.' \
+\
+; } 2> /dev/null
+
+echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words
+cmd="curl http://$name_server:3490/xxxx.bla";
+upfile="99B.words" 
+code="421";
+show_output="true";
+message="Arbitrary choice of 421. POST using CGI on bad URL."
+unittest "Error calling CGI multipart with wrong file";
 rm ${MYDIR}/99B.words
 
 ###################################################################
@@ -848,8 +854,8 @@ cmd="curl http://$name_server:3490/xxxx.bla";
 upfile="99B.words" 
 code="421";
 show_output="true";
-message="Check if CGI was properly executed above."
-unittest "Simple post chunked calling CGI";
+message="Arbitrary choice of 421. POST using CGI on bad URL."
+unittest "Error calling CGI chunked with wrong file";
 rm ${MYDIR}/99B.words
 
 #################################################################

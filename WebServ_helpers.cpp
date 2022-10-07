@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 21:16:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/07 03:43:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,18 @@ int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
 	struct dirent *dirp;
 	std::string list;
 	std::string href;
+	std::string fname;
 
 	dp = opendir(dir.c_str());
 	while ((dirp = readdir(dp)) != NULL)
 	{
-		href = si.in_header.directory + "/" + dirp->d_name;
-		remove_dup_char(href, '/');
-		list += "<a href='" + href + "'>" + dirp->d_name + "</a><br>\n";
+		fname = dirp->d_name;
+		if (fname == "." || fname == ".." || !StringTools::startsWith(fname, "."))
+		{
+			href = si.in_header.directory + "/" + fname;
+			remove_dup_char(href, '/');
+			list += "<a href='" + href + "'>" + fname + "</a><br>\n";
+		}
 	}
 	closedir(dp);
 	set_code(200, "OK");
