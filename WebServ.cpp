@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/11 00:48:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/11 01:05:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,18 @@
 
 void WebServ::init()
 {
-	consider_stdin_because_grace();
-	give_up_if_empty_configuration();
 	try
 	{
+		consider_stdin_because_grace();
+		give_up_if_empty_configuration();
 		hook_it();
+		light_up();
 	}
 	catch(std::exception& e)
 	{
 		verbose(CRITICAL) << "(webserv) Error: " << e.what() << std::endl;
 		throw e;
 	}
-	light_up();
 }
 
 void WebServ::consider_stdin_because_grace()
