@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/10 23:21:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/11 00:48:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void WebServ::init()
 	}
 	catch(std::exception& e)
 	{
+		verbose(CRITICAL) << "(webserv) Error: " << e.what() << std::endl;
 		throw e;
 	}
 	light_up();

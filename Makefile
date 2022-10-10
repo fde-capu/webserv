@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/11 00:43:50 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/11 00:57:21 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -87,9 +87,6 @@ g:			1
 	gdb --args ./$(NAME1) $(ARGS1)
 k1:
 	-pkill $(NAME1)
-youpi:
-	echo 'Initial YoupiBanane/youpi.bla' > unit/confs/html4242/YoupiBanane/youpi.bla
-	ls -l unit/confs/html4242/YoupiBanane/youpi.bla
 
 ####### :::::::::: #######
 ####### :: lynx :: #######
@@ -121,7 +118,7 @@ siege:
 	@echo "\nBuilding siege standalone..."
 	@-cd siege-standalone && \
 	make -s > /dev/null 2> /dev/null
-	@mv siege-standalone/siege .
+	@mv siege-standalone/src/siege .
 siege-fclean:
 	@cd siege-standalone && \
 	make -s fclean

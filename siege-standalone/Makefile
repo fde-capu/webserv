@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/10/11 00:09:16 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/11 00:46:26 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/11 00:55:15 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,6 @@ $(BIN):
 	cd src && ./configure --bindir=$(PWD)/src
 	cd src && make -s
 	cd src && make install
-	mv src/src/siege .
 
 unpack:
 	echo "Unpacking siege..."
