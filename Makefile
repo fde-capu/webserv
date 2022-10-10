@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/10 22:28:12 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/11 00:43:50 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,12 +66,13 @@ $(OBJS1):	%.o : %.cpp
 $(OBJS2):	%.o : %.cpp
 	$(DOT)
 	$(CC) $(CCFLAGS) -o $@ -c $<
-clean:		lynx-clean
+clean:		lynx-clean siege-clean
 	-@rm -f $(OBJS)
 	-@rm -f $(OBJS1)
 	-@rm -f $(OBJS2)
-fclean:		clean lynx-fclean
+fclean:		clean lynx-fclean siege-fclean
 	-@rm -f $(NAME1)
+	@./unset_working_directory.sh
 re:			fclean all
 rt:			re t
 v:			1
@@ -109,6 +110,27 @@ lynx-clean:
 	make -s clean
 lynx-re:
 	cd lynx-standalone && \
+	make re
+
+####### ::::::::::: #######
+####### :: siege :: #######
+####### ::::::::::: #######
+
+siege:
+	@[ -f siege ] && exit 0 ||:
+	@echo "\nBuilding siege standalone..."
+	@-cd siege-standalone && \
+	make -s > /dev/null 2> /dev/null
+	@mv siege-standalone/siege .
+siege-fclean:
+	@cd siege-standalone && \
+	make -s fclean
+	@rm -f siege
+siege-clean:
+	@cd siege-standalone && \
+	make -s clean
+siege-re:
+	cd siege-standalone && \
 	make re
 
 ####### :::::::::: #######

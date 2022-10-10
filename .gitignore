@@ -2,5 +2,8 @@ webserv
 *.o
 *.noise
 lynx
-lynx-standalone/lynx.*
+lynx-standalone/lynx*
 lynx-standalone/src
+siege
+siege-standalone/siege*
+siege-standalone/bombardment
