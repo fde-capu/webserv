@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/05 21:07:26 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/07 00:06:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/10 23:31:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,12 @@ DataFold load_configuration(int argc, char **argv, std::string conf_file)
 
 int main(int argc, char **argv)
 {
-	TemplateError load(argv[0], "template_default.conf");
-	g_config = load_configuration(argc, argv, WS_ARGVAL);
-	WebServ webserv(g_config);
-	webserv.init();
+	try
+	{
+		TemplateError load(argv[0], "template_default.conf");
+		g_config = load_configuration(argc, argv, WS_ARGVAL);
+		WebServ webserv(g_config);
+		webserv.init();
+	} catch(std::exception&) { return 1; };
 	return 0;
 }

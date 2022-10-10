@@ -6,13 +6,13 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/07 01:25:47 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/10 22:28:12 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 MAKESILENT	  = @
 VERBOSE		  =	0
-ENVS		  =	-DAGV_SKIP_CHECK=0
+ENVS		  =	-DAGV_SKIP_CHECK=1
 TRACKMAKEFILE = Makefile
 
 NAME1	=	webserv
@@ -56,7 +56,7 @@ line:
 	@echo "\n************************\n"
 $(NAME1):	$(OBJS1) $(OBJS)
 	$(CC) $(CCFLAGS) $(OBJS) $(OBJS1) -o $(NAME1)
-	./set_working_directory.sh
+	@./set_working_directory.sh
 $(OBJS):	%.o : %.cpp $(HEAD)
 	$(DOT)
 	$(CC) $(CCFLAGS) -o $@ -c $<

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/07 00:14:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/10 23:21:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,14 @@ void WebServ::init()
 {
 	consider_stdin_because_grace();
 	give_up_if_empty_configuration();
-	hook_it();
+	try
+	{
+		hook_it();
+	}
+	catch(std::exception& e)
+	{
+		throw e;
+	}
 	light_up();
 }
 
@@ -53,7 +60,7 @@ int WebServ::bind_socket_to_local(int u_port)
 {
 	struct addrinfo hints;
 	struct addrinfo *result, *rp; // rp = read pointer
-	int sfd, s;
+	int sfd(0), s;
 	int yes = 1;
 
 	hints = addrinfo();
@@ -62,24 +69,40 @@ int WebServ::bind_socket_to_local(int u_port)
 	hints.ai_socktype = SOCK_STREAM;
 	s = getaddrinfo(NULL, itoa(u_port).c_str(), &hints, &result);
 	if (s != 0)
+	{
+		freeaddrinfo(result);
 		throw std::domain_error("(bind_socket_to_local) getaddrinfo failed: " + std::string(gai_strerror(s)));
+	}
 
 	for (rp = result; rp != NULL; rp = rp->ai_next)
 	{
 		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if (sfd == -1)
+		{
+			freeaddrinfo(result);
 			throw std::domain_error("(bind_socket_to_local) Socket creation failed.");
+		}
 		if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+		{
+			freeaddrinfo(result);
 			throw std::domain_error("(bind_socket_to_local) Could not unlock the socket.");
-		set_non_blocking(sfd);
+		}
+		try
+		{
+			set_non_blocking(sfd);
+		}
+		catch (std::exception& e)
+		{
+			freeaddrinfo(result);
+			throw e;
+		}
 		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break;
 		close(sfd);
 	}
+	freeaddrinfo(result);
 	if (rp == NULL)
 		throw std::domain_error("(bind_socket_to_local) Socket locked.");
-
-	freeaddrinfo(result);
 	verbose(2) << "(bind_socket_to_local) Bound fd " << sfd << " to port " << u_port << "." << std::endl;
 	return sfd;
 }
