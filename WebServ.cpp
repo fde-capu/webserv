@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/11 15:19:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/11 23:39:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void WebServ::hook_it()
 				taken_ports.push_back(instance[i].port[j]);
 			}
 			else if (same_port_another_name(&instance[i]))
-				verbose(2) << "(webserv) Warning: multiple servers on same port. Using first." << std::endl;
+				verbose(1) << "(webserv) Warning: multiple servers on same port. Using first." << std::endl;
 		}
 	}
 	poll_list.push_back(stdin_to_pollfd()); // stdin exits gracefully.
@@ -96,12 +96,13 @@ void WebServ::light_up()
 		if (there_is_an_instance(event))
 			dup_into_poll(event);
 		else
-			respond_connection_from(event);
+			listen_to(event);
 	}
 }
 
 int WebServ::catch_connection()
 {
+	int V(1);
 	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
 	int nothing = -1;
 	int poll_count;
@@ -113,55 +114,38 @@ int WebServ::catch_connection()
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
 		if (poll_list[i].revents & POLLIN)
+		{
+			verbose(V) << poll_list[i].fd << " is ready to POLLIN." << std::endl;
 			return poll_list[i].fd;
+		}
 		else if (poll_list[i].fd != 0 && poll_list[i].revents & POLLOUT)
 		{
-			verbose(0) << poll_list[i].fd << " is ready to POLLOUT." << std::endl;
-			verbose(0) << "Doing nothing." << std::endl;
+			verbose(V) << poll_list[i].fd << " is ready to POLLOUT." << std::endl;
+			send_response(poll_list[i].fd);
 			return nothing;
 		}
 	}
 	return nothing;
 }
 
-void WebServ::dup_into_poll(int oldfd)
+void WebServ::listen_to(int fd)
 {
 	int V(1);
-	struct sockaddr_storage remoteaddr;
-	unsigned int addrlen = sizeof remoteaddr;
-	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
-	if (newfd == -1)
-		throw std::domain_error("(webserv) Unacceptable connection.");
-	set_non_blocking(newfd);
-	poll_list.push_back(make_in_out_fd(newfd));
-	fd_to_port[newfd] = fd_to_port[oldfd];
-
-	verbose(V) << "(webserv) Connection from fd (" << oldfd << \
-		")->" << newfd << "." << std::endl;
-}
-
-void WebServ::respond_connection_from(int fd)
-{
-	int V(2);
-	ws_server_instance si;
-	std::string raw_data;
 	std::string body;
 	ws_header in_header;
 	Chronometer time_out;
 	CircularBuffer raw(fd);
 	std::string encapsulated;
 
-	verbose(1) << " . . . . . . . . . . . . . . . " << std::endl;
-	verbose(1) << " fd " << fd << ", POLLIN " << (poll_list[fd].revents & POLLIN) \
-		<< ", POLLOUT " << (poll_list[fd].revents & POLLOUT) << std::endl;
-	verbose(V) << "(respond_connection_from) Getting data from fd " << fd \
+	verbose(V) << " . . . . . . . . . . . . . . . " << std::endl;
+	verbose(V) << "(listen_to) Getting data from fd " << fd \
 		<< "." << std::endl;
 
 	while (!in_header.is_valid)
 	{
 		if (time_out > TIME_OUT_MSEC)
 		{
-			verbose(2) << "(respond_connection_from) Timeout! << " << time_out << \
+			verbose(V) << "(listen_to) Timeout! << " << time_out << \
 				" > Incomplete header" << std::endl;
 			return respond_timeout(fd);
 		}
@@ -169,18 +153,20 @@ void WebServ::respond_connection_from(int fd)
 		in_header = get_header(raw.output);
 	}
 
-	verbose(V) << "(respond_connection_from) Got header:" << std::endl << \
+	verbose(V) << "(listen_to) Got header:" << std::endl << \
 		in_header << std::endl;
 
-	si = choose_instance(in_header, fd_to_port[fd]);
-	si.in_body = get_body(raw.receive_until_eof());
-	si.set_props();
-	si.set_sizes();
-	si.fd = fd;
-	ws_reply_instance respond(si); // ...oonn...
+	fd_to_si[fd] = choose_instance(in_header, fd_to_port[fd]);
+	fd_to_si[fd].in_body = get_body(raw.receive_until_eof());
+	fd_to_si[fd].set_props();
+	fd_to_si[fd].set_sizes();
+	fd_to_si[fd].fd = fd;
+}
+
+void WebServ::send_response(int fd)
+{
+	ws_reply_instance respond(fd_to_si[fd]); // ...oonn...
 	respond.encapsulate();
-	verbose(V) << "(respond_connection_from) respond.package_length " << respond.package_length << std::endl;
-	verbose(V) << "(respond_connection_from) respond.out_body.length() " << respond.out_body.length() << std::endl;
 	if (send(fd, respond.out_body.c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
@@ -276,4 +262,20 @@ void WebServ::set_non_blocking(int sock)
 	opts = O_NONBLOCK;
 	if (fcntl(sock, F_SETFL, opts) == -1)
 		throw std::domain_error("(webserv) Could not set non-blocking flag.");
+}
+
+void WebServ::dup_into_poll(int oldfd)
+{
+	int V(1);
+	struct sockaddr_storage remoteaddr;
+	unsigned int addrlen = sizeof remoteaddr;
+	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
+	if (newfd == -1)
+		throw std::domain_error("(webserv) Unacceptable connection.");
+	set_non_blocking(newfd);
+	poll_list.push_back(make_in_out_fd(newfd));
+	fd_to_port[newfd] = fd_to_port[oldfd];
+
+	verbose(V) << "(webserv) Connection from fd (" << oldfd << \
+		")->" << newfd << "." << std::endl;
 }

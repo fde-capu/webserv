@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/11 15:01:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/11 23:38:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ struct ws_reply_instance
 	int is_201(ws_server_instance&); // Created.
 	int is_404(ws_server_instance&); // Not Found.
 	int is_413_507_422(ws_server_instance&); // Alias for read_limits();
-	int read_limits(ws_server_instance&); // Payload Too Large et.c.
+	int read_limits(ws_server_instance&); // Payload Too Large etc.
 	int is_424(ws_server_instance&); // Failed Dependency.
 
 	int cgi_prepare(ws_server_instance&, std::string);
@@ -142,6 +142,7 @@ class WebServ
 		std::vector<ws_server_instance> instance;
 		std::vector<struct pollfd> poll_list;
 		std::map<int, int> fd_to_port;
+		std::map<int, ws_server_instance> fd_to_si;
 		std::vector<int> taken_ports;
 		bool lit;
 		void hook_it();
@@ -160,7 +161,8 @@ class WebServ
 		void dup_into_poll(int);
 		void remove_from_poll(int);
 		ws_server_instance choose_instance(ws_header&, int);
-		void respond_connection_from(int);
+		void listen_to(int);
+		void send_response(int);
 		void respond_timeout(int);
 		void load_defaults();
 		static void set_non_blocking(int);
