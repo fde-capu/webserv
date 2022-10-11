@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/29 15:09:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/11 15:01:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,8 +145,6 @@ class WebServ
 		std::vector<int> taken_ports;
 		bool lit;
 		void hook_it();
-		void consider_stdin_because_grace();
-		void give_up_if_empty_configuration();
 		ws_server_instance dftosi(DataFold);
 		struct pollfd stdin_to_pollfd();
 		void exit_gracefully();
@@ -159,7 +157,7 @@ class WebServ
 		bool same_port_another_name(const ws_server_instance*) const;
 		int catch_connection();
 		bool there_is_an_instance(int) const;
-		void add_to_poll(int);
+		void dup_into_poll(int);
 		void remove_from_poll(int);
 		ws_server_instance choose_instance(ws_header&, int);
 		void respond_connection_from(int);
@@ -182,7 +180,7 @@ class WebServ
 
 		// Usefull services for everyone!
 		static int bind_socket_to_local(int);
-		struct pollfd make_pollin_fd(int) const;
+		struct pollfd make_in_out_fd(int) const;
 		static struct ws_header get_header(const std::string&);
 		static std::string get_body(const std::string&);
 };

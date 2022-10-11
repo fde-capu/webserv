@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/07 03:43:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/11 15:21:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,15 +49,15 @@ int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
 }
 
 struct pollfd WebServ::stdin_to_pollfd()
-{ return make_pollin_fd(0); }
+{ return make_in_out_fd(0); }
 
-struct pollfd WebServ::make_pollin_fd(int newfd) const
+struct pollfd WebServ::make_in_out_fd(int newfd) const
 {
 	struct pollfd ufds;
 
 	ufds = pollfd();
 	ufds.fd = newfd;
-	ufds.events = POLLIN;
+	ufds.events = POLLIN | POLLOUT;
 	return ufds;
 }
 

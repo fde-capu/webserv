@@ -6,11 +6,63 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:40:40 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/04 15:41:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/11 15:16:37 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+
+int WebServ::bind_socket_to_local(int u_port)
+{
+	int V(1);
+	struct addrinfo hints;
+	struct addrinfo *result, *rp; // rp = read pointer
+	int sfd(0), s;
+	int yes = 1;
+
+	hints = addrinfo();
+	hints.ai_flags = AI_PASSIVE;
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	s = getaddrinfo(NULL, itoa(u_port).c_str(), &hints, &result);
+	if (s != 0)
+	{
+		freeaddrinfo(result);
+		throw std::domain_error("(bind_socket_to_local) getaddrinfo failed: " + std::string(gai_strerror(s)));
+	}
+
+	for (rp = result; rp != NULL; rp = rp->ai_next)
+	{
+		sfd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		if (sfd == -1)
+		{
+			freeaddrinfo(result);
+			throw std::domain_error("(bind_socket_to_local) Socket creation failed.");
+		}
+		if (setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
+		{
+			freeaddrinfo(result);
+			throw std::domain_error("(bind_socket_to_local) Could not unlock the socket.");
+		}
+		try
+		{
+			set_non_blocking(sfd);
+		}
+		catch (std::exception& e)
+		{
+			freeaddrinfo(result);
+			throw e;
+		}
+		if (bind(sfd, rp->ai_addr, rp->ai_addrlen) == 0)
+			break;
+		close(sfd);
+	}
+	freeaddrinfo(result);
+	if (rp == NULL)
+		throw std::domain_error("(bind_socket_to_local) Socket locked.");
+	verbose(V) << "(bind_socket_to_local) Bound fd " << sfd << " to port " << u_port << "." << std::endl;
+	return sfd;
+}
 
 bool WebServ::is_port_taken(int port) const
 {
@@ -22,7 +74,7 @@ bool WebServ::is_port_taken(int port) const
 
 bool WebServ::same_port_another_name(const ws_server_instance* candidate) const
 {
-	bool out = false;
+	bool out = true;
 	for (size_t i = 0; i < instance.size(); i++)
 	{
 		for (size_t j = 0; j < instance[i].port.size(); j++)
@@ -32,7 +84,7 @@ bool WebServ::same_port_another_name(const ws_server_instance* candidate) const
 				if ((instance[i].port[j] == candidate->port[k]) && \
 						(instance[i].config.getValStr("server_name") \
 						 != candidate->config.getValStr("server_name")))
-					out = true;
+					out = false;
 			}
 		}
 	}
