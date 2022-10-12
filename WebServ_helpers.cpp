@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/12 21:39:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 01:27:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void WebServ::exit_gracefully()
 	return ;
 }
 
-bool WebServ::there_is_an_instance(int fd) const
+bool WebServ::is_a_webserv(int fd) const
 {
 	for (size_t i = 0; i < instance.size(); i++)
 		for (size_t j = 0; j < instance[i].listen_sock.size(); j++)

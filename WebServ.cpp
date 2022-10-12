@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 00:51:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 01:31:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void WebServ::light_up()
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
-	verbose(0) << config.getValStr("welcome_message") << std::endl;
+	verbose(CRITICAL) << config.getValStr("welcome_message") << std::endl;
 
 	lit = true;
 	while (lit)
@@ -115,27 +115,27 @@ void WebServ::light_up()
 			return exit_gracefully();
 		if (event.revents & POLLIN)
 		{
-			if (there_is_an_instance(event.fd))
+			if (is_a_webserv(event.fd))
 			{
 				verbose(V) << " . . . . . . . . . . . . . . . " << std::endl;
 				dup_into_poll(event.fd);
 				continue ;
 			}
-			if (fd_to_si[event.fd].got_pollin)
+			if (webserver[event.fd].got_pollin)
 				continue ;
 			verbose(V) << "(light_up) Got POLLIN from " << event.fd << std::endl;
 			listen_to(event.fd);
-			fd_to_si[event.fd].got_pollin = true;
+			webserver[event.fd].got_pollin = true;
 		}
-		if (event.revents & POLLOUT || fd_to_si[event.fd].got_pollout)
+		if (event.revents & POLLOUT || webserver[event.fd].got_pollout)
 		{
-			if (fd_to_si.find(event.fd) == fd_to_si.end())
-				fd_to_si[event.fd] = ws_server_instance();
-			if (fd_to_si[event.fd].got_pollout)
+			if (webserver.find(event.fd) == webserver.end())
+				webserver[event.fd] = ws_server_instance();
+			if (webserver[event.fd].got_pollout)
 				continue ;
-			fd_to_si[event.fd].got_pollout = true;
+			webserver[event.fd].got_pollout = true;
 			verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
-			if (!fd_to_si[event.fd].got_pollin)
+			if (!webserver[event.fd].got_pollin)
 				continue ;
 			send_response(event.fd);
 			close(event.fd);
@@ -171,16 +171,16 @@ void WebServ::listen_to(int fd)
 	verbose(2) << "(listen_to) Got header:" << std::endl << \
 		in_header << std::endl;
 
-	fd_to_si[fd] = choose_instance(in_header, fd_to_port[fd]);
-	fd_to_si[fd].in_body = get_body(raw.receive_until_eof());
-	fd_to_si[fd].set_props();
-	fd_to_si[fd].set_sizes();
-	fd_to_si[fd].fd = fd;
+	webserver[fd] = choose_instance(in_header, fd_to_port[fd]);
+	webserver[fd].in_body = get_body(raw.receive_until_eof());
+	webserver[fd].set_props();
+	webserver[fd].set_sizes();
+	webserver[fd].fd = fd;
 }
 
 void WebServ::send_response(int fd)
 {
-	ws_reply_instance respond(fd_to_si[fd]); // ...oonn...
+	ws_reply_instance respond(webserver[fd]); // ...oonn...
 	respond.encapsulate();
 	if (send(fd, respond.out_body.c_str(),
 		respond.package_length, 0) == -1)
@@ -275,11 +275,11 @@ void WebServ::remove_from_poll(int fd)
 			break ;
 		}
 	}
-	for (std::map<int, ws_server_instance>::iterator it = fd_to_si.begin(); it != fd_to_si.end(); it++)
+	for (std::map<int, ws_server_instance>::iterator it = webserver.begin(); it != webserver.end(); it++)
 	{
 		if (it->first == fd)
 		{
-			fd_to_si.erase(it);
+			webserver.erase(it);
 			break ;
 		}
 	}

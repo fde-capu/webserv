@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 00:07:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 01:30:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ class WebServ
 		std::vector<ws_server_instance> instance;
 		std::vector<struct pollfd> poll_list;
 		std::map<int, int> fd_to_port;
-		std::map<int, ws_server_instance> fd_to_si;
+		std::map<int, ws_server_instance> webserver;
 		std::vector<int> taken_ports;
 		bool lit;
 		void hook_it();
@@ -159,7 +159,7 @@ class WebServ
 		bool is_port_taken(int) const;
 		bool same_port_another_name(const ws_server_instance*) const;
 		struct pollfd catch_connection();
-		bool there_is_an_instance(int) const;
+		bool is_a_webserv(int) const;
 		bool already_initiated(int) const;
 		void dup_into_poll(int);
 		void remove_from_poll(int);

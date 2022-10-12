@@ -8,7 +8,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="";
+step_by_step="true";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -173,8 +173,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 ##################################################################
 
 { anounce Basic_1 \
@@ -193,7 +191,7 @@ unittest "Basic 1";
 
 ##################################################################
 
-{ anounce Root_by_servername \
+{ anounce RROT_BY_SERVERNAME \
 \
 	'If server_name is existent on another root: 200' \
 \
@@ -207,7 +205,7 @@ unittest "Root by servername";
 
 #################################################################
 
-{ anounce Subdirectory \
+{ anounce SUBDIRECTORY \
 \
 	'Accepts subdirectory calls. \n
 	-L tells curl to follow redirect. \n
@@ -224,7 +222,7 @@ unittest "Subdirectory";
 
 #################################################################
 
-{ anounce SubdirectorySlash \
+{ anounce SUBSDIRECTORY_SLASH \
 \
 	"Subdirectory ending with '/' has the same effect. \n
 	This time, curl -L is not required." \
@@ -239,7 +237,7 @@ unittest "Subdirectory with slash (/)";
 
 #################################################################
 
-{ anounce Another_port \
+{ anounce ANOTHER_PORT \
 \
 	':3491, another port, another server, another folder: \n
 	root ./unit/confs/html-3491.' \
@@ -254,7 +252,7 @@ unittest "Port to server";
 
 ##################################################################
 
-{ anounce Dumb_client \
+{ anounce DUMB_CLIENT \
 \
 	' - client NOT redirecting (gets 301):\n
 	(dumb test, this is client-side).' \
@@ -267,7 +265,7 @@ unittest "Client not redirecting";
 
 ##################################################################
 
-{ anounce Redirect \
+{ anounce REDIRECT \
 \
 	':3493 server redirects 301 to :3490. \n
 	- client redirecting:' \
@@ -283,7 +281,7 @@ unittest "Client redirecting made two calls";
 ##################################################################
 ##################################################################
 
-{ anounce Not_this_directory \
+{ anounce NOT_THIS_DIRECTORY
 \
 	'Forbid existent server_name without root definition. 403' \
 \
@@ -295,7 +293,7 @@ unittest "server_name w/o root (forbidden)";
 
 ##################################################################
 
-{ anounce Unknown_servername \
+{ anounce UNKNOWN_SERVERNAME \
 \
 	'If server_name is unexistent, defaults to previous: 200' \
 \
@@ -308,7 +306,7 @@ unittest "Unexistent server_name defaults to first";
 
 ##################################################################
 
-{ anounce GET_refusal \
+{ anounce GET_REFUSAL \
 \
 	':3491 accepts only GET. Testing POST is not allowed. 405' \
 \
@@ -322,7 +320,7 @@ unittest "POST rejection";
 
 ##################################################################
 
-{ anounce DELETE_refusal \
+{ anounce DELETE_REFUSAL \
 \
 	':3491 accepts only GET. Testing DELETE is not allowed. 405' \
 \
@@ -335,7 +333,7 @@ unittest "DELETE rejection";
 
 ##################################################################
 
-{ anounce Forbidden \
+{ anounce FORBIDDEN \
 \
 	':3492 is solenly a `server { listen 3492; }`, \n
 	this is an open port, but forbidden serverside, \n
@@ -426,6 +424,7 @@ cmd="curl http://$name_server:3490/large_upload"
 code="201"
 show_output="true"
 unittest "Noise to large_upload 42B"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
 
@@ -441,6 +440,7 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "1MB success"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
 
@@ -455,6 +455,7 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "2MB success"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
 
@@ -470,6 +471,7 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "50MB success"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
 #####################################################################
@@ -506,6 +508,7 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 code="507"
 fail="true"
 unittest "200MB rejection (out of resources)"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
 ##################################################################
@@ -621,6 +624,7 @@ outdir="${MYDIR}/confs/html/uploads_large";
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
 unittest "Noise to large_upload 42B"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ###############################################################
 
@@ -637,6 +641,7 @@ cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "1MB success"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
 
@@ -652,6 +657,7 @@ cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "2MB success"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
 
@@ -668,14 +674,17 @@ cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "50MB success"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_PARTIAL \
 \
 	'How about 200MB? This time, it is accepted as partial upload, \n
 	since curl is set to close and webserv must always close.\n
-	Note: takes long. You can manually check unit/confs/html/uploads_large' \
+	Note: takes long.' \
 \
 ; } 2> /dev/null
 
@@ -685,6 +694,7 @@ cmd="curl http://$name_server:3490/large_upload"
 code="201"
 fail="true"
 unittest "Accepts, though incomplete"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
 ##################################################################
