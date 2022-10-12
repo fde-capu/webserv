@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/12 22:41:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 00:15:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,25 @@ void WebServ::hook_it()
 	verbose(1) << "(webserv) I'm hooked." << std::endl << std::endl;
 }
 
+struct pollfd WebServ::catch_connection()
+{
+	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
+	int poll_count;
+
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	if (poll_count == -1)
+		throw std::domain_error("(webserv) Poll error.");
+	for (size_t i = 0; i < poll_list.size(); i++)
+	{
+		if (poll_list[i].revents & POLLIN \
+		||  poll_list[i].revents & POLLOUT )
+			return poll_list[i];
+	}
+	struct pollfd out;
+	out.fd = -1; // meaning nothing.
+	return out;
+}
+
 void WebServ::light_up()
 {
 	int V(1);
@@ -96,54 +115,35 @@ void WebServ::light_up()
 			return exit_gracefully();
 		if (event.revents & POLLIN)
 		{
+			if (fd_to_si.find(event.fd) != fd_to_si.end())
+			{
+				remove_from_poll(event.fd);
+				continue ;
+			}
 			if (there_is_an_instance(event.fd))
 			{
 				verbose(V) << " . . . . . . . . . . . . . . . " << std::endl;
 				dup_into_poll(event.fd);
 				continue ;
 			}
+			fd_to_si[event.fd].got_pollin = true;
 			verbose(V) << "(light_up) Got POLLIN from " << event.fd << std::endl;
 			listen_to(event.fd);
+			if (fd_to_si[event.fd].got_pollout)
+				break ;
 			continue ;
 		}
-		if (event.revents & POLLOUT)
+		if (event.revents & POLLOUT || fd_to_si[event.fd].got_pollout)
 		{
-			verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
-			if (fd_to_si.find(event.fd) == fd_to_si.end()) // POLLOUT before POLLIN
+			fd_to_si[event.fd].got_pollout = true;
+			if (!fd_to_si[event.fd].got_pollin)
 				continue ;
+			verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
 			send_response(event.fd);
 			close(event.fd);
 			remove_from_poll(event.fd);
-			for (std::map<int, ws_server_instance>::iterator it = fd_to_si.begin(); it != fd_to_si.end(); it++)
-			{
-				if (it->first == event.fd)
-				{
-					verbose(V) << "(light_up) Erasing " << event.fd << std::endl;
-					fd_to_si.erase(it);
-					break ;
-				}
-			}
 		}
 	}
-}
-
-struct pollfd WebServ::catch_connection()
-{
-	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
-	int poll_count;
-
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
-	if (poll_count == -1)
-		throw std::domain_error("(webserv) Poll error.");
-	for (size_t i = 0; i < poll_list.size(); i++)
-	{
-		if (poll_list[i].revents & POLLIN \
-		||  poll_list[i].revents & POLLOUT )
-			return poll_list[i];
-	}
-	struct pollfd out;
-	out.fd = -1; // meaning nothing.
-	return out;
 }
 
 void WebServ::listen_to(int fd)
@@ -170,7 +170,7 @@ void WebServ::listen_to(int fd)
 		in_header = get_header(raw.output);
 	}
 
-	verbose(V) << "(listen_to) Got header:" << std::endl << \
+	verbose(2) << "(listen_to) Got header:" << std::endl << \
 		in_header << std::endl;
 
 	fd_to_si[fd] = choose_instance(in_header, fd_to_port[fd]);
@@ -274,10 +274,17 @@ void WebServ::remove_from_poll(int fd)
 		{
 			std::vector<struct pollfd>::iterator position(&poll_list[i]);
 			poll_list.erase(position);
-			return ;
+			break ;
 		}
 	}
-	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
+	for (std::map<int, ws_server_instance>::iterator it = fd_to_si.begin(); it != fd_to_si.end(); it++)
+	{
+		if (it->first == fd)
+		{
+			fd_to_si.erase(it);
+			break ;
+		}
+	}
 }
 
 void WebServ::dup_into_poll(int oldfd)

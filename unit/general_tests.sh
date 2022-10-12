@@ -173,8 +173,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 ##################################################################
 
 { anounce Basic_1 \
@@ -475,7 +473,9 @@ unittest "50MB success"
 #####################################################################
 #####################################################################
 
-{ anounce MULTI_FAIL \
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce MULTI_FAIL_1 \
 \
 	'Now POSTing 1MB.noise.\n
 	This shall NOT be accepted, because curl will expect 100-continue,\n
@@ -492,7 +492,7 @@ unittest "webserv must close connection"
 
 #####################################################################
 
-{ anounce MULTI_FAIL \
+{ anounce MULTI_FAIL_200 \
 \
 	'How about 200MB? Wait a little, but this would get OOM KILL\n
 	by Workspace. Set CIRCULARBUFFER_LIMIT for this.\n
