@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/12 21:28:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/12 22:41:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,29 +89,40 @@ void WebServ::light_up()
 	while (lit)
 	{
 		event = catch_connection();
-		std::cout << *this;
+		std::cout << *this; // Animation.
 		if (event.fd == -1)
 			continue ;
 		if (event.fd == 0)
-		{
-			if (event.revents & POLLIN)
-				return exit_gracefully();
-			continue ;
-		}
+			return exit_gracefully();
 		if (event.revents & POLLIN)
 		{
-			verbose(V) << "Got POLLIN from " << event.fd << std::endl;
 			if (there_is_an_instance(event.fd))
+			{
+				verbose(V) << " . . . . . . . . . . . . . . . " << std::endl;
 				dup_into_poll(event.fd);
-			else
-				listen_to(event.fd);
+				continue ;
+			}
+			verbose(V) << "(light_up) Got POLLIN from " << event.fd << std::endl;
+			listen_to(event.fd);
+			continue ;
 		}
 		if (event.revents & POLLOUT)
 		{
-			verbose(V) << "Got POLLOUT from " << event.fd << std::endl;
+			verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
+			if (fd_to_si.find(event.fd) == fd_to_si.end()) // POLLOUT before POLLIN
+				continue ;
 			send_response(event.fd);
 			close(event.fd);
 			remove_from_poll(event.fd);
+			for (std::map<int, ws_server_instance>::iterator it = fd_to_si.begin(); it != fd_to_si.end(); it++)
+			{
+				if (it->first == event.fd)
+				{
+					verbose(V) << "(light_up) Erasing " << event.fd << std::endl;
+					fd_to_si.erase(it);
+					break ;
+				}
+			}
 		}
 	}
 }
@@ -126,7 +137,8 @@ struct pollfd WebServ::catch_connection()
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
-		if (poll_list[i].revents)
+		if (poll_list[i].revents & POLLIN \
+		||  poll_list[i].revents & POLLOUT )
 			return poll_list[i];
 	}
 	struct pollfd out;
@@ -143,7 +155,6 @@ void WebServ::listen_to(int fd)
 	CircularBuffer raw(fd);
 	std::string encapsulated;
 
-	verbose(V) << " . . . . . . . . . . . . . . . " << std::endl;
 	verbose(V) << "(listen_to) Getting data from fd " << fd \
 		<< "." << std::endl;
 
@@ -178,20 +189,6 @@ void WebServ::send_response(int fd)
 		throw std::domain_error("(webserv) Sending response went wrong.");
 }
 
-void WebServ::remove_from_poll(int fd)
-{
-	for (size_t i = 0; i < poll_list.size(); i++)
-	{
-		if (poll_list[i].fd == fd)
-		{
-			std::vector<struct pollfd>::iterator position(&poll_list[i]);
-			poll_list.erase(position);
-			return ;
-		}
-	}
-	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
-}
-
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
 	*this = ws_reply_instance();
@@ -217,6 +214,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 
 ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 {
+	int V(1);
 	ws_server_instance si;
 	ws_server_instance *choose;
 
@@ -253,7 +251,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 	si.root_config.push_back("client_max_body_size", config.getValStr \
 		("client_max_body_size"));
 
-	verbose(2) << "(choose_instance) Responding as " << \
+	verbose(V) << "(choose_instance) Responding as " << \
 		choose->config.getValStr("server_name") << ":" << in_port << \
 		"." << std::endl;
 
@@ -266,6 +264,20 @@ void WebServ::set_non_blocking(int sock)
 	opts = O_NONBLOCK;
 	if (fcntl(sock, F_SETFL, opts) == -1)
 		throw std::domain_error("(webserv) Could not set non-blocking flag.");
+}
+
+void WebServ::remove_from_poll(int fd)
+{
+	for (size_t i = 0; i < poll_list.size(); i++)
+	{
+		if (poll_list[i].fd == fd)
+		{
+			std::vector<struct pollfd>::iterator position(&poll_list[i]);
+			poll_list.erase(position);
+			return ;
+		}
+	}
+	throw std::domain_error("(webserv) Cannot remove unlisted fd.");
 }
 
 void WebServ::dup_into_poll(int oldfd)
