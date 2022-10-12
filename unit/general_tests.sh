@@ -8,7 +8,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -173,6 +173,8 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce Basic_1 \
@@ -472,8 +474,6 @@ unittest "50MB success"
 #####################################################################
 #####################################################################
 #####################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce MULTI_FAIL_1 \
 \

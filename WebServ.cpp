@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 00:39:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 00:51:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ struct pollfd WebServ::catch_connection()
 
 void WebServ::light_up()
 {
-	int V(1);
+	int V(2);
 	struct pollfd event;
 
 	verbose(V) << "Light up server: " << \
@@ -146,7 +146,7 @@ void WebServ::light_up()
 
 void WebServ::listen_to(int fd)
 {
-	int V(1);
+	int V(2);
 	std::string body;
 	ws_header in_header;
 	Chronometer time_out;
@@ -212,7 +212,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 
 ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 {
-	int V(1);
+	int V(2);
 	ws_server_instance si;
 	ws_server_instance *choose;
 
@@ -287,7 +287,7 @@ void WebServ::remove_from_poll(int fd)
 
 void WebServ::dup_into_poll(int oldfd)
 {
-	int V(1);
+	int V(2);
 	struct sockaddr_storage remoteaddr;
 	unsigned int addrlen = sizeof remoteaddr;
 	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
