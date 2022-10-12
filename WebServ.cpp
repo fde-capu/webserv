@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 00:15:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 00:39:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,30 +115,28 @@ void WebServ::light_up()
 			return exit_gracefully();
 		if (event.revents & POLLIN)
 		{
-			if (fd_to_si.find(event.fd) != fd_to_si.end())
-			{
-				remove_from_poll(event.fd);
-				continue ;
-			}
 			if (there_is_an_instance(event.fd))
 			{
 				verbose(V) << " . . . . . . . . . . . . . . . " << std::endl;
 				dup_into_poll(event.fd);
 				continue ;
 			}
-			fd_to_si[event.fd].got_pollin = true;
+			if (fd_to_si[event.fd].got_pollin)
+				continue ;
 			verbose(V) << "(light_up) Got POLLIN from " << event.fd << std::endl;
 			listen_to(event.fd);
-			if (fd_to_si[event.fd].got_pollout)
-				break ;
-			continue ;
+			fd_to_si[event.fd].got_pollin = true;
 		}
 		if (event.revents & POLLOUT || fd_to_si[event.fd].got_pollout)
 		{
+			if (fd_to_si.find(event.fd) == fd_to_si.end())
+				fd_to_si[event.fd] = ws_server_instance();
+			if (fd_to_si[event.fd].got_pollout)
+				continue ;
 			fd_to_si[event.fd].got_pollout = true;
+			verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
 			if (!fd_to_si[event.fd].got_pollin)
 				continue ;
-			verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
 			send_response(event.fd);
 			close(event.fd);
 			remove_from_poll(event.fd);
