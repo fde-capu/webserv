@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/06 23:55:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/12 20:23:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -449,7 +449,7 @@ bool ArgVal::comply(char *u_board_file)
 
 	if (AGV_SKIP_CHECK == 1)
 	{
-		verbose(V) << "Skept validation." << std::endl;
+		verbose(CRITICAL) << "Skept validation." << std::endl;
 		return true;
 	}
 

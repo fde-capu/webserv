@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/11 15:21:45 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/12 21:30:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ struct pollfd WebServ::make_in_out_fd(int newfd) const
 	ufds = pollfd();
 	ufds.fd = newfd;
 	ufds.events = POLLIN | POLLOUT;
+	ufds.revents = POLLIN | POLLOUT;
 	return ufds;
 }
 

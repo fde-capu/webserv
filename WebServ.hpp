@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/11 23:38:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/12 19:59:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ class WebServ
 		void flush_stdin();
 		bool is_port_taken(int) const;
 		bool same_port_another_name(const ws_server_instance*) const;
-		int catch_connection();
+		struct pollfd catch_connection();
 		bool there_is_an_instance(int) const;
 		void dup_into_poll(int);
 		void remove_from_poll(int);

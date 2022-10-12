@@ -6,22 +6,22 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/11 23:39:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/12 21:28:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
 // {%}
-//  Get POLLIN, set pollin_fd.
+//  Poll gets POLLIN, set pollin_fd.
 //  If pollin_fd is any listen_sock of any instance,
 //   generate newfd,
 //   put newfd to poll.
-//  If not, it sends data and awaits response, then
-//   receive,
-//   analise and route (will generate response),
+//  Poll gets POLLIN again, this time from newfd.
+//   receives data, validate data, prepares reply.
+//  Poll gets POLLOUT from newfd,
 //   send response,
-//   close pollin_fd.
+//   removes from poll and close newfd.
 
 WebServ::WebServ(DataFold& u_config)
 : config(u_config), server(config.filter("server")), lit(false)
@@ -78,8 +78,8 @@ void WebServ::hook_it()
 
 void WebServ::light_up()
 {
-	int V(2);
-	int event;
+	int V(1);
+	struct pollfd event;
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
@@ -89,43 +89,49 @@ void WebServ::light_up()
 	while (lit)
 	{
 		event = catch_connection();
-		if (event == -1) // meaning no event.
+		std::cout << *this;
+		if (event.fd == -1)
 			continue ;
-		if (event == 0) // stdin.
-			return exit_gracefully();
-		if (there_is_an_instance(event))
-			dup_into_poll(event);
-		else
-			listen_to(event);
+		if (event.fd == 0)
+		{
+			if (event.revents & POLLIN)
+				return exit_gracefully();
+			continue ;
+		}
+		if (event.revents & POLLIN)
+		{
+			verbose(V) << "Got POLLIN from " << event.fd << std::endl;
+			if (there_is_an_instance(event.fd))
+				dup_into_poll(event.fd);
+			else
+				listen_to(event.fd);
+		}
+		if (event.revents & POLLOUT)
+		{
+			verbose(V) << "Got POLLOUT from " << event.fd << std::endl;
+			send_response(event.fd);
+			close(event.fd);
+			remove_from_poll(event.fd);
+		}
 	}
 }
 
-int WebServ::catch_connection()
+struct pollfd WebServ::catch_connection()
 {
-	int V(1);
-	int TIME_OUT = 0; // 0 = non-blocking, -1 = blocking, N = cycle blocking ms
-	int nothing = -1;
+	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
 	int poll_count;
-	DataFold event;
 
 	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
-		if (poll_list[i].revents & POLLIN)
-		{
-			verbose(V) << poll_list[i].fd << " is ready to POLLIN." << std::endl;
-			return poll_list[i].fd;
-		}
-		else if (poll_list[i].fd != 0 && poll_list[i].revents & POLLOUT)
-		{
-			verbose(V) << poll_list[i].fd << " is ready to POLLOUT." << std::endl;
-			send_response(poll_list[i].fd);
-			return nothing;
-		}
+		if (poll_list[i].revents)
+			return poll_list[i];
 	}
-	return nothing;
+	struct pollfd out;
+	out.fd = -1; // meaning nothing.
+	return out;
 }
 
 void WebServ::listen_to(int fd)
@@ -170,8 +176,6 @@ void WebServ::send_response(int fd)
 	if (send(fd, respond.out_body.c_str(),
 		respond.package_length, 0) == -1)
 		throw std::domain_error("(webserv) Sending response went wrong.");
-	close(fd);
-	remove_from_poll(fd);
 }
 
 void WebServ::remove_from_poll(int fd)
