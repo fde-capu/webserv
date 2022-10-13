@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:37:23 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/29 15:13:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 05:24:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ bool WebServ::host_from_header(std::string& line, ws_header& header, bool& is_va
 
 struct ws_header WebServ::get_header(const std::string& full_file)
 {
-	static int V(3);
+	static int V(1);
 	ws_header header;
 	std::vector<std::string> line;
 	std::vector<std::string> carrier;
@@ -117,6 +117,8 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 			header.transfer_encoding = carrier[1];
 		if (is_equal_insensitive(carrier[0], "expect"))
 			header.expect = carrier[1];
+		if (is_equal_insensitive(carrier[0], "cookie"))
+			header.cookie = carrier[1];
 	}
 	header.is_valid = is_valid;
 	verbose(V) << "(get_header) " << header << std::endl;

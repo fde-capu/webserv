@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:48:34 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 01:21:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 05:24:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,5 +81,6 @@ std::ostream & operator<< (std::ostream & o, ws_header const & wsh)
 	o << "ws_header | charset    | " << wsh.charset << std::endl;
 	o << "ws_header | transf-enc | " << wsh.transfer_encoding << std::endl;
 	o << "ws_header | expect     | " << wsh.expect << std::endl;
+	o << "ws_header | cookie     | " << wsh.cookie << std::endl;
 	return o;
 }

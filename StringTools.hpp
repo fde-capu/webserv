@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 21:57:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 07:19:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ class StringTools
 		std::string					word_from(const std::string&, size_t) const;
 		bool						is_equal_insensitive(const std::string, const std::string) const;
 		std::string					to_lower(std::string) const;
+		std::string					to_upper(std::string) const;
 		void						remove_dup_char(std::string&, const char) const;
 		void						remove_rep_char(std::string&, const char) const;
 		static std::string			query_for(std::string, std::string&);
@@ -108,6 +109,7 @@ class StringTools
 		static std::string			consume_until(std::string&, const std::string);
 		static void					just_consume_until(std::string&, const std::string);
 		static std::string			consume_bytes(std::string&, size_t);
+		static std::string			get_after_until_line(const std::string&, const std::string);
 		static std::string			get_after_first(const std::string&, const std::string);
 		static std::string			get_before_first(const std::string&, const std::string);
 		static size_t				strhex2size_t(const std::string);
@@ -120,6 +122,7 @@ bool isWordContained(const std::string&, const std::string&);
 void remove_dup_char(std::string&, const char);
 void remove_rep_char(std::string&, const char);
 std::string to_lower(std::string);
+std::string to_upper(std::string);
 bool is_equal_insensitive(const std::string, const std::string);
 std::string trim(std::string&);
 void soft_trim(std::string&);

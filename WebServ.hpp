@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 01:30:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 05:24:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ struct ws_header
 	std::string transfer_encoding;
 	std::string charset;
 	std::string expect;
+	std::string cookie;
 
 	bool		is_valid;
 	int			status;

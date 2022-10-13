@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 01:27:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 07:31:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ void WebServ::load_defaults()
 
 void ws_reply_instance::encapsulate()
 {
-	int V(3);
+	int V(1);
 	std::string out = "";
 
 	verbose(V) << "(encapsulate) out_header:" << std::endl << out_header << std::endl;
@@ -163,6 +163,8 @@ void ws_reply_instance::encapsulate()
 	}
 	else
 		out += "Content-Type: text/html; charset=utf-8\r\n";
+	if (out_header.cookie != "")
+		out += "Set-Cookie: " + out_header.cookie + "\r\n";
 	out += "\r\n";
 	verbose(V) << "(encapsulate) pre header:" << std::endl << out << std::endl;
 	verbose(V) << "(encapsulate) pre body:" << LONG(out_body) << std::endl;

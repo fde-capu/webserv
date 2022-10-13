@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 02:21:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 07:30:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -638,6 +638,16 @@ std::string StringTools::to_lower(std::string str) const
 	return str;
 }
 
+std::string to_upper(std::string a)
+{ return stool.to_upper(a); }
+
+std::string StringTools::to_upper(std::string str) const
+{
+	for (size_t i = 0; i < str.length(); i++)
+		str[i] = toupper(str[i]);
+	return str;
+}
+
 void remove_dup_char(std::string& dst, const char c)
 { return stool.remove_dup_char(dst, c); }
 
@@ -760,6 +770,17 @@ std::string StringTools::consume_delims(std::string& src, const std::string deli
 		h++;
 	src.erase(0, h);
 	return ret;
+}
+
+std::string StringTools::get_after_until_line(const std::string& src, const std::string phrase)
+{
+	size_t h(src.find(phrase));
+	if (h == std::string::npos)
+		return "";
+	size_t nl(src.find("\n", h));
+	size_t rl(src.find("\r", h));
+	size_t b = nl < rl ? nl : rl;
+	return src.substr(h + phrase.length(), b - (h + phrase.length()));
 }
 
 std::string StringTools::get_after_first(const std::string& src, const std::string phrase)

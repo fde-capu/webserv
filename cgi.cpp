@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:27:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 07:30:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,26 @@
 
 void ws_reply_instance::cgi_setenv(ws_server_instance& si, std::string path_info)
 {
+	int V(1);
+
 	setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
 	setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
 	setenv("PATH_INFO", path_info.c_str(), 1);
+	setenv("SESSION_ID", si.in_header.cookie.c_str(), 1);
+
+	std::vector<std::string> cookie(split_trim(si.in_header.cookie, ";"));
+	std::string key;
+	std::string val;
+	for (size_t i = 0; i < cookie.size(); i++)
+	{
+		if (cookie[i].empty())
+			continue ;
+		key = StringTools::get_before_first(cookie[i], "=");
+		val = StringTools::get_after_first(cookie[i], "=");
+		key = "WS_" + to_upper(key);
+		verbose(V) << "(cgi_setenv) " << key << "=" << val << std::endl;
+		setenv(key.c_str(), val.c_str(), 1);
+	}
 }
 
 void ws_reply_instance::cgi_write_into_child(ws_server_instance& si, int u_pipe)
@@ -106,6 +123,8 @@ void ws_reply_instance::header_from_body()
 	out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
 	out_header.content_type = StringTools::query_for("Content-Type", out_body);
 	out_header.charset = StringTools::query_for("charset", out_body);
+	out_header.cookie = StringTools::get_after_until_line(out_body, "Set-Cookie:");
+	trim(out_header.cookie);
 	dbreak[0] = out_body.find("\r\n\r\n");
 	dbreak[1] = out_body.find("\n\n");
 	dbreak[2] = out_body.find("\r\r");
@@ -113,7 +132,7 @@ void ws_reply_instance::header_from_body()
 		h_body = h_body > dbreak[i] ? dbreak[i] : h_body;
 	dblen = h_body == dbreak[0] ? 4 : 2;
 	if (h_body != std::string::npos)
-		out_body = out_body.substr(h_body + dblen);
+		out_body.erase(0, h_body + dblen);
 }
 
 int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 02:13:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 06:13:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,9 @@ struct pollfd WebServ::catch_connection()
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
-		if (poll_list[i].revents & POLLIN \
-		||  poll_list[i].revents & POLLOUT )
+//		if (poll_list[i].revents & POLLIN \
+//		||  poll_list[i].revents & POLLOUT )
+		if (poll_list[i].revents)
 			return poll_list[i];
 	}
 	struct pollfd out;
@@ -158,7 +159,7 @@ void WebServ::listen_to(int fd)
 
 	while (!in_header.is_valid)
 	{
-		if (time_out > TIME_OUT_MSEC)
+		if (time_out > TIME_OUT_MSEC / 10)
 		{
 			verbose(V) << "(listen_to) Timeout! << " << time_out << \
 				" > Incomplete header" << std::endl;
