@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:40:40 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/11 15:16:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 16:43:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int WebServ::bind_socket_to_local(int u_port)
 {
-	int V(1);
+	int V(2);
 	struct addrinfo hints;
 	struct addrinfo *result, *rp; // rp = read pointer
 	int sfd(0), s;

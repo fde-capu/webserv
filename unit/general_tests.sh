@@ -1,14 +1,12 @@
 #!/bin/sh
 
-## unset_workgin_directory.sh
-
 # unit test for webserv
 # by fde-capu
 
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="false";
+step_by_step="true";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -172,7 +170,7 @@ done
 if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
-#################################################################### Begin
+############################################################### Begin
 fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ##################################################################
@@ -1051,5 +1049,6 @@ cookieline=`cat tmp_response | grep "$sessionid"`;
 cat tmp_response;
 colorscore "SESSION_ID expired." "$cookieline" "";
 rm tmp_response;
+rm cookiefile;
 
 finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!

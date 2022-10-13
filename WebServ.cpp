@@ -6,22 +6,11 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 06:13:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 22:14:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
-
-// {%}
-//  Poll gets POLLIN, set pollin_fd.
-//  If pollin_fd is any listen_sock of any instance,
-//   generate newfd,
-//   put newfd to poll.
-//  Poll gets POLLIN again, this time from newfd.
-//   receives data, validate data, prepares reply.
-//  Poll gets POLLOUT from newfd,
-//   send response,
-//   removes from poll and close newfd.
 
 WebServ::WebServ(DataFold& u_config)
 : config(u_config), server(config.filter("server")), lit(false)
@@ -86,8 +75,6 @@ struct pollfd WebServ::catch_connection()
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
-//		if (poll_list[i].revents & POLLIN \
-//		||  poll_list[i].revents & POLLOUT )
 		if (poll_list[i].revents)
 			return poll_list[i];
 	}
@@ -96,10 +83,33 @@ struct pollfd WebServ::catch_connection()
 	return out;
 }
 
+void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
+{
+	static std::map<int, bool> has_header;
+
+	for (std::map<int, std::pair<bool, bool> >::iterator it = ready.begin(); it != ready.end(); it++)
+	{
+		if (it->second.first && !has_header[it->first])
+		{
+			listen_to(it->first);
+			has_header[it->first] = true;
+		}
+		if (it->second.second && has_header[it->first])
+		{
+			send_response(it->first);
+			close(it->first);
+			remove_from_poll(it->first);
+			ready.erase(it->first);
+			has_header.erase(it->first);
+		}
+	}
+}
+
 void WebServ::light_up()
 {
 	int V(2);
 	struct pollfd event;
+	std::map<int, std::pair<bool, bool> > ready;
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
@@ -108,6 +118,7 @@ void WebServ::light_up()
 	lit = true;
 	while (lit)
 	{
+		dispatch(ready);
 		event = catch_connection();
 		std::cout << *this; // Animation.
 		if (event.fd == -1)
@@ -122,25 +133,15 @@ void WebServ::light_up()
 				dup_into_poll(event.fd);
 				continue ;
 			}
-			if (webserver[event.fd].got_pollin)
-				continue ;
 			verbose(V) << "(light_up) Got POLLIN from " << event.fd << std::endl;
-			listen_to(event.fd);
-			webserver[event.fd].got_pollin = true;
+			ready[event.fd].first = true;
+			continue ;
 		}
-		if (event.revents & POLLOUT || webserver[event.fd].got_pollout)
+		if (event.revents & POLLOUT)
 		{
-			if (webserver.find(event.fd) == webserver.end())
-				webserver[event.fd] = ws_server_instance();
-			if (webserver[event.fd].got_pollout)
-				continue ;
-			webserver[event.fd].got_pollout = true;
 			verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
-			if (!webserver[event.fd].got_pollin)
-				continue ;
-			send_response(event.fd);
-			close(event.fd);
-			remove_from_poll(event.fd);
+			ready[event.fd].second = true;
+			continue ;
 		}
 	}
 }
@@ -159,7 +160,7 @@ void WebServ::listen_to(int fd)
 
 	while (!in_header.is_valid)
 	{
-		if (time_out > TIME_OUT_MSEC / 10)
+		if (time_out > TIME_OUT_MSEC)
 		{
 			verbose(V) << "(listen_to) Timeout! << " << time_out << \
 				" > Incomplete header" << std::endl;
@@ -177,6 +178,8 @@ void WebServ::listen_to(int fd)
 	webserver[fd].set_props();
 	webserver[fd].set_sizes();
 	webserver[fd].fd = fd;
+
+	verbose(V) << "(listen_to) Finished getting data." << std::endl;
 }
 
 void WebServ::send_response(int fd)
@@ -276,14 +279,7 @@ void WebServ::remove_from_poll(int fd)
 			break ;
 		}
 	}
-	for (std::map<int, ws_server_instance>::iterator it = webserver.begin(); it != webserver.end(); it++)
-	{
-		if (it->first == fd)
-		{
-			webserver.erase(it);
-			break ;
-		}
-	}
+	webserver.erase(fd);
 }
 
 void WebServ::dup_into_poll(int oldfd)

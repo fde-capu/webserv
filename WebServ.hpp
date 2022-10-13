@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 05:24:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 21:55:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ struct ws_server_instance
 	DataFold root_config;
 	int fd;
 	bool insufficient_resources;
-	bool got_pollin;
-	bool got_pollout;
 
 	const DataFold operator[] (std::string) const;
 	std::string val(std::string) const;
@@ -183,6 +181,7 @@ class WebServ
 		std::vector<ws_server_instance> getInstance() const;
 		void init();
 		void light_up();
+		void dispatch(std::map<int, std::pair<bool, bool> >&);
 
 		// Usefull services for everyone!
 		static int bind_socket_to_local(int);

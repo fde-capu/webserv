@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 07:30:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 16:44:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void ws_reply_instance::cgi_setenv(ws_server_instance& si, std::string path_info)
 {
-	int V(1);
+	int V(2);
 
 	setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
 	setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
