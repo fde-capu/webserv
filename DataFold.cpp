@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/06 23:53:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 22:20:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -564,7 +564,6 @@ DataFold DataFold::parse_only_val(const datafold_t &df)
 		entry.val = df.val;
 		hard_trim(entry.val);
 		entry.type = df.type + DF_TYPE_ONLY_VAL;
-//		entry.key = df.val;
 		entry.key = "";
 		out.push_back(entry);
 		return out;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 22:14:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 22:42:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,46 +65,6 @@ void WebServ::hook_it()
 	verbose(1) << "(webserv) I'm hooked." << std::endl << std::endl;
 }
 
-struct pollfd WebServ::catch_connection()
-{
-	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
-	int poll_count;
-
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
-	if (poll_count == -1)
-		throw std::domain_error("(webserv) Poll error.");
-	for (size_t i = 0; i < poll_list.size(); i++)
-	{
-		if (poll_list[i].revents)
-			return poll_list[i];
-	}
-	struct pollfd out;
-	out.fd = -1; // meaning nothing.
-	return out;
-}
-
-void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
-{
-	static std::map<int, bool> has_header;
-
-	for (std::map<int, std::pair<bool, bool> >::iterator it = ready.begin(); it != ready.end(); it++)
-	{
-		if (it->second.first && !has_header[it->first])
-		{
-			listen_to(it->first);
-			has_header[it->first] = true;
-		}
-		if (it->second.second && has_header[it->first])
-		{
-			send_response(it->first);
-			close(it->first);
-			remove_from_poll(it->first);
-			ready.erase(it->first);
-			has_header.erase(it->first);
-		}
-	}
-}
-
 void WebServ::light_up()
 {
 	int V(2);
@@ -142,6 +102,60 @@ void WebServ::light_up()
 			verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
 			ready[event.fd].second = true;
 			continue ;
+		}
+	}
+}
+
+struct pollfd WebServ::catch_connection()
+{
+	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
+	int poll_count;
+
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	if (poll_count == -1)
+		throw std::domain_error("(webserv) Poll error.");
+	for (size_t i = 0; i < poll_list.size(); i++)
+	{
+		if (poll_list[i].revents)
+			return poll_list[i];
+	}
+	struct pollfd out;
+	out.fd = -1; // meaning nothing.
+	return out;
+}
+
+void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
+{
+	int rbytes;
+	int fd;
+	bool pollin, pollout;
+	static std::map<int, bool> has_header;
+	static std::map<int, std::string> raw;
+	static std::map<int, ws_header> in_header;
+	static std::map<int, bool> out_of_resources;
+	static std::map<int, std::string> body;
+
+	for (std::map<int, std::pair<bool, bool> >::iterator it = ready.begin(); it != ready.end(); it++)
+	{
+		fd = it->first;
+		pollin = it->second.first;
+		pollout = it->second.second;
+
+		if (pollin)
+		{
+			rbytes = read(fd, const_cast<char *>(buffer), 10); // BUFFER_SIZE
+			raw[fd].append(buffer, rbytes);
+			if (!in_header[fd].is_valid)
+				in_header[fd] = get_header(raw[fd]);
+//			listen_to(it->first);
+		}
+		if (it->second.second && has_header[it->first])
+		{
+			send_response(it->first);
+			close(it->first);
+			remove_from_poll(it->first);
+			ready.erase(it->first);
+			has_header.erase(it->first);
 		}
 	}
 }
