@@ -8,7 +8,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="false";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -1027,5 +1027,29 @@ set -x;
 ##################################################################
 #################################################################
 #################################################################
+
+{ anounce COOKIE \
+\
+	"Show cookie usage and session management." \
+\
+; } 2> /dev/null
+
+set +x
+curl http://$name_server:3490/cgi_cookie.php -b cookiefile -c cookiefile --trace-ascii tmp_response
+cookieline=`cat tmp_response | grep "Set-Cookie" | sed "s|.*Set-Cookie.*|Set-Cookie|"`
+sessionid=`cat tmp_response | grep "Set-Cookie" | sed "s|.*SESSION_ID=||" | sed "s|;.*||"`
+cat tmp_response;
+colorscore "Must have gotten some Set-Cookie header." "$cookieline" "Set-Cookie";
+sleep 2
+curl http://$name_server:3490/cgi_cookie.php -b cookiefile -c cookiefile -so tmp_response;
+cookieline=`cat tmp_response | grep "$sessionid"`;
+cat tmp_response;
+colorscore "SESSION_ID must be set." "$cookieline" "$sessionid";
+sleep 4
+curl http://$name_server:3490/cgi_cookie.php -b cookiefile -c cookiefile -so tmp_response;
+cookieline=`cat tmp_response | grep "$sessionid"`;
+cat tmp_response;
+colorscore "SESSION_ID expired." "$cookieline" "";
+rm tmp_response;
 
 finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
