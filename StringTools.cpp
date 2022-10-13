@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 21:58:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/13 02:21:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -711,7 +711,7 @@ std::string StringTools::consume_bytes(std::string& src, size_t bytes)
 		return ret;
 	}
 	ret = src.substr(0, bytes);
-	src = src.substr(bytes);
+	src.erase(0, bytes);
 	return ret;
 }
 
@@ -723,7 +723,7 @@ void StringTools::just_consume_until(std::string& src, const std::string delim_s
 		src = "";
 		return;
 	}
-	src = src.substr(h + delim_str.length());
+	src.erase(0, h + delim_str.length());
 	return;
 }
 
@@ -738,7 +738,7 @@ std::string StringTools::consume_until(std::string& src, const std::string delim
 		return ret;
 	}
 	ret = src.substr(0, h);
-	src = src.substr(h + delim_str.length());
+	src.erase(0, h + delim_str.length());
 	return ret;
 }
 
@@ -758,7 +758,7 @@ std::string StringTools::consume_delims(std::string& src, const std::string deli
 	ret = src.substr(0, h);
 	while (src.length() && h < src.length() - 1 && isInSet(src.at(h), delim_set))
 		h++;
-	src = src.substr(h);
+	src.erase(0, h);
 	return ret;
 }
 

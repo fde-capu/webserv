@@ -173,9 +173,11 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 #################################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
-{ anounce Basic_1 \
+{ anounce BASIC_ONE \
 \
 	':3490 will demonstrate the implementations. \n
 	It is bound to directory ./unit/confs/html.	\n
@@ -187,11 +189,11 @@ cmd="curl http://$name_server:3490";
 testfile="$MYDIR/confs/html/index.htm";
 code="200";
 show_output="true";
-unittest "Basic 1";
+unittest "Basic one";
 
 ##################################################################
 
-{ anounce RROT_BY_SERVERNAME \
+{ anounce ROOT_BY_HOSTNAME \
 \
 	'If server_name is existent on another root: 200' \
 \
@@ -677,8 +679,6 @@ unittest "50MB success"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_PARTIAL \
 \
