@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 22:42:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/14 17:49:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,27 @@ void WebServ::hook_it()
 	verbose(1) << "(webserv) I'm hooked." << std::endl << std::endl;
 }
 
+struct pollfd WebServ::catch_connection()
+{
+	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
+	int poll_count;
+
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	if (poll_count == -1)
+		throw std::domain_error("(webserv) Poll error.");
+	for (size_t i = 0; i < poll_list.size(); i++)
+	{
+		if (poll_list[i].revents)
+			return poll_list[i];
+	}
+	struct pollfd out;
+	out.fd = -1; // meaning nothing.
+	return out;
+}
+
 void WebServ::light_up()
 {
-	int V(2);
+	int V(1);
 	struct pollfd event;
 	std::map<int, std::pair<bool, bool> > ready;
 
@@ -93,47 +111,32 @@ void WebServ::light_up()
 				dup_into_poll(event.fd);
 				continue ;
 			}
-			verbose(V) << "(light_up) Got POLLIN from " << event.fd << std::endl;
+			if (!ready[event.fd].first)
+				verbose(V) << "(light_up) Got POLLIN from " << event.fd << std::endl;
 			ready[event.fd].first = true;
 			continue ;
 		}
 		if (event.revents & POLLOUT)
 		{
-			verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
+			if (!ready[event.fd].second)
+				verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
 			ready[event.fd].second = true;
 			continue ;
 		}
 	}
 }
 
-struct pollfd WebServ::catch_connection()
-{
-	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
-	int poll_count;
-
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
-	if (poll_count == -1)
-		throw std::domain_error("(webserv) Poll error.");
-	for (size_t i = 0; i < poll_list.size(); i++)
-	{
-		if (poll_list[i].revents)
-			return poll_list[i];
-	}
-	struct pollfd out;
-	out.fd = -1; // meaning nothing.
-	return out;
-}
-
 void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 {
+	int LOCAL_BUFFER_SIZE(10);
+	static char* buffer = static_cast<char *>(std::malloc(LOCAL_BUFFER_SIZE * sizeof(char) + 1));
 	int rbytes;
 	int fd;
 	bool pollin, pollout;
 	static std::map<int, bool> has_header;
+	static std::map<int, bool> has_ended;
 	static std::map<int, std::string> raw;
 	static std::map<int, ws_header> in_header;
-	static std::map<int, bool> out_of_resources;
-	static std::map<int, std::string> body;
 
 	for (std::map<int, std::pair<bool, bool> >::iterator it = ready.begin(); it != ready.end(); it++)
 	{
@@ -143,19 +146,38 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (pollin)
 		{
-			rbytes = read(fd, const_cast<char *>(buffer), 10); // BUFFER_SIZE
+			rbytes = read(fd, buffer, LOCAL_BUFFER_SIZE);
+			has_ended[fd] = rbytes == 0;
 			raw[fd].append(buffer, rbytes);
 			if (!in_header[fd].is_valid)
 				in_header[fd] = get_header(raw[fd]);
-//			listen_to(it->first);
+			if (in_header[fd].is_valid && webserver.find(fd) == webserver.end())
+				webserver[fd] = choose_instance(in_header[fd], fd_to_port[fd]);
+			if (in_header[fd].is_valid && has_ended[fd])
+			{
+				webserver[fd].in_body = get_body(raw[fd]);
+				webserver[fd].set_props();
+				webserver[fd].set_sizes();
+				webserver[fd].fd = fd;
+			}
+			ready[fd].first = false;
 		}
-		if (it->second.second && has_header[it->first])
+		if (pollout)
 		{
-			send_response(it->first);
-			close(it->first);
-			remove_from_poll(it->first);
-			ready.erase(it->first);
-			has_header.erase(it->first);
+			if (!has_ended[fd])
+				continue ;
+			if (webserver.find(fd) == webserver.end())
+				continue ;
+			ws_reply_instance respond(webserver[fd]); // ...oonn...
+			send_response(fd);
+			close(fd);
+			remove_from_poll(fd);
+			ready[fd].second = false;
+
+			has_header.erase(fd);
+			has_ended.erase(fd);
+			raw.erase(fd);
+			in_header.erase(fd);
 		}
 	}
 }
@@ -221,8 +243,8 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 	if (is_413_507_422(si)) return ; // 413 Too Large, 507 No resource, 422 Unprocessable.
 	if (is_400(si)) return ; // 400 Bad Request. POST w/o filename.
 	if (is_cgi_exec(si)) return ; // Runs CGI and returns accordingly. 202 Accepted.
-	if (is_201(si)) return ; // Created (POST) and saves data.
-	if (is_200(si)) return ; // Ok (GET) and loads file.
+	if (is_201(si)) return ; // POST and saves data.
+	if (is_200(si)) return ; // Ok GET and loads file.
 
 	set_code(420, "Enhance Your Calm");
 	out_body = TemplateError::page(420, si.custom_error(420));
