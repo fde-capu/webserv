@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 11:59:23 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/08/31 14:25:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 00:51:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ class Chronometer
 		void btn_stop();
 		double read_last() const;
 		operator double();
-	private:
 		Chronometer(Chronometer const & src);
 		Chronometer& operator= (Chronometer const & rhs);
 };

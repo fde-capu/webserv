@@ -7,7 +7,7 @@
 
 name_server="127.0.0.1";
 step_by_step="true";
-clean_upfiles_after_test="";
+clean_upfiles_after_test="true";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -171,8 +171,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -493,6 +491,8 @@ message="Response code might have been chosen differently."
 unittest "webserv must close connection"
 
 #####################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce MULTI_FAIL_200 \
 \

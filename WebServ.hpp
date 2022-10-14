@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 21:55:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 01:09:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ struct ws_server_instance
 	DataFold root_config;
 	int fd;
 	bool insufficient_resources;
+	Chronometer chronometer;
 
 	const DataFold operator[] (std::string) const;
 	std::string val(std::string) const;

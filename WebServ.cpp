@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/14 17:49:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 01:22:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,56 +128,98 @@ void WebServ::light_up()
 
 void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 {
-	int LOCAL_BUFFER_SIZE(10);
+	int V(1);
+	int LOCAL_BUFFER_SIZE(10485760);
 	static char* buffer = static_cast<char *>(std::malloc(LOCAL_BUFFER_SIZE * sizeof(char) + 1));
 	int rbytes;
+	int sbytes;
 	int fd;
-	bool pollin, pollout;
-	static std::map<int, bool> has_header;
-	static std::map<int, bool> has_ended;
+	bool* pollin;
+	bool* pollout;
+	static std::map<int, bool> in_ended;
+	static std::map<int, bool> out_ended;
+	static std::map<int, bool> body_ok;
+	static std::map<int, bool> chosen_instance;
+	static std::map<int, bool> chosen_response;
 	static std::map<int, std::string> raw;
 	static std::map<int, ws_header> in_header;
+	static std::map<int, ws_reply_instance> respond;
 
 	for (std::map<int, std::pair<bool, bool> >::iterator it = ready.begin(); it != ready.end(); it++)
 	{
 		fd = it->first;
-		pollin = it->second.first;
-		pollout = it->second.second;
+		pollin = &(it->second.first);
+		pollout = &(it->second.second);
 
-		if (pollin)
+		if (*pollin)
 		{
+			*pollin = false;
 			rbytes = read(fd, buffer, LOCAL_BUFFER_SIZE);
-			has_ended[fd] = rbytes == 0;
-			raw[fd].append(buffer, rbytes);
+			if (rbytes == 0)
+				in_ended[fd] = true;
+			if (rbytes > 0)
+			{
+				raw[fd].append(buffer, rbytes);
+				webserver[fd].chronometer.btn_reset();
+			}
 			if (!in_header[fd].is_valid)
 				in_header[fd] = get_header(raw[fd]);
-			if (in_header[fd].is_valid && webserver.find(fd) == webserver.end())
-				webserver[fd] = choose_instance(in_header[fd], fd_to_port[fd]);
-			if (in_header[fd].is_valid && has_ended[fd])
+			if (in_header[fd].is_valid && !chosen_instance[fd])
 			{
-				webserver[fd].in_body = get_body(raw[fd]);
-				webserver[fd].set_props();
-				webserver[fd].set_sizes();
-				webserver[fd].fd = fd;
+				verbose(V) << "- Got valid header." << std::endl;
+				webserver[fd] = choose_instance(in_header[fd], fd_to_port[fd]);
+				chosen_instance[fd] = true;
+				verbose(V) << "- Has choosen instance." << std::endl;
+				webserver[fd].chronometer.btn_reset();
 			}
-			ready[fd].first = false;
 		}
-		if (pollout)
+		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > 1)
+			in_ended[fd] = true;
+		if (in_ended[fd] && !body_ok[fd])
 		{
-			if (!has_ended[fd])
+			webserver[fd].in_body = get_body(raw[fd]);
+			verbose(V) << "- Body mounted." << std::endl;
+			webserver[fd].set_props();
+			webserver[fd].set_sizes();
+			webserver[fd].fd = fd;
+			body_ok[fd] = true;
+		}
+		if (*pollout)
+		{
+			if (!chosen_instance[fd])
+			{
+				verbose(V) << "  (No instance.)" << std::endl;
 				continue ;
-			if (webserver.find(fd) == webserver.end())
-				continue ;
-			ws_reply_instance respond(webserver[fd]); // ...oonn...
-			send_response(fd);
-			close(fd);
-			remove_from_poll(fd);
-			ready[fd].second = false;
-
-			has_header.erase(fd);
-			has_ended.erase(fd);
-			raw.erase(fd);
-			in_header.erase(fd);
+			}
+			if (!chosen_response[fd] && in_ended[fd])
+			{
+				respond[fd] = ws_reply_instance(webserver[fd]); // ...oonn...
+				chosen_response[fd] = true;
+				verbose(V) << "- Chosen response." << std::endl;
+				respond[fd].encapsulate();
+				verbose(V) << "- Encapsulated." << std::endl;
+			}
+			if (chosen_response[fd] && in_ended[fd])
+			{
+				*pollout = false;
+				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0);
+				StringTools::consume_bytes(respond[fd].out_body, sbytes);
+				verbose(V) << "- Sent response." << std::endl;
+				out_ended[fd] = respond[fd].out_body.length() == 0;
+			}
+			if (out_ended[fd])
+			{
+				close(fd);
+				remove_from_poll(fd);
+				in_ended.erase(fd);
+				out_ended.erase(fd);
+				body_ok.erase(fd);
+				chosen_instance.erase(fd);
+				chosen_response.erase(fd);
+				raw.erase(fd);
+				in_header.erase(fd);
+				respond.erase(fd);
+			}
 		}
 	}
 }

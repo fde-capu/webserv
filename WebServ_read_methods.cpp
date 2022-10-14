@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 21:58:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 01:28:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ void ws_server_instance::read_more_multipart()
 
 int ws_reply_instance::read_limits(ws_server_instance& si)
 {
-	static int V(2);
+	static int V(1);
 	int pos_status(0);
 
 	verbose(V) << "(read_limits) max_size: " << si.max_size << "." \
@@ -148,15 +148,15 @@ int ws_reply_instance::read_limits(ws_server_instance& si)
 	verbose(V) << "(read_limits) content_type: " << \
 		si.in_header.content_type << std::endl;
 
-	pos_status = si.read_more_general();
-	si.set_sizes();
+//	pos_status = si.read_more_general();
+	si.mount_multipart();
 	if (si.exceeded_limit)
 	{
 		set_code(413, "Payload Too Large");
 		out_body = TemplateError::page(413, si.custom_error(413));
 		return 413;
 	}
-	if (pos_status == 507)
+	if (si.in_header.content_length > CIRCULARBUFFER_LIMIT)
 	{
 		set_code(507, "Insufficient Resources");
 		out_body = TemplateError::page(507, si.custom_error(507));

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 16:42:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/14 23:48:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void ws_reply_instance::set_code(int code_n, const std::string& u_output)
 {
 	out_header.status = code_n;
 	out_header.status_msg = u_output;
-	verbose(1) << "(webserv) " << code_n << " " << u_output << std::endl;
+	verbose(CRITICAL) << "(webserv) " << code_n << " " << u_output << std::endl;
 }
 
 void ws_reply_instance::set_redirect(const std::string& target)
