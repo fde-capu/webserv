@@ -6,7 +6,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -171,8 +171,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -459,6 +457,10 @@ ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+for i in 1 2 3 4 5 6 7 8 9 10
+do
+
 { anounce MULTI_50M_NOISE \
 \
 	'How about 50MB?\n
@@ -466,12 +468,16 @@ ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 \
 ; } 2> /dev/null
 
+rm -f ${MYDIR}/confs/html/uploads_large/file.noise
 noise="50MB"
 cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "50MB success"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+
+done
+finish;
 
 #####################################################################
 #####################################################################
