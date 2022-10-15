@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 22:13:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 23:03:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 # include "DataFold.hpp"
 # include "CircularBuffer.hpp"
 # include "Chronometer.hpp"
-# include "TemplateError.hpp"
+# include "TemplatePage.hpp"
 # include <algorithm>
 # include <vector>
 # include <arpa/inet.h>

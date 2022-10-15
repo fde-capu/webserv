@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   TemplateError.hpp                                  :+:      :+:    :+:   */
+/*   TemplatePage.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/09/18 20:43:31 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/21 21:26:22 by fde-capu         ###   ########.fr       */
+/*   Created: 2022/10/15 23:04:55 by fde-capu          #+#    #+#             */
+/*   Updated: 2022/10/15 23:04:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <string>
 # include "FileString.hpp"
 
-class TemplateError
+class TemplatePage
 {
 	private:
 		std::string error_to_get;
@@ -24,9 +24,9 @@ class TemplateError
 		static std::string path;
 		std::string full_file_name;
 		static FileString config;
-		TemplateError();
+		TemplatePage();
 	public:
-		TemplateError(const char *, const char *);
+		TemplatePage(const char *, const char *);
 		static std::string page(size_t, std::string = "");
 };
 

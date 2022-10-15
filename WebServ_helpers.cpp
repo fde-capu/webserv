@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/14 23:48:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 23:05:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ extern DataFold g_config;
 int ws_reply_instance::bad_gateway(std::string u_content)
 {
 	set_code(502, "Bad Gateway");
-	out_body = TemplateError::page(502, u_content);
+	out_body = TemplatePage::page(502, u_content);
 	return 502;
 }
 
@@ -199,7 +199,7 @@ void WebServ::respond_timeout(int fd)
 {
 	ws_reply_instance respond;
 	respond.set_code(408, "Request Timeout");
-	respond.out_body = TemplateError::page(408);
+	respond.out_body = TemplatePage::page(408);
 	respond.encapsulate();
 	if (send(fd, respond.out_body.c_str(),
 		respond.package_length, 0) == -1)

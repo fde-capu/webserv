@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:40:40 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 16:43:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 23:08:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ ws_server_instance WebServ::dftosi(DataFold df)
 	while (df_listen.loop())
 	{
 		port = std::atoi(df_listen.val.c_str());
-		si.port.push_back(port); // htons?
+		si.port.push_back(port);
 		si.config = df;
 	}
 	return si;

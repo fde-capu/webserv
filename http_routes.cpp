@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 22:45:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 23:03:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int ws_reply_instance::is_501(ws_server_instance& si)
 	)
 	{
 		set_code(501, "Not Implemented");
-		out_body = TemplateError::page(501, si.custom_error(501));
+		out_body = TemplatePage::page(501, si.custom_error(501));
 		return 501;
 	}
 	return 0;
@@ -46,7 +46,7 @@ int ws_reply_instance::is_301(ws_server_instance& si)
 		if (atoi(returns[0].c_str()) == 301)
 		{
 			set_code(301, "Moved Permanently");
-			out_body = TemplateError::page(301);
+			out_body = TemplatePage::page(301);
 			set_redirect(returns[1]);
 			return 301;
 		}
@@ -70,7 +70,7 @@ int ws_reply_instance::is_405(ws_server_instance& si)
 	if (method_accepted)
 		return 0;
 	set_code(405, "Method Not Allowed");
-	out_body = TemplateError::page(405, si.custom_error(405));
+	out_body = TemplatePage::page(405, si.custom_error(405));
 	return 405;
 }
 
@@ -83,7 +83,7 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 		)
 	{
 		set_code(403, "Forbidden");
-		out_body = TemplateError::page(403, si.custom_error(403));
+		out_body = TemplatePage::page(403, si.custom_error(403));
 		return 403;
 	}
 	return 0;
@@ -127,13 +127,13 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 			else if (autoindex != "")
 			{
 				set_code(403, "Forbidden");
-				out_body = TemplateError::page(403, si.custom_error(403));
+				out_body = TemplatePage::page(403, si.custom_error(403));
 				return 403;
 			}
 		}
 		verbose(V) << "(is_404) autoindex: " << autoindex << std::endl;
 		set_code(404, "File Not Found");
-		out_body = TemplateError::page(404, si.custom_error(404));
+		out_body = TemplatePage::page(404, si.custom_error(404));
 		return 404;
 	}
 	if (si.in_header.method == "DELETE")
@@ -141,7 +141,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 		if (FileString::exists(request))
 			return 0;
 		set_code(404, "File Not Found");
-		out_body = TemplateError::page(404, si.custom_error(404));
+		out_body = TemplatePage::page(404, si.custom_error(404));
 		return 404;
 	}
 	return 0;
@@ -149,7 +149,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 {
-	static int V(1);
+	static int V(3);
 	int pos_status(0);
 
 	verbose(V) << "(is_413_507_422) max_size: " << si.max_size << "." \
@@ -161,19 +161,19 @@ int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 	if (si.exceeded_limit)
 	{
 		set_code(413, "Payload Too Large");
-		out_body = TemplateError::page(413, si.custom_error(413));
+		out_body = TemplatePage::page(413, si.custom_error(413));
 		return 413;
 	}
 	if (si.in_header.content_length > CIRCULARBUFFER_LIMIT)
 	{
 		set_code(507, "Insufficient Resources");
-		out_body = TemplateError::page(507, si.custom_error(507));
+		out_body = TemplatePage::page(507, si.custom_error(507));
 		return 507;
 	}
 	if (pos_status == 422)
 	{
 		set_code(422, "Unprocessable Entity");
-		out_body = TemplateError::page(422, si.custom_error(422));
+		out_body = TemplatePage::page(422, si.custom_error(422));
 		return 422;
 	}
 
@@ -194,7 +194,7 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 			"will return 424 Failed Dependency." << std::endl;
 
 		set_code(424, "Failed Dependency");
-		out_body = TemplateError::page(424, si.custom_error(424));
+		out_body = TemplatePage::page(424, si.custom_error(424));
 		return 424;
 	}
 	return 0;
@@ -206,7 +206,7 @@ int ws_reply_instance::is_400(ws_server_instance& si)
 	if (si.is_chunked() && FileString::is_dir(full_path))
 	{
 		set_code(400, "Bad Request");
-		out_body = TemplateError::page(400);
+		out_body = TemplatePage::page(400);
 		return 400;
 	}
 	return 0;
@@ -214,7 +214,7 @@ int ws_reply_instance::is_400(ws_server_instance& si)
 
 int ws_reply_instance::is_201(ws_server_instance& si)
 {
-	static int V(3);
+	static int V(1);
 
 	std::string full_path;
 	std::string mp_block;
@@ -236,7 +236,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 
 		FileString::write(full_path, *data);
 		set_code(201, "Created");
-		out_body = TemplateError::page(201);
+		out_body = TemplatePage::page(201);
 		return 201;
 	}
 	return 0;
@@ -275,13 +275,13 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 		if (std::remove(request.c_str()) != 0)
 		{
 			set_code(422, "Unprocessable Entity");
-			out_body = TemplateError::page(422, si.custom_error(422));
+			out_body = TemplatePage::page(422, si.custom_error(422));
 			return 422;
 		}
 		else
 		{
 			set_code(200, "OK");
-			out_body = TemplateError::page(200);
+			out_body = TemplatePage::page(200);
 			return 200;
 		}
 	}

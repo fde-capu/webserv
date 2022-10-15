@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/15 22:51:09 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/15 23:05:30 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,13 +24,13 @@ SRCS	=	FileString.cpp DataFold.cpp \
 			http_routes.cpp Chronometer.cpp \
 			WebServ_post_process.cpp WebServ_proc_header.cpp \
 			WebServ_operator_out.cpp WebServ_ports.cpp WebServ.cpp \
-			TemplateError.cpp cgi.cpp
+			TemplatePage.cpp cgi.cpp
 SRCS1	=	main.cpp
 HEAD	=	$(TRACKMAKEFILE) argval_ws.conf header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
 			CircularBuffer.hpp Chronometer.hpp \
-			TemplateError.hpp
+			TemplatePage.hpp
 SHELL	=	/bin/sh
 CC		=	$(MAKESILENT) c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(VERBOSE) $(ENVS)
 CCFLAGS	=	-Wall -Werror -Wextra -g -O0

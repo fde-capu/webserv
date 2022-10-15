@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 16:44:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 23:05:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 	if (!FileString::exists(si.location_path()))
 	{
 		set_code(421, "Missdirected Request");
-		out_body = TemplateError::page(421, si.custom_error(421));
+		out_body = TemplatePage::page(421, si.custom_error(421));
 		return 421;
 	}
 	program += " " + si.location_path();
@@ -199,7 +199,7 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	if (!si.is_chunked() && !FileString::exists(si.location_path()))
 	{
 		set_code(421, "Missdirected Request");
-		out_body = TemplateError::page(421, si.custom_error(421));
+		out_body = TemplatePage::page(421, si.custom_error(421));
 		return 421;
 	}
 	DataFold cgi_vec(si.config.get<DataFold>("cgi"));
