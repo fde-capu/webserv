@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/15 22:12:49 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/15 22:51:09 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ SRCS	=	FileString.cpp DataFold.cpp \
 			StringTools.cpp ArgVal.cpp datafold_type.cpp \
 			CircularBuffer.cpp WebServ_helpers.cpp \
 			http_routes.cpp Chronometer.cpp \
-			WebServ_read_methods.cpp WebServ_proc_header.cpp \
+			WebServ_post_process.cpp WebServ_proc_header.cpp \
 			WebServ_operator_out.cpp WebServ_ports.cpp WebServ.cpp \
 			TemplateError.cpp cgi.cpp
 SRCS1	=	main.cpp

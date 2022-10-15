@@ -968,6 +968,7 @@ echo "Got body: `cat foo_out`";
 rm foo_out;
 colorscore "ls must be the same after DELETE call" $before $after;
 colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "$out" "200";
+rm ${MYDIR}/noise_to_delete
 
 #################################################################
 

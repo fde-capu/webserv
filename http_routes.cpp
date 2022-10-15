@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:19:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 22:45:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,41 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 }
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
-{ return read_limits(si); }
+{
+	static int V(1);
+	int pos_status(0);
+
+	verbose(V) << "(is_413_507_422) max_size: " << si.max_size << "." \
+		<< std::endl;
+	verbose(V) << "(is_413_507_422) content_type: " << \
+		si.in_header.content_type << std::endl;
+
+	pos_status = si.process_post();
+	if (si.exceeded_limit)
+	{
+		set_code(413, "Payload Too Large");
+		out_body = TemplateError::page(413, si.custom_error(413));
+		return 413;
+	}
+	if (si.in_header.content_length > CIRCULARBUFFER_LIMIT)
+	{
+		set_code(507, "Insufficient Resources");
+		out_body = TemplateError::page(507, si.custom_error(507));
+		return 507;
+	}
+	if (pos_status == 422)
+	{
+		set_code(422, "Unprocessable Entity");
+		out_body = TemplateError::page(422, si.custom_error(422));
+		return 422;
+	}
+
+	verbose(V) << "(is_413_507_422) in_body >>" << SHORT(si.in_body) << "<<" << std::endl;
+	verbose(V) << "(is_413_507_422) multipart_content >>" << SHORT(si.multipart_content) << "<<" << std::endl;
+	verbose(V) << "(is_413_507_422) chunked_content >>" << SHORT(si.chunked_content) << "<<" << std::endl;
+
+	return 0;
+}
 
 int ws_reply_instance::is_424(ws_server_instance& si)
 {

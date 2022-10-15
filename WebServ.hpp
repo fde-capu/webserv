@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 20:31:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 22:49:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,10 @@ struct ws_server_instance
 	int status;
 
 	void set_sizes();
-	bool check_socket_stream(CircularBuffer&);
 	void set_props();
 
 	int process_post();
-	bool read_more_plain(const size_t&);
-	void read_more_chunked();
-	void read_more_multipart();
+	void mount_chunked();
 	void mount_multipart();
 
 	DataFold get_location_config() const;
@@ -119,8 +116,7 @@ struct ws_reply_instance
 	int is_400(ws_server_instance&); // Bad Request.
 	int is_201(ws_server_instance&); // Created.
 	int is_404(ws_server_instance&); // Not Found.
-	int is_413_507_422(ws_server_instance&); // Alias for read_limits();
-	int read_limits(ws_server_instance&); // Payload Too Large etc.
+	int is_413_507_422(ws_server_instance&); //413 Payload Too Large, 507 Insufficient Resources, 422 Unprocessable Entity
 	int is_424(ws_server_instance&); // Failed Dependency.
 
 	int cgi_prepare(ws_server_instance&, std::string);
