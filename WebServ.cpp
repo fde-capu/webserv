@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/16 00:15:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/16 01:37:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ struct pollfd WebServ::catch_connection()
 
 void WebServ::light_up()
 {
-	int V(2);
+	int V(1);
 	struct pollfd event;
 	std::map<int, std::pair<bool, bool> > ready;
 
@@ -117,14 +117,14 @@ void WebServ::light_up()
 				continue ;
 			}
 			if (!ready[event.fd].first)
-				verbose(V) << "(light_up) Got POLLIN from " << event.fd << std::endl;
+				verbose(V + 1) << "(light_up) Got POLLIN from " << event.fd << std::endl;
 			ready[event.fd].first = true;
 			continue ;
 		}
 		if (event.revents & POLLOUT)
 		{
 			if (!ready[event.fd].second)
-				verbose(V) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
+				verbose(V + 1) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
 			ready[event.fd].second = true;
 			continue ;
 		}
@@ -171,7 +171,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			}
 		}
 
-		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > 1)
+		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > 500)
 			in_ended[fd] = true;
 		if (in_ended[fd] && !body_ok[fd])
 		{
