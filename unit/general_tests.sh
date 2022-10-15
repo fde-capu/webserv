@@ -6,7 +6,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 clean_upfiles_after_test="true";
 
 MYSELF="$(realpath "$0")"
@@ -171,6 +171,8 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -520,8 +522,6 @@ ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 ###################################################################
 ###################################################################
 ###################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_99_WORDS_FAIL \
 \
