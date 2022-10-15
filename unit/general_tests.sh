@@ -171,6 +171,8 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
+fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -492,14 +494,9 @@ unittest "webserv must close connection"
 
 #####################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce MULTI_FAIL_200 \
 \
-	'How about 200MB? Wait a little, but this would get OOM KILL\n
-	by Workspace. Set CIRCULARBUFFER_LIMIT for this.\n
-	Found safe to stick to 1048576 \* 100.\n
-	Server should not crash, so 507 Insufficient Storage.' \
+	'Oom killed.' \
 \
 ; } 2> /dev/null
 
