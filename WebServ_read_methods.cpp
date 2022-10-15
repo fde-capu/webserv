@@ -6,18 +6,16 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:35:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 01:28:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 21:08:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-int ws_server_instance::read_more_general()
+int ws_server_instance::process_post()
 {
 	if (is_chunked() && is_multipart())
 		return 422;
-	if (!is_chunked() && !is_multipart())
-		read_more_plain(max_size);
 	if (is_chunked())
 	{
 		set_sizes();
@@ -31,42 +29,14 @@ int ws_server_instance::read_more_general()
 	{
 		if (in_header.content_length > CIRCULARBUFFER_LIMIT)
 			return 507;
-		read_more_multipart();
+		mount_multipart();
 	}
 	return status;
 }
 
-bool ws_server_instance::read_more_plain(const size_t& max)
-{
-	static int V(2);
-	size_t next_load;
-	CircularBuffer buf(fd);
-	bool data_was_read(false);
-	size_t len;
-
-	if (in_header.method == "GET")
-		return false;
-	while (check_socket_stream(buf))
-	{
-		next_load = max > in_body.length() ? max - in_body.length() : 0;
-		if (!next_load)
-			break ;
-
-		verbose(V) << "(read_more_plain) max " << max << " next_load " \
-			<< next_load << std::endl;
-
-		len = in_body.length();
-		in_body += buf.try_to_receive(next_load, true);
-		data_was_read = data_was_read || len != in_body.length();
-
-		verbose(V) << "in_body " << SHORT(in_body) << std::endl;
-	}
-	return data_was_read;
-}
-
 void ws_server_instance::read_more_chunked()
 {
-	static int V(5);
+	static int V(2);
 	std::string chunk_size_hex;
 	std::string chunk_extension;
 	size_t chunk_size_bytes(1);
@@ -75,13 +45,13 @@ void ws_server_instance::read_more_chunked()
 	set_sizes();
 	if (in_header.method == "GET" || reached_limit || exceeded_limit)
 		return ;
-	while (chrono < 1000)
-	{
-		if (chrono > 999.9)
-			verbose(V) << "(read_more_chunked) chrono: " << chrono << std::endl;
-		if (read_more_plain(in_header.content_length))
-			chrono.btn_reset();
-	}
+//	while (chrono < 1000)
+//	{
+//		if (chrono > 999.9)
+//			verbose(V) << "(read_more_chunked) chrono: " << chrono << std::endl;
+//		if (read_more_plain(in_header.content_length))
+//			chrono.btn_reset();
+//	}
 	while (!reached_limit && !exceeded_limit)
 	{
 		chunk_size_hex = StringTools::consume_until(in_body, "\r\n");
@@ -130,14 +100,6 @@ void ws_server_instance::mount_multipart()
 	set_sizes();
 }
 
-void ws_server_instance::read_more_multipart()
-{
-	static int V(2);
-	verbose(V) << "(read_more_multipart) Calling read_more_plain." << std::endl;
-	read_more_plain(in_header.content_length);
-	mount_multipart();
-}
-
 int ws_reply_instance::read_limits(ws_server_instance& si)
 {
 	static int V(1);
@@ -148,8 +110,7 @@ int ws_reply_instance::read_limits(ws_server_instance& si)
 	verbose(V) << "(read_limits) content_type: " << \
 		si.in_header.content_type << std::endl;
 
-//	pos_status = si.read_more_general();
-	si.mount_multipart();
+	pos_status = si.process_post();
 	if (si.exceeded_limit)
 	{
 		set_code(413, "Payload Too Large");

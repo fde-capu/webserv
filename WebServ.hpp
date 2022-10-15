@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 01:09:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 20:31:25 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ struct ws_server_instance
 	bool check_socket_stream(CircularBuffer&);
 	void set_props();
 
-	int read_more_general();
+	int process_post();
 	bool read_more_plain(const size_t&);
 	void read_more_chunked();
 	void read_more_multipart();

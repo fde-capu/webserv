@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 20:07:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/15 20:11:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,9 +160,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			if (rbytes > 0)
 			{
 				if (raw[fd].length() + rbytes > CIRCULARBUFFER_LIMIT)
-				{
 					continue ;
-				}
 				raw[fd].append(buffer, rbytes);
 				webserver[fd].chronometer.btn_reset();
 			}
