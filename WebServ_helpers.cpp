@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 23:05:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/16 00:16:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,19 +193,6 @@ void ws_header::header500()
 ws_reply_instance::ws_reply_instance()
 {
 	out_header.header500();
-}
-
-void WebServ::respond_timeout(int fd)
-{
-	ws_reply_instance respond;
-	respond.set_code(408, "Request Timeout");
-	respond.out_body = TemplatePage::page(408);
-	respond.encapsulate();
-	if (send(fd, respond.out_body.c_str(),
-		respond.package_length, 0) == -1)
-		throw std::domain_error("(webserv) Sending response went wrong.");
-	close(fd);
-	remove_from_poll(fd);
 }
 
 void ws_server_instance::set_props()

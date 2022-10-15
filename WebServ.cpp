@@ -6,11 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 23:03:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/16 00:15:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+
+char* WebServ::buffer = static_cast<char *>(std::malloc(BUFFER_SIZE * sizeof(char) + 1));
 
 WebServ::WebServ(DataFold& u_config)
 : config(u_config), server(config.filter("server")), lit(false)
@@ -102,7 +104,10 @@ void WebServ::light_up()
 		if (event.fd == -1)
 			continue ;
 		if (event.fd == 0)
+		{
+			free(buffer);
 			return exit_gracefully();
+		}
 		if (event.revents & POLLIN)
 		{
 			if (is_a_webserv(event.fd))
@@ -128,22 +133,12 @@ void WebServ::light_up()
 
 void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 {
-	int V(1);
-	int LOCAL_BUFFER_SIZE(10485760);
-	static char* buffer = static_cast<char *>(std::malloc(LOCAL_BUFFER_SIZE * sizeof(char) + 1));
+	int V(2);
 	int rbytes;
 	int sbytes;
 	int fd;
 	bool* pollin;
 	bool* pollout;
-	static std::map<int, bool> in_ended;
-	static std::map<int, bool> out_ended;
-	static std::map<int, bool> body_ok;
-	static std::map<int, bool> chosen_instance;
-	static std::map<int, bool> chosen_response;
-	static std::map<int, std::string> raw;
-	static std::map<int, ws_header> in_header;
-	static std::map<int, ws_reply_instance> respond;
 
 	for (std::map<int, std::pair<bool, bool> >::iterator it = ready.begin(); it != ready.end(); it++)
 	{
@@ -154,12 +149,12 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		if (*pollin)
 		{
 			*pollin = false;
-			rbytes = read(fd, buffer, LOCAL_BUFFER_SIZE);
+			rbytes = read(fd, buffer, BUFFER_SIZE);
 			if (rbytes == 0)
 				in_ended[fd] = true;
 			if (rbytes > 0)
 			{
-				if (raw[fd].length() + rbytes > CIRCULARBUFFER_LIMIT)
+				if (raw[fd].length() + rbytes > MEMORY_LIMIT)
 					continue ;
 				raw[fd].append(buffer, rbytes);
 				webserver[fd].chronometer.btn_reset();
@@ -175,6 +170,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				webserver[fd].chronometer.btn_reset();
 			}
 		}
+
 		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > 1)
 			in_ended[fd] = true;
 		if (in_ended[fd] && !body_ok[fd])
@@ -186,13 +182,11 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			webserver[fd].fd = fd;
 			body_ok[fd] = true;
 		}
+
 		if (*pollout)
 		{
 			if (!chosen_instance[fd])
-			{
-				verbose(V) << "  (No instance.)" << std::endl;
 				continue ;
-			}
 			if (!chosen_response[fd] && in_ended[fd])
 			{
 				respond[fd] = ws_reply_instance(webserver[fd]); // ...oonn...
@@ -224,51 +218,6 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			}
 		}
 	}
-}
-
-void WebServ::listen_to(int fd)
-{
-	int V(2);
-	std::string body;
-	ws_header in_header;
-	Chronometer time_out;
-	CircularBuffer raw(fd);
-	std::string encapsulated;
-
-	verbose(V) << "(listen_to) Getting data from fd " << fd \
-		<< "." << std::endl;
-
-	while (!in_header.is_valid)
-	{
-		if (time_out > TIME_OUT_MSEC)
-		{
-			verbose(V) << "(listen_to) Timeout! << " << time_out << \
-				" > Incomplete header" << std::endl;
-			return respond_timeout(fd);
-		}
-		raw.receive_until("\r\n\r\n");
-		in_header = get_header(raw.output);
-	}
-
-	verbose(2) << "(listen_to) Got header:" << std::endl << \
-		in_header << std::endl;
-
-	webserver[fd] = choose_instance(in_header, fd_to_port[fd]);
-	webserver[fd].in_body = get_body(raw.receive_until_eof());
-	webserver[fd].set_props();
-	webserver[fd].set_sizes();
-	webserver[fd].fd = fd;
-
-	verbose(V) << "(listen_to) Finished getting data." << std::endl;
-}
-
-void WebServ::send_response(int fd)
-{
-	ws_reply_instance respond(webserver[fd]); // ...oonn...
-	respond.encapsulate();
-	if (send(fd, respond.out_body.c_str(),
-		respond.package_length, 0) == -1)
-		throw std::domain_error("(webserv) Sending response went wrong.");
 }
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)

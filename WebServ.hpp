@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 22:49:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/16 00:39:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ struct ws_server_instance
 	DataFold config;
 	DataFold root_config;
 	int fd;
-	bool insufficient_resources;
 	Chronometer chronometer;
 
 	const DataFold operator[] (std::string) const;
@@ -138,9 +137,9 @@ class WebServ
 		DataFold config;
 		DataFold server;
 		std::vector<ws_server_instance> instance;
+		std::map<int, ws_server_instance> webserver;
 		std::vector<struct pollfd> poll_list;
 		std::map<int, int> fd_to_port;
-		std::map<int, ws_server_instance> webserver;
 		std::vector<int> taken_ports;
 		bool lit;
 		void hook_it();
@@ -160,15 +159,21 @@ class WebServ
 		void dup_into_poll(int);
 		void remove_from_poll(int);
 		ws_server_instance choose_instance(ws_header&, int);
-		void listen_to(int);
-		void send_response(int);
-		void respond_timeout(int);
 		void load_defaults();
 		static void set_non_blocking(int);
 		static bool ignore_empty(std::string&);
 		WebServ& operator= (WebServ const & rhs);
 		WebServ(WebServ const & src);
 		WebServ();
+		static char* buffer;
+		std::map<int, bool> in_ended;
+		std::map<int, bool> out_ended;
+		std::map<int, bool> body_ok;
+		std::map<int, bool> chosen_instance;
+		std::map<int, bool> chosen_response;
+		std::map<int, std::string> raw;
+		std::map<int, ws_header> in_header;
+		std::map<int, ws_reply_instance> respond;
 
 	public:
 		WebServ(DataFold&);

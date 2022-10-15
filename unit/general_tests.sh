@@ -6,8 +6,8 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="";
-clean_upfiles_after_test="true";
+step_by_step="true";
+clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -171,7 +171,7 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ##################################################################
 
@@ -472,8 +472,6 @@ outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "50MB success"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
-
-finish ;
 
 #####################################################################
 #####################################################################
@@ -1051,4 +1049,4 @@ colorscore "SESSION_ID expired." "$cookieline" "";
 rm tmp_response;
 rm cookiefile;
 
-finish; # < < < < < < < < < < < < < < < < < < < < < < < < < < End line!
+finish; # < < < < < < < < < < < < < < < < < < < < < End line!
