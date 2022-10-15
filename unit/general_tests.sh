@@ -6,7 +6,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -172,6 +172,7 @@ if false; then
 
 ############################################################### Begin
 fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -461,7 +462,7 @@ ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 { anounce MULTI_50M_NOISE \
 \
 	'How about 50MB?\n
-	Testing on 42SP Workspace, it gets oom kill once ocasionally with 100MB.' \
+	Beware oom kills.' \
 \
 ; } 2> /dev/null
 
