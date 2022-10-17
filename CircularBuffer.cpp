@@ -6,14 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/11 13:51:42 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/12 23:49:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 01:02:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "CircularBuffer.hpp"
 #include "bladefs.hpp"
 #include <iostream>
-# include <errno.h>
 
 CircularBuffer::CircularBuffer(int u_fd)
 : fd(u_fd), size(CIRCULARBUFFER_SIZE), limit(CIRCULARBUFFER_LIMIT), \

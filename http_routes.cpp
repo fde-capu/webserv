@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 23:36:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 00:59:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,7 +230,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 		else
 			data = &si.in_body;
 
-		verbose(V) << "(webserv) >" << SHORT((*data)) << \
+		verbose(CRITICAL) << "(webserv) >" << SHORT((*data)) << \
 			"< will be saved into " << full_path << \
 			"." << std::endl;
 

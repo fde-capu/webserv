@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/16 01:47:08 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 00:59:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,10 +146,31 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		pollin = &(it->second.first);
 		pollout = &(it->second.second);
 
+		if (remove_client[fd])
+		{
+			close(fd);
+			remove_from_poll(fd);
+			in_ended.erase(fd);
+			out_ended.erase(fd);
+			body_ok.erase(fd);
+			chosen_instance.erase(fd);
+			chosen_response.erase(fd);
+			raw.erase(fd);
+			in_header.erase(fd);
+			respond.erase(fd);
+			remove_client.erase(fd);
+			continue ;
+		}
+
 		if (*pollin)
 		{
 			*pollin = false;
 			rbytes = read(fd, buffer, BUFFER_SIZE);
+			if (rbytes < 0)
+			{
+				remove_client[fd] = true;
+				continue ;
+			}
 			if (rbytes == 0)
 				in_ended[fd] = true;
 			if (rbytes > 0)
@@ -169,6 +190,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				verbose(V) << "- Has choosen instance." << std::endl;
 				webserver[fd].chronometer.btn_reset();
 			}
+			continue ;
 		}
 
 		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > 100)
@@ -199,24 +221,19 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			{
 				*pollout = false;
 				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0);
-				StringTools::consume_bytes(respond[fd].out_body, sbytes);
-				verbose(V) << "- Sent response." << std::endl;
+				if (rbytes < 0)
+				{
+					remove_client[fd] = true;
+					continue ;
+				}
+				if (rbytes > 0)
+					StringTools::consume_bytes(respond[fd].out_body, sbytes);
 				out_ended[fd] = respond[fd].out_body.length() == 0;
 			}
-			if (out_ended[fd])
-			{
-				close(fd);
-				remove_from_poll(fd);
-				in_ended.erase(fd);
-				out_ended.erase(fd);
-				body_ok.erase(fd);
-				chosen_instance.erase(fd);
-				chosen_response.erase(fd);
-				raw.erase(fd);
-				in_header.erase(fd);
-				respond.erase(fd);
-			}
+			continue ;
 		}
+
+		remove_client[fd] = remove_client[fd] || (out_ended[fd] && (save_ended[fd] || !save_file[fd]));
 	}
 }
 

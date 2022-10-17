@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 23:05:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 01:05:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		close(pipe_cp[1]);
 		std::vector<char*> vec_cp = StringTools::vecstr2veccharp(argv);
 		execv(vec_cp[0], vec_cp.data());
-		throw std::domain_error("(webserv) This line should never be reached.");
+		throw std::domain_error("(cgi_pipe) This line should never be reached.");
 	}
 	else // Parent
 	{
