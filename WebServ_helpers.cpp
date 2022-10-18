@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 17:21:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 14:26:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,15 @@ const DataFold ws_server_instance::operator[] (std::string df_query) const
 
 std::string ws_server_instance::val(std::string key) const
 { return this->config.get<DataFold>(key)[key]; }
+
+bool ws_reply_instance::save_canceled() const
+{
+	return out_header.status == 413 \
+		|| out_header.status == 507 \
+		|| out_header.status == 400 \
+		|| out_header.status == 422 \
+		|| out_header.status == 424 ;
+}
 
 void ws_reply_instance::set_code(int code_n, const std::string& u_output)
 {

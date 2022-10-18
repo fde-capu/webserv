@@ -348,6 +348,8 @@ unittest "Forbidden";
 ##################################################################
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce MULTI_99_WORDS \
 \
 	'POST multipart/form-data tests. \n
@@ -656,8 +658,6 @@ unittest "2MB success"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_50M_NOISE \
 \

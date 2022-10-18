@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 17:24:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 13:56:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 {
-	static int V(3);
+	static int V(1);
 	int pos_status(0);
 
 	verbose(V) << "(is_413_507_422) max_size: " << si.max_size << "." \
@@ -216,16 +216,16 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 {
 	int V(1);
 
-	if (si.in_header.is_post())
+	if (si.in_header.is_post() && !save_canceled())
 	{
 		full_path = si.location_path(si.multipart_filename);
 		verbose(V) << "(is_201) Opening " << full_path << "." << std::endl;
-		file_fd = open(full_path.c_str(), O_WRONLY);
+		file_fd = open(full_path.c_str(), O_WRONLY | O_CREAT | O_NONBLOCK, S_IRUSR | S_IWUSR);
 		if (file_fd == -1)
 			throw std::domain_error("(webserv) Cannot open file to save data.");
 		if (fcntl(file_fd, F_SETFL, O_NONBLOCK) == -1)
 			throw std::domain_error("(webserv) Could not set non-blocking file.");
-		verbose(V) << "(is_201) Opening " << full_path << " as " << file_fd << "." << std::endl;
+		verbose(V) << "(is_201) as " << file_fd << "." << std::endl;
 		poll_list.push_back(WebServ::make_in_out_fd(file_fd));
 		set_code(201, "Created");
 		out_body = TemplatePage::page(201);
@@ -237,12 +237,14 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 bool ws_reply_instance::work_save(ws_server_instance& si)
 {
 	int V(1);
+	size_t WRITE_SIZE(10000000);
 	std::string* data;
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
 	int sbytes;
+	size_t wr_size;
 
-	if (!si.in_header.is_post())
+	if (!si.in_header.is_post() || save_canceled())
 		return false;
 	if (si.is_multipart())
 		data = &si.multipart_content;
@@ -262,7 +264,9 @@ bool ws_reply_instance::work_save(ws_server_instance& si)
 	{
 		if (poll_list[i].revents & POLLOUT)
 		{
-			sbytes = send(poll_list[i].fd, data, 10000000, 0);
+			wr_size = data->length() > WRITE_SIZE ? WRITE_SIZE : data->length();
+			verbose(V) << "(work_save) Writing into " << poll_list[i].fd << std::endl;
+			sbytes = write(poll_list[i].fd, data->c_str(), wr_size);
 			if (sbytes < 0)
 				return false;
 			if (sbytes > 0)
@@ -276,6 +280,7 @@ bool ws_reply_instance::work_save(ws_server_instance& si)
 			verbose(V) << " - Saved " << sbytes << ", " << data->length() << " left." << std::endl;
 			if (data->length() == 0)
 			{
+				verbose(V) << poll_list[i].fd << " - Finished saving (removed)." << std::endl;
 				std::vector<struct pollfd>::iterator position(&poll_list[i]);
 				poll_list.erase(position);
 				return false;

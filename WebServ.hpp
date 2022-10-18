@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 17:21:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 13:51:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ struct ws_reply_instance
 	int bad_gateway(std::string = "");
 	int list_autoindex(std::string, ws_server_instance&);
 	void header_from_body();
+	bool save_canceled() const;
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert
