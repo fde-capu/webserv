@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 16:07:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 17:52:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,18 +62,14 @@ void ws_reply_instance::cgi_write_into_child(ws_server_instance& si, int u_pipe)
 
 int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::string>& argv)
 {
-	int V(3);
-	int pipe_pc[2] = {0, 0};
-	int pipe_cp[2] = {0, 0};
-	pid_t child_pid = -1;
-
+	child_pid = -1;
 	if (pipe(pipe_pc) == -1)
 		throw std::domain_error("(cgi_pipe) Cannot pipe for cgi (parent->child).");
 	if (pipe(pipe_cp) == -1)
 		throw std::domain_error("(cgi_pipe) Cannot pipe for cgi (child->parent).");
 	child_pid = fork();
 	if (child_pid < 0)
-		throw std::domain_error("(cgi_pipe) Forking went wrong.");
+		throw std::domain_error("(cgi_pipe) Fork went wrong.");
 	if (child_pid == 0) // Child
 	{
 		cgi_setenv(si, argv[0]);
@@ -91,24 +87,18 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 	{
 		close(pipe_pc[0]);
 		close(pipe_cp[1]);
-		if (si.in_header.is_post())
-			cgi_write_into_child(si, pipe_pc[1]);
-		close(pipe_pc[1]);
-		out_body = CircularBuffer(pipe_cp[0]);
-		wait(0);
-		close(pipe_cp[0]);
-		verbose(V) << "(Parent) Got >>>" << LONG(out_body) << "<<<" << std::endl;
-		header_from_body();
+		WebServ::set_non_blocking(pipe_cp[0]);
 		if (si.in_header.is_post())
 		{
-			set_code(202, "Accepted");
-			return 202;
+			WebServ::set_non_blocking(pipe_pc[1]);
+			dumping_to_cgi = true;
 		}
 		else
 		{
-			set_code(200, "OK");
-			return 200;
+			close(pipe_pc[1]);
+			dumping_to_cgi_finished = true;
 		}
+		getting_from_cgi = true;
 	}
 	return 0;
 }

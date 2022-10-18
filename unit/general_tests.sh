@@ -836,7 +836,8 @@ rm ${MYDIR}/99B.words
 fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 #largecgi="10000000";
-largecgi="12345678";
+largecgi="1234567";
+# XXX test with 12345678
 
 { anounce CGI_POST_MULTI_LARGE \
 \
@@ -844,14 +845,14 @@ largecgi="12345678";
 \
 ; } 2> /dev/null
 
-head -c $largecgi /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c $largecgi /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
+head -c $largecgi /dev/zero | tr '\0' 'z' > "${MYDIR}/youpi.bla"
+head -c $largecgi /dev/zero | tr '\0' 'Z' > "${MYDIR}/youpi_expected_result.bla"
 cmd="curl -H 'Expect:' http://$name_server:3490/large_upload/bla.bla"
 upfile="youpi.bla"
 code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
 short_output="true";
-unittest "Test POST /directory/youpi.bla size of $largecgi"
+unittest "Test POST multipart /directory/youpi.bla large file."
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
 
@@ -864,14 +865,14 @@ rm "${MYDIR}/youpi_expected_result.bla"
 ; } 2> /dev/null
 
 chunked="true"
-head -c $largecgi /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c $largecgi /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
+head -c $largecgi /dev/zero | tr '\0' 'z' > "${MYDIR}/youpi.bla"
+head -c $largecgi /dev/zero | tr '\0' 'Z' > "${MYDIR}/youpi_expected_result.bla"
 cmd="curl http://$name_server:3490/large_upload/bla.bla"
 upfile="youpi.bla"
 code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
 short_output="true";
-unittest "Test POST /directory/youpi.bla size of $largecgi"
+unittest "Test POST chunked /directory/youpi.bla large file."
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
 

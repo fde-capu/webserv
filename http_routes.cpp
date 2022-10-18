@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 16:05:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 17:37:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,8 +236,34 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 
 bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 {
-	return false;
-	(void)si;
+	int V(1);
+
+	if (dumping_to_cgi)
+	{
+		cgi_write_into_child(si, pipe_pc[1]);
+		close(pipe_pc[1]);
+		dumping_to_cgi = false;
+		dumping_to_cgi_finished = true;
+	}
+	if (getting_from_cgi && dumping_to_cgi_finished)
+	{
+		out_body = CircularBuffer(pipe_cp[0]);
+		wait(0);
+		close(pipe_cp[0]);
+		verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
+		header_from_body();
+		if (si.in_header.is_post())
+		{
+			set_code(202, "Accepted");
+			return false;
+		}
+		else
+		{
+			set_code(200, "OK");
+			return false;
+		}
+	}
+	return true;
 }
 
 bool ws_reply_instance::is_working_save(ws_server_instance& si)
@@ -298,7 +324,6 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 			}
 		}
 	}
-
 	return true;
 }
 

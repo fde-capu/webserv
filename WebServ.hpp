@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 15:58:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 17:48:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,13 @@ struct ws_reply_instance
 	void header_from_body();
 	bool save_canceled() const;
 
+	int pipe_pc[2];
+	int pipe_cp[2];
+	pid_t child_pid;
+	bool dumping_to_cgi;
+	bool dumping_to_cgi_finished;
+	bool getting_from_cgi;
+
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert
 		ws_reply_instance(std::string&);	// to ws_server_instance&.
@@ -168,7 +175,6 @@ class WebServ
 		void remove_from_poll(int);
 		ws_server_instance choose_instance(ws_header&, int);
 		void load_defaults();
-		static void set_non_blocking(int);
 		static bool ignore_empty(std::string&);
 		WebServ& operator= (WebServ const & rhs);
 		WebServ(WebServ const & src);
@@ -197,6 +203,7 @@ class WebServ
 		void dispatch(std::map<int, std::pair<bool, bool> >&);
 
 		// Usefull services for everyone!
+		static void set_non_blocking(int);
 		static int bind_socket_to_local(int);
 		static struct pollfd make_in_out_fd(int);
 		static struct ws_header get_header(const std::string&);
