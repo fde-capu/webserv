@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 01:05:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 16:07:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,10 +189,15 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
 	int V(3);
+	std::string call_extension;
+	std::string cgi_params_str;
+	std::vector<std::string> cgi_params;
+	std::string cgi_extension;
+	std::string cgi_children;
 
 	si.cgi_flag = false;
 	verbose(V) << "(is_cgi_exec) si.location " << si.location_path() << std::endl;
-	std::string call_extension = StringTools::get_file_extension(si.in_header.directory);
+	call_extension = StringTools::get_file_extension(si.in_header.directory);
 	verbose(V) << "(is_cgi_exec) call_extension " << call_extension << std::endl;
 	if (call_extension == "")
 		return 0;
@@ -209,24 +214,25 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	if (cgi_vec.size() == 1)
 	{
 		verbose(V) << "(is_cgi_exec) size == 1" << std::endl;
-		std::string cgi_params_str(cgi_vec.getValStr("cgi"));
+		cgi_params_str = cgi_vec.getValStr("cgi");
 		verbose(V) << "(is_cgi_exec) cgi_params_str " << cgi_params_str << std::endl;
-		std::vector<std::string> cgi_params(StringTools::split(cgi_params_str, " "));
-		std::string cgi_extension = cgi_params[0];
+		cgi_params = StringTools::split(cgi_params_str, " ");
+		cgi_extension = cgi_params[0];
 		verbose(V) << "(is_cgi_exec) cgi_extension " << cgi_extension << std::endl;
-		std::string cgi_children = cgi_params_str.substr(cgi_extension.length() + 1);
+		cgi_children = cgi_params_str.substr(cgi_extension.length() + 1);
 		verbose(V) << "(is_cgi_exec) cgi_children " << cgi_children << std::endl;
+		si.cgi_flag = true;
 		return cgi_prepare(si, cgi_children);
 	}
 	while (cgi_vec.loop())
 	{
 		verbose(V) << "(is_cgi_exec) cgi_vec.val " << cgi_vec.val << std::endl;
-		std::vector<std::string> cgi_params(StringTools::split(cgi_vec.val, " "));
-		std::string cgi_extension = cgi_params[0];
+		cgi_params = StringTools::split(cgi_vec.val, " ");
+		cgi_extension = cgi_params[0];
 		verbose(V) << "(is_cgi_exec) cgi_extension " << cgi_extension << std::endl;
 		if (cgi_extension != call_extension)
 			continue ;
-		std::string cgi_children = cgi_vec.val.substr(cgi_extension.length() + 1);
+		cgi_children = cgi_vec.val.substr(cgi_extension.length() + 1);
 		verbose(V) << "(is_cgi_exec) cgi_children " << cgi_children << std::endl;
 		si.cgi_flag = true;
 		return cgi_prepare(si, cgi_children);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 15:48:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 15:58:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ struct ws_reply_instance
 	std::string full_path;
 	int file_fd;
 	bool is_working_save(ws_server_instance&);
+	bool is_working_cgi(ws_server_instance&);
 
 	int cgi_prepare(ws_server_instance&, std::string);
 	int cgi_pipe(ws_server_instance&, const std::vector<std::string>&);

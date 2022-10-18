@@ -27,6 +27,7 @@ resetvars()
 	chunked="";
 	trace="";
 	show_output="";
+	short_output="";
 	message="";
 }
 resetvars;
@@ -58,6 +59,7 @@ unittest()
 	out=`eval "$fullcmd"`;
 
 	[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
+	[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
 
 	if [ "$out" = "000" ]; then
 		{ anounce ERROR 'Make sure the server is running! (Response 0?)'; } 2> /dev/null;
@@ -833,19 +835,23 @@ rm ${MYDIR}/99B.words
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
+#largecgi="10000000";
+largecgi="12345678";
+
 { anounce CGI_POST_MULTI_LARGE \
 \
 	'Test CGI call when posting multipart for large file.' \
 \
 ; } 2> /dev/null
 
-head -c 4096 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c 4096 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
+head -c $largecgi /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
+head -c $largecgi /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
 cmd="curl -H 'Expect:' http://$name_server:3490/large_upload/bla.bla"
 upfile="youpi.bla"
 code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
-unittest "Test POST /directory/youpi.bla size of 4096"
+short_output="true";
+unittest "Test POST /directory/youpi.bla size of $largecgi"
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
 
@@ -858,13 +864,14 @@ rm "${MYDIR}/youpi_expected_result.bla"
 ; } 2> /dev/null
 
 chunked="true"
-head -c 4096 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
-head -c 4096 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
+head -c $largecgi /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
+head -c $largecgi /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
 cmd="curl http://$name_server:3490/large_upload/bla.bla"
 upfile="youpi.bla"
 code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
-unittest "Test POST /directory/youpi.bla size of 4096"
+short_output="true";
+unittest "Test POST /directory/youpi.bla size of $largecgi"
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
 
