@@ -348,8 +348,6 @@ unittest "Forbidden";
 ##################################################################
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce MULTI_99_WORDS \
 \
 	'POST multipart/form-data tests. \n
@@ -542,6 +540,8 @@ unittest "Chunked fail 400 Bad Request";
 rm ${MYDIR}/99B.words
 
 ##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_99_WORDS \
 \

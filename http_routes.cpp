@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 13:56:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 15:05:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 {
-	static int V(1);
+	static int V(2);
 	int pos_status(0);
 
 	verbose(V) << "(is_413_507_422) max_size: " << si.max_size << "." \
@@ -246,6 +246,11 @@ bool ws_reply_instance::work_save(ws_server_instance& si)
 
 	if (!si.in_header.is_post() || save_canceled())
 		return false;
+	if (si.is_chunked() && !si.chunk_finished)
+	{
+		si.mount_chunked();
+		return true;
+	}
 	if (si.is_multipart())
 		data = &si.multipart_content;
 	else if (si.is_chunked())
@@ -288,7 +293,6 @@ bool ws_reply_instance::work_save(ws_server_instance& si)
 		}
 	}
 
-//	FileString::write(full_path, *data);
 	return true;
 }
 
