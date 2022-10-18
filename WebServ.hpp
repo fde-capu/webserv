@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 00:59:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 14:49:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ class WebServ
 		std::map<int, bool> out_ended;
 		std::map<int, bool> body_ok;
 		std::map<int, bool> chosen_instance;
-		std::map<int, bool> chosen_response;
+		std::map<int, bool> encapsulated;
 		std::map<int, std::string> raw;
 		std::map<int, ws_header> in_header;
 		std::map<int, ws_reply_instance> respond;

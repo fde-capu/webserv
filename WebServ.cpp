@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 00:59:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 14:57:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ void WebServ::light_up()
 
 void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 {
-	int V(2);
+	int V(1);
 	int rbytes;
 	int sbytes;
 	int fd;
@@ -154,11 +154,12 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			out_ended.erase(fd);
 			body_ok.erase(fd);
 			chosen_instance.erase(fd);
-			chosen_response.erase(fd);
+			encapsulated.erase(fd);
 			raw.erase(fd);
 			in_header.erase(fd);
 			respond.erase(fd);
 			remove_client.erase(fd);
+			verbose(V) << fd << " - Removed." << std::endl;
 			continue ;
 		}
 
@@ -184,10 +185,10 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				in_header[fd] = get_header(raw[fd]);
 			if (in_header[fd].is_valid && !chosen_instance[fd])
 			{
-				verbose(V) << "- Got valid header." << std::endl;
+				verbose(V) << fd << " - Got header." << std::endl;
 				webserver[fd] = choose_instance(in_header[fd], fd_to_port[fd]);
 				chosen_instance[fd] = true;
-				verbose(V) << "- Has choosen instance." << std::endl;
+				verbose(V) << fd << " - Has instance." << std::endl;
 				webserver[fd].chronometer.btn_reset();
 			}
 			continue ;
@@ -198,7 +199,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		if (in_ended[fd] && !body_ok[fd])
 		{
 			webserver[fd].in_body = get_body(raw[fd]);
-			verbose(V) << "- Body mounted." << std::endl;
+			verbose(V) << fd << " - Body mounted." << std::endl;
 			webserver[fd].set_props();
 			webserver[fd].set_sizes();
 			webserver[fd].fd = fd;
@@ -209,15 +210,14 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		{
 			if (!chosen_instance[fd])
 				continue ;
-			if (!chosen_response[fd] && in_ended[fd])
+			if (!encapsulated[fd] && in_ended[fd])
 			{
 				respond[fd] = ws_reply_instance(webserver[fd]); // ...oonn...
-				chosen_response[fd] = true;
-				verbose(V) << "- Chosen response." << std::endl;
+				encapsulated[fd] = true;
 				respond[fd].encapsulate();
-				verbose(V) << "- Encapsulated." << std::endl;
+				verbose(V) << fd << " - Response encapsulated." << std::endl;
 			}
-			if (chosen_response[fd] && in_ended[fd])
+			if (encapsulated[fd])
 			{
 				*pollout = false;
 				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0);
@@ -228,12 +228,13 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				}
 				if (rbytes > 0)
 					StringTools::consume_bytes(respond[fd].out_body, sbytes);
+				verbose(V) << fd << " - Sent " << sbytes << ", " << respond[fd].out_body.length() << " left." << std::endl;
 				out_ended[fd] = respond[fd].out_body.length() == 0;
+				remove_client[fd] = out_ended[fd];
 			}
 			continue ;
 		}
 
-		remove_client[fd] = remove_client[fd] || (out_ended[fd] && (save_ended[fd] || !save_file[fd]));
 	}
 }
 
@@ -277,8 +278,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 				{
 					choose = &instance[i];
 				}
-				if (instance[i].config.getValStr("server_name") \
-					== in.host)
+				if (instance[i].config.getValStr("server_name") == in.host)
 				{
 					choose = &instance[i];
 					break ;

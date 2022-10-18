@@ -6,7 +6,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -171,8 +171,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -994,33 +992,6 @@ echo "Got body: `cat foo_out`";
 rm foo_out;
 colorscore "Expect 404" "$out" "404"
 
-#################################################################
-##################################################################
-##################################################################
-
-{ anounce Stress \
-\
-	"Stress testing $stress_count calls. Wait for it.\n
-	This can be changed on general_tests.sh:stress_count" \
-\
-; } 2> /dev/null
-
-set +x;
-
-stress_count=100;
-rm -f stress_out;
-i=1;
-while [ "$i" -le "$stress_count" ]; do
-	echo -n "\r $i";
-	curl -sv http://localhost:3491/ 2>> stress_out 1> /dev/null &
-	i=$(( i + 1 ));
-done;
-wait;
-stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
-colorscore "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
-rm -f stress_out;
-set -x;
-
 ##################################################################
 #################################################################
 #################################################################
@@ -1049,5 +1020,35 @@ cat tmp_response;
 colorscore "SESSION_ID expired." "$cookieline" "";
 rm tmp_response;
 rm cookiefile;
+
+#################################################################
+##################################################################
+##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce STRESS \
+\
+	"Stress testing $stress_count calls. Wait for it.\n
+	This can be changed on general_tests.sh:stress_count" \
+\
+; } 2> /dev/null
+
+set +x;
+
+stress_count=100;
+rm -f stress_out;
+i=1;
+while [ "$i" -le "$stress_count" ]; do
+	echo -n "\r $i";
+	curl -sv http://localhost:3491/ 2>> stress_out 1> /dev/null &
+	i=$(( i + 1 ));
+done;
+wait;
+stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
+colorscore "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
+rm -f stress_out;
+set -x;
+
 
 finish; # < < < < < < < < < < < < < < < < < < < < < End line!
