@@ -6,7 +6,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 name_server="127.0.0.1";
-step_by_step="";
+step_by_step="true";
 clean_upfiles_after_test="";
 
 MYSELF="$(realpath "$0")"
@@ -495,7 +495,7 @@ unittest "webserv must close connection"
 
 { anounce MULTI_FAIL_200 \
 \
-	'Oom killed.' \
+	'Large file 200MB fail on multipart.' \
 \
 ; } 2> /dev/null
 
@@ -656,6 +656,8 @@ unittest "2MB success"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_50M_NOISE \
 \
@@ -1024,8 +1026,6 @@ rm cookiefile;
 #################################################################
 ##################################################################
 ##################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce STRESS \
 \

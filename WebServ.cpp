@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 14:57:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 15:37:46 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,8 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			in_header.erase(fd);
 			respond.erase(fd);
 			remove_client.erase(fd);
+			response_working.erase(fd);
+			chosen_response.erase(fd);
 			verbose(V) << fd << " - Removed." << std::endl;
 			continue ;
 		}
@@ -194,7 +196,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			continue ;
 		}
 
-		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > 100)
+		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > 50)
 			in_ended[fd] = true;
 		if (in_ended[fd] && !body_ok[fd])
 		{
@@ -206,17 +208,28 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			body_ok[fd] = true;
 		}
 
+		if (!chosen_response[fd] && in_ended[fd])
+		{
+			respond[fd] = ws_reply_instance(webserver[fd]); // ...oonn...
+			chosen_response[fd] = true;
+			verbose(V) << fd << " - Chosen response." << std::endl;
+			response_working[fd] = true;
+		}
+		if (response_working[fd])
+		{
+			response_working[fd] = false;
+		}
+		if (chosen_response[fd] && !response_working[fd])
+		{
+			encapsulated[fd] = true;
+			respond[fd].encapsulate();
+			verbose(V) << fd << " - Response encapsulated." << std::endl;
+		}
+
 		if (*pollout)
 		{
 			if (!chosen_instance[fd])
 				continue ;
-			if (!encapsulated[fd] && in_ended[fd])
-			{
-				respond[fd] = ws_reply_instance(webserver[fd]); // ...oonn...
-				encapsulated[fd] = true;
-				respond[fd].encapsulate();
-				verbose(V) << fd << " - Response encapsulated." << std::endl;
-			}
 			if (encapsulated[fd])
 			{
 				*pollout = false;

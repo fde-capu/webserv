@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 14:49:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 15:34:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,8 @@ class WebServ
 		std::map<int, ws_header> in_header;
 		std::map<int, ws_reply_instance> respond;
 		std::map<int, bool> remove_client;
+		std::map<int, bool> response_working;
+		std::map<int, bool> chosen_response;
 
 	public:
 		WebServ(DataFold&);
