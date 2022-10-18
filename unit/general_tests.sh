@@ -541,8 +541,6 @@ rm ${MYDIR}/99B.words
 
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CHUNK_99_WORDS \
 \
 	'POST chunked tests. \n
@@ -833,13 +831,23 @@ rm ${MYDIR}/99B.words
 
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce CGI_POST_MULTI_LARGE \
 \
 	'Test CGI call when posting multipart for large file.' \
 \
 ; } 2> /dev/null
 
-# XXX
+head -c 4096 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
+head -c 4096 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
+cmd="curl -H 'Expect:' http://$name_server:3490/large_upload/bla.bla"
+upfile="youpi.bla"
+code="202"
+testfile="${MYDIR}/youpi_expected_result.bla"
+unittest "Test POST /directory/youpi.bla size of 4096"
+rm "${MYDIR}/youpi.bla"
+rm "${MYDIR}/youpi_expected_result.bla"
 
 ###################################################################
 
@@ -849,8 +857,19 @@ rm ${MYDIR}/99B.words
 \
 ; } 2> /dev/null
 
-# XXX
+chunked="true"
+head -c 4096 /dev/zero | tr '\0' 'x' > "${MYDIR}/youpi.bla"
+head -c 4096 /dev/zero | tr '\0' 'X' > "${MYDIR}/youpi_expected_result.bla"
+cmd="curl http://$name_server:3490/large_upload/bla.bla"
+upfile="youpi.bla"
+code="202"
+testfile="${MYDIR}/youpi_expected_result.bla"
+unittest "Test POST /directory/youpi.bla size of 4096"
+rm "${MYDIR}/youpi.bla"
+rm "${MYDIR}/youpi_expected_result.bla"
 
+###################################################################
+###################################################################
 ###################################################################
 
 { anounce MULTI_CGI_BLA_FAIL \

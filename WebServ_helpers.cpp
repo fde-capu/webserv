@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 14:26:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 15:42:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,11 +121,21 @@ std::string ws_server_instance::val(std::string key) const
 
 bool ws_reply_instance::save_canceled() const
 {
-	return out_header.status == 413 \
-		|| out_header.status == 507 \
+	return false \
+		|| out_header.status == 200 \
+		|| out_header.status == 301 \
 		|| out_header.status == 400 \
+		|| out_header.status == 403 \
+		|| out_header.status == 404 \
+		|| out_header.status == 424 \
+		|| out_header.status == 405 \
+		|| out_header.status == 413 \
+		|| out_header.status == 421 \
 		|| out_header.status == 422 \
-		|| out_header.status == 424 ;
+		|| out_header.status == 424 \
+		|| out_header.status == 501 \
+		|| out_header.status == 507 \
+		;
 }
 
 void ws_reply_instance::set_code(int code_n, const std::string& u_output)

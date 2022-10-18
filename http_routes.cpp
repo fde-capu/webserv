@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 15:05:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 15:51:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 {
-	static int V(2);
+	static int V(1);
 	int pos_status(0);
 
 	verbose(V) << "(is_413_507_422) max_size: " << si.max_size << "." \
@@ -234,7 +234,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 	return 0;
 }
 
-bool ws_reply_instance::work_save(ws_server_instance& si)
+bool ws_reply_instance::is_working_save(ws_server_instance& si)
 {
 	int V(1);
 	size_t WRITE_SIZE(10000000);
@@ -244,7 +244,7 @@ bool ws_reply_instance::work_save(ws_server_instance& si)
 	int sbytes;
 	size_t wr_size;
 
-	if (!si.in_header.is_post() || save_canceled())
+	if (!si.in_header.is_post() || save_canceled() || si.is_cgi())
 		return false;
 	if (si.is_chunked() && !si.chunk_finished)
 	{
@@ -270,7 +270,7 @@ bool ws_reply_instance::work_save(ws_server_instance& si)
 		if (poll_list[i].revents & POLLOUT)
 		{
 			wr_size = data->length() > WRITE_SIZE ? WRITE_SIZE : data->length();
-			verbose(V) << "(work_save) Writing into " << poll_list[i].fd << std::endl;
+			verbose(V) << "(is_working_save) Writing into " << poll_list[i].fd << std::endl;
 			sbytes = write(poll_list[i].fd, data->c_str(), wr_size);
 			if (sbytes < 0)
 				return false;
