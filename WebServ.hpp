@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 15:34:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 17:21:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,11 @@ struct ws_reply_instance
 	int is_413_507_422(ws_server_instance&); //413 Payload Too Large, 507 Insufficient Resources, 422 Unprocessable Entity
 	int is_424(ws_server_instance&); // Failed Dependency.
 
+	std::vector<struct pollfd> poll_list;
+	std::string full_path;
+	int file_fd;
+	bool work_save(ws_server_instance&);
+
 	int cgi_prepare(ws_server_instance&, std::string);
 	int cgi_pipe(ws_server_instance&, const std::vector<std::string>&);
 	void cgi_setenv(ws_server_instance&, std::string);
@@ -190,7 +195,7 @@ class WebServ
 
 		// Usefull services for everyone!
 		static int bind_socket_to_local(int);
-		struct pollfd make_in_out_fd(int) const;
+		static struct pollfd make_in_out_fd(int);
 		static struct ws_header get_header(const std::string&);
 		static std::string get_body(const std::string&);
 };

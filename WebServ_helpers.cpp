@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/16 00:16:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 17:21:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ struct pollfd WebServ::stdin_to_pollfd()
 	return ufds;
 }
 
-struct pollfd WebServ::make_in_out_fd(int newfd) const
+struct pollfd WebServ::make_in_out_fd(int newfd)
 {
 	struct pollfd ufds;
 

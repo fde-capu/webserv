@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 15:37:46 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 16:52:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		if (in_ended[fd] && !body_ok[fd])
 		{
 			webserver[fd].in_body = get_body(raw[fd]);
-			verbose(V) << fd << " - Body mounted." << std::endl;
+			verbose(V) << fd << " - In body mounted." << std::endl;
 			webserver[fd].set_props();
 			webserver[fd].set_sizes();
 			webserver[fd].fd = fd;
@@ -217,7 +217,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		}
 		if (response_working[fd])
 		{
-			response_working[fd] = false;
+			response_working[fd] = respond[fd].work_save(webserver[fd]);
 		}
 		if (chosen_response[fd] && !response_working[fd])
 		{
@@ -228,18 +228,16 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (*pollout)
 		{
-			if (!chosen_instance[fd])
-				continue ;
 			if (encapsulated[fd])
 			{
 				*pollout = false;
 				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0);
-				if (rbytes < 0)
+				if (sbytes < 0)
 				{
 					remove_client[fd] = true;
 					continue ;
 				}
-				if (rbytes > 0)
+				if (sbytes > 0)
 					StringTools::consume_bytes(respond[fd].out_body, sbytes);
 				verbose(V) << fd << " - Sent " << sbytes << ", " << respond[fd].out_body.length() << " left." << std::endl;
 				out_ended[fd] = respond[fd].out_body.length() == 0;
@@ -247,7 +245,6 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			}
 			continue ;
 		}
-
 	}
 }
 

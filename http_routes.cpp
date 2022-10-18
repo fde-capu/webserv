@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 01:13:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/18 17:24:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,30 +214,77 @@ int ws_reply_instance::is_400(ws_server_instance& si)
 
 int ws_reply_instance::is_201(ws_server_instance& si)
 {
-	std::string full_path;
-	std::string mp_block;
-	std::string* data;
+	int V(1);
 
 	if (si.in_header.is_post())
 	{
 		full_path = si.location_path(si.multipart_filename);
-		if (si.is_multipart())
-			data = &si.multipart_content;
-		else if (si.is_chunked())
-			data = &si.chunked_content;
-		else
-			data = &si.in_body;
-
-		verbose(CRITICAL) << "(webserv) >" << SHORT((*data)) << \
-			"< will be saved into " << full_path << \
-			"." << std::endl;
-
-		FileString::write(full_path, *data);
+		verbose(V) << "(is_201) Opening " << full_path << "." << std::endl;
+		file_fd = open(full_path.c_str(), O_WRONLY);
+		if (file_fd == -1)
+			throw std::domain_error("(webserv) Cannot open file to save data.");
+		if (fcntl(file_fd, F_SETFL, O_NONBLOCK) == -1)
+			throw std::domain_error("(webserv) Could not set non-blocking file.");
+		verbose(V) << "(is_201) Opening " << full_path << " as " << file_fd << "." << std::endl;
+		poll_list.push_back(WebServ::make_in_out_fd(file_fd));
 		set_code(201, "Created");
 		out_body = TemplatePage::page(201);
 		return 201;
 	}
 	return 0;
+}
+
+bool ws_reply_instance::work_save(ws_server_instance& si)
+{
+	int V(1);
+	std::string* data;
+	int poll_count;
+	int TIME_OUT = 0; // non-blocking.
+	int sbytes;
+
+	if (!si.in_header.is_post())
+		return false;
+	if (si.is_multipart())
+		data = &si.multipart_content;
+	else if (si.is_chunked())
+		data = &si.chunked_content;
+	else
+		data = &si.in_body;
+	
+	verbose(CRITICAL) << "(webserv) >" << SHORT((*data)) << \
+		"< will be saved into " << full_path << \
+		"." << std::endl;
+
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	if (poll_count == -1)
+		throw std::domain_error("(webserv) Poll error.");
+	for (size_t i = 0; i < poll_list.size(); i++)
+	{
+		if (poll_list[i].revents & POLLOUT)
+		{
+			sbytes = send(poll_list[i].fd, data, 10000000, 0);
+			if (sbytes < 0)
+				return false;
+			if (sbytes > 0)
+				StringTools::consume_bytes(*data, sbytes);
+			if (si.is_multipart())
+				data = &si.multipart_content;
+			else if (si.is_chunked())
+				data = &si.chunked_content;
+			else
+				data = &si.in_body;
+			verbose(V) << " - Saved " << sbytes << ", " << data->length() << " left." << std::endl;
+			if (data->length() == 0)
+			{
+				std::vector<struct pollfd>::iterator position(&poll_list[i]);
+				poll_list.erase(position);
+				return false;
+			}
+		}
+	}
+
+//	FileString::write(full_path, *data);
+	return true;
 }
 
 int ws_reply_instance::is_200(ws_server_instance& si)

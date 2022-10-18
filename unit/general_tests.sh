@@ -815,7 +815,7 @@ rm ${MYDIR}/99B.words
 
 ###################################################################
 
-{ anounce CGI_CHUNK \
+{ anounce CGI_CHUNK_BLA_OK \
 \
 	'Should run and return the proper body.' \
 \
@@ -830,6 +830,26 @@ show_output="true";
 message="Check if CGI was properly executed above."
 unittest "Simple chunked cgi post";
 rm ${MYDIR}/99B.words
+
+##################################################################
+
+{ anounce CGI_POST_MULTI_LARGE \
+\
+	'Test CGI call when posting multipart for large file.' \
+\
+; } 2> /dev/null
+
+# XXX
+
+###################################################################
+
+{ anounce CGI_POST_CHUNK_LARGE \
+\
+	'CGI POST chunked for large file.' \
+\
+; } 2> /dev/null
+
+# XXX
 
 ###################################################################
 
