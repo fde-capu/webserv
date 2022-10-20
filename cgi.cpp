@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 17:52:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/20 21:23:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,28 +36,114 @@ void ws_reply_instance::cgi_setenv(ws_server_instance& si, std::string path_info
 	}
 }
 
-void ws_reply_instance::cgi_write_into_child(ws_server_instance& si, int u_pipe)
+bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 {
-	int V(3);
-	size_t written_bytes(0);
-	size_t write_into_child;
-	size_t w;
+	int V(1);
+	size_t ASYNC_CHUNK_SIZE(10000000);
+	std::string* data;
+	int poll_count;
+	int TIME_OUT = 0; // non-blocking.
+	int sbytes;
+	size_t wr_size;
 
-	write_into_child = si.is_chunked() ? si.chunked_content.length() :
-		si.is_multipart() ? si.multipart_content.length() :
-		si.in_body.length();
-	while (write_into_child)
+	if (!si.in_header.is_post() || save_canceled())
+		return false;
+	if (si.is_chunked() && !si.chunk_finished)
 	{
-		if (si.is_chunked())
-			w = write(u_pipe, static_cast<const void*>(si.chunked_content.c_str()), write_into_child);
-		else if (si.is_multipart())
-			w = write(u_pipe, static_cast<const void*>(si.multipart_content.c_str()), write_into_child);
-		else
-			w = write(u_pipe, static_cast<const void*>(si.in_body.c_str()), write_into_child);
-		write_into_child -= w < write_into_child ? w : write_into_child;
-		written_bytes += w;
-		verbose(V) << "(cgi_write_into_child) written_bytes = " << written_bytes << std::endl;
+		si.mount_chunked();
+		return true;
 	}
+	if (si.is_multipart())
+		data = &si.multipart_content;
+	else if (si.is_chunked())
+		data = &si.chunked_content;
+	else
+		data = &si.in_body;
+	
+	verbose(CRITICAL) << "(webserv) >" << SHORT((*data)) << \
+		"< will be dumped into cgi." << std::endl;
+
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	if (poll_count == -1)
+		throw std::domain_error("(webserv) Poll error.");
+	for (size_t i = 0; i < poll_list.size(); i++)
+	{
+		if (!poll_list[i].revents)
+			continue ;
+		if (poll_list[i].revents & POLLOUT)
+		{
+			wr_size = data->length() > ASYNC_CHUNK_SIZE ? ASYNC_CHUNK_SIZE : data->length();
+			verbose(V) << "(cgi_dumping) Writing into " << poll_list[i].fd << std::endl;
+			sbytes = write(poll_list[i].fd, data->c_str(), wr_size);
+			if (sbytes < 0)
+				return false;
+			if (sbytes > 0)
+				StringTools::consume_bytes(*data, sbytes);
+			if (si.is_multipart())
+				data = &si.multipart_content;
+			else if (si.is_chunked())
+				data = &si.chunked_content;
+			else
+				data = &si.in_body;
+			verbose(V) << " - Dumped " << sbytes << ", " << data->length() << " left." << std::endl;
+			if (data->length() == 0)
+			{
+				verbose(V) << poll_list[i].fd << " - Finished dumping (removed)." << std::endl;
+				std::vector<struct pollfd>::iterator position(&poll_list[i]);
+				poll_list.erase(position);
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool ws_reply_instance::cgi_receiving()
+{
+	int V(1);
+	size_t ASYNC_CHUNK_SIZE(10);
+	int CGI_TIMEOUT(50);
+	int poll_count;
+	int TIME_OUT = 0; // non-blocking.
+	int rbytes;
+	char* buffer = static_cast<char*>(malloc(ASYNC_CHUNK_SIZE));
+
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	if (poll_count == -1)
+		throw std::domain_error("(webserv) Poll error.");
+	for (size_t i = 0; i < poll_list.size(); i++)
+	{
+		if (!poll_list[i].revents)
+			continue ;
+		if (poll_list[i].revents & POLLIN)
+		{
+			verbose(V) << "(cgi_receiving) Getting from cgi fd " << poll_list[i].fd << std::endl;
+			rbytes = read(poll_list[i].fd, buffer, ASYNC_CHUNK_SIZE);
+			verbose(V) << "(cgi_receiving) " << rbytes << " bytes." << std::endl;
+			if (rbytes < 0)
+				return false;
+			if (rbytes == 0)
+			{
+				verbose(V) << poll_list[i].fd << " - Finished receiving from cgi (removed)." << std::endl;
+				std::vector<struct pollfd>::iterator position(&poll_list[i]);
+				poll_list.erase(position);
+				return false;
+			}
+			if (rbytes > 0)
+			{
+//				out_body.append(buffer, rbytes);
+				if (chronometer > CGI_TIMOUT)
+				{
+					verbose(V) << " - CGI timeout." << std::endl;
+					return false;
+				}
+				verbose(V) << " - Got " << rbytes << " from cgi." << std::endl;
+				return true;
+			}
+		}
+//		BREAK_REPEAT_LIMIT(10);
+	}
+	return true;
 }
 
 int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::string>& argv)
@@ -91,6 +177,7 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		if (si.in_header.is_post())
 		{
 			WebServ::set_non_blocking(pipe_pc[1]);
+			poll_list.push_back(WebServ::make_in_out_fd(pipe_pc[1]));
 			dumping_to_cgi = true;
 		}
 		else
@@ -98,6 +185,8 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 			close(pipe_pc[1]);
 			dumping_to_cgi_finished = true;
 		}
+		WebServ::set_non_blocking(pipe_cp[0]);
+		poll_list.push_back(WebServ::make_in_out_fd(pipe_cp[0]));
 		getting_from_cgi = true;
 	}
 	return 0;

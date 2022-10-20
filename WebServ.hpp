@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 17:48:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/20 21:23:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ struct ws_reply_instance
 	void set_code(int, const std::string&);
 	void set_redirect(const std::string&);
 	std::string file_name;
+	Chronometer chronometer;
 
 	int PUT_mock(ws_server_instance&); // So it proceeds for 42 ubuntu_tester.
 	int is_501(ws_server_instance&); // Refuses if something is not implemented.
@@ -128,7 +129,8 @@ struct ws_reply_instance
 	int cgi_prepare(ws_server_instance&, std::string);
 	int cgi_pipe(ws_server_instance&, const std::vector<std::string>&);
 	void cgi_setenv(ws_server_instance&, std::string);
-	void cgi_write_into_child(ws_server_instance&, int);
+	bool cgi_dumping(ws_server_instance&);
+	bool cgi_receiving();
 	int bad_gateway(std::string = "");
 	int list_autoindex(std::string, ws_server_instance&);
 	void header_from_body();

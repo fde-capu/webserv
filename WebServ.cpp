@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 16:06:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/20 21:24:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ void WebServ::light_up()
 void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 {
 	int V(1);
+	int INCOME_TIMEOUT(50);
 	int rbytes;
 	int sbytes;
 	int fd;
@@ -196,7 +197,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			continue ;
 		}
 
-		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > 50)
+		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > INCOME_TIMEOUT)
 			in_ended[fd] = true;
 		if (in_ended[fd] && !body_ok[fd])
 		{

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 17:37:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/20 21:09:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,14 +240,18 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 
 	if (dumping_to_cgi)
 	{
-		cgi_write_into_child(si, pipe_pc[1]);
+		if (cgi_dumping(si))
+			return true;
 		close(pipe_pc[1]);
+		poll_list.push_back(WebServ::make_in_out_fd(file_fd));
 		dumping_to_cgi = false;
 		dumping_to_cgi_finished = true;
 	}
 	if (getting_from_cgi && dumping_to_cgi_finished)
 	{
-		out_body = CircularBuffer(pipe_cp[0]);
+		if (cgi_receiving())
+			return true;
+//		out_body = CircularBuffer(pipe_cp[0]);
 		wait(0);
 		close(pipe_cp[0]);
 		verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
@@ -269,7 +273,7 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 bool ws_reply_instance::is_working_save(ws_server_instance& si)
 {
 	int V(1);
-	size_t WRITE_SIZE(10000000);
+	size_t ASYNC_CHUNK_SIZE(10000000);
 	std::string* data;
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
@@ -299,9 +303,11 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
+		if (!poll_list[i].revents)
+			continue ;
 		if (poll_list[i].revents & POLLOUT)
 		{
-			wr_size = data->length() > WRITE_SIZE ? WRITE_SIZE : data->length();
+			wr_size = data->length() > ASYNC_CHUNK_SIZE ? ASYNC_CHUNK_SIZE : data->length();
 			verbose(V) << "(is_working_save) Writing into " << poll_list[i].fd << std::endl;
 			sbytes = write(poll_list[i].fd, data->c_str(), wr_size);
 			if (sbytes < 0)
