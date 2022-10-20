@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/20 21:23:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/20 21:57:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,16 +132,16 @@ bool ws_reply_instance::cgi_receiving()
 			if (rbytes > 0)
 			{
 //				out_body.append(buffer, rbytes);
-				if (chronometer > CGI_TIMOUT)
-				{
-					verbose(V) << " - CGI timeout." << std::endl;
-					return false;
-				}
 				verbose(V) << " - Got " << rbytes << " from cgi." << std::endl;
 				return true;
 			}
 		}
 //		BREAK_REPEAT_LIMIT(10);
+	}
+	if (chronometer > CGI_TIMEOUT)
+	{
+		verbose(V) << " - CGI timeout." << std::endl;
+		return false;
 	}
 	return true;
 }
