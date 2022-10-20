@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/20 21:09:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 01:35:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,8 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 {
 	int V(1);
 
+	if (out_header.status == 404)
+		return false;
 	if (dumping_to_cgi)
 	{
 		if (cgi_dumping(si))
@@ -251,7 +253,6 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 	{
 		if (cgi_receiving())
 			return true;
-//		out_body = CircularBuffer(pipe_cp[0]);
 		wait(0);
 		close(pipe_cp[0]);
 		verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
