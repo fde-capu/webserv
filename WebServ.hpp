@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/20 21:23:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 00:41:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,7 @@ class WebServ
 		WebServ& operator= (WebServ const & rhs);
 		WebServ(WebServ const & src);
 		WebServ();
-		static char* buffer;
+		char* buffer;
 		std::map<int, bool> in_ended;
 		std::map<int, bool> out_ended;
 		std::map<int, bool> body_ok;

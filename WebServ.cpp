@@ -6,17 +6,18 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/20 21:24:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 00:57:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-char* WebServ::buffer = static_cast<char *>(std::malloc(BUFFER_SIZE * sizeof(char) + 1));
-
 WebServ::WebServ(DataFold& u_config)
 : config(u_config), server(config.filter("server")), lit(false)
 {
+	buffer = static_cast<char *>(std::malloc(BUFFER_SIZE * sizeof(char) + 1));
+	if (!buffer)
+		throw std::domain_error("(webserv) Failed to initialize due to bad_alloc.");
 	load_defaults();
 	while (server.loop())
 		instance.push_back(dftosi(server.val));
@@ -105,7 +106,6 @@ void WebServ::light_up()
 			continue ;
 		if (event.fd == 0)
 		{
-			free(buffer);
 			return exit_gracefully();
 		}
 		if (event.revents & POLLIN)
