@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 16:14:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 17:06:56 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,8 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 {
+	return 0; // XXX
+
 	static int V(1);
 	int pos_status(0);
 
@@ -306,6 +308,11 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 		si.mount_chunked();
 		return true;
 	}
+	if (si.is_multipart() && !si.multipart_finished)
+	{
+		si.mount_multipart();
+		return true;
+	}
 	if (si.is_multipart())
 		data = &si.multipart_content;
 	else if (si.is_chunked())
@@ -316,6 +323,8 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 	verbose(CRITICAL) << "(webserv) >" << SHORT((*data)) << \
 		"< will be saved into " << full_path << \
 		"." << std::endl;
+
+	BREAK_REPEAT_LIMIT(10);
 
 	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
 	if (poll_count == -1)

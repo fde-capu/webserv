@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 22:50:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/18 15:08:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 16:48:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,5 +84,6 @@ void ws_server_instance::mount_multipart()
 	multipart_content_type = StringTools::query_for("Content-Type", in_body);
 	multipart_content.reserve(body_end - body_start);
 	multipart_content = in_body.substr(body_start, body_end - body_start);
+	multipart_finished = true;
 	set_sizes();
 }

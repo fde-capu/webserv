@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 15:13:43 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 17:12:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ struct ws_server_instance
 	bool is_multipart() const;
 	bool is_chunked() const;
 	bool chunk_finished;
+	bool multipart_finished;
 	bool is_cgi() const;
 	bool cgi_flag;
 	std::string location_path(const std::string = "") const;
@@ -97,16 +98,27 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 
 struct ws_reply_instance
 {
-	ws_header out_header;
-	std::string out_body;
-	size_t package_length;
 	ws_reply_instance();
 	void encapsulate();
 	void set_code(int, const std::string&);
 	void set_redirect(const std::string&);
+
+	ws_header out_header;
+	std::string out_body;
+	size_t package_length;
 	std::string file_name;
 	Chronometer chronometer;
 	bool first_time;
+	std::vector<struct pollfd> poll_list;
+	std::string full_path;
+	int file_fd;
+	int pipe_pc[2];
+	int pipe_cp[2];
+	pid_t child_pid;
+	bool dumping_to_cgi;
+	bool dumping_to_cgi_finished;
+	bool getting_from_cgi;
+	bool to_work_load;
 
 	int PUT_mock(ws_server_instance&); // So it proceeds for 42 ubuntu_tester.
 	int is_501(ws_server_instance&); // Refuses if something is not implemented.
@@ -121,13 +133,9 @@ struct ws_reply_instance
 	int is_413_507_422(ws_server_instance&); //413 Payload Too Large, 507 Insufficient Resources, 422 Unprocessable Entity
 	int is_424(ws_server_instance&); // Failed Dependency.
 
-	std::vector<struct pollfd> poll_list;
-	std::string full_path;
-	int file_fd;
 	bool is_working_load(ws_server_instance&);
 	bool is_working_save(ws_server_instance&);
 	bool is_working_cgi(ws_server_instance&);
-
 	int cgi_prepare(ws_server_instance&, std::string);
 	int cgi_pipe(ws_server_instance&, const std::vector<std::string>&);
 	void cgi_setenv(ws_server_instance&, std::string);
@@ -137,14 +145,6 @@ struct ws_reply_instance
 	int list_autoindex(std::string, ws_server_instance&);
 	void header_from_body();
 	bool save_canceled() const;
-
-	int pipe_pc[2];
-	int pipe_cp[2];
-	pid_t child_pid;
-	bool dumping_to_cgi;
-	bool dumping_to_cgi_finished;
-	bool getting_from_cgi;
-	bool to_work_load;
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert
