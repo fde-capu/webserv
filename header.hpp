@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 23:41:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 22:31:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@
 # ifndef VERBOSE
 #  define VERBOSE 0
 # endif
-
-# define VERBOSE_LINE_LIMIT  60
 
 # define DEFAULT_INDEX "index.html index.htm"
 # define DEFAULT_ACCEPTED_METHODS "GET"

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/18 14:32:59 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/20 21:16:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 22:31:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <iostream>
 # include <csignal>
 
+# define VERBOSE_LINE_LIMIT  60
 # define verbose(X) if (VERBOSE >= X) std::cout
 # define BREAK raise(SIGTRAP);
 # define BREAK_REPEAT_LIMIT(X) static size_t BREAK_REPEAT_LIMIT(0); if (BREAK_REPEAT_LIMIT++ > X) BREAK

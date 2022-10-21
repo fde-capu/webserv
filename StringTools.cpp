@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 21:30:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 22:35:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,10 +250,13 @@ std::string StringTools::apply_quotes(std::string str, std::string quote) const
 
 size_t StringTools::find_outside_quotes(std::string& str, std::string needle, size_t u_start)
 {
+	int V(30);
 	std::string q("");
-	std::string::iterator e = str.end();
+	std::string::iterator e;
 	std::string::iterator s = str.begin() + u_start;
+	std::string::iterator n;
 
+	verbose(V) << "(find_outside_quotes) >" << needle << "< @ " << SHORT(str) << std::endl;
 	while (*s)
 	{
 		if (*s == '\\')
@@ -268,14 +271,26 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle, si
 					q = q.substr(0, q.length() - 1);
 				else if (q.empty())
 					q += *i;
+				break ;
 			}
-			else if (!q.length())
+			else
 			{
-				if (e - s < static_cast<long>(needle.size()))
-					return std::string::npos;
-				if (std::string(s, s + (needle.length())) == needle)
+				if (q.length())
+					continue ;
+				e = s;
+				n = needle.begin();
+				while (*e && *n && *e == *n)
 				{
-					return s - str.begin();
+					e++;
+					n++;
+					if (!*e && *n)
+					{
+						return std::string::npos;
+					}
+					if (!*n)
+					{
+						return s - str.begin();
+					}
 				}
 			}
 		}
