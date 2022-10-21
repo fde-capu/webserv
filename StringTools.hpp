@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:43:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 07:19:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 21:08:30 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ class StringTools
 		std::string					substitute_all_ret(const std::string, std::string, std::string) const;
 		void						erase_boundaries(std::string&, std::string) const;
 		void						erase_boundaries(std::string&, std::string, std::string) const;
-		static size_t				find_outside_quotes(std::string&, std::string);
-		static size_t				find_outside_quotes_set(std::string&, std::string);
+		static size_t				find_outside_quotes(std::string&, std::string, size_t = 0);
+		static size_t				find_outside_quotes_set(std::string&, std::string, size_t = 0);
 		size_t						find_closing_bracket(std::string) const;
 		void						remove_comments(std::string&) const;
 		std::string					remove_quotes(std::string&) const;

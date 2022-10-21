@@ -839,7 +839,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 largecgi="10000000";
 largecgi="12345678";
-largecgi="52428000";
+largecgi="42428000";
 
 { anounce CGI_POST_MULTI_LARGE \
 \

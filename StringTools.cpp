@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 07:30:25 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 21:30:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,11 +248,13 @@ std::string apply_quotes(std::string str, std::string quote)
 std::string StringTools::apply_quotes(std::string str, std::string quote) const
 { return std::string(quote + escape_char(str, quote) + quote); }
 
-size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
+size_t StringTools::find_outside_quotes(std::string& str, std::string needle, size_t u_start)
 {
-	std::string q = "";
+	std::string q("");
 	std::string::iterator e = str.end();
-	for(std::string::iterator s = str.begin(); *s; s++)
+	std::string::iterator s = str.begin() + u_start;
+
+	while (*s)
 	{
 		if (*s == '\\')
 			s += 2;
@@ -265,29 +267,30 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle)
 				if (*(q.end() - 1) == *i)
 					q = q.substr(0, q.length() - 1);
 				else if (q.empty())
-					q = q + *i;
+					q += *i;
 			}
-			else
+			else if (!q.length())
 			{
 				if (e - s < static_cast<long>(needle.size()))
 					return std::string::npos;
 				if (std::string(s, s + (needle.length())) == needle)
 				{
-					if (q.length() == 0)
-						return s - str.begin();
+					return s - str.begin();
 				}
 			}
 		}
+		s++;
 	}
 	return std::string::npos;
 }
 
-size_t StringTools::find_outside_quotes_set(std::string& str, std::string set)
+
+size_t StringTools::find_outside_quotes_set(std::string& str, std::string set, size_t u_start)
 {
 	size_t out = std::string::npos;
 	for (std::string::iterator i = set.begin(); *i; i++)
 	{
-		size_t first = find_outside_quotes(str, std::string(i, i + 1));
+		size_t first = find_outside_quotes(str, std::string(i, i + 1), u_start);
 		if (first < out)
 			out = first;
 	}
@@ -673,14 +676,18 @@ bool StringTools::isWord(const std::string& str, size_t pos)
 
 std::string StringTools::query_for(std::string query, std::string& src)
 {
-	size_t h = src.find(query);
-	if (h == std::string::npos)
+	size_t start = src.find(query);
+	size_t end;
+	std::string tmp("");
+
+	if (start == std::string::npos)
 		return "";
-	while (h < src.length() && !isWord(src, h++)) ;
-	if (h == std::string::npos)
+	while (start < src.length() && !isWord(src, start++)) ;
+	if (start == std::string::npos)
 		return "";
-	std::string tmp = src.substr(h);
-	tmp = src.substr(h, find_outside_quotes_set(tmp, ";\r\n"));
+	end = find_outside_quotes_set(src, ";\r\n", start);
+	if (end != std::string::npos)
+		tmp = src.substr(start, end - start);
 	return trim(tmp, " \"\'");
 }
 
@@ -701,13 +708,13 @@ bool StringTools::startsWith(const std::string& full, const std::string& beginin
 
 std::string& StringTools::trim(std::string& str, std::string set)
 {
-	size_t start = 0;
-	size_t end;
+	size_t start(0);
+	size_t end(str.length() - 1);
 
 	while (start < str.length() && isInSet(str.at(start), set)) start++;
-	end = str.length() - 1;
 	while (str.length() && isInSet(str.at(end), set)) end--;
-	str = str.substr(start, end - start + 1);
+	if (start != 0 || end != str.length() - 1)
+		str = str.substr(start, end - start + 1);
 	return str;
 }
 
