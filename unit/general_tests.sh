@@ -59,7 +59,7 @@ unittest()
 	out=`eval "$fullcmd"`;
 
 	[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
-	[ "$short_output" != "" ] && ls -l tmp_response && head -c 105 tmp_response && echo "...";
+	[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
 
 	if [ "$out" = "000" ]; then
 		{ anounce ERROR 'Make sure the server is running! (Response 0?)'; } 2> /dev/null;
@@ -167,12 +167,14 @@ do
 done
 
 { ${MYDIR}/clean_uploads.sh; }
+rm tmp_response;
 
 { set +x; } 2> /dev/null
 if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
+
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -696,8 +698,6 @@ ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 ##################################################################
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CGI_GET_SH \
 \
 	'Test CGI with GET method, cgi_test.sh.' \
@@ -706,7 +706,7 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 cmd="curl http://$name_server:3490/cgi_test.sh"
 code="200";
-short_output="true";
+show_output="true";
 message="There should the output of a script, not the script itself.";
 unittest "Get cgi sh";
 
@@ -732,7 +732,7 @@ unittest "Get cgi sh but no";
 
 cmd="curl http://$name_server:3490/somesub/hi.sh"
 code="200";
-short_output="true";
+show_output="true";
 message="hi.sh should not show the 'echo' command (script was executed).";
 unittest "Get cgi somesub/sh";
 
@@ -746,7 +746,7 @@ unittest "Get cgi somesub/sh";
 
 cmd="curl http://$name_server:3490/uri_alias/hi.sh"
 code="200";
-short_output="true";
+show_output="true";
 unittest "Get cgi uri_alias/hi.sh";
 
 ##################################################################
@@ -759,7 +759,7 @@ unittest "Get cgi uri_alias/hi.sh";
 
 cmd="curl http://$name_server:3490/cgi_test.php"
 code="200";
-short_output="true";
+show_output="true";
 message="There should the output of a script, not the script itself.";
 unittest "Get cgi php";
 
@@ -775,7 +775,7 @@ echo -n "This file is exactly 99 bytes long, and is used to test POST requests. 
 cmd="curl http://$name_server:3490/cgi_sort_words.sh";
 upfile="99B.words" 
 code="202";
-short_output="true";
+show_output="true";
 message="Check if CGI was properly executed above."
 unittest "Simple post";
 rm ${MYDIR}/99B.words
@@ -793,7 +793,7 @@ echo -n "This file is exactly 99 bytes long, and is used to test POST requests. 
 cmd="curl http://$name_server:3490/cgi_sort_words.sh";
 upfile="99B.words" 
 code="202";
-short_output="true";
+show_output="true";
 message="Check if CGI was properly executed above."
 unittest "Simple post chunked";
 rm ${MYDIR}/99B.words
@@ -810,7 +810,7 @@ echo -n "This file is exactly 99 bytes long, and is used to test POST requests. 
 cmd="curl http://$name_server:3490/bla.bla";
 upfile="99B.words" 
 code="202";
-short_output="true";
+show_output="true";
 message="ubuntu_cgi_tester runs and converts all to uppercase."
 unittest "Simple multipart cgi post";
 rm ${MYDIR}/99B.words
@@ -828,7 +828,7 @@ echo -n "This file is exactly 99 bytes long, and is used to test POST requests. 
 cmd="curl http://$name_server:3490/bla.bla";
 upfile="99B.words" 
 code="202";
-short_output="true";
+show_output="true";
 message="Check if CGI was properly executed above."
 unittest "Simple chunked cgi post";
 rm ${MYDIR}/99B.words
@@ -838,6 +838,8 @@ rm ${MYDIR}/99B.words
 #largecgi="10000000";
 largecgi="1234567";
 # XXX test with 12345678
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CGI_POST_MULTI_LARGE \
 \

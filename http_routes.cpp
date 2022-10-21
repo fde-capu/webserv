@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 01:35:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 16:14:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,14 +238,17 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 {
 	int V(1);
 
-	if (out_header.status == 404)
+	if (!si.is_cgi() \
+		|| out_header.status == 301 \
+		|| out_header.status == 403 \
+		|| out_header.status == 404 \
+	)
 		return false;
 	if (dumping_to_cgi)
 	{
 		if (cgi_dumping(si))
 			return true;
 		close(pipe_pc[1]);
-		poll_list.push_back(WebServ::make_in_out_fd(file_fd));
 		dumping_to_cgi = false;
 		dumping_to_cgi_finished = true;
 	}
@@ -253,7 +256,10 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 	{
 		if (cgi_receiving())
 			return true;
+		getting_from_cgi = false;
 		wait(0);
+//		std::vector<struct pollfd>::iterator position(&poll_list[pipe_cp[0]]);
+//		poll_list.erase(position);
 		close(pipe_cp[0]);
 		verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 		header_from_body();
@@ -269,6 +275,18 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 		}
 	}
 	return true;
+}
+
+bool ws_reply_instance::is_working_load(ws_server_instance& si)
+{
+	int V(1);
+
+	if (!to_work_load || si.is_cgi())
+		return false;
+	verbose(V) << "(is_working_load) TO DO ASYNC" << std::endl;
+	out_body = FileString(file_name.c_str()).content();
+	to_work_load = false;
+	return false;
 }
 
 bool ws_reply_instance::is_working_save(ws_server_instance& si)
@@ -356,9 +374,9 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 		}
 		else
 			file_name = request;
+		to_work_load = true;
 		set_code(200, "OK");
-		out_body = FileString(file_name.c_str()).content();
-		verbose(V) << "(is_200) out_body" << std::endl << SHORT(out_body) << std::endl;
+		verbose(V) << "(is_working_load) out_body" << std::endl << SHORT(out_body) << std::endl;
 		return 200;
 	}
 	if (si.in_header.method == "DELETE")

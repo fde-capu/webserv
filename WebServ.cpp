@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 00:57:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 16:21:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,20 +213,33 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		{
 			respond[fd] = ws_reply_instance(webserver[fd]); // ...oonn...
 			chosen_response[fd] = true;
-			verbose(V) << fd << " - Chosen response." << std::endl;
+			verbose(V) << fd << " - Chosen reply instance." << std::endl;
+			response_working[fd] = true;
+		}
+		if (respond[fd].to_work_load)
+		{
 			response_working[fd] = true;
 		}
 		if (response_working[fd])
 		{
-			response_working[fd] = \
-				respond[fd].is_working_save(webserver[fd]) \
-			||	respond[fd].is_working_cgi(webserver[fd]);
+			bool l(respond[fd].is_working_load(webserver[fd]));
+			bool s(respond[fd].is_working_save(webserver[fd]));
+			bool c(respond[fd].is_working_cgi(webserver[fd]));
+//			if (l)
+//				verbose(V) << " - Working load." << std::endl;
+//			if (s)
+//				verbose(V) << " - Working save." << std::endl;
+//			if (c)
+//				verbose(V) << " - Working cgi." << std::endl;
+//			BREAK_REPEAT_LIMIT(10);
+			response_working[fd] = l || s || c;
 		}
 		if (chosen_response[fd] && !response_working[fd])
 		{
 			encapsulated[fd] = true;
 			respond[fd].encapsulate();
 			verbose(V) << fd << " - Response encapsulated." << std::endl;
+//			verbose(V) << "--- out header ---" << std::endl << respond[fd].out_header << std::endl;
 		}
 
 		if (*pollout)
@@ -254,7 +267,6 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
 	*this = ws_reply_instance();
-	out_body = "";
 
 	// Order matters.
 	if (PUT_mock(si)) return ; // 200 but mocked.

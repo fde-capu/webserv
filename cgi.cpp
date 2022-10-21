@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 01:36:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 16:28:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,6 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 	else
 		data = &si.in_body;
 	
-	verbose(CRITICAL) << "(webserv) >" << SHORT((*data)) << \
-		"< will be dumped into cgi." << std::endl;
-
 	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
@@ -101,22 +98,23 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 bool ws_reply_instance::cgi_receiving()
 {
 	int V(1);
-	size_t ASYNC_CHUNK_SIZE(10);
-	int CGI_TIMEOUT(500);
+	size_t ASYNC_CHUNK_SIZE(10000000);
+	int CGI_TIMEOUT(50);
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
 	int rbytes;
 	char* buffer = static_cast<char*>(malloc(ASYNC_CHUNK_SIZE));
-	static bool first_time(true);
 
 	if (first_time)
 	{
+		verbose(V) << "(cgi_receiving) First time." << std::endl;
+		verbose(V) << "- Current body: " << SHORT(out_body) << std::endl;
 		first_time = false;
 		chronometer.btn_reset();
 	}
 	if (chronometer > CGI_TIMEOUT)
 	{
-		verbose(V) << " - CGI timed out." << std::endl;
+		verbose(V) << chronometer << " ----- !!! ----- CGI timed out." << std::endl;
 		return false;
 	}
 	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
@@ -128,27 +126,23 @@ bool ws_reply_instance::cgi_receiving()
 			continue ;
 		if (poll_list[i].revents & POLLIN)
 		{
-			verbose(V) << "(cgi_receiving) Getting from fd " << poll_list[i].fd << std::endl;
 			rbytes = read(poll_list[i].fd, buffer, ASYNC_CHUNK_SIZE);
-			verbose(V) << "(cgi_receiving) " << rbytes << " bytes." << std::endl;
+			verbose(V) << "(cgi_receiving) " << rbytes << " bytes from " << poll_list[i].fd << "." << std::endl;
 			if (rbytes < 0)
 				return false;
-			if (rbytes == 0)
+			if (rbytes)
 			{
-				verbose(V) << poll_list[i].fd << " - Finished receiving from cgi (removed)." << std::endl;
-				std::vector<struct pollfd>::iterator position(&poll_list[i]);
-				poll_list.erase(position);
-				return false;
-			}
-			if (rbytes > 0)
-			{
+				verbose(V) << "(cgi_receiving) Append, reset." << std::endl;
 				out_body.append(buffer, rbytes);
-				verbose(V) << " - Got " << rbytes << " from cgi." << std::endl;
 				chronometer.btn_reset();
 				return true;
 			}
+			else
+			{
+				verbose(V) << "(cgi_receiving) Nothing." << std::endl;
+				return false;
+			}
 		}
-//		BREAK_REPEAT_LIMIT(10);
 	}
 	return true;
 }
@@ -182,7 +176,6 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 	{
 		close(pipe_pc[0]);
 		close(pipe_cp[1]);
-		WebServ::set_non_blocking(pipe_cp[0]);
 		if (si.in_header.is_post())
 		{
 			WebServ::set_non_blocking(pipe_pc[1]);
@@ -200,7 +193,7 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		getting_from_cgi = true;
 		verbose(V) << "(cgi_pipe) Set get-from-cgi " << pipe_cp[0] << std::endl;
 	}
-	return 0;
+	return 1;
 }
 
 void ws_reply_instance::header_from_body()
@@ -227,7 +220,7 @@ void ws_reply_instance::header_from_body()
 
 int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 {
-	int V(3);
+	int V(1);
 
 	if (!FileString::exists(si.location_path()))
 	{
@@ -278,7 +271,7 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 
 int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
-	int V(3);
+	int V(1);
 	std::string call_extension;
 	std::string cgi_params_str;
 	std::vector<std::string> cgi_params;
