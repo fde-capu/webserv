@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/18 14:40:44 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/21 17:57:23 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,7 @@ SRCS	=	FileString.cpp DataFold.cpp \
 			http_routes.cpp Chronometer.cpp \
 			WebServ_post_process.cpp WebServ_proc_header.cpp \
 			WebServ_operator_out.cpp WebServ_ports.cpp WebServ.cpp \
-			TemplatePage.cpp cgi.cpp
+			TemplatePage.cpp cgi.cpp WebServ_works.cpp
 SRCS1	=	main.cpp
 HEAD	=	$(TRACKMAKEFILE) argval_ws.conf header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \

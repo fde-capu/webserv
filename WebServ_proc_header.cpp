@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:37:23 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 16:43:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 17:22:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,25 @@ bool WebServ::validate_header_entry
 
 ws_server_instance::ws_server_instance()
 {
+	in_body = "";
+	fd = 0;
+	multipart_type = "";
+	multipart_content = "";
+	multipart_content_disposition = "";
+	multipart_name = "";
+	multipart_filename = "";
+	multipart_content_type = "";
+	boundary = "";
+	chunked_content = "";
+	max_size = 0;
+	body_start = 0;
+	body_end = 0;
+	exceeded_limit = false;
+	reached_limit = false;
 	status = 0;
+	chunk_finished = false;
+	multipart_finished = false;
+	cgi_flag = false;
 }
 
 ws_header::ws_header()

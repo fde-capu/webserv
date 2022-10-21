@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 16:21:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 18:32:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 //				verbose(V) << " - Working save." << std::endl;
 //			if (c)
 //				verbose(V) << " - Working cgi." << std::endl;
-//			BREAK_REPEAT_LIMIT(10);
+			BREAK_REPEAT_LIMIT(10); // XXX
 			response_working[fd] = l || s || c;
 		}
 		if (chosen_response[fd] && !response_working[fd])

@@ -6,40 +6,16 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 16:57:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 18:31:12 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-void ws_reply_instance::cgi_setenv(ws_server_instance& si, std::string path_info)
-{
-	int V(2);
-
-	setenv("REQUEST_METHOD", si.in_header.method.c_str(), 1);
-	setenv("SERVER_PROTOCOL", si.in_header.protocol.c_str(), 1);
-	setenv("PATH_INFO", path_info.c_str(), 1);
-	setenv("SESSION_ID", si.in_header.cookie.c_str(), 1);
-
-	std::vector<std::string> cookie(split_trim(si.in_header.cookie, ";"));
-	std::string key;
-	std::string val;
-	for (size_t i = 0; i < cookie.size(); i++)
-	{
-		if (cookie[i].empty())
-			continue ;
-		key = StringTools::get_before_first(cookie[i], "=");
-		val = StringTools::get_after_first(cookie[i], "=");
-		key = "WS_" + to_upper(key);
-		verbose(V) << "(cgi_setenv) " << key << "=" << val << std::endl;
-		setenv(key.c_str(), val.c_str(), 1);
-	}
-}
-
 bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 {
 	int V(1);
-	size_t ASYNC_CHUNK_SIZE(10000000);
+	size_t ASYNC_CHUNK_SIZE(1000000);
 	std::string* data;
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
@@ -51,11 +27,13 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 	if (si.is_chunked() && !si.chunk_finished)
 	{
 		si.mount_chunked();
+		verbose(V) << "(cgi_dumping) Mounted chunked data." << std::endl;
 		return true;
 	}
 	if (si.is_multipart() && !si.multipart_finished)
 	{
 		si.mount_multipart();
+		verbose(V) << "(cgi_dumping) Mounted multipart data." << std::endl;
 		return true;
 	}
 	if (si.is_multipart())
@@ -68,17 +46,32 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
+	verbose(V) << "poll_count " << poll_count << ", list size " << poll_list.size() << std::endl;
+
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
 		if (!poll_list[i].revents)
 			continue ;
+		                       printf("  fd=%d; events: %s%s%s\n", poll_list[i].fd,
+                               (poll_list[i].events & POLLIN)  ? "POLLIN "  : "",
+                               (poll_list[i].events & POLLOUT) ? "POLLOUT " : "",
+                               (poll_list[i].events & POLLERR) ? "POLLERR " : "");
+
+		                       printf("  fd=%d; revents: %s%s%s\n", poll_list[i].fd,
+                               (poll_list[i].revents & POLLIN)  ? "POLLIN "  : "",
+                               (poll_list[i].revents & POLLOUT) ? "POLLOUT " : "",
+                               (poll_list[i].revents & POLLERR) ? "POLLERR " : "");
+
 		if (poll_list[i].revents & POLLOUT)
 		{
 			wr_size = data->length() > ASYNC_CHUNK_SIZE ? ASYNC_CHUNK_SIZE : data->length();
 			verbose(V) << "(cgi_dumping) Writing into " << poll_list[i].fd << std::endl;
 			sbytes = write(poll_list[i].fd, data->c_str(), wr_size);
 			if (sbytes < 0)
+			{
+				verbose(V) << " - NEGATIVE SBYTES" << std::endl;
 				return false;
+			}
 			if (sbytes > 0)
 				StringTools::consume_bytes(*data, sbytes);
 			if (si.is_multipart())
@@ -90,9 +83,10 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 			verbose(V) << " - Dumped " << sbytes << ", " << data->length() << " left." << std::endl;
 			if (data->length() == 0)
 			{
-				verbose(V) << poll_list[i].fd << " - Finished dumping (removed)." << std::endl;
-				std::vector<struct pollfd>::iterator position(&poll_list[i]);
-				poll_list.erase(position);
+//				std::vector<struct pollfd>::iterator position(&poll_list[i]);
+//				poll_list.erase(position);
+//				verbose(V) << poll_list[i].fd << " - Finished dumping (removed)." << std::endl;
+				verbose(V) << " - Finished dumping (not removed)." << std::endl;
 				return false;
 			}
 		}
@@ -201,28 +195,6 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 	return 1;
 }
 
-void ws_reply_instance::header_from_body()
-{
-	size_t dbreak[3];
-	size_t h_body(std::string::npos);
-	size_t dblen;
-
-	out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
-	out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
-	out_header.content_type = StringTools::query_for("Content-Type", out_body);
-	out_header.charset = StringTools::query_for("charset", out_body);
-	out_header.cookie = StringTools::get_after_until_line(out_body, "Set-Cookie:");
-	trim(out_header.cookie);
-	dbreak[0] = out_body.find("\r\n\r\n");
-	dbreak[1] = out_body.find("\n\n");
-	dbreak[2] = out_body.find("\r\r");
-	for (size_t i = 0; i < 3; i++)
-		h_body = h_body > dbreak[i] ? dbreak[i] : h_body;
-	dblen = h_body == dbreak[0] ? 4 : 2;
-	if (h_body != std::string::npos)
-		out_body.erase(0, h_body + dblen);
-}
-
 int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 {
 	int V(3);
@@ -327,6 +299,3 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	}
 	return 0;
 }
-
-bool ws_server_instance::is_cgi() const
-{ return cgi_flag; }
