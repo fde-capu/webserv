@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 18:02:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 19:47:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,6 @@ ws_reply_instance::ws_reply_instance()
 	pipe_cp[1] = 0;
 	child_pid = 0;
 	dumping_to_cgi = false;
-	dumping_to_cgi_finished = false;
 	getting_from_cgi = false;
 	to_work_load = false;
 }

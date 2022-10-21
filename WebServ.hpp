@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 17:12:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 19:47:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,6 @@ struct ws_reply_instance
 	int pipe_cp[2];
 	pid_t child_pid;
 	bool dumping_to_cgi;
-	bool dumping_to_cgi_finished;
 	bool getting_from_cgi;
 	bool to_work_load;
 

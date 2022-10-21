@@ -838,7 +838,7 @@ rm ${MYDIR}/99B.words
 fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 #largecgi="10000000";
-largecgi="131073";
+largecgi="12345678";
 # XXX test with 12345678
 
 { anounce CGI_POST_MULTI_LARGE \

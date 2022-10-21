@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 18:00:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 19:52:37 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 {
 	int V(1);
+	bool action_dump(false);
+	bool action_get(false);
 
 	if (!si.is_cgi() \
 		|| out_header.status == 301 \
@@ -24,35 +26,38 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 		return false;
 	if (dumping_to_cgi)
 	{
-		if (cgi_dumping(si))
-			return true;
-		close(pipe_pc[1]);
-		dumping_to_cgi = false;
-		dumping_to_cgi_finished = true;
+		action_dump = cgi_dumping(si);
+		if (!action_dump)
+		{
+			close(pipe_pc[1]);
+			dumping_to_cgi = false;
+		}
 	}
-	if (getting_from_cgi && dumping_to_cgi_finished)
+	if (getting_from_cgi)
 	{
-		if (cgi_receiving())
-			return true;
-		getting_from_cgi = false;
-		wait(0);
-//		std::vector<struct pollfd>::iterator position(&poll_list[pipe_cp[0]]);
-//		poll_list.erase(position);
-		close(pipe_cp[0]);
-		verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
-		header_from_body();
-		if (si.in_header.is_post())
+		action_get = cgi_receiving();
+		if (!action_get)
 		{
-			set_code(202, "Accepted");
-			return false;
-		}
-		else
-		{
-			set_code(200, "OK");
-			return false;
+			getting_from_cgi = false;
+			wait(0);
+			//		std::vector<struct pollfd>::iterator position(&poll_list[pipe_cp[0]]);
+			//		poll_list.erase(position);
+			close(pipe_cp[0]);
+			verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
+			header_from_body();
+			if (si.in_header.is_post())
+			{
+				set_code(202, "Accepted");
+				return false;
+			}
+			else
+			{
+				set_code(200, "OK");
+				return false;
+			}
 		}
 	}
-	return true;
+	return action_dump || action_get;
 }
 
 bool ws_reply_instance::is_working_load(ws_server_instance& si)

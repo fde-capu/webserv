@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 18:31:12 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 19:47:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 
 bool ws_reply_instance::cgi_receiving()
 {
-	int V(1);
+	int V(2);
 	size_t ASYNC_CHUNK_SIZE(10000000);
 	int CGI_TIMEOUT(50);
 	int poll_count;
@@ -151,9 +151,9 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 	int V(1);
 
 	child_pid = -1;
-	if (pipe(pipe_pc) == -1)
+	if (pipe2(pipe_pc, O_CLOEXEC | O_DIRECT | O_NONBLOCK) == -1)
 		throw std::domain_error("(cgi_pipe) Cannot pipe for cgi (parent->child).");
-	if (pipe(pipe_cp) == -1)
+	if (pipe2(pipe_cp, O_CLOEXEC | O_DIRECT | O_NONBLOCK) == -1)
 		throw std::domain_error("(cgi_pipe) Cannot pipe for cgi (child->parent).");
 	child_pid = fork();
 	if (child_pid < 0)
@@ -185,7 +185,6 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 		else
 		{
 			close(pipe_pc[1]);
-			dumping_to_cgi_finished = true;
 		}
 		WebServ::set_non_blocking(pipe_cp[0]);
 		poll_list.push_back(WebServ::make_in_out_fd(pipe_cp[0]));
@@ -199,12 +198,6 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 {
 	int V(3);
 
-	if (!FileString::exists(si.location_path()))
-	{
-		set_code(421, "Missdirected Request");
-		out_body = TemplatePage::page(421, si.custom_error(421));
-		return 421;
-	}
 	program += " " + si.location_path();
 	verbose(V) << "(cgi_prepare) program " << program << std::endl;
 	std::vector<std::string> arg_vec(StringTools::split(program, " "));
@@ -261,7 +254,7 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	verbose(V) << "(is_cgi_exec) call_extension " << call_extension << std::endl;
 	if (call_extension == "")
 		return 0;
-	if (!si.is_chunked() && !FileString::exists(si.location_path()))
+	if (!si.is_chunked() && !FileString::exists(si.location_path()) && !si.in_header.is_post())
 	{
 		set_code(421, "Missdirected Request");
 		out_body = TemplatePage::page(421, si.custom_error(421));
