@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 19:56:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 20:21:03 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,7 +213,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		{
 			respond[fd] = ws_reply_instance(webserver[fd]); // ...oonn...
 			chosen_response[fd] = true;
-			verbose(V) << fd << " - Chosen reply instance." << std::endl;
+			verbose(V) << fd << " - Chosen reply." << std::endl;
 			response_working[fd] = true;
 		}
 		if (respond[fd].to_work_load)

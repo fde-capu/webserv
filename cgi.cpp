@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 19:47:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 20:17:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,26 +46,15 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
-	verbose(V) << "poll_count " << poll_count << ", list size " << poll_list.size() << std::endl;
 
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
 		if (!poll_list[i].revents)
 			continue ;
-		                       printf("  fd=%d; events: %s%s%s\n", poll_list[i].fd,
-                               (poll_list[i].events & POLLIN)  ? "POLLIN "  : "",
-                               (poll_list[i].events & POLLOUT) ? "POLLOUT " : "",
-                               (poll_list[i].events & POLLERR) ? "POLLERR " : "");
-
-		                       printf("  fd=%d; revents: %s%s%s\n", poll_list[i].fd,
-                               (poll_list[i].revents & POLLIN)  ? "POLLIN "  : "",
-                               (poll_list[i].revents & POLLOUT) ? "POLLOUT " : "",
-                               (poll_list[i].revents & POLLERR) ? "POLLERR " : "");
-
 		if (poll_list[i].revents & POLLOUT)
 		{
 			wr_size = data->length() > ASYNC_CHUNK_SIZE ? ASYNC_CHUNK_SIZE : data->length();
-			verbose(V) << "(cgi_dumping) Writing into " << poll_list[i].fd << std::endl;
+//			verbose(V) << "(cgi_dumping) Writing into " << poll_list[i].fd << std::endl;
 			sbytes = write(poll_list[i].fd, data->c_str(), wr_size);
 			if (sbytes < 0)
 			{
@@ -80,7 +69,7 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 				data = &si.chunked_content;
 			else
 				data = &si.in_body;
-			verbose(V) << " - Dumped " << sbytes << ", " << data->length() << " left." << std::endl;
+//			verbose(V) << " - Dumped " << sbytes << ", " << data->length() << " left." << std::endl;
 			if (data->length() == 0)
 			{
 //				std::vector<struct pollfd>::iterator position(&poll_list[i]);

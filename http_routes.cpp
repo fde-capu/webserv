@@ -6,12 +6,11 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 17:59:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/21 20:30:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
-// extern DataFold g_config; // XXX
 
 int ws_reply_instance::PUT_mock(ws_server_instance& si)
 {
@@ -149,8 +148,6 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 {
-	return 0; // XXX
-
 	static int V(1);
 	int pos_status(0);
 
@@ -168,6 +165,7 @@ int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 	}
 	if (si.in_header.content_length > MEMORY_LIMIT)
 	{
+		verbose(V) << "(is_413_507_422) Client declared " << si.in_header.content_length << "." << std::endl;
 		set_code(507, "Insufficient Resources");
 		out_body = TemplatePage::page(507, si.custom_error(507));
 		return 507;
