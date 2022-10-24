@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "Hi!";
+echo "Hello, I am a script on 'somesub'!";

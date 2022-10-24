@@ -502,17 +502,17 @@ unittest "webserv must close connection"
 
 #####################################################################
 
-{ anounce MULTI_FAIL_200 \
+{ anounce MULTI_FAIL_100MB \
 \
-	'Large file 200MB fail on multipart.' \
+	'Large file 100MB fail on multipart.' \
 \
 ; } 2> /dev/null
 
-noise="200MB"
+noise="100MB"
 cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 code="507"
 fail="true"
-unittest "200MB rejection (out of resources)"
+unittest "100MB rejection (out of resources)"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
@@ -717,18 +717,6 @@ unittest "Get cgi sh";
 
 ##################################################################
 
-{ anounce CGI_GET_NOTFOUND \
-\
-	'Test CGI with GET method, xxxx.sh (unexistent).' \
-\
-; } 2> /dev/null;
-
-cmd="curl http://$name_server:3490/xxxx.sh"
-code="404";
-unittest "Get cgi sh but no";
-
-##################################################################
-
 { anounce CGI_GET_ON_SOMESUB \
 \
 	'Test CGI with GET on subdirectory calls.' \
@@ -756,8 +744,7 @@ unittest "Get cgi uri_alias/hi.sh";
 
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
+# XXX Works once in a while.
 { anounce CGI_GET_PHP \
 \
 	'Test CGI with GET method, cgi_test.php.' \
@@ -770,6 +757,20 @@ show_output="true";
 message="There should the output of a script, not the script itself.";
 unittest "Get cgi php";
 
+##################################################################
+
+{ anounce CGI_GET_NOTFOUND \
+\
+	'Test CGI with GET method, xxxx.sh (unexistent).' \
+\
+; } 2> /dev/null;
+
+cmd="curl http://$name_server:3490/xxxx.sh"
+code="404";
+unittest "Get cgi sh but no";
+
+##################################################################
+##################################################################
 ##################################################################
 
 { anounce CGI_POST_MULTI \
@@ -865,6 +866,9 @@ rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
 
 ###################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+## XXX CGI FDs are always increasing, never closed?
 
 { anounce CGI_POST_CHUNK_LARGE \
 \

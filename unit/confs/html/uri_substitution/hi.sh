@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "Hi!";
+echo "Howdy! I am from uri_substitution folder!";
