@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 16:41:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 18:31:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,7 +339,8 @@ void WebServ::remove_from_poll(int fd)
 		if (poll_list[i].fd == fd)
 		{
 			std::vector<struct pollfd>::iterator position(&poll_list[i]);
-			poll_list.erase(position);
+			if (position != poll_list.end())
+				poll_list.erase(position);
 			break ;
 		}
 	}

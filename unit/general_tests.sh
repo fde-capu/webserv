@@ -180,6 +180,8 @@ if false; then
 
 ############################################################### Begin
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -685,14 +687,14 @@ ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 { anounce CHUNK_PARTIAL \
 \
-	'How about 200MB? This time, it is accepted as partial upload, \n
+	'How about 100MB? This time, it is accepted as partial upload, \n
 	since curl is set to close and webserv must always close.\n
-	Note: takes long.' \
+	Note: takes long. 200MB would get curl oom killed on Workspace.' \
 \
 ; } 2> /dev/null
 
 chunked="true";
-noise="200MB"
+noise="100MB"
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
 fail="true"
@@ -863,8 +865,6 @@ rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
 
 ###################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CGI_POST_CHUNK_LARGE \
 \

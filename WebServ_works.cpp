@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 17:47:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 18:40:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 		action_dump = cgi_dumping(si);
 		if (!action_dump)
 		{
+			std::vector<struct pollfd>::iterator position(&poll_list[pipe_pc[1]]);
+			if (position != poll_list.end())
+				poll_list.erase(position);
 			close(pipe_pc[1]);
 			dumping_to_cgi = false;
 		}
@@ -38,11 +41,9 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 		action_get = cgi_receiving();
 		if (!action_get)
 		{
+			wait(0);
 			getting_from_cgi = false;
 			close(pipe_cp[0]);
-			wait(0);
-//			std::vector<struct pollfd>::iterator position(&poll_list[pipe_cp[0]]);
-//			poll_list.erase(position);
 			free(buffer);
 			verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 			header_from_body();
@@ -130,9 +131,7 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 			verbose(V) << " - Saved " << sbytes << ", " << data->length() << " left." << std::endl;
 			if (data->length() == 0)
 			{
-				verbose(V) << poll_list[i].fd << " - Finished saving (removed)." << std::endl;
-				std::vector<struct pollfd>::iterator position(&poll_list[i]);
-				poll_list.erase(position);
+				verbose(V) << poll_list[i].fd << " - Finished saving." << std::endl;
 				return false;
 			}
 		}

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 17:46:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 18:33:32 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,11 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 	{
 		si.mount_chunked();
 		verbose(V + 1) << "(cgi_dumping) Mounted chunked data." << std::endl;
-//		return true;
 	}
 	if (si.is_multipart() && !si.multipart_finished)
 	{
 		si.mount_multipart();
 		verbose(V + 1) << "(cgi_dumping) Mounted multipart data." << std::endl;
-//		return true;
 	}
 	if (si.is_multipart())
 		data = &si.multipart_content;
@@ -72,8 +70,6 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 			chronometer.btn_reset();
 			if (data->length() == 0)
 			{
-//				std::vector<struct pollfd>::iterator position(&poll_list[i]);
-//				poll_list.erase(position);
 				verbose(V) << poll_list[i].fd << " - Finished dumping." << std::endl;
 				return false;
 			}
