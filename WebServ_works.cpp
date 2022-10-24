@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 19:38:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 21:19:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 {
-	int V(1);
+	int V(2);
 	bool action_dump(false);
 	bool action_get(false);
 
@@ -62,6 +62,7 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 bool ws_reply_instance::is_working_load(ws_server_instance& si)
 {
 	int V(1);
+	// XXX
 
 	if (!to_work_load || si.is_cgi())
 		return false;
@@ -73,7 +74,7 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 
 bool ws_reply_instance::is_working_save(ws_server_instance& si)
 {
-	int V(1);
+	int V(2);
 	std::string* data;
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
@@ -99,7 +100,7 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 	else
 		data = &si.in_body;
 	
-	verbose(CRITICAL) << "(webserv) >" << SHORT((*data)) << \
+	verbose(V + 1) << "(webserv) >" << SHORT((*data)) << \
 		"< will be saved into " << full_path << \
 		"." << std::endl;
 

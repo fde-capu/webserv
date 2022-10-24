@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 16:00:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 20:59:43 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,7 +214,7 @@ int ws_reply_instance::is_400(ws_server_instance& si)
 
 int ws_reply_instance::is_201(ws_server_instance& si)
 {
-	int V(1);
+	int V(3);
 
 	if (si.in_header.is_post() && !save_canceled())
 	{

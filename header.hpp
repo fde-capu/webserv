@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 15:29:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 21:25:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # define WS_DEFAULT_CONFIG "webserv-default.conf"
 # define WS_ARGVAL "argval_ws.conf"
 # define ASYNC_CHUNK_SIZE 1000000
-# define CGI_TIMEOUT 50
+# define CGI_TIMEOUT 250
 
 # include <map>
 # include <string>

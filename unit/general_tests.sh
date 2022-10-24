@@ -6,7 +6,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 	name_server="127.0.0.1";
-	step_by_step="true";
+	step_by_step="";
 	clean_upfiles_after_test="";
 
 	MYSELF="$(realpath "$0")"
@@ -179,6 +179,8 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ##################################################################
 
@@ -744,7 +746,6 @@ unittest "Get cgi uri_alias/hi.sh";
 
 ##################################################################
 
-# XXX Works once in a while.
 { anounce CGI_GET_PHP \
 \
 	'Test CGI with GET method, cgi_test.php.' \
@@ -754,8 +755,11 @@ unittest "Get cgi uri_alias/hi.sh";
 cmd="curl http://$name_server:3490/cgi_test.php"
 code="200";
 show_output="true";
+testfile="${MYDIR}/test_php";
+echo "<-- there should NOT be and 'echo' here!!!\r\n" > "$testfile"
 message="There should the output of a script, not the script itself.";
 unittest "Get cgi php";
+rm "$testfile"
 
 ##################################################################
 
@@ -843,8 +847,6 @@ rm ${MYDIR}/99B.words
 
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CGI_POST_MULTI_LARGE \
 \
 	"Test CGI call when posting multipart for large file. \n
@@ -856,6 +858,7 @@ largecgi="42428000";
 
 head -c $largecgi /dev/zero | tr '\0' 'z' > "${MYDIR}/youpi.bla"
 head -c $largecgi /dev/zero | tr '\0' 'Z' > "${MYDIR}/youpi_expected_result.bla"
+touch "${MYDIR}/confs/html/uploads_large/bla.bla"
 cmd="curl -H 'Expect:' http://$name_server:3490/large_upload/bla.bla"
 upfile="youpi.bla"
 code="202"
@@ -866,6 +869,7 @@ fail="true"; # comparing files would get general_tests.sh oom killed.
 unittest "Test POST multipart /directory/youpi.bla large file."
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
+rm "${MYDIR}/confs/html/uploads_large/bla.bla"
 
 ###################################################################
 
@@ -880,6 +884,7 @@ largecgi="42428001";
 chunked="true"
 head -c $largecgi /dev/zero | tr '\0' 'z' > "${MYDIR}/youpi.bla"
 head -c $largecgi /dev/zero | tr '\0' 'Z' > "${MYDIR}/youpi_expected_result.bla"
+touch "${MYDIR}/confs/html/uploads_large/bla.bla"
 cmd="curl http://$name_server:3490/large_upload/bla.bla"
 upfile="youpi.bla"
 code="202"
@@ -890,6 +895,7 @@ fail="true"; # comparing files would get general_tests.sh oom killed.
 unittest "Test POST chunked /directory/youpi.bla large file."
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"
+rm "${MYDIR}/confs/html/uploads_large/bla.bla"
 
 ###################################################################
 ###################################################################
