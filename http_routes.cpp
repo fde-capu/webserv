@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 20:30:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 15:04:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,7 +220,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 	{
 		full_path = si.location_path(si.multipart_filename);
 		verbose(V) << "(is_201) Opening " << full_path << "." << std::endl;
-		file_fd = open(full_path.c_str(), O_WRONLY | O_CREAT | O_NONBLOCK, S_IRUSR | S_IWUSR);
+		file_fd = open(full_path.c_str(), O_WRONLY | O_CREAT | O_NONBLOCK | O_CLOEXEC , S_IRUSR | S_IWUSR);
 		if (file_fd == -1)
 			throw std::domain_error("(webserv) Cannot open file to save data.");
 		if (fcntl(file_fd, F_SETFL, O_NONBLOCK) == -1)

@@ -756,6 +756,8 @@ unittest "Get cgi uri_alias/hi.sh";
 
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce CGI_GET_PHP \
 \
 	'Test CGI with GET method, cgi_test.php.' \
@@ -840,14 +842,12 @@ rm ${MYDIR}/99B.words
 
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 largecgi="42428000";
 
 { anounce CGI_POST_MULTI_LARGE \
 \
-	'Test CGI call when posting multipart for large file. \n
-	 Value of 42428000 is a best for not getting oom killed on Workspace.' \
+	"Test CGI call when posting multipart for large file. \n
+	 Value of $largecgi is a best for not getting oom killed on Workspace." \
 \
 ; } 2> /dev/null
 
@@ -858,7 +858,7 @@ upfile="youpi.bla"
 code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
 short_output="true";
-compare_size="42428000";
+compare_size="$largecgi";
 fail="true"; # comparing files would get general_tests.sh oom killed.
 unittest "Test POST multipart /directory/youpi.bla large file."
 rm "${MYDIR}/youpi.bla"
