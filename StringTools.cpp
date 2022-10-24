@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 15:43:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 19:33:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -736,6 +736,11 @@ std::string& StringTools::trim(std::string& str, std::string set)
 	if (start != 0 || end != str.length() - 1)
 		str = str.substr(start, end - start + 1);
 	return str;
+}
+
+void StringTools::just_consume_bytes(std::string& src, size_t bytes)
+{
+	src.erase(0, bytes);
 }
 
 std::string StringTools::consume_bytes(std::string& src, size_t bytes)

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 18:33:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 19:34:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 				return false;
 			}
 			if (sbytes > 0)
-				StringTools::consume_bytes(*data, sbytes);
+				StringTools::just_consume_bytes(*data, sbytes);
 			if (si.is_multipart())
 				data = &si.multipart_content;
 			else if (si.is_chunked())

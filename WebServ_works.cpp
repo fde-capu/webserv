@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 18:40:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 19:38:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,6 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 		action_dump = cgi_dumping(si);
 		if (!action_dump)
 		{
-			std::vector<struct pollfd>::iterator position(&poll_list[pipe_pc[1]]);
-			if (position != poll_list.end())
-				poll_list.erase(position);
 			close(pipe_pc[1]);
 			dumping_to_cgi = false;
 		}

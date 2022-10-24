@@ -85,8 +85,8 @@
 		[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
 
 		[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm ${MYDIR}/$upfile;
-		[ "$clean_upfiles_after_test" != "" ] && rm tmp_response; # XXX
 		[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm tmp_trace_ascii
+		rm tmp_response;
 
 		resetvars;
 	}
@@ -683,8 +683,6 @@ ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CHUNK_PARTIAL \
 \
 	'How about 100MB? This time, it is accepted as partial upload, \n
@@ -757,6 +755,8 @@ show_output="true";
 unittest "Get cgi uri_alias/hi.sh";
 
 ##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CGI_GET_PHP \
 \
