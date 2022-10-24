@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 15:51:56 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 15:53:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,7 @@ ws_reply_instance::~ws_reply_instance()
 {
 	int V(1);
 	verbose(V) << "(ws_reply_instance) Destructor." << std::endl;
+//	free(buffer); // XXX
 }
 
 void ws_server_instance::set_props()
