@@ -80,7 +80,7 @@ unittest()
 	[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
 
 	[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm ${MYDIR}/$upfile;
-	[ "$clean_upfiles_after_test" != "" ] && rm tmp_response;
+	[ "$clean_upfiles_after_test" != "" ] && rm tmp_response; # XXX
 	[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm tmp_trace_ascii
 
 	resetvars;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 22:35:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 14:35:34 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,9 +253,9 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle, si
 	int V(30);
 	std::string q("");
 	std::string::iterator e;
-	std::string::iterator s = str.begin() + u_start;
 	std::string::iterator n;
 
+	std::string::iterator s = str.begin() + str.find(needle, u_start);
 	verbose(V) << "(find_outside_quotes) >" << needle << "< @ " << SHORT(str) << std::endl;
 	while (*s)
 	{
@@ -298,7 +298,6 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle, si
 	}
 	return std::string::npos;
 }
-
 
 size_t StringTools::find_outside_quotes_set(std::string& str, std::string set, size_t u_start)
 {
@@ -691,10 +690,12 @@ bool StringTools::isWord(const std::string& str, size_t pos)
 
 std::string StringTools::query_for(std::string query, std::string& src)
 {
+	int V(1);
 	size_t start = src.find(query);
 	size_t end;
 	std::string tmp("");
 
+	verbose(V) << "(query_for) " << query << std::endl;
 	if (start == std::string::npos)
 		return "";
 	while (start < src.length() && !isWord(src, start++)) ;
