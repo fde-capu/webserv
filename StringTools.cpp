@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 14:35:34 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 15:43:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,9 +254,13 @@ size_t StringTools::find_outside_quotes(std::string& str, std::string needle, si
 	std::string q("");
 	std::string::iterator e;
 	std::string::iterator n;
+	size_t n_find;
 
-	std::string::iterator s = str.begin() + str.find(needle, u_start);
 	verbose(V) << "(find_outside_quotes) >" << needle << "< @ " << SHORT(str) << std::endl;
+	n_find = str.find(needle, u_start);
+	if (n_find == std::string::npos)
+		return std::string::npos;
+	std::string::iterator s = str.begin() + n_find;
 	while (*s)
 	{
 		if (*s == '\\')

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 19:52:37 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 15:34:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 bool ws_reply_instance::is_working_save(ws_server_instance& si)
 {
 	int V(1);
-	size_t ASYNC_CHUNK_SIZE(10000000);
 	std::string* data;
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.

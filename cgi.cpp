@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 20:17:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 15:31:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 {
 	int V(1);
-	size_t ASYNC_CHUNK_SIZE(1000000);
 	std::string* data;
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
@@ -85,13 +84,10 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 
 bool ws_reply_instance::cgi_receiving()
 {
-	int V(2);
-	size_t ASYNC_CHUNK_SIZE(10000000);
-	int CGI_TIMEOUT(50);
+	int V(1);
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
 	int rbytes;
-	char* buffer = static_cast<char*>(malloc(ASYNC_CHUNK_SIZE));
 
 	if (first_time)
 	{
