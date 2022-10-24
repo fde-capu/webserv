@@ -6,7 +6,7 @@
 # All variables are true if some string "anything" and false as empty string "".
 
 	name_server="127.0.0.1";
-	step_by_step="";
+	step_by_step="true";
 	clean_upfiles_after_test="";
 
 	MYSELF="$(realpath "$0")"

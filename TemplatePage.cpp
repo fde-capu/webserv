@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 23:04:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 23:04:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 21:32:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ std::string TemplatePage::page(size_t error_code, std::string u_content)
 
 	FileString result;
 	result.load(full_t_file.c_str());
+
 	verbose(V) << "(TemplatePage) fail: " << result.fail() << std::endl;
 
 	if (result.fail())

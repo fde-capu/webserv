@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 21:19:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 21:57:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,13 +62,44 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 bool ws_reply_instance::is_working_load(ws_server_instance& si)
 {
 	int V(1);
-	// XXX
+	int TIME_OUT = 0; // non-blocking.
+	size_t rbytes;
+	int poll_count;
 
 	if (!to_work_load || si.is_cgi())
 		return false;
-	verbose(V) << "(is_working_load) TO DO ASYNC" << std::endl;
-	out_body = FileString(file_name.c_str()).content();
-	to_work_load = false;
+	init_buffer();
+	verbose(V) << "(is_working_load)" << std::endl;
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	if (poll_count == -1)
+		throw std::domain_error("(webserv) Poll error.");
+	for (size_t i = 0; i < poll_list.size(); i++)
+	{
+		if (!poll_list[i].revents)
+			continue ;
+		if (poll_list[i].revents & POLLIN)
+		{
+			rbytes = read(poll_list[i].fd, buffer, ASYNC_CHUNK_SIZE);
+			verbose(V) << "(is_working_load) " << rbytes << " bytes from " << poll_list[i].fd << "." << std::endl;
+			if (rbytes < 0)
+			{
+				to_work_load = false;
+				return false;
+			}
+			if (rbytes)
+			{
+				verbose(V) << "(is_working_load) Append, reset." << std::endl;
+				out_body.append(buffer, rbytes);
+				return true;
+			}
+			else
+			{
+				verbose(V) << "(is_working_load) Nothing." << std::endl;
+				to_work_load = false;
+				return false;
+			}
+		}
+	}
 	return false;
 }
 

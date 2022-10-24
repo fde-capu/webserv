@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 20:02:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 21:51:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -531,3 +531,16 @@ void ws_reply_instance::header_from_body()
 
 bool ws_server_instance::is_cgi() const
 { return cgi_flag; }
+
+void ws_reply_instance::init_buffer()
+{
+	int V(5);
+
+	if (first_time)
+	{
+		verbose(V) << "(ws_reply_instance) Initialized buffer." << std::endl;
+		first_time = false;
+		buffer = static_cast<char*>(malloc(ASYNC_CHUNK_SIZE));
+		chronometer.btn_reset();
+	}
+}
