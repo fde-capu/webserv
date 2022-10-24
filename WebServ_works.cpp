@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 16:22:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 17:47:18 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,11 +39,11 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 		if (!action_get)
 		{
 			getting_from_cgi = false;
-			wait(0);
-			//		std::vector<struct pollfd>::iterator position(&poll_list[pipe_cp[0]]);
-			//		poll_list.erase(position);
-			free(buffer);
 			close(pipe_cp[0]);
+			wait(0);
+//			std::vector<struct pollfd>::iterator position(&poll_list[pipe_cp[0]]);
+//			poll_list.erase(position);
+			free(buffer);
 			verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 			header_from_body();
 			if (si.in_header.is_post())

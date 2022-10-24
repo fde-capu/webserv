@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 15:49:27 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 16:41:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,13 +226,6 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			bool l(respond[fd].is_working_load(webserver[fd]));
 			bool s(respond[fd].is_working_save(webserver[fd]));
 			bool c(respond[fd].is_working_cgi(webserver[fd]));
-//			if (l)
-//				verbose(V) << " - Working load." << std::endl;
-//			if (s)
-//				verbose(V) << " - Working save." << std::endl;
-//			if (c)
-//				verbose(V) << " - Working cgi." << std::endl;
-//			BREAK_REPEAT_LIMIT(50); // XXX
 			response_working[fd] = l || s || c;
 		}
 		if (chosen_response[fd] && !response_working[fd] && !encapsulated[fd])

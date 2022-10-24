@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 16:21:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 17:46:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,14 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 	if (si.is_chunked() && !si.chunk_finished)
 	{
 		si.mount_chunked();
-		verbose(V) << "(cgi_dumping) Mounted chunked data." << std::endl;
-		return true;
+		verbose(V + 1) << "(cgi_dumping) Mounted chunked data." << std::endl;
+//		return true;
 	}
 	if (si.is_multipart() && !si.multipart_finished)
 	{
 		si.mount_multipart();
-		verbose(V) << "(cgi_dumping) Mounted multipart data." << std::endl;
-		return true;
+		verbose(V + 1) << "(cgi_dumping) Mounted multipart data." << std::endl;
+//		return true;
 	}
 	if (si.is_multipart())
 		data = &si.multipart_content;
@@ -53,7 +53,7 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 		if (poll_list[i].revents & POLLOUT)
 		{
 			wr_size = data->length() > ASYNC_CHUNK_SIZE ? ASYNC_CHUNK_SIZE : data->length();
-//			verbose(V) << "(cgi_dumping) Writing into " << poll_list[i].fd << std::endl;
+			verbose(V + 1) << "(cgi_dumping) Writing into " << poll_list[i].fd << std::endl;
 			sbytes = write(poll_list[i].fd, data->c_str(), wr_size);
 			if (sbytes < 0)
 			{
@@ -68,13 +68,13 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 				data = &si.chunked_content;
 			else
 				data = &si.in_body;
-//			verbose(V) << " - Dumped " << sbytes << ", " << data->length() << " left." << std::endl;
+			verbose(V + 1) << " - Dumped " << sbytes << ", " << data->length() << " left." << std::endl;
+			chronometer.btn_reset();
 			if (data->length() == 0)
 			{
 //				std::vector<struct pollfd>::iterator position(&poll_list[i]);
 //				poll_list.erase(position);
-//				verbose(V) << poll_list[i].fd << " - Finished dumping (removed)." << std::endl;
-				verbose(V) << " - Finished dumping (not removed)." << std::endl;
+				verbose(V) << poll_list[i].fd << " - Finished dumping." << std::endl;
 				return false;
 			}
 		}
@@ -97,6 +97,8 @@ bool ws_reply_instance::cgi_receiving()
 		buffer = static_cast<char*>(malloc(ASYNC_CHUNK_SIZE));
 		chronometer.btn_reset();
 	}
+	if (dumping_to_cgi)
+		chronometer.btn_reset();
 	if (chronometer > CGI_TIMEOUT)
 	{
 		verbose(V) << chronometer << " ----- !!! ----- CGI timed out." << std::endl;
@@ -112,19 +114,19 @@ bool ws_reply_instance::cgi_receiving()
 		if (poll_list[i].revents & POLLIN)
 		{
 			rbytes = read(poll_list[i].fd, buffer, ASYNC_CHUNK_SIZE);
-			verbose(V) << "(cgi_receiving) " << rbytes << " bytes from " << poll_list[i].fd << "." << std::endl;
+			verbose(V + 1) << "(cgi_receiving) " << rbytes << " bytes from " << poll_list[i].fd << "." << std::endl;
 			if (rbytes < 0)
 				return false;
 			if (rbytes)
 			{
-				verbose(V) << "(cgi_receiving) Append, reset." << std::endl;
+				verbose(V + 1) << "(cgi_receiving) Append, reset." << std::endl;
 				out_body.append(buffer, rbytes);
 				chronometer.btn_reset();
 				return true;
 			}
 			else
 			{
-				verbose(V) << "(cgi_receiving) Nothing." << std::endl;
+				verbose(V + 1) << "(cgi_receiving) Nothing." << std::endl;
 				return false;
 			}
 		}

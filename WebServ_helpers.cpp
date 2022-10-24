@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 16:20:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 17:17:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,8 +216,7 @@ void ws_header::header500()
 
 ws_reply_instance::ws_reply_instance()
 {
-	int V(1);
-
+	int V(3);
 	verbose(V) << "(ws_reply_instance) Constructor." << std::endl;
 	out_header.header500();
 	out_body = "";
@@ -238,7 +237,7 @@ ws_reply_instance::ws_reply_instance()
 
 ws_reply_instance::~ws_reply_instance()
 {
-	int V(1);
+	int V(3);
 	verbose(V) << "(ws_reply_instance) Destructor." << std::endl;
 }
 

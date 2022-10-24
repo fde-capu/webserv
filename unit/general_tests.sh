@@ -5,96 +5,96 @@
 
 # All variables are true if some string "anything" and false as empty string "".
 
-name_server="127.0.0.1";
-step_by_step="true";
-clean_upfiles_after_test="";
+	name_server="127.0.0.1";
+	step_by_step="true";
+	clean_upfiles_after_test="";
 
-MYSELF="$(realpath "$0")"
-MYDIR="${MYSELF%/*}"
-ok_count=0;
-ko_count=0;
-tot_count=0;
+	MYSELF="$(realpath "$0")"
+	MYDIR="${MYSELF%/*}"
+	ok_count=0;
+	ko_count=0;
+	tot_count=0;
 
-resetvars()
-{
-	cmd="";
-	code="";
-	testfile="";
-	upfile="";
-	noise="";
-	fail="";
-	outdir="";
-	chunked="";
-	trace="";
-	show_output="";
-	short_output="";
-	compare_size="";
-	message="";
-}
-resetvars;
-
-unittest()
-{
-	fullcmd="$cmd";
-
-	if [ "$noise" != "" ] ; then
-		upfile="file.noise";
-		head -c $noise /dev/urandom > "${MYDIR}/$upfile";
-		[ "$chunked" != "" ] && fullcmd="$fullcmd/$upfile";
-	fi
-
-	fullcmd="set -x; $fullcmd -sSvw '%{http_code}'";
-
-	if [ "$upfile" != "" ] ; then
-		if [ "$chunked" = "" ] ; then
-			fullcmd="$fullcmd -F \"file=@${MYDIR}/$upfile\"";
-		else
-			fullcmd="$fullcmd --data-binary \"@${MYDIR}/$upfile\"";
-			fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
-		fi
-	fi
-
-	[ "$trace" != "" ] && fullcmd="$fullcmd --trace-ascii tmp_trace_ascii";
-	fullcmd="$fullcmd -o tmp_response";
-	
-	out=`eval "$fullcmd"`;
-
-	[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
-	[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
-
-	if [ "$out" = "000" ]; then
-		{ anounce ERROR 'Make sure the server is running! (Response 0?)'; } 2> /dev/null;
-		exit 1;
-	fi
-
-	[ "$fail" = "" ] && [ "$testfile" != "" ] && echo "File comparison: $testfile";
-
-	colorscore "$1 | expect $code, got $out" "$out" "$code"
-
-	if [ "$fail" = "" ] ; then
-		[ "$testfile" != "" ] && colorscore "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
-		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorscore "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
-	fi
-
-	if [ "$compare_size" != "" ] ; then
-		colorscore "$1 | compare sizes" "`ls -l tmp_response | awk '{print $5}'`" "$compare_size";
-	fi
-
-	[ "$trace" != "" ] && cat tmp_trace_ascii
-
-	[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
-
-	[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm ${MYDIR}/$upfile;
-	[ "$clean_upfiles_after_test" != "" ] && rm tmp_response; # XXX
-	[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm tmp_trace_ascii
-
+	resetvars()
+	{
+		cmd="";
+		code="";
+		testfile="";
+		upfile="";
+		noise="";
+		fail="";
+		outdir="";
+		chunked="";
+		trace="";
+		show_output="";
+		short_output="";
+		compare_size="";
+		message="";
+	}
 	resetvars;
-}
 
-enterkey()
-{
-	[ "$step_by_step" = "" ] && return;
-	{ set +x; } 2> /dev/null
+	unittest()
+	{
+		fullcmd="$cmd";
+
+		if [ "$noise" != "" ] ; then
+			upfile="file.noise";
+			head -c $noise /dev/urandom > "${MYDIR}/$upfile";
+			[ "$chunked" != "" ] && fullcmd="$fullcmd/$upfile";
+		fi
+
+		fullcmd="set -x; $fullcmd -sSvw '%{http_code}'";
+
+		if [ "$upfile" != "" ] ; then
+			if [ "$chunked" = "" ] ; then
+				fullcmd="$fullcmd -F \"file=@${MYDIR}/$upfile\"";
+			else
+				fullcmd="$fullcmd --data-binary \"@${MYDIR}/$upfile\"";
+				fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
+			fi
+		fi
+
+		[ "$trace" != "" ] && fullcmd="$fullcmd --trace-ascii tmp_trace_ascii";
+		fullcmd="$fullcmd -o tmp_response";
+		
+		out=`eval "$fullcmd"`;
+
+		[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
+		[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
+
+		if [ "$out" = "000" ]; then
+			{ anounce ERROR 'Make sure the server is running! (Response 0?)'; } 2> /dev/null;
+			exit 1;
+		fi
+
+		[ "$fail" = "" ] && [ "$testfile" != "" ] && echo "File comparison: $testfile";
+
+		colorscore "$1 | expect $code, got $out" "$out" "$code"
+
+		if [ "$fail" = "" ] ; then
+			[ "$testfile" != "" ] && colorscore "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
+			[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorscore "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
+		fi
+
+		if [ "$compare_size" != "" ] ; then
+			colorscore "$1 | compare sizes" "`ls -l tmp_response | awk '{print $5}'`" "$compare_size";
+		fi
+
+		[ "$trace" != "" ] && cat tmp_trace_ascii
+
+		[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
+
+		[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm ${MYDIR}/$upfile;
+		[ "$clean_upfiles_after_test" != "" ] && rm tmp_response; # XXX
+		[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm tmp_trace_ascii
+
+		resetvars;
+	}
+
+	enterkey()
+	{
+		[ "$step_by_step" = "" ] && return;
+		{ set +x; } 2> /dev/null
 	echo -n "\t\t\t\t\t--> Next ";
 	read anything;
 	set -x
@@ -756,8 +756,6 @@ unittest "Get cgi uri_alias/hi.sh";
 
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CGI_GET_PHP \
 \
 	'Test CGI with GET method, cgi_test.php.' \
@@ -842,14 +840,14 @@ rm ${MYDIR}/99B.words
 
 ##################################################################
 
-largecgi="42428000";
-
 { anounce CGI_POST_MULTI_LARGE \
 \
 	"Test CGI call when posting multipart for large file. \n
 	 Value of $largecgi is a best for not getting oom killed on Workspace." \
 \
 ; } 2> /dev/null
+
+largecgi="42428000";
 
 head -c $largecgi /dev/zero | tr '\0' 'z' > "${MYDIR}/youpi.bla"
 head -c $largecgi /dev/zero | tr '\0' 'Z' > "${MYDIR}/youpi_expected_result.bla"
@@ -866,11 +864,15 @@ rm "${MYDIR}/youpi_expected_result.bla"
 
 ###################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce CGI_POST_CHUNK_LARGE \
 \
 	'CGI POST chunked for large file.' \
 \
 ; } 2> /dev/null
+
+largecgi="42428000";
 
 chunked="true"
 head -c $largecgi /dev/zero | tr '\0' 'z' > "${MYDIR}/youpi.bla"
@@ -880,6 +882,8 @@ upfile="youpi.bla"
 code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
 short_output="true";
+compare_size="$largecgi";
+fail="true"; # comparing files would get general_tests.sh oom killed.
 unittest "Test POST chunked /directory/youpi.bla large file."
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"

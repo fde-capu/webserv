@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 22:50:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 16:48:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 17:14:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int ws_server_instance::process_post()
 
 void ws_server_instance::mount_chunked()
 {
-	static int V(3);
+	static int V(1);
 	std::string chunk_size_hex;
 	std::string chunk_extension;
 	size_t chunk_size_bytes;
@@ -52,6 +52,7 @@ void ws_server_instance::mount_chunked()
 		chunk_size_bytes = StringTools::strhex2size_t(chunk_size_hex);
 		if (chunk_size_bytes == 0)
 		{
+			verbose(V) << "(mount_chunked) Zero mount finished." << std::endl;
 			chunk_finished = true;
 			return ;
 		}
