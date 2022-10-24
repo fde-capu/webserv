@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 01:42:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 19:33:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 19:56:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -694,7 +694,7 @@ bool StringTools::isWord(const std::string& str, size_t pos)
 
 std::string StringTools::query_for(std::string query, std::string& src)
 {
-	int V(1);
+	int V(4);
 	size_t start = src.find(query);
 	size_t end;
 	std::string tmp("");

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 19:34:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 20:24:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,8 +180,14 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 
 int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 {
-	int V(3);
+	int V(1);
 
+	if (!FileString::exists(si.location_path()))
+	{
+		set_code(421, "Missdirected Request");
+		out_body = TemplatePage::page(421, si.custom_error(421));
+		return 421;
+	}
 	program += " " + si.location_path();
 	verbose(V) << "(cgi_prepare) program " << program << std::endl;
 	std::vector<std::string> arg_vec(StringTools::split(program, " "));
@@ -225,7 +231,7 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 
 int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
-	int V(3);
+	int V(1);
 	std::string call_extension;
 	std::string cgi_params_str;
 	std::vector<std::string> cgi_params;
@@ -238,12 +244,6 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 	verbose(V) << "(is_cgi_exec) call_extension " << call_extension << std::endl;
 	if (call_extension == "")
 		return 0;
-	if (!si.is_chunked() && !FileString::exists(si.location_path()) && !si.in_header.is_post())
-	{
-		set_code(421, "Missdirected Request");
-		out_body = TemplatePage::page(421, si.custom_error(421));
-		return 421;
-	}
 	DataFold cgi_vec(si.config.get<DataFold>("cgi"));
 	verbose(V) << "(is_cgi_exec) cgi_vec " << cgi_vec << std::endl;
 	if (cgi_vec.empty())

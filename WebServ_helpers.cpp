@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 17:17:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 20:02:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ std::vector<ws_server_instance> WebServ::getInstance() const
 
 WebServ::~WebServ()
 {
-	int V(1);
+	int V(7);
 	verbose(V) << "(webserv) Destructor." << std::endl;
 	free(static_cast<void*>(buffer));
 }

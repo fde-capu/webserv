@@ -843,6 +843,8 @@ rm ${MYDIR}/99B.words
 
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce CGI_POST_MULTI_LARGE \
 \
 	"Test CGI call when posting multipart for large file. \n
@@ -867,16 +869,13 @@ rm "${MYDIR}/youpi_expected_result.bla"
 
 ###################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-## XXX CGI FDs are always increasing, never closed?
-
 { anounce CGI_POST_CHUNK_LARGE \
 \
 	'CGI POST chunked for large file.' \
 \
 ; } 2> /dev/null
 
-largecgi="42428000";
+largecgi="42428001";
 
 chunked="true"
 head -c $largecgi /dev/zero | tr '\0' 'z' > "${MYDIR}/youpi.bla"
