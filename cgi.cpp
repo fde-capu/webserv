@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 15:31:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 16:21:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ bool ws_reply_instance::cgi_receiving()
 		verbose(V) << "(cgi_receiving) First time." << std::endl;
 		verbose(V) << "- Current body: " << SHORT(out_body) << std::endl;
 		first_time = false;
+		buffer = static_cast<char*>(malloc(ASYNC_CHUNK_SIZE));
 		chronometer.btn_reset();
 	}
 	if (chronometer > CGI_TIMEOUT)

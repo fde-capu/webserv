@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 15:04:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 16:00:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 {
-	static int V(1);
+	static int V(3);
 	int pos_status(0);
 
 	verbose(V) << "(is_413_507_422) max_size: " << si.max_size << "." \
