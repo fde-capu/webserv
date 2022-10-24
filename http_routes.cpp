@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 21:44:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 22:32:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,13 +256,13 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 		}
 		else
 			file_name = request;
-		to_work_load = true;
 		file_fd = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);
 		if (file_fd == -1)
 			throw std::domain_error("(is_202) Cannot open file to load page.");
 		if (fcntl(file_fd, F_SETFL, O_NONBLOCK) == -1)
 			throw std::domain_error("(is_202) Could not set non-blocking file.");
 		poll_list.push_back(WebServ::make_in_out_fd(file_fd));
+		to_work_load = true;
 		set_code(200, "OK");
 		return 200;
 	}

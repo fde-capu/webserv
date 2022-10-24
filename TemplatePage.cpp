@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 23:04:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 21:32:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 22:35:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,9 @@ TemplatePage::TemplatePage(const char * executable, const char * u_defaults)
 	verbose(V) << "(TemplatePage) config: " << config << std::endl;
 }
 
-std::string TemplatePage::page(size_t error_code, std::string u_content)
+std::string TemplatePage::for_code(size_t error_code)
 {
-	int V(8);
-
-	if (u_content != "")
-		return u_content;
+	int V(1);
 
 	std::string error_query = StringTools::stoa(error_code);
 	verbose(V) << "(TemplatePage) error_query: " << error_query << std::endl;
@@ -50,6 +47,29 @@ std::string TemplatePage::page(size_t error_code, std::string u_content)
 
 	std::string full_t_file = path + "/" + t_file;
 	verbose(V) << "(TemplatePage) full_t_file: " << full_t_file << std::endl;
+
+	return full_t_file;
+
+	FileString result;
+	result.load(full_t_file.c_str());
+
+	verbose(V) << "(TemplatePage) fail: " << result.fail() << std::endl;
+
+	if (result.fail())
+		return "Response code: " + itoa(error_code) + "\n";
+
+	verbose(V) << "(TemplatePage) result: " << result << std::endl;
+	return result.getContent();
+}
+
+std::string TemplatePage::page(size_t error_code, std::string u_content)
+{
+	int V(8);
+
+	if (u_content != "")
+		return u_content;
+
+	std::string full_t_file = for_code(error_code);
 
 	FileString result;
 	result.load(full_t_file.c_str());

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 21:51:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 22:18:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,8 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 	if (!FileString::exists(si.location_path()))
 	{
 		set_code(421, "Missdirected Request");
-		out_body = TemplatePage::page(421, si.custom_error(421));
+		template_page(421, si.custom_error(421));
+//		out_body = TemplatePage::page(421, si.custom_error(421)); // XXX
 		return 421;
 	}
 	program += " " + si.location_path();

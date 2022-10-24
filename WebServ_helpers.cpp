@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 21:51:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 22:35:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,6 +320,7 @@ DataFold ws_server_instance::get_location_config() const
 
 std::string ws_server_instance::custom_error(const size_t code) const
 {
+	// XXX Later will be void and setup loading file;
 	size_t V(4);
 	std::string out;
 	DataFold loop;
@@ -543,4 +544,21 @@ void ws_reply_instance::init_buffer()
 		buffer = static_cast<char*>(malloc(ASYNC_CHUNK_SIZE));
 		chronometer.btn_reset();
 	}
+}
+
+void ws_reply_instance::template_page(size_t error_code, std::string u_content)
+{
+	int V(1);
+
+	if (u_content != "")
+		out_body = u_content; // XXX
+	file_name = TemplatePage::for_code(error_code);
+	verbose(V) << "(template_page) file_name " << file_name << std::endl;
+	file_fd = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);
+	if (file_fd == -1)
+		throw std::domain_error("(template_page) Cannot open file to load page.");
+	if (fcntl(file_fd, F_SETFL, O_NONBLOCK) == -1)
+		throw std::domain_error("(template_page) Could not set non-blocking file.");
+	poll_list.push_back(WebServ::make_in_out_fd(file_fd));
+	to_work_load = true;
 }
