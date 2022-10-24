@@ -28,6 +28,7 @@ resetvars()
 	trace="";
 	show_output="";
 	short_output="";
+	compare_size="";
 	message="";
 }
 resetvars;
@@ -73,6 +74,10 @@ unittest()
 	if [ "$fail" = "" ] ; then
 		[ "$testfile" != "" ] && colorscore "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
 		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorscore "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
+	fi
+
+	if [ "$compare_size" != "" ] ; then
+		colorscore "$1 | compare sizes" "`ls -l tmp_response | awk '{print $5}'`" "$compare_size";
 	fi
 
 	[ "$trace" != "" ] && cat tmp_trace_ascii
@@ -837,13 +842,12 @@ rm ${MYDIR}/99B.words
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
-largecgi="10000000";
-largecgi="12345678";
 largecgi="42428000";
 
 { anounce CGI_POST_MULTI_LARGE \
 \
-	'Test CGI call when posting multipart for large file.' \
+	'Test CGI call when posting multipart for large file. \n
+	 Value of 42428000 is a best for not getting oom killed on Workspace.' \
 \
 ; } 2> /dev/null
 
@@ -854,6 +858,8 @@ upfile="youpi.bla"
 code="202"
 testfile="${MYDIR}/youpi_expected_result.bla"
 short_output="true";
+compare_size="42428000";
+fail="true"; # comparing files would get general_tests.sh oom killed.
 unittest "Test POST multipart /directory/youpi.bla large file."
 rm "${MYDIR}/youpi.bla"
 rm "${MYDIR}/youpi_expected_result.bla"

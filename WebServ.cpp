@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 20:21:03 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/24 14:37:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,13 +234,11 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 //			BREAK_REPEAT_LIMIT(50); // XXX
 			response_working[fd] = l || s || c;
 		}
-		if (chosen_response[fd] && !response_working[fd])
+		if (chosen_response[fd] && !response_working[fd] && !encapsulated[fd])
 		{
-			if (!encapsulated[fd])
-				respond[fd].encapsulate();
+			respond[fd].encapsulate();
 			encapsulated[fd] = true;
 			verbose(V) << fd << " - Response encapsulated." << std::endl;
-//			verbose(V) << "--- out header ---" << std::endl << respond[fd].out_header << std::endl;
 		}
 
 		if (*pollout)
