@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 23:04:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 17:39:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 17:45:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,6 @@ std::string TemplatePage::for_code(size_t error_code)
 	std::string full_t_file = path + "/" + t_file;
 	verbose(V) << "(TemplatePage) full_t_file: " << full_t_file << std::endl;
 
+	stool.remove_dup_char(full_t_file, '/');
 	return full_t_file;
-
-	FileString result;
-	result.load(full_t_file.c_str());
-
-	verbose(V) << "(TemplatePage) fail: " << result.fail() << std::endl;
-
-	if (result.fail())
-		return "Response code: " + itoa(error_code) + "\n";
-
-	verbose(V) << "(TemplatePage) result: " << result << std::endl;
-	return result.getContent();
 }

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 17:40:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 17:49:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -497,7 +497,6 @@ void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 
 std::string ws_reply_instance::custom_error(const size_t code, ws_server_instance& si) const
 {
-	// XXX Later will be void and setup loading file;
 	size_t V(1);
 	std::string out;
 	DataFold loop;
