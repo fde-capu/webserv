@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 17:55:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 18:01:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,11 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 {
 	int V(1);
 	int TIME_OUT = 0; // non-blocking.
-	size_t rbytes;
-	int poll_count;
+	int rbytes;
+	int poll_count(0);
 
 	if (!to_work_load || si.is_cgi())
 		return false;
-	verbose(V) << "(is_working_load)" << std::endl;
 	init_buffer();
 	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
 	if (poll_count == -1)

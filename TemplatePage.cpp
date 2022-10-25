@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 23:04:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 17:45:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 18:03:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ TemplatePage::TemplatePage(const char * executable, const char * u_defaults)
 
 std::string TemplatePage::for_code(size_t error_code)
 {
-	int V(1);
+	int V(3);
 
 	std::string error_query = StringTools::stoa(error_code);
 	verbose(V) << "(TemplatePage) error_query: " << error_query << std::endl;

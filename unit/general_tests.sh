@@ -180,6 +180,8 @@ if false; then
 
 ############################################################### Begin
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -356,8 +358,6 @@ unittest "Forbidden";
 ##################################################################
 ##################################################################
 ##################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce MULTI_99_WORDS \
 \
@@ -1009,9 +1009,11 @@ unittest "Another autoindex, now with root rewrite"
 
 before="`ls ${MYDIR}/confs/html/uploads_large`";
 echo 'This file will be deleted.' > "${MYDIR}/confs/html/uploads_large/file_to_be_deleted";
+during="`ls ${MYDIR}/confs/html/uploads_large`";
 out=`curl -X DELETE http://$name_server:3490/large_upload/file_to_be_deleted -sSvw '%{http_code}' -o foo_out`;
 after="`ls ${MYDIR}/confs/html/uploads_large`";
 echo "ls before DELETE: $before";
+echo "ls during DELETE: $during";
 echo "ls after DELETE: $after";
 echo "Got body: `cat foo_out`";
 rm foo_out;

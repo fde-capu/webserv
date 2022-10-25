@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 17:49:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 18:03:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -477,7 +477,7 @@ void ws_reply_instance::init_buffer()
 
 void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 {
-	int V(1);
+	int V(2);
 
 	file_name = u_filename != "" ? u_filename : TemplatePage::for_code(error_code);
 	verbose(V) << "(template_page) file_name " << file_name << std::endl;
@@ -497,7 +497,7 @@ void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 
 std::string ws_reply_instance::custom_error(const size_t code, ws_server_instance& si) const
 {
-	size_t V(1);
+	size_t V(2);
 	std::string out;
 	DataFold loop;
 	DataFold err;
