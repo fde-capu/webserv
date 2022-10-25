@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 19:00:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 21:29:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 	int fd;
 	bool* pollin;
 	bool* pollout;
+	int close_test;
 
 	for (std::map<int, std::pair<bool, bool> >::iterator it = ready.begin(); it != ready.end(); it++)
 	{
@@ -149,8 +150,20 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (remove_client[fd])
 		{
-			close(fd);
+			close_test = close(fd);
+			if (close_test < 0)
+			{
+				verbose(V) << "(webserv) " << fd << " close status: " << close_test << ", errno = " << errno << std::endl;
+				verbose(V) << "EBADF " << (errno == EBADF) << std::endl;
+				verbose(V) << "EINTR " << (errno == EINTR) << std::endl;
+				verbose(V) << "EIO " << (errno == EIO) << std::endl;
+				verbose(V) << "ENOSPC " << (errno == ENOSPC) << std::endl;
+				verbose(V) << "EDQUOT " << (errno == EDQUOT) << std::endl;
+			}
+			respond.erase(fd);
+
 			remove_from_poll(fd);
+			webserver.erase(fd);
 			in_ended.erase(fd);
 			out_ended.erase(fd);
 			body_ok.erase(fd);
@@ -158,7 +171,6 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			encapsulated.erase(fd);
 			raw.erase(fd);
 			in_header.erase(fd);
-			respond.erase(fd);
 			remove_client.erase(fd);
 			response_working.erase(fd);
 			chosen_response.erase(fd);
@@ -197,7 +209,13 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			continue ;
 		}
 
-		if (!in_ended[fd] && chosen_instance[fd] && webserver[fd].chronometer > INCOME_TIMEOUT)
+		if (chosen_instance[fd] && webserver[fd].chronometer > 1000)
+		{
+			remove_client[fd] = true;
+			continue ;
+		}
+		if (!in_ended[fd] && chosen_instance[fd] \
+			&& webserver[fd].chronometer > INCOME_TIMEOUT)
 			in_ended[fd] = true;
 		if (in_ended[fd] && !body_ok[fd])
 		{
@@ -248,7 +266,10 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				}
 				if (sbytes == 0) {} // 0
 				if (sbytes > 0)
+				{
 					StringTools::consume_bytes(respond[fd].out_body, sbytes);
+					webserver[fd].chronometer.btn_reset();
+				}
 				verbose(V) << fd << " - Sent " << sbytes << ", " << respond[fd].out_body.length() << " left." << std::endl;
 				out_ended[fd] = respond[fd].out_body.length() == 0;
 				remove_client[fd] = out_ended[fd];
@@ -260,7 +281,8 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
-	*this = ws_reply_instance();
+	int V(1);
+	verbose(V) << "(ws_reply_instance) Constructor." << std::endl;
 
 	// Order matters.
 	if (PUT_mock(si)) return ; // 200 but mocked.
@@ -345,7 +367,6 @@ void WebServ::remove_from_poll(int fd)
 			break ;
 		}
 	}
-	webserver.erase(fd);
 }
 
 void WebServ::dup_into_poll(int oldfd)

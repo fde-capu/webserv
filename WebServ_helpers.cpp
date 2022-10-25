@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 18:03:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 21:49:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ std::vector<ws_server_instance> WebServ::getInstance() const
 
 WebServ::~WebServ()
 {
-	int V(7);
+	int V(1);
 	verbose(V) << "(webserv) Destructor." << std::endl;
 	free(static_cast<void*>(buffer));
 }
@@ -214,14 +214,44 @@ void ws_header::header500()
 	connection = "close";
 }
 
+ws_reply_instance& ws_reply_instance::operator= (ws_reply_instance const & rhs)
+{
+	int V(1);
+	verbose(V) << "(ws_reply_instance) operator=" << std::endl;
+	if (this != &rhs)
+	{
+		buffer = rhs.buffer;
+		out_header = rhs.out_header;
+		out_body = rhs.out_body;
+		package_length = rhs.package_length;
+		file_name = rhs.file_name;
+		chronometer = rhs.chronometer;
+		first_time = rhs.first_time;
+		full_path = rhs.full_path;
+		file_fd = rhs.file_fd;
+		pipe_pc[0] = rhs.pipe_pc[0];
+		pipe_pc[1] = rhs.pipe_pc[1];
+		pipe_cp[0] = rhs.pipe_cp[0];
+		pipe_cp[1] = rhs.pipe_cp[1];
+		child_pid = rhs.child_pid;
+		dumping_to_cgi = rhs.dumping_to_cgi;
+		getting_from_cgi = rhs.getting_from_cgi;
+		to_work_load = rhs.to_work_load;
+		poll_list = rhs.poll_list;
+	}
+	return *this;
+}
+
 ws_reply_instance::ws_reply_instance()
 {
-	int V(3);
-	verbose(V) << "(ws_reply_instance) Constructor." << std::endl;
+	int V(1);
+	verbose(V) << "(ws_reply_instance) Empty constructor." << std::endl;
+	buffer = 0;
 	out_header.header500();
 	out_body = "";
 	package_length = 0;
 	file_name = "";
+	chronometer.btn_reset();
 	first_time = true;
 	full_path = "";
 	file_fd = 0;
@@ -237,8 +267,10 @@ ws_reply_instance::ws_reply_instance()
 
 ws_reply_instance::~ws_reply_instance()
 {
-	int V(3);
+	int V(1);
 	verbose(V) << "(ws_reply_instance) Destructor." << std::endl;
+	if (buffer)
+		free(static_cast<void*>(buffer));
 }
 
 void ws_server_instance::set_props()

@@ -6,13 +6,15 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/25 18:44:01 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/25 20:53:55 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+### XXX SLIPCHEK 0
+
 MAKESILENT	  = @
 VERBOSE		  =	1
-ENVS		  =	-DAGV_SKIP_CHECK=0
+ENVS		  =	-DAGV_SKIP_CHECK=1
 TRACKMAKEFILE = Makefile
 
 NAME1	=	webserv

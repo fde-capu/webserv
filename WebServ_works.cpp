@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 19:02:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 20:56:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 			wait(0);
 			getting_from_cgi = false;
 			close(pipe_cp[0]);
-			free(buffer);
 			verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
 			header_from_body();
 			if (si.in_header.is_post())

@@ -15,6 +15,9 @@ by fde-capu
 `curl http://localhost:3490`
 `lynx http://localhost:3490`
 
+`make siege`
+`siege -b http://127.0.0.1:3490/empty_page`
+
 ## Tests
 
 Run `webserv unit/webserv-unit.conf`.

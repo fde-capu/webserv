@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 17:29:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 21:48:15 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,20 +97,13 @@ std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 
 struct ws_reply_instance
 {
-	ws_reply_instance();
-	void encapsulate();
-	void set_code(int, const std::string&);
-	void set_redirect(const std::string&);
 	char* buffer;
-	virtual ~ws_reply_instance();
-
 	ws_header out_header;
 	std::string out_body;
 	size_t package_length;
 	std::string file_name;
 	Chronometer chronometer;
 	bool first_time;
-	std::vector<struct pollfd> poll_list;
 	std::string full_path;
 	int file_fd;
 	int pipe_pc[2];
@@ -119,7 +112,14 @@ struct ws_reply_instance
 	bool dumping_to_cgi;
 	bool getting_from_cgi;
 	bool to_work_load;
+	std::vector<struct pollfd> poll_list;
 
+	ws_reply_instance();
+	virtual ~ws_reply_instance();
+
+	void encapsulate();
+	void set_code(int, const std::string&);
+	void set_redirect(const std::string&);
 	int PUT_mock(ws_server_instance&); // So it proceeds for 42 ubuntu_tester.
 	int is_501(ws_server_instance&); // Refuses if something is not implemented.
 	int is_cgi_exec(ws_server_instance&); // Run!
@@ -148,6 +148,7 @@ struct ws_reply_instance
 	void init_buffer();
 	void template_page(size_t, std::string = "");
 	std::string custom_error(const size_t, ws_server_instance&) const;
+	ws_reply_instance& operator= (ws_reply_instance const & rhs);
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert
@@ -184,7 +185,6 @@ class WebServ
 		ws_server_instance choose_instance(ws_header&, int);
 		void load_defaults();
 		static bool ignore_empty(std::string&);
-		WebServ& operator= (WebServ const & rhs);
 		WebServ(WebServ const & src);
 		WebServ();
 		char* buffer;

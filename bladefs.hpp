@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/18 14:32:59 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 22:31:16 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 20:47:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include <iostream>
 # include <csignal>
+
+/* XXX Verbose must also be polled! */
 
 # define VERBOSE_LINE_LIMIT  60
 # define verbose(X) if (VERBOSE >= X) std::cout
