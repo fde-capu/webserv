@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 21:58:42 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 23:03:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,6 +199,8 @@ class WebServ
 		std::map<int, bool> remove_client;
 		std::map<int, bool> response_working;
 		std::map<int, bool> chosen_response;
+		std::map<int, Chronometer> timer;
+		int dispatch(std::map<int, std::pair<bool, bool> >&);
 
 	public:
 		WebServ(DataFold&);
@@ -208,7 +210,6 @@ class WebServ
 		std::vector<ws_server_instance> getInstance() const;
 		void init();
 		void light_up();
-		void dispatch(std::map<int, std::pair<bool, bool> >&);
 
 		// Usefull services for everyone!
 		static void set_non_blocking(int);

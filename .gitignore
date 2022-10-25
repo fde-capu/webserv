@@ -6,4 +6,5 @@ lynx-standalone/lynx*
 lynx-standalone/src
 siege
 siege-standalone/siege*
+siege-standalone/src
 siege-standalone/bombardment

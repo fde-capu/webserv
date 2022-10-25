@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 22:06:19 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 23:11:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ void WebServ::hook_it()
 
 struct pollfd WebServ::catch_connection()
 {
+	int V(1);
 	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
 	int poll_count;
 
@@ -78,8 +79,12 @@ struct pollfd WebServ::catch_connection()
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
-		if (poll_list[i].revents) // Checks read and write at same time.
+		if (poll_list[i].revents & POLLIN || poll_list[i].revents & POLLOUT) // Checks read and write at same time.
 			return poll_list[i];
+		else if (poll_list[i].revents)
+		{
+			verbose(V) << "(catch_connection) Some unknown event on " << poll_list[i].fd << std::endl;
+		}
 	}
 	struct pollfd out;
 	out.fd = -1; // meaning nothing.
@@ -91,6 +96,7 @@ void WebServ::light_up()
 	int V(1);
 	struct pollfd event;
 	std::map<int, std::pair<bool, bool> > ready;
+	int client;
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
@@ -99,7 +105,9 @@ void WebServ::light_up()
 	lit = true;
 	while (lit) // Main loop.
 	{
-		dispatch(ready);
+		client = dispatch(ready);
+		if (client)
+			ready.erase(client);
 		event = catch_connection();
 		std::cout << *this; // Animation.
 		if (event.fd == -1)
@@ -131,7 +139,7 @@ void WebServ::light_up()
 	}
 }
 
-void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
+int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 {
 	int V(1);
 	int INCOME_TIMEOUT(50);
@@ -162,7 +170,6 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				verbose(V) << "EDQUOT " << (errno == EDQUOT) << std::endl;
 			}
 			respond.erase(fd);
-
 			remove_from_poll(fd);
 			webserver.erase(fd);
 			in_ended.erase(fd);
@@ -175,10 +182,9 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			remove_client.erase(fd);
 			response_working.erase(fd);
 			chosen_response.erase(fd);
-			ready.erase(it);
+			timer.erase(fd);
 			verbose(V) << fd << " - Removed." << std::endl;
-			return ;
-			continue ;
+			return fd;
 		}
 
 		if (*pollin)
@@ -187,6 +193,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			rbytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
 			if (rbytes < 0) // -1
 			{
+				verbose(V) << "(dispatch) Marked to remove by read fail " << fd << std::endl;
 				remove_client[fd] = true;
 				continue ;
 			}
@@ -212,8 +219,9 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			continue ;
 		}
 
-		if (chosen_instance[fd] && webserver[fd].chronometer > 1000)
+		if (timer[fd] > 1000)
 		{
+			verbose(V) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
 			remove_client[fd] = true;
 			continue ;
 		}
@@ -229,10 +237,9 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			webserver[fd].fd = fd;
 			body_ok[fd] = true;
 		}
-
 		if (!chosen_response[fd] && in_ended[fd])
 		{
-			verbose(V) << " - Will reply." << std::endl;
+			verbose(V) << fd << " - Will reply." << std::endl;
 			respond[fd] = ws_reply_instance(webserver[fd]); // ...oonn...
 			chosen_response[fd] = true;
 			verbose(V) << fd << " - Chosen reply." << std::endl;
@@ -264,6 +271,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0); // Writes to client.
 				if (sbytes < 0) // -1
 				{
+					verbose(V) << "(dispatch) Marked to remove by send fail " << fd << std::endl;
 					remove_client[fd] = true;
 					continue ;
 				}
@@ -276,10 +284,13 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				verbose(V) << fd << " - Sent " << sbytes << ", " << respond[fd].out_body.length() << " left." << std::endl;
 				out_ended[fd] = respond[fd].out_body.length() == 0;
 				remove_client[fd] = out_ended[fd];
+				if (remove_client[fd])
+					verbose(V) << "(dispatch) Marked to remove by nothing left " << fd << std::endl;
 			}
 			continue ;
 		}
 	}
+	return 0;
 }
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
@@ -353,9 +364,7 @@ ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 
 void WebServ::set_non_blocking(int sock)
 {
-	int opts;
-	opts = O_NONBLOCK;
-	if (fcntl(sock, F_SETFL, opts) == -1)
+	if (fcntl(sock, F_SETFL, O_NONBLOCK) == -1)
 		throw std::domain_error("(webserv) Could not set non-blocking flag.");
 }
 
@@ -375,7 +384,7 @@ void WebServ::remove_from_poll(int fd)
 
 void WebServ::dup_into_poll(int oldfd)
 {
-	int V(2);
+	int V(CRITICAL);
 	struct sockaddr_storage remoteaddr;
 	unsigned int addrlen = sizeof remoteaddr;
 	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
@@ -384,6 +393,7 @@ void WebServ::dup_into_poll(int oldfd)
 	set_non_blocking(newfd);
 	poll_list.push_back(make_in_out_fd(newfd));
 	fd_to_port[newfd] = fd_to_port[oldfd];
+	timer[newfd].btn_reset();
 
 	verbose(V) << "(webserv) Connection from fd (" << oldfd << \
 		")->" << newfd << "." << std::endl;
