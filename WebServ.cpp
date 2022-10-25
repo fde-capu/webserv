@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 21:29:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 22:06:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,10 +150,11 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (remove_client[fd])
 		{
+			verbose(V) << "(dispatch) Closing fd " << fd << std::endl;
 			close_test = close(fd);
 			if (close_test < 0)
 			{
-				verbose(V) << "(webserv) " << fd << " close status: " << close_test << ", errno = " << errno << std::endl;
+				verbose(V) << "(dispatch) " << fd << " close status: " << close_test << ", errno = " << errno << std::endl;
 				verbose(V) << "EBADF " << (errno == EBADF) << std::endl;
 				verbose(V) << "EINTR " << (errno == EINTR) << std::endl;
 				verbose(V) << "EIO " << (errno == EIO) << std::endl;
@@ -174,7 +175,9 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			remove_client.erase(fd);
 			response_working.erase(fd);
 			chosen_response.erase(fd);
+			ready.erase(it);
 			verbose(V) << fd << " - Removed." << std::endl;
+			return ;
 			continue ;
 		}
 
@@ -283,6 +286,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
 	int V(1);
 	verbose(V) << "(ws_reply_instance) Constructor." << std::endl;
+	init();
 
 	// Order matters.
 	if (PUT_mock(si)) return ; // 200 but mocked.

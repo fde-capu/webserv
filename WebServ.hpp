@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 21:48:15 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 21:58:42 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,6 +117,7 @@ struct ws_reply_instance
 	ws_reply_instance();
 	virtual ~ws_reply_instance();
 
+	void init();
 	void encapsulate();
 	void set_code(int, const std::string&);
 	void set_redirect(const std::string&);
@@ -179,7 +180,6 @@ class WebServ
 		bool same_port_another_name(const ws_server_instance*) const;
 		struct pollfd catch_connection();
 		bool is_a_webserv(int) const;
-		bool already_initiated(int) const;
 		void dup_into_poll(int);
 		void remove_from_poll(int);
 		ws_server_instance choose_instance(ws_header&, int);
