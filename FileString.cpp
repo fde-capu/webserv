@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/05 20:25:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 18:52:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,7 @@ bool FileString::loop()
 int FileString::key_count(std::string key)
 { return fs_data.key_count(key); }
 
-void FileString::write(std::string filename, std::string& data)
+void FileString::write(std::string filename, std::string& data) // Not used by webserv.
 {
 	std::ofstream out(filename.c_str());
 	out << data;

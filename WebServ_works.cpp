@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 18:28:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 19:02:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,24 +78,24 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 			continue ;
 		if (poll_list[i].revents & POLLIN)
 		{
-			rbytes = read(poll_list[i].fd, buffer, ASYNC_CHUNK_SIZE);
+			rbytes = read(poll_list[i].fd, buffer, ASYNC_CHUNK_SIZE); // Loading file for reply.
 			verbose(V) << "(is_working_load) " << rbytes << " bytes from " << poll_list[i].fd << "." << std::endl;
-			if (rbytes < 0)
+			if (rbytes < 0) // -1
 			{
 				to_work_load = false;
 				return false;
 			}
-			if (rbytes)
-			{
-				verbose(V) << "(is_working_load) Append, reset." << std::endl;
-				out_body.append(buffer, rbytes);
-				return true;
-			}
-			else
+			if (rbytes == 0) // 0
 			{
 				verbose(V) << "(is_working_load) Nothing." << std::endl;
 				to_work_load = false;
 				return false;
+			}
+			if (rbytes > 0)
+			{
+				verbose(V) << "(is_working_load) Append, reset." << std::endl;
+				out_body.append(buffer, rbytes);
+				return true;
 			}
 		}
 	}
@@ -145,9 +145,10 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 		{
 			wr_size = data->length() > ASYNC_CHUNK_SIZE ? ASYNC_CHUNK_SIZE : data->length();
 			verbose(V) << "(is_working_save) Writing into " << poll_list[i].fd << std::endl;
-			sbytes = write(poll_list[i].fd, data->c_str(), wr_size);
-			if (sbytes < 0)
+			sbytes = write(poll_list[i].fd, data->c_str(), wr_size); // Saving file.
+			if (sbytes < 0) // -1
 				return false;
+			if (sbytes == 0) {} // 0
 			if (sbytes > 0)
 				StringTools::consume_bytes(*data, sbytes);
 			if (si.is_multipart())

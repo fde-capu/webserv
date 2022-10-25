@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 18:33:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 19:00:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,12 +170,12 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		{
 			*pollin = false;
 			rbytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
-			if (rbytes < 0)
+			if (rbytes < 0) // -1
 			{
 				remove_client[fd] = true;
 				continue ;
 			}
-			if (rbytes == 0)
+			if (rbytes == 0) // 0
 				in_ended[fd] = true;
 			if (rbytes > 0)
 			{
@@ -241,11 +241,12 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			{
 				*pollout = false;
 				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0); // Writes to client.
-				if (sbytes < 0)
+				if (sbytes < 0) // -1
 				{
 					remove_client[fd] = true;
 					continue ;
 				}
+				if (sbytes == 0) {} // 0
 				if (sbytes > 0)
 					StringTools::consume_bytes(respond[fd].out_body, sbytes);
 				verbose(V) << fd << " - Sent " << sbytes << ", " << respond[fd].out_body.length() << " left." << std::endl;

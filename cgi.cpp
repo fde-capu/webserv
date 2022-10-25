@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 18:29:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 19:03:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,13 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 		{
 			wr_size = data->length() > ASYNC_CHUNK_SIZE ? ASYNC_CHUNK_SIZE : data->length();
 			verbose(V + 1) << "(cgi_dumping) Writing into " << poll_list[i].fd << std::endl;
-			sbytes = write(poll_list[i].fd, data->c_str(), wr_size);
-			if (sbytes < 0)
+			sbytes = write(poll_list[i].fd, data->c_str(), wr_size); // Dumping into CGI.
+			if (sbytes < 0) // -1
 			{
 				verbose(V) << " - NEGATIVE SBYTES" << std::endl;
 				return false;
 			}
+			if (sbytes == 0) {} // 0
 			if (sbytes > 0)
 				StringTools::just_consume_bytes(*data, sbytes);
 			if (si.is_multipart())
@@ -102,21 +103,21 @@ bool ws_reply_instance::cgi_receiving()
 			continue ;
 		if (poll_list[i].revents & POLLIN)
 		{
-			rbytes = read(poll_list[i].fd, buffer, ASYNC_CHUNK_SIZE);
+			rbytes = read(poll_list[i].fd, buffer, ASYNC_CHUNK_SIZE); // Receiving from CGI.
 			verbose(V + 1) << "(cgi_receiving) " << rbytes << " bytes from " << poll_list[i].fd << "." << std::endl;
-			if (rbytes < 0)
+			if (rbytes < 0) // -1
 				return false;
+			if (rbytes == 0) // 0
+			{
+				verbose(V + 1) << "(cgi_receiving) Nothing." << std::endl;
+				return false;
+			}
 			if (rbytes)
 			{
 				verbose(V + 1) << "(cgi_receiving) Append, reset." << std::endl;
 				out_body.append(buffer, rbytes);
 				chronometer.btn_reset();
 				return true;
-			}
-			else
-			{
-				verbose(V + 1) << "(cgi_receiving) Nothing." << std::endl;
-				return false;
 			}
 		}
 	}

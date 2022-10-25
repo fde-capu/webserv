@@ -342,6 +342,19 @@ unittest "DELETE rejection";
 
 ##################################################################
 
+{ anounce UNKNOWN_METHOD \
+\
+	':3491 Unknow method.' \
+\
+; } 2> /dev/null
+
+cmd="curl -X DELETE http://$name_server:3491";
+code="405";
+fail="true";
+unittest "Unknown method";
+
+##################################################################
+
 { anounce FORBIDDEN \
 \
 	':3492 is solenly a `server { listen 3492; }`, \n

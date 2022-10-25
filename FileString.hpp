@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:31:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/09/18 22:49:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 18:54:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ class FileString
 		int type;
 		int key_count(std::string);
 
-		static void write(std::string, std::string&);
+		static void write(std::string, std::string&); // Not used by webserv.
 		static bool is_dir(const std::string&);
 		static bool is_file(const std::string&);
 		static bool exists(const std::string&);
