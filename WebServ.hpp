@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 22:28:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 17:29:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,6 @@ struct ws_server_instance
 	std::string location_path(const std::string = "") const;
 	DataFold server_location_config(const std::string&, std::string = "") const;
 	std::string location_get_single(const std::string&, std::string = "") const;
-	std::string custom_error(const size_t) const;
 };
 std::ostream & operator<< (std::ostream & o, ws_server_instance const &);
 
@@ -148,6 +147,7 @@ struct ws_reply_instance
 	bool save_canceled() const;
 	void init_buffer();
 	void template_page(size_t, std::string = "");
+	std::string custom_error(const size_t, ws_server_instance&) const;
 
 	ws_reply_instance(ws_server_instance&); // Arg may be std::string&
 	private:								// and auto-convert

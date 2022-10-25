@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 22:18:23 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 17:26:58 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,8 +178,7 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 	if (!FileString::exists(si.location_path()))
 	{
 		set_code(421, "Missdirected Request");
-		template_page(421, si.custom_error(421));
-//		out_body = TemplatePage::page(421, si.custom_error(421)); // XXX
+		template_page(421, custom_error(421, si));
 		return 421;
 	}
 	program += " " + si.location_path();
@@ -197,7 +196,7 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 	else if (FileString::exists(file_test))
 		full_program = file_test;
 	else
-		return bad_gateway(si.custom_error(502));
+		return bad_gateway(custom_error(502, si));
 	stool.remove_dup_char(full_program, '/');
 	verbose(V) << "(cgi_prepare) full_program " << full_program << std::endl;
 	std::vector<std::string> argv(arg_vec.size());

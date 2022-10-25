@@ -899,8 +899,6 @@ rm "${MYDIR}/confs/html/uploads_large/bla.bla"
 ###################################################################
 ###################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce MULTI_CGI_BLA_FAIL \
 \
 	'Test CGI call when posting and calling something (UNexistent) .bla.' \
@@ -938,6 +936,8 @@ rm ${MYDIR}/99B.words
 ##################################################################
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce Custom_Error \
 \
 	':3490 has custom error.' \
@@ -948,7 +948,7 @@ cmd="curl http://$name_server:3490/x"
 code="404"
 testfile="$MYDIR/confs/html/40x.html";
 show_output="true"
-unittest "Error 404 width custom configuration"
+unittest "Error 404 with custom configuration"
 
 #################################################################
 
@@ -962,7 +962,7 @@ cmd="curl http://$name_server:3491/x"
 code="404"
 testfile="$MYDIR/../default_responses/404.html";
 show_output="true"
-unittest "Error 404"
+unittest "Error 404 without custom"
 
 #################################################################
 

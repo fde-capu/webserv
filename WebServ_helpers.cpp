@@ -6,17 +6,17 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 22:35:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 17:40:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 extern DataFold g_config;
 
-int ws_reply_instance::bad_gateway(std::string u_content)
+int ws_reply_instance::bad_gateway(std::string u_filename)
 {
 	set_code(502, "Bad Gateway");
-	out_body = TemplatePage::page(502, u_content);
+	template_page(502, u_filename);
 	return 502;
 }
 
@@ -318,77 +318,6 @@ DataFold ws_server_instance::get_location_config() const
 	return locations;
 }
 
-std::string ws_server_instance::custom_error(const size_t code) const
-{
-	// XXX Later will be void and setup loading file;
-	size_t V(4);
-	std::string out;
-	DataFold loop;
-	DataFold err;
-	DataFold loc;
-	std::string code_str(itoa(code));
-	bool match(false);
-
-	verbose(V) << "(custom_error) for " << code << std::endl;
-
-	loop = config;
-	while (loop.loop())
-	{
-		if (loop.key == "error_page")
-		{
-			verbose(V) << "(custom_error) config: " << loop.val << std::endl;
-			err = ":" + loop.val;
-			while (err.loop())
-			{
-				verbose(V) << "(custom_error) err: " << err.val << std::endl;
-				if (err.val == code_str)
-				{
-					verbose(V) << "(custom_error) MATCH" << std::endl;
-					match = true;
-				}
-				if (match)
-					out = err.val;
-			}
-		}
-		match = false;
-	}
-	loop = config.get<DataFold>("location");
-	while (loop.loop())
-	{
-		loc = loop.val;
-		while (loc.loop())
-		{
-			if (!StringTools::startsWith(in_header.directory, loc.getValStr("uri")))
-				continue ;
-			if (loc.key == "error_page")
-			{
-				verbose(V) << "(custom_error) locations: " << loc.val << std::endl;
-				err = ":" + loc.val;
-				while (err.loop())
-				{
-					verbose(V) << "(custom_error) err: " << err.val << std::endl;
-					if (err.val == code_str)
-					{
-						verbose(V) << "(custom_error) MATCH" << std::endl;
-						match = true;
-					}
-				}
-				if (match)
-					out = err.val;
-			}
-		}
-		match = false;
-	}
-	if (out == "")
-		return "";
-	out = root_config.getValStr("root") + "/" + location_get_single("root") + "/" + out;
-	if (!FileString::exists(out))
-		return "";
-	out = FileString(out.c_str()).content();
-	verbose(V) << "(custom_error) Return: " << out << std::endl;
-	return out;
-}
-
 DataFold ws_server_instance::server_location_config(const std::string& key, \
 	std::string u_default) const
 {
@@ -546,14 +475,17 @@ void ws_reply_instance::init_buffer()
 	}
 }
 
-void ws_reply_instance::template_page(size_t error_code, std::string u_content)
+void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 {
 	int V(1);
 
-	if (u_content != "")
-		out_body = u_content; // XXX
-	file_name = TemplatePage::for_code(error_code);
+	file_name = u_filename != "" ? u_filename : TemplatePage::for_code(error_code);
 	verbose(V) << "(template_page) file_name " << file_name << std::endl;
+	if (!FileString::is_file(file_name) || !FileString::exists(file_name))
+	{
+		out_body = "Response code: " + itoa(error_code) + "\n";
+		return ;
+	}
 	file_fd = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);
 	if (file_fd == -1)
 		throw std::domain_error("(template_page) Cannot open file to load page.");
@@ -561,4 +493,74 @@ void ws_reply_instance::template_page(size_t error_code, std::string u_content)
 		throw std::domain_error("(template_page) Could not set non-blocking file.");
 	poll_list.push_back(WebServ::make_in_out_fd(file_fd));
 	to_work_load = true;
+}
+
+std::string ws_reply_instance::custom_error(const size_t code, ws_server_instance& si) const
+{
+	// XXX Later will be void and setup loading file;
+	size_t V(1);
+	std::string out;
+	DataFold loop;
+	DataFold err;
+	DataFold loc;
+	std::string code_str(itoa(code));
+	bool match(false);
+
+	verbose(V) << "(custom_error) for " << code << std::endl;
+
+	loop = si.config;
+	while (loop.loop())
+	{
+		if (loop.key == "error_page")
+		{
+			verbose(V) << "(custom_error) config: " << loop.val << std::endl;
+			err = ":" + loop.val;
+			while (err.loop())
+			{
+				verbose(V) << "(custom_error) err: " << err.val << std::endl;
+				if (err.val == code_str)
+				{
+					verbose(V) << "(custom_error) MATCH" << std::endl;
+					match = true;
+				}
+				if (match)
+					out = err.val;
+			}
+		}
+		match = false;
+	}
+	loop = si.config.get<DataFold>("location");
+	while (loop.loop())
+	{
+		loc = loop.val;
+		while (loc.loop())
+		{
+			if (!StringTools::startsWith(si.in_header.directory, loc.getValStr("uri")))
+				continue ;
+			if (loc.key == "error_page")
+			{
+				verbose(V) << "(custom_error) locations: " << loc.val << std::endl;
+				err = ":" + loc.val;
+				while (err.loop())
+				{
+					verbose(V) << "(custom_error) err: " << err.val << std::endl;
+					if (err.val == code_str)
+					{
+						verbose(V) << "(custom_error) MATCH" << std::endl;
+						match = true;
+					}
+				}
+				if (match)
+					out = err.val;
+			}
+		}
+		match = false;
+	}
+	if (out == "")
+		return "";
+	out = si.root_config.getValStr("root") + "/" + si.location_get_single("root") + "/" + out;
+	if (!FileString::exists(out))
+		return "";
+	verbose(V) << "(custom_error) Set file_name: " << out << std::endl;
+	return out;
 }
