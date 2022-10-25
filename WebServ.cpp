@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 17:37:00 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 18:33:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,12 +73,12 @@ struct pollfd WebServ::catch_connection()
 	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
 	int poll_count;
 
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 1. Incomming connections.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
-		if (poll_list[i].revents)
+		if (poll_list[i].revents) // Checks read and write at same time.
 			return poll_list[i];
 	}
 	struct pollfd out;
@@ -97,7 +97,7 @@ void WebServ::light_up()
 	verbose(CRITICAL) << config.getValStr("welcome_message") << std::endl;
 
 	lit = true;
-	while (lit)
+	while (lit) // Main loop.
 	{
 		dispatch(ready);
 		event = catch_connection();
@@ -169,7 +169,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		if (*pollin)
 		{
 			*pollin = false;
-			rbytes = read(fd, buffer, BUFFER_SIZE);
+			rbytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
 			if (rbytes < 0)
 			{
 				remove_client[fd] = true;
@@ -240,7 +240,7 @@ void WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			if (encapsulated[fd])
 			{
 				*pollout = false;
-				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0);
+				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0); // Writes to client.
 				if (sbytes < 0)
 				{
 					remove_client[fd] = true;

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 18:16:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 18:28:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 	if (!to_work_load || si.is_cgi())
 		return false;
 	init_buffer();
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 2. Loading file for reply.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
@@ -134,7 +134,7 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 		"< will be saved into " << full_path << \
 		"." << std::endl;
 
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 3. Saving file.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)

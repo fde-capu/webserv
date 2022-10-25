@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 17:26:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 18:29:06 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 	else
 		data = &si.in_body;
 	
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 4. Dumping body into CGI.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 
@@ -93,7 +93,7 @@ bool ws_reply_instance::cgi_receiving()
 		verbose(V) << chronometer << " ----- !!! ----- CGI timed out." << std::endl;
 		return false;
 	}
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT);
+	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 5. Receiving data from CGI.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)

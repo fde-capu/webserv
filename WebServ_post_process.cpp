@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 22:50:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/24 21:00:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/25 18:46:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int ws_server_instance::process_post()
 	}
 	if (is_multipart())
 	{
-		if (in_header.content_length > CIRCULARBUFFER_LIMIT)
+		if (in_header.content_length > MEMORY_LIMIT)
 			return 507;
 		mount_multipart();
 	}
