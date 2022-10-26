@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 22:26:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 00:34:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,25 @@ void WebServ::init()
 	try
 	{
 		hook_it();
-		light_up();
 	}
 	catch(std::exception& e)
 	{
 		verbose(CRITICAL) << "(webserv) Error: " << e.what() << std::endl;
 		throw e;
+	}
+
+	while (true)
+	{
+		try
+		{
+			light_up();
+		}
+		catch(std::exception& e)
+		{
+			verbose(CRITICAL) << "(webserv) Error: " << e.what() << std::endl;
+		}
+		if (!lit)
+			break ;
 	}
 }
 
@@ -79,7 +92,8 @@ void WebServ::light_up()
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
-	verbose(CRITICAL) << config.getValStr("welcome_message") << std::endl;
+	if (!lit)
+		verbose(CRITICAL) << config.getValStr("welcome_message") << std::endl;
 
 	lit = true;
 	while (lit) // Main loop.

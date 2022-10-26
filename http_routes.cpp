@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 22:10:13 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 00:08:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,9 +258,9 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 			file_name = request;
 		file_page = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);
 		if (file_page == -1)
-			throw std::domain_error("(is_202) Cannot open file to load page.");
+			throw std::domain_error("(is_200) Cannot open file to load page.");
 		if (fcntl(file_page, F_SETFL, O_NONBLOCK) == -1)
-			throw std::domain_error("(is_202) Could not set non-blocking file.");
+			throw std::domain_error("(is_200) Could not set non-blocking file.");
 		poll_list.push_back(WebServ::make_in_out_fd(file_page));
 		to_work_load = true;
 		set_code(200, "OK");
