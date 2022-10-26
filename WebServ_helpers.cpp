@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 22:08:53 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 01:17:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,6 +255,8 @@ void ws_reply_instance::init()
 	chronometer.btn_reset();
 	first_time = true;
 	full_path = "";
+	file_page = 0;
+	file_save = 0;
 	pipe_pc[0] = 0;
 	pipe_pc[1] = 0;
 	pipe_cp[0] = 0;
@@ -276,6 +278,10 @@ ws_reply_instance::~ws_reply_instance()
 {
 	int V(5);
 	verbose(V) << "(ws_reply_instance) Destructor." << std::endl;
+	if (file_page)
+		close(file_page);
+	if (file_save)
+		close(file_save);
 	if (buffer)
 		free(static_cast<void*>(buffer));
 }
