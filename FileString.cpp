@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/03 09:30:53 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 18:52:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 01:45:16 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void FileString::load(const std::string & str)
 
 void FileString::load(const char * u_fn)
 {
-	int V(3);
+	int V(4);
 	_read_ok = false;
 
 	std::string fn(u_fn);

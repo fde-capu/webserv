@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 01:19:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 01:38:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ void WebServ::light_up()
 			}
 			else if (poll_list[i].revents)
 			{
-				verbose(V + 1) << "(light_up) Some unknown event on " << poll_list[i].fd << std::endl;
+				verbose(V + 2) << "(light_up) Some unknown event on " << poll_list[i].fd << std::endl;
 			}
 		}
 	}
@@ -180,7 +180,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (remove_client[fd])
 		{
-			verbose(V + 1) << "(dispatch) Closing fd " << fd << std::endl;
+			verbose(V + 0) << "(dispatch) Closing fd " << fd << std::endl;
 			close(fd);
 			respond.erase(fd);
 			remove_from_poll(fd);

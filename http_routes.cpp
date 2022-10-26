@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 00:49:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 01:42:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ int ws_reply_instance::is_403(ws_server_instance& si)
 
 int ws_reply_instance::is_404(ws_server_instance& si)
 {
-	int V(3);
+	int V(4);
 	std::string request;
 	DataFold indexes;
 	std::string \
@@ -148,7 +148,7 @@ int ws_reply_instance::is_404(ws_server_instance& si)
 
 int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 {
-	static int V(3);
+	int V(4);
 	int pos_status(0);
 
 	verbose(V) << "(is_413_507_422) max_size: " << si.max_size << "." \
