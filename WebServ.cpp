@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 23:11:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 17:28:36 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,17 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 	bool* pollout;
 	int close_test;
 
+	for (std::map<int, Chronometer>::iterator it = timer.begin(); it != timer.end(); it++)
+	{
+		fd = it->first;
+		if (timer[fd] > 2000)
+		{
+			verbose(V + 1) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
+			ready[fd].first = true;
+			remove_client[fd] = true;
+		}
+	}
+
 	for (std::map<int, std::pair<bool, bool> >::iterator it = ready.begin(); it != ready.end(); it++)
 	{
 		fd = it->first;
@@ -158,16 +169,16 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (remove_client[fd])
 		{
-			verbose(V) << "(dispatch) Closing fd " << fd << std::endl;
+			verbose(V + 1) << "(dispatch) Closing fd " << fd << std::endl;
 			close_test = close(fd);
 			if (close_test < 0)
 			{
-				verbose(V) << "(dispatch) " << fd << " close status: " << close_test << ", errno = " << errno << std::endl;
-				verbose(V) << "EBADF " << (errno == EBADF) << std::endl;
-				verbose(V) << "EINTR " << (errno == EINTR) << std::endl;
-				verbose(V) << "EIO " << (errno == EIO) << std::endl;
-				verbose(V) << "ENOSPC " << (errno == ENOSPC) << std::endl;
-				verbose(V) << "EDQUOT " << (errno == EDQUOT) << std::endl;
+				verbose(V + 1) << "(dispatch) " << fd << " close status: " << close_test << ", errno = " << errno << std::endl;
+				verbose(V + 2) << "EBADF " << (errno == EBADF) << std::endl;
+				verbose(V + 2) << "EINTR " << (errno == EINTR) << std::endl;
+				verbose(V + 2) << "EIO " << (errno == EIO) << std::endl;
+				verbose(V + 2) << "ENOSPC " << (errno == ENOSPC) << std::endl;
+				verbose(V + 2) << "EDQUOT " << (errno == EDQUOT) << std::endl;
 			}
 			respond.erase(fd);
 			remove_from_poll(fd);
@@ -205,6 +216,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 					continue ;
 				raw[fd].append(buffer, rbytes);
 				webserver[fd].chronometer.btn_reset();
+				timer[fd].btn_reset();
 			}
 			if (!in_header[fd].is_valid)
 				in_header[fd] = get_header(raw[fd]);
@@ -215,16 +227,11 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				chosen_instance[fd] = true;
 				verbose(V) << fd << " - Has instance." << std::endl;
 				webserver[fd].chronometer.btn_reset();
+				timer[fd].btn_reset();
 			}
 			continue ;
 		}
 
-		if (timer[fd] > 1000)
-		{
-			verbose(V) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
-			remove_client[fd] = true;
-			continue ;
-		}
 		if (!in_ended[fd] && chosen_instance[fd] \
 			&& webserver[fd].chronometer > INCOME_TIMEOUT)
 			in_ended[fd] = true;
@@ -280,6 +287,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				{
 					StringTools::consume_bytes(respond[fd].out_body, sbytes);
 					webserver[fd].chronometer.btn_reset();
+					timer[fd].btn_reset();
 				}
 				verbose(V) << fd << " - Sent " << sbytes << ", " << respond[fd].out_body.length() << " left." << std::endl;
 				out_ended[fd] = respond[fd].out_body.length() == 0;

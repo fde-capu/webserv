@@ -16,7 +16,7 @@ by fde-capu
 `lynx http://localhost:3490`
 
 `make siege`
-`siege -b http://127.0.0.1:3490/empty_page`
+`siege -b -c 42 http://127.0.0.1:3490/empty_page`
 
 ## Tests
 
