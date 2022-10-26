@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 17:38:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 18:07:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,13 +220,13 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 	{
 		full_path = si.location_path(si.multipart_filename);
 		verbose(V) << "(is_201) Opening " << full_path << "." << std::endl;
-		file_fd = open(full_path.c_str(), O_WRONLY | O_CREAT | O_NONBLOCK | O_CLOEXEC, S_IRUSR | S_IWUSR);
-		if (file_fd == -1)
+		file_save = open(full_path.c_str(), O_WRONLY | O_CREAT | O_NONBLOCK | O_CLOEXEC, S_IRUSR | S_IWUSR);
+		if (file_save == -1)
 			throw std::domain_error("(is_201) Cannot open file to save data.");
-		if (fcntl(file_fd, F_SETFL, O_NONBLOCK) == -1)
+		if (fcntl(file_save, F_SETFL, O_NONBLOCK) == -1)
 			throw std::domain_error("(is_201) Could not set non-blocking file.");
-		verbose(V) << "(is_201) as " << file_fd << "." << std::endl;
-		poll_list.push_back(WebServ::make_in_out_fd(file_fd));
+		verbose(V) << "(is_201) as " << file_save << "." << std::endl;
+		poll_list.push_back(WebServ::make_in_out_fd(file_save));
 		set_code(201, "Created");
 		template_page(201);
 		return 201;
@@ -256,12 +256,12 @@ int ws_reply_instance::is_200(ws_server_instance& si)
 		}
 		else
 			file_name = request;
-		file_fd = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);
-		if (file_fd == -1)
+		file_page = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);
+		if (file_page == -1)
 			throw std::domain_error("(is_202) Cannot open file to load page.");
-		if (fcntl(file_fd, F_SETFL, O_NONBLOCK) == -1)
+		if (fcntl(file_page, F_SETFL, O_NONBLOCK) == -1)
 			throw std::domain_error("(is_202) Could not set non-blocking file.");
-		poll_list.push_back(WebServ::make_in_out_fd(file_fd));
+		poll_list.push_back(WebServ::make_in_out_fd(file_page));
 		to_work_load = true;
 		set_code(200, "OK");
 		return 200;

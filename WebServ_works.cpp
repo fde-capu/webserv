@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 20:56:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 18:48:29 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
+		if (poll_list[i].fd != file_page)
+			continue ;
 		if (!poll_list[i].revents)
 			continue ;
 		if (poll_list[i].revents & POLLIN)
@@ -81,6 +83,7 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 			verbose(V) << "(is_working_load) " << rbytes << " bytes from " << poll_list[i].fd << "." << std::endl;
 			if (rbytes < 0) // -1
 			{
+				verbose(V) << "(is_working_load) Cannot read " << poll_list[i].fd << std::endl;
 				to_work_load = false;
 				return false;
 			}
@@ -92,7 +95,7 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 			}
 			if (rbytes > 0)
 			{
-				verbose(V) << "(is_working_load) Append, reset." << std::endl;
+				verbose(V) << "(is_working_load) Append." << std::endl;
 				out_body.append(buffer, rbytes);
 				return true;
 			}
@@ -103,7 +106,7 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 
 bool ws_reply_instance::is_working_save(ws_server_instance& si)
 {
-	int V(2);
+	int V(3);
 	std::string* data;
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
@@ -138,6 +141,8 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
+		if (poll_list[i].fd != file_save)
+			continue ;
 		if (!poll_list[i].revents)
 			continue ;
 		if (poll_list[i].revents & POLLOUT)

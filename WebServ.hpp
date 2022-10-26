@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 23:03:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 18:54:45 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,8 @@ struct ws_reply_instance
 	Chronometer chronometer;
 	bool first_time;
 	std::string full_path;
-	int file_fd;
+	int file_page;
+	int file_save;
 	int pipe_pc[2];
 	int pipe_cp[2];
 	pid_t child_pid;
@@ -200,6 +201,7 @@ class WebServ
 		std::map<int, bool> response_working;
 		std::map<int, bool> chosen_response;
 		std::map<int, Chronometer> timer;
+		std::map<int, bool> virgin;
 		int dispatch(std::map<int, std::pair<bool, bool> >&);
 
 	public:

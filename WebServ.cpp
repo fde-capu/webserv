@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 17:28:36 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 18:53:57 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,9 +153,9 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 	for (std::map<int, Chronometer>::iterator it = timer.begin(); it != timer.end(); it++)
 	{
 		fd = it->first;
-		if (timer[fd] > 2000)
+		if (timer[fd] > 1000 && !virgin[fd])
 		{
-			verbose(V + 1) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
+			verbose(CRITICAL) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
 			ready[fd].first = true;
 			remove_client[fd] = true;
 		}
@@ -166,6 +166,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		fd = it->first;
 		pollin = &(it->second.first);
 		pollout = &(it->second.second);
+		virgin[fd] = false;
 
 		if (remove_client[fd])
 		{
@@ -194,6 +195,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			response_working.erase(fd);
 			chosen_response.erase(fd);
 			timer.erase(fd);
+			virgin.erase(fd);
 			verbose(V) << fd << " - Removed." << std::endl;
 			return fd;
 		}
@@ -204,7 +206,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			rbytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
 			if (rbytes < 0) // -1
 			{
-				verbose(V) << "(dispatch) Marked to remove by read fail " << fd << std::endl;
+				verbose(CRITICAL) << "(webserv) Marked to remove by read fail " << fd << std::endl;
 				remove_client[fd] = true;
 				continue ;
 			}
@@ -261,6 +263,8 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			bool l(respond[fd].is_working_load(webserver[fd]));
 			bool s(respond[fd].is_working_save(webserver[fd]));
 			bool c(respond[fd].is_working_cgi(webserver[fd]));
+			if (l || s || c)
+				timer[fd].btn_reset();
 			response_working[fd] = l || s || c;
 		}
 		if (chosen_response[fd] && !response_working[fd] && !encapsulated[fd])
@@ -278,7 +282,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0); // Writes to client.
 				if (sbytes < 0) // -1
 				{
-					verbose(V) << "(dispatch) Marked to remove by send fail " << fd << std::endl;
+					verbose(CRITICAL) << "(webserv) Marked to remove by send fail " << fd << std::endl;
 					remove_client[fd] = true;
 					continue ;
 				}
@@ -293,7 +297,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				out_ended[fd] = respond[fd].out_body.length() == 0;
 				remove_client[fd] = out_ended[fd];
 				if (remove_client[fd])
-					verbose(V) << "(dispatch) Marked to remove by nothing left " << fd << std::endl;
+					verbose(V + 1) << "(dispatch) Marked to remove by nothing left " << fd << std::endl;
 			}
 			continue ;
 		}
@@ -303,7 +307,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 {
-	int V(1);
+	int V(5);
 	verbose(V) << "(ws_reply_instance) Constructor." << std::endl;
 	init();
 
@@ -402,6 +406,7 @@ void WebServ::dup_into_poll(int oldfd)
 	poll_list.push_back(make_in_out_fd(newfd));
 	fd_to_port[newfd] = fd_to_port[oldfd];
 	timer[newfd].btn_reset();
+	virgin[newfd] = true;
 
 	verbose(V) << "(webserv) Connection from fd (" << oldfd << \
 		")->" << newfd << "." << std::endl;

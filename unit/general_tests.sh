@@ -3,11 +3,12 @@
 # unit test for webserv
 # by fde-capu
 
-# All variables are true if some string "anything" and false as empty string "".
+# All variables are true if some string "anything" and false as empty string.
 
 	name_server="127.0.0.1";
 	step_by_step="";
 	clean_upfiles_after_test="";
+	verbose="";
 
 	MYSELF="$(realpath "$0")"
 	MYDIR="${MYSELF%/*}"
@@ -40,6 +41,7 @@
 		if [ "$noise" != "" ] ; then
 			upfile="file.noise";
 			head -c $noise /dev/urandom > "${MYDIR}/$upfile";
+			[ "$verbose" != "" ] && echo "upfile:" && ls -l "${MYDIR}/$upfile";
 			[ "$chunked" != "" ] && fullcmd="$fullcmd/$upfile";
 		fi
 
@@ -179,8 +181,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ##################################################################
 
@@ -444,7 +444,6 @@ noise="42"
 outdir="${MYDIR}/confs/html/uploads_large";
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
-show_output="true"
 unittest "Noise to large_upload 42B"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
@@ -713,6 +712,24 @@ code="201"
 fail="true"
 unittest "Accepts, though incomplete"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+
+##################################################################
+##################################################################
+##################################################################
+
+{ anounce GET_LARGE_FILE \
+\
+	'Gets a large file.' \
+\
+; } 2> /dev/null
+
+head -c 56789012 /dev/urandom > ${MYDIR}/confs/html/uploads_large/noise_to_get
+
+cmd="curl http://$name_server:3490/large_upload/noise_to_get";
+testfile="$MYDIR/confs/html/uploads_large/noise_to_get";
+code="200";
+short_output="true";
+unittest "Get large file";
 
 ##################################################################
 ##################################################################
@@ -1030,7 +1047,7 @@ echo "ls during DELETE: $during";
 echo "ls after DELETE: $after";
 echo "Got body: `cat foo_out`";
 rm foo_out;
-colorscore "ls must be the same after DELETE call" $before $after;
+colorscore "ls must be the same after DELETE call" "$before" "$after";
 colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "$out" "200";
 
 #################################################################
@@ -1050,7 +1067,7 @@ echo "ls during DELETE: $during";
 echo "ls after DELETE: $after";
 echo "Got body: `cat foo_out`";
 rm foo_out;
-colorscore "ls must be the same after DELETE call" $before $after;
+colorscore "ls must be the same after DELETE call" "$before" "$after";
 colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "$out" "200";
 rm ${MYDIR}/noise_to_delete
 
@@ -1110,6 +1127,8 @@ rm cookiefile;
 ##################################################################
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce STRESS \
 \
 	"Stress testing $stress_count calls. Wait for it.\n
@@ -1119,7 +1138,7 @@ rm cookiefile;
 
 set +x;
 
-stress_count=100;
+stress_count=50;
 rm -f stress_out;
 i=1;
 while [ "$i" -le "$stress_count" ]; do
@@ -1133,5 +1152,6 @@ colorscore "\rCount of 200 OK repsponses must be $stress_count, and it is $stres
 rm -f stress_out;
 set -x;
 
+##################################################################
 
 finish; # < < < < < < < < < < < < < < < < < < < < < End line!

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 22:47:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 18:08:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,8 @@ ws_reply_instance& ws_reply_instance::operator= (ws_reply_instance const & rhs)
 		chronometer = rhs.chronometer;
 		first_time = rhs.first_time;
 		full_path = rhs.full_path;
-		file_fd = rhs.file_fd;
+		file_page = rhs.file_page;
+		file_save = rhs.file_save;
 		pipe_pc[0] = rhs.pipe_pc[0];
 		pipe_pc[1] = rhs.pipe_pc[1];
 		pipe_cp[0] = rhs.pipe_cp[0];
@@ -254,7 +255,6 @@ void ws_reply_instance::init()
 	chronometer.btn_reset();
 	first_time = true;
 	full_path = "";
-	file_fd = 0;
 	pipe_pc[0] = 0;
 	pipe_pc[1] = 0;
 	pipe_cp[0] = 0;
@@ -525,12 +525,12 @@ void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 		out_body = "Response code: " + itoa(error_code) + "\n";
 		return ;
 	}
-	file_fd = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);
-	if (file_fd == -1)
+	file_page = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);
+	if (file_page == -1)
 		throw std::domain_error("(template_page) Cannot open file to load page.");
-	if (fcntl(file_fd, F_SETFL, O_NONBLOCK) == -1)
+	if (fcntl(file_page, F_SETFL, O_NONBLOCK) == -1)
 		throw std::domain_error("(template_page) Could not set non-blocking file.");
-	poll_list.push_back(WebServ::make_in_out_fd(file_fd));
+	poll_list.push_back(WebServ::make_in_out_fd(file_page));
 	to_work_load = true;
 }
 
