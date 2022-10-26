@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 18:07:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 22:10:13 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 {
 	if (is_equal_insensitive(si.in_header.expect, "100-continue"))
 	{
-		verbose(2) << "(is_424) Because of " << si.in_header.expect << \
+		verbose(3) << "(is_424) Because of " << si.in_header.expect << \
 			", and sizes are ok, would return 100-continue. " \
 			"webserv must always close connection, so, instead, " \
 			"will return 424 Failed Dependency." << std::endl;
@@ -236,7 +236,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 
 int ws_reply_instance::is_200(ws_server_instance& si)
 {
-	int V(2);
+	int V(3);
 	std::string request;
 	DataFold indexes;
 

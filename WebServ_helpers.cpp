@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 18:08:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 22:08:53 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ struct pollfd WebServ::make_in_out_fd(int newfd)
 void WebServ::exit_gracefully()
 {
 	flush_stdin();
-	verbose(1) << "(webserv) Exit gracefully." << std::endl;
-	verbose(1) << config.getValStr("bye_message") << std::endl;
+	verbose(3) << "(webserv) Exit gracefully." << std::endl;
+	verbose(2) << config.getValStr("bye_message") << std::endl;
 	lit = false;
 	return ;
 }
@@ -147,7 +147,7 @@ void ws_reply_instance::set_code(int code_n, const std::string& u_output)
 {
 	out_header.status = code_n;
 	out_header.status_msg = u_output;
-	verbose(CRITICAL) << "(webserv) " << code_n << " " << u_output << std::endl;
+	verbose(3) << "(webserv) " << code_n << " " << u_output << std::endl;
 }
 
 void ws_reply_instance::set_redirect(const std::string& target)
@@ -516,7 +516,7 @@ void ws_reply_instance::init_buffer()
 
 void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 {
-	int V(2);
+	int V(3);
 
 	file_name = u_filename != "" ? u_filename : TemplatePage::for_code(error_code);
 	verbose(V) << "(template_page) file_name " << file_name << std::endl;
@@ -536,7 +536,7 @@ void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 
 std::string ws_reply_instance::custom_error(const size_t code, ws_server_instance& si) const
 {
-	size_t V(2);
+	size_t V(3);
 	std::string out;
 	DataFold loop;
 	DataFold err;

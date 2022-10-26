@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/10 16:23:55 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/12 20:23:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 22:00:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 ArgVal::ArgVal(int argc, char ** argv, const char * u_board_file_name)
 : _fail(false), argc(argc), argv(argv)
 {
-	int V(2);
+	int V(3);
 
 	std::string path = relative_path(u_board_file_name);
 	_board_file_name = const_cast<char*>(path.c_str());
@@ -83,7 +83,7 @@ void ArgVal::run()
 
 void ArgVal::load_conditions(char * u_condition_file)
 {
-	int V(2);
+	int V(3);
 
 	std::string path = relative_path(u_condition_file);
 	_board_file_name = const_cast<char*>(path.c_str());
@@ -98,7 +98,7 @@ ArgVal::ArgVal()
 
 bool ArgVal::validate_by_board_key(DataFold board, DataFold config)
 {
-	int V(2);
+	int V(3);
 	DataFold par;
 	size_t count;
 
@@ -140,7 +140,7 @@ bool ArgVal::validate_by_board_key(DataFold board, DataFold config)
 
 bool ArgVal::comply_argval_params(DataFold board, DataFold config)
 {
-	int V(2);
+	int V(3);
 	DataFold par;
 	DataFold con;
 	DataFold foo;
@@ -377,7 +377,7 @@ size_t ArgVal::count_keys(DataFold data, std::string key) const
 
 bool ArgVal::comply_config_keys(DataFold board, DataFold config)
 {
-	int V(2);
+	int V(3);
 	DataFold par;
 	bool valid;
 
@@ -442,7 +442,7 @@ bool ArgVal::comply_check(DataFold board, DataFold config)
 
 bool ArgVal::comply(char *u_board_file)
 {
-	int V(2);
+	int V(3);
 	const char * _board_file = u_board_file;
 	verbose(V) << "(ArgVal) Reading: " << _board_file << std::endl;
 	_config.load(_board_file);

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 18:48:29 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 22:15:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 {
-	int V(2);
+	int V(3);
 	bool action_dump(false);
 	bool action_get(false);
 

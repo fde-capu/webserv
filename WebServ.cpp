@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 21:02:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 22:26:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,16 +61,16 @@ void WebServ::hook_it()
 				taken_ports.push_back(instance[i].port[j]);
 			}
 			else if (same_port_another_name(&instance[i]))
-				verbose(1) << "(webserv) Warning: multiple servers on same port. Using first." << std::endl;
+				verbose(2) << "(webserv) Warning: multiple servers on same port. Using first." << std::endl;
 		}
 	}
 	poll_list.push_back(stdin_to_pollfd()); // stdin exits gracefully.
-	verbose(1) << "(webserv) I'm hooked." << std::endl << std::endl;
+	verbose(2) << "(webserv) I'm hooked." << std::endl << std::endl;
 }
 
 void WebServ::light_up()
 {
-	int V(1);
+	int V(2);
 	struct pollfd event;
 	std::map<int, std::pair<bool, bool> > ready;
 	int client;
@@ -105,7 +105,7 @@ void WebServ::light_up()
 				{
 					if (is_a_webserv(event.fd))
 					{
-						verbose(CRITICAL) << " . . . . . . . . . . . . . . . " << std::endl;
+						verbose(V) << " . . . . . . . . . . . . . . . " << std::endl;
 						dup_into_poll(event.fd);
 						continue ;
 					}
@@ -147,7 +147,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		fd = it->first;
 		if (timer[fd] > ACTIVITY_TIMEOUT && !virgin[fd])
 		{
-			verbose(CRITICAL) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
+			verbose(V + 1) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
 			ready[fd].first = true;
 			remove_client[fd] = true;
 		}
@@ -189,7 +189,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			rbytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
 			if (rbytes < 0) // -1
 			{
-				verbose(CRITICAL) << "(webserv) Marked to remove by read fail " << fd << std::endl;
+				verbose(V + 1) << "(webserv) Marked to remove by read fail " << fd << std::endl;
 				remove_client[fd] = true;
 				continue ;
 			}
@@ -265,7 +265,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0); // Writes to client.
 				if (sbytes < 0) // -1
 				{
-					verbose(CRITICAL) << "(webserv) Marked to remove by send fail " << fd << std::endl;
+					verbose(V + 1) << "(webserv) Marked to remove by send fail " << fd << std::endl;
 					remove_client[fd] = true;
 					continue ;
 				}
@@ -276,7 +276,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 					webserver[fd].chronometer.btn_reset();
 					timer[fd].btn_reset();
 				}
-				verbose(V) << fd << " - Sent " << sbytes << ", " << respond[fd].out_body.length() << " left." << std::endl;
+				verbose(V + 1) << fd << " - Sent " << sbytes << ", " << respond[fd].out_body.length() << " left." << std::endl;
 				out_ended[fd] = respond[fd].out_body.length() == 0;
 				remove_client[fd] = out_ended[fd];
 				if (remove_client[fd])
@@ -314,7 +314,7 @@ ws_reply_instance::ws_reply_instance(ws_server_instance& si)
 
 ws_server_instance WebServ::choose_instance(ws_header& in, int in_port)
 {
-	int V(2);
+	int V(3);
 	ws_server_instance si;
 	ws_server_instance *choose;
 
@@ -379,7 +379,7 @@ void WebServ::remove_from_poll(int fd)
 
 void WebServ::dup_into_poll(int oldfd)
 {
-	int V(CRITICAL);
+	int V(2);
 	struct sockaddr_storage remoteaddr;
 	unsigned int addrlen = sizeof remoteaddr;
 	int newfd = accept(oldfd, (struct sockaddr *)&remoteaddr, &addrlen);
