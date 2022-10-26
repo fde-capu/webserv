@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 18:53:57 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/26 21:02:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,35 +68,14 @@ void WebServ::hook_it()
 	verbose(1) << "(webserv) I'm hooked." << std::endl << std::endl;
 }
 
-struct pollfd WebServ::catch_connection()
-{
-	int V(1);
-	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
-	int poll_count;
-
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 1. Incomming connections.
-	if (poll_count == -1)
-		throw std::domain_error("(webserv) Poll error.");
-	for (size_t i = 0; i < poll_list.size(); i++)
-	{
-		if (poll_list[i].revents & POLLIN || poll_list[i].revents & POLLOUT) // Checks read and write at same time.
-			return poll_list[i];
-		else if (poll_list[i].revents)
-		{
-			verbose(V) << "(catch_connection) Some unknown event on " << poll_list[i].fd << std::endl;
-		}
-	}
-	struct pollfd out;
-	out.fd = -1; // meaning nothing.
-	return out;
-}
-
 void WebServ::light_up()
 {
 	int V(1);
 	struct pollfd event;
 	std::map<int, std::pair<bool, bool> > ready;
 	int client;
+	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
+	int poll_count;
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
@@ -105,55 +84,68 @@ void WebServ::light_up()
 	lit = true;
 	while (lit) // Main loop.
 	{
+		std::cout << *this; // Animation.
 		client = dispatch(ready);
 		if (client)
 			ready.erase(client);
-		event = catch_connection();
-		std::cout << *this; // Animation.
-		if (event.fd == -1)
-			continue ;
-		if (event.fd == 0)
+
+		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 1. Incomming connections.
+		if (poll_count == -1)
+			throw std::domain_error("(webserv) Poll error.");
+		for (size_t i = 0; i < poll_list.size(); i++)
 		{
-			return exit_gracefully();
-		}
-		if (event.revents & POLLIN)
-		{
-			if (is_a_webserv(event.fd))
+			event = poll_list[i];
+			if (poll_list[i].revents & POLLIN || poll_list[i].revents & POLLOUT) // Checks read and write at same time.
 			{
-				verbose(CRITICAL) << " . . . . . . . . . . . . . . . " << std::endl;
-				dup_into_poll(event.fd);
-				continue ;
+				if (event.fd == -1)
+					continue ;
+				if (event.fd == 0)
+					return exit_gracefully();
+				if (event.revents & POLLIN)
+				{
+					if (is_a_webserv(event.fd))
+					{
+						verbose(CRITICAL) << " . . . . . . . . . . . . . . . " << std::endl;
+						dup_into_poll(event.fd);
+						continue ;
+					}
+					if (!ready[event.fd].first)
+						verbose(V + 1) << "(light_up) Got POLLIN from " << event.fd << std::endl;
+					ready[event.fd].first = true;
+					continue ;
+				}
+				if (event.revents & POLLOUT)
+				{
+					if (!ready[event.fd].second)
+						verbose(V + 1) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
+					ready[event.fd].second = true;
+					continue ;
+				}
 			}
-			if (!ready[event.fd].first)
-				verbose(V + 1) << "(light_up) Got POLLIN from " << event.fd << std::endl;
-			ready[event.fd].first = true;
-			continue ;
-		}
-		if (event.revents & POLLOUT)
-		{
-			if (!ready[event.fd].second)
-				verbose(V + 1) << "(light_up) Got POLLOUT from " << event.fd << std::endl;
-			ready[event.fd].second = true;
-			continue ;
+			else if (poll_list[i].revents)
+			{
+				verbose(V) << "(catch_connection) Some unknown event on " << poll_list[i].fd << std::endl;
+			}
 		}
 	}
 }
 
 int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 {
-	int V(1);
+	int V(2);
 	int INCOME_TIMEOUT(50);
+	int ACTIVITY_TIMEOUT(2000);
 	int rbytes;
 	int sbytes;
 	int fd;
 	bool* pollin;
 	bool* pollout;
-	int close_test;
+	std::map<int, std::pair<bool, bool> >::iterator it;
 
 	for (std::map<int, Chronometer>::iterator it = timer.begin(); it != timer.end(); it++)
 	{
 		fd = it->first;
-		if (timer[fd] > 1000 && !virgin[fd])
+		if (timer[fd] > ACTIVITY_TIMEOUT && !virgin[fd])
 		{
 			verbose(CRITICAL) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
 			ready[fd].first = true;
@@ -161,7 +153,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		}
 	}
 
-	for (std::map<int, std::pair<bool, bool> >::iterator it = ready.begin(); it != ready.end(); it++)
+	for (it = ready.begin(); it != ready.end(); it++)
 	{
 		fd = it->first;
 		pollin = &(it->second.first);
@@ -171,16 +163,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		if (remove_client[fd])
 		{
 			verbose(V + 1) << "(dispatch) Closing fd " << fd << std::endl;
-			close_test = close(fd);
-			if (close_test < 0)
-			{
-				verbose(V + 1) << "(dispatch) " << fd << " close status: " << close_test << ", errno = " << errno << std::endl;
-				verbose(V + 2) << "EBADF " << (errno == EBADF) << std::endl;
-				verbose(V + 2) << "EINTR " << (errno == EINTR) << std::endl;
-				verbose(V + 2) << "EIO " << (errno == EIO) << std::endl;
-				verbose(V + 2) << "ENOSPC " << (errno == ENOSPC) << std::endl;
-				verbose(V + 2) << "EDQUOT " << (errno == EDQUOT) << std::endl;
-			}
+			close(fd);
 			respond.erase(fd);
 			remove_from_poll(fd);
 			webserver.erase(fd);
