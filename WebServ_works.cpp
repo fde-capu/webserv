@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 19:58:07 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 00:29:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 			{
 				verbose(V) << "(is_working_load) Append." << std::endl;
 				out_body.append(buffer, rbytes);
+				WebServ::memuse += rbytes;
+				verbose(-2) << "(is_working_load) memuse += " << rbytes << " (" << WebServ::memuse << ")" << std::endl;
 				return true;
 			}
 		}
@@ -166,7 +168,11 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 				return false;
 			if (sbytes == 0) {} // 0
 			if (sbytes > 0)
+			{
 				StringTools::consume_bytes(*data, sbytes);
+//				WebServ::memuse -= sbytes;
+//				verbose(-2) << "(is_working_save) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;
+			}
 			if (si.is_multipart())
 				data = &si.multipart_content;
 			else if (si.is_chunked())

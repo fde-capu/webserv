@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 21:00:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 23:23:05 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,6 +218,7 @@ class WebServ
 		static struct pollfd make_in_out_fd(int);
 		static struct ws_header get_header(const std::string&);
 		static std::string get_body(const std::string&);
+		static int memuse;
 };
 
 std::ostream & operator<< (std::ostream & o, WebServ const & i);

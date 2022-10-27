@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/06 18:45:14 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/13 22:20:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 00:59:17 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -572,6 +572,7 @@ DataFold DataFold::parse_only_val(const datafold_t &df)
 
 DataFold DataFold::parse_data(const std::string jstr)
 {
+	int V(5);
 	DataFold out;
 	std::string ops = jstr;
 	size_t div_p;
@@ -581,7 +582,7 @@ DataFold DataFold::parse_data(const std::string jstr)
 	size_t p[4];
 
 	clean_before_parse(ops);
-	verbose(4) << std::endl << "Parsing: " << ops << std::endl;
+	verbose(V) << std::endl << "Parsing: " << ops << std::endl;
 
 	pass = false;
 	while (!pass)
@@ -637,7 +638,7 @@ DataFold DataFold::parse_data(const std::string jstr)
 
 	}
 
-	verbose(4) << "Parsed: " << static_cast<std::string>(out) << std::endl << std::endl;
+	verbose(V) << "Parsed: " << static_cast<std::string>(out) << std::endl << std::endl;
 	return out;
 }
 

@@ -97,6 +97,56 @@ unittest()
 	resetvars;
 }
 
+stressupmulti()
+{
+	{ anounce STRESS_UPLOADS_MULTI \
+		\
+			"Stress testing $stress_count uploads simultanouslly of $noise_size.\n
+			 Needs score of $more_than or more." \
+			\
+			; } 2> /dev/null
+
+		set +x;
+		rm -f stress_out;
+		head -c $noise_size /dev/urandom > file.noise;
+		i=1;
+		while [ "$i" -le "$stress_count" ]; do
+			echo -n "\r $i ";
+			curl -H "Expect:" http://127.0.0.1:3490/large_upload -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
+			i=$(( i + 1 ));
+		done;
+		wait;
+		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
+		colorge "\rTotal $stress_count, accept $more_than, score  $stress_result" "$stress_result" "$more_than";
+		rm -f stress_out;
+		rm -f file.noise;
+}
+
+stressupchunk()
+{
+	{ anounce STRESS_UPLOADS_CHUNK \
+		\
+			"Stress testing $stress_count chunked uploads simultanouslly of $noise_size.\n
+			 Needs score of $more_than or more." \
+			\
+			; } 2> /dev/null
+
+		set +x;
+		rm -f stress_out;
+		head -c $noise_size /dev/urandom > file.noise;
+		i=1;
+		while [ "$i" -le "$stress_count" ]; do
+			echo -n "\r $i ";
+			curl -H "Expect:" -H "Content-Type: test/file" -H "Transfer-Encoding: chunked" http://127.0.0.1:3490/large_upload/file.nois -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
+			i=$(( i + 1 ));
+		done;
+		wait;
+		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
+		colorge "\rTotal $stress_count, accept $more_than, score  $stress_result" "$stress_result" "$more_than";
+		rm -f stress_out;
+		rm -f file.noise;
+}
+
 enterkey()
 {
 	[ "$step_by_step" = "" ] && return;
@@ -515,39 +565,25 @@ unittest "50MB success"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
+#####################################################################
+#####################################################################
 
-{ anounce MULTI_SUCCESS_104MB \
+{ anounce MULTI_FAIL_70MB \
 \
-	'Large file 104MB success on multipart.' \
+	'Large file 70MB fail on multipart. webserv is limited to 64MB.' \
 \
 ; } 2> /dev/null
 
-noise="104MB"
-cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
-code="201"
-unittest "104MB multi-part"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
-
-#####################################################################
-#####################################################################
-#####################################################################
-
-{ anounce MULTI_FAIL_105MB \
-\
-	'Large file 105MB fail on multipart.' \
-\
-; } 2> /dev/null
-
-noise="105MB"
+noise="70MB"
 cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 code="507"
 fail="true"
-unittest "105MB multi-part (fail)"
+unittest "70MB multi-part (fail)"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
 
-{ anounce MULTI_FAIL_1 \
+{ anounce MULTI_FAIL_NO_CONT \
 \
 	'Now POSTing 1MB.noise.\n
 	This shall NOT be accepted, because curl will expect 100-continue,\n
@@ -577,6 +613,8 @@ unittest "webserv must close connection"
 ###################################################################
 ###################################################################
 ###################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce CHUNK_99_WORDS_FAIL \
 \
@@ -713,33 +751,32 @@ ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
 
-{ anounce CHUNK_104M_NOISE \
+{ anounce CHUNK_50M_NOISE \
 \
-	'How about 104MB?\n
+	'How about 50MB?\n
 	This takes long, because of chunk decoding.' \
 \
 ; } 2> /dev/null
 
 chunked="true";
-noise="104MB"
+noise="50MB"
 cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
-unittest "Chunked 104MB success"
+unittest "Chunked 50MB success"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
 
 { anounce CHUNK_PARTIAL \
 \
-	'How about 110MB? This time, it is accepted as partial upload, \n
-	since curl is set to close and webserv must always close.\n
-	Note: takes long.' \
+	'How about 70MB? This time, it is accepted as partial upload, \n
+	since webserv is limited to 64M.' \
 \
 ; } 2> /dev/null
 
 chunked="true";
-noise="100MB"
+noise="70MB"
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
 fail="true"
@@ -1162,7 +1199,7 @@ rm cookiefile;
 
 stress_count=142;
 
-{ anounce STRESS \
+{ anounce STRESS_GET \
 \
 	"Stress testing $stress_count calls. Wait for it.\n
 	This can be changed on general_tests.sh:stress_count" \
@@ -1185,33 +1222,6 @@ set -x;
 
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
-stressupmulti()
-{
-	{ anounce STRESS_UPLOADS_MULTI \
-		\
-			"Stress testing $stress_count uploads simultanouslly of $noise_size.\n
-			 Needs score of $more_than or more." \
-			\
-			; } 2> /dev/null
-
-		set +x;
-		rm -f stress_out;
-		head -c $noise_size /dev/urandom > file.noise;
-		i=1;
-		while [ "$i" -le "$stress_count" ]; do
-			echo -n "\r $i ";
-		curl -H "Expect:" http://127.0.0.1:3490/large_upload -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
-			i=$(( i + 1 ));
-		done;
-		wait;
-		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
-		colorge "\rCount of 201 Created must be $stress_count, and it is $stress_result" "$stress_result" "$more_than";
-		rm -f stress_out;
-		rm -f file.noise;
-}
-
 stress_count=100;
 noise_size="1MB";
 more_than="95";
@@ -1232,11 +1242,34 @@ noise_size="10MB";
 more_than="9";
 stressupmulti
 
-stress_count=2;
+stress_count=3;
 noise_size="50MB";
 more_than="1";
 stressupmulti
 
+finish; ## XXX
+
+##################################################################
+
+stress_count=100;
+noise_size="1MB";
+more_than="95";
+stressupchunk
+
+stress_count=50;
+noise_size="2MB";
+more_than="45";
+stressupchunk
+
+stress_count=10;
+noise_size="10MB";
+more_than="9";
+stressupchunk
+
+stress_count=3;
+noise_size="50MB";
+more_than="1";
+stressupchunk
 
 ##################################################################
 

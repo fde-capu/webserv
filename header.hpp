@@ -6,18 +6,18 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 17:50:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 23:02:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HEADER_HPP
 # define HEADER_HPP
 
-# define BUFFER_SIZE 10485760
-# define MEMORY_LIMIT 104857600
 # define WS_DEFAULT_CONFIG "webserv-default.conf"
 # define WS_ARGVAL "argval_ws.conf"
-# define ASYNC_CHUNK_SIZE 1000000
+# define BUFFER_SIZE 10485760
+# define MEMORY_LIMIT 64000000
+# define ASYNC_CHUNK_SIZE 1048576
 # define CGI_TIMEOUT 250
 
 # include <map>

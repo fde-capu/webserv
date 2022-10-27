@@ -6,11 +6,13 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 20:33:14 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 00:53:02 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+
+int WebServ::memuse(0);
 
 WebServ::WebServ(DataFold& u_config)
 : config(u_config), server(config.filter("server")), lit(false)
@@ -95,7 +97,7 @@ void WebServ::light_up()
 		config.getValStr("server_name") << std::endl;
 	if (!lit)
 		verbose(CRITICAL) << config.getValStr("welcome_message") << std::endl;
-
+	
 	lit = true;
 	while (lit) // Main loop.
 	{
@@ -104,7 +106,6 @@ void WebServ::light_up()
 		client = dispatch(ready);
 		if (client)
 			ready.erase(client);
-
 		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 1. Incomming connections.
 		if (poll_count == -1)
 			throw std::domain_error("(webserv) Poll error.");
@@ -181,6 +182,8 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			verbose(V) << fd << " :: " << respond[fd].out_header.status << " :: " << respond[fd].out_header.status_msg << std::endl;
 			verbose(V + 1) << "(dispatch) Closing fd " << fd << std::endl;
 			close(fd);
+			memuse -= respond[fd].out_body.length();
+			verbose(-2) << "(dispatch) out_body memuse -= " << respond[fd].out_body.length() << " (" << WebServ::memuse << ")" << std::endl;
 			respond.erase(fd);
 			remove_from_poll(fd);
 			webserver.erase(fd);
@@ -189,6 +192,8 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			body_ok.erase(fd);
 			chosen_instance.erase(fd);
 			encapsulated.erase(fd);
+			memuse -= raw[fd].length();
+			verbose(-2) << "(dispatch) raw memuse -= " << raw[fd].length() << " (" << WebServ::memuse << ")" << std::endl;
 			raw.erase(fd);
 			in_header.erase(fd);
 			remove_client.erase(fd);
@@ -202,8 +207,8 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (*pollin)
 		{
-			*pollin = false;
 			rbytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
+			*pollin = false;
 			if (rbytes < 0) // -1
 			{
 				verbose(V + 1) << "(webserv) Marked to remove by read fail " << fd << std::endl;
@@ -217,6 +222,8 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				if (raw[fd].length() + rbytes > MEMORY_LIMIT)
 					continue ;
 				raw[fd].append(buffer, rbytes);
+				memuse += rbytes;
+				verbose(-2) << "(*pollin) memuse += " << rbytes << " (" << WebServ::memuse << ")" << std::endl;
 				webserver[fd].chronometer.btn_reset();
 				timer[fd].btn_reset();
 			}
@@ -226,10 +233,10 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			{
 				verbose(V) << fd << " - Got header." << std::endl;
 				webserver[fd] = choose_instance(in_header[fd], fd_to_port[fd]);
-				chosen_instance[fd] = true;
 				verbose(V) << fd << " - Has instance." << std::endl;
 				webserver[fd].chronometer.btn_reset();
 				timer[fd].btn_reset();
+				chosen_instance[fd] = true;
 			}
 			continue ;
 		}
@@ -240,6 +247,8 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		if (in_ended[fd] && !body_ok[fd])
 		{
 			webserver[fd].in_body = get_body(raw[fd]);
+			memuse += webserver[fd].in_body.length();
+			verbose(-2) << "(dispatch) in_body memuse += " << webserver[fd].in_body.length() << " (" << WebServ::memuse << ")" << std::endl;
 			verbose(V) << fd << " - In body mounted." << std::endl;
 			webserver[fd].set_props();
 			webserver[fd].set_sizes();
@@ -290,6 +299,8 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				if (sbytes > 0)
 				{
 					StringTools::consume_bytes(respond[fd].out_body, sbytes);
+					memuse -= sbytes;
+					verbose(-2) << "(*pollout) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;
 					webserver[fd].chronometer.btn_reset();
 					timer[fd].btn_reset();
 				}
