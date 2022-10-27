@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 13:52:44 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 14:17:48 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 	int sbytes;
 	size_t wr_size;
 
-	if (!si.in_header.is_post() || save_canceled() || si.is_cgi())
+	if (!file_save || !si.in_header.is_post() || save_canceled() || si.is_cgi())
 		return false;
 	if (si.is_chunked() && !si.chunk_finished)
 	{
@@ -136,7 +136,7 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 	else
 		data = &si.in_body;
 	
-	verbose(V + 1) << "(webserv) >" << SHORT((*data)) << \
+	verbose(V + 0) << "(webserv) >" << SHORT((*data)) << \
 		"< will be saved into " << full_path << \
 		"." << std::endl;
 

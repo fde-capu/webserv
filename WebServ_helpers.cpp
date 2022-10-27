@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 13:53:58 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 14:14:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -316,11 +316,11 @@ void ws_server_instance::set_sizes()
 		body_start += body_start ? 4 : 0;
 		body_end = payload_end;
 
-		verbose(V) << "(set_sizes:multipart) max_size:" << max_size << \
-			" multipart len:" \
+		verbose(V) << "(set_sizes:multipart) max:" << max_size << \
+			" | multipart:" \
 			<< multipart_content.length() << \
-			" body len:" << in_body.length() << \
-			" declared len:" \
+			" | body:" << in_body.length() << \
+			" | declared:" \
 			<< static_cast<size_t>(in_header.content_length) << std::endl;
 
 		exceeded_limit = max_size && body_end - body_start > max_size;
@@ -328,8 +328,8 @@ void ws_server_instance::set_sizes()
 			in_body.length() > static_cast<size_t>(in_header.content_length);
 		reached_limit = exceeded_limit || in_body.length() == static_cast<size_t>(in_header.content_length);
 
-		verbose(V) << "(set_sizes:multipart) exceeded_limit: " << exceeded_limit << std::endl;
-		verbose(V) << "(set_sizes:multipart) reached_limit: " << reached_limit << std::endl;
+		verbose(V) << "(set_sizes:multipart) exceeded: " << exceeded_limit \
+			<< " | reached: " << reached_limit << std::endl;
 	}
 	else if (is_chunked())
 	{
@@ -518,7 +518,7 @@ void ws_reply_instance::init_buffer()
 
 void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 {
-	int V(3);
+	int V(4);
 
 	file_name = u_filename != "" ? u_filename : TemplatePage::for_code(error_code);
 	verbose(V) << "(template_page) file_name " << file_name << std::endl;

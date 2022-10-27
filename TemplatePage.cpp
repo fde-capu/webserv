@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 23:04:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/25 18:03:17 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 14:14:00 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,19 @@ TemplatePage::TemplatePage(const char * executable, const char * u_defaults)
 
 std::string TemplatePage::for_code(size_t error_code)
 {
-	int V(3);
+	int V(4);
 
-	std::string error_query = StringTools::stoa(error_code);
-	verbose(V) << "(TemplatePage) error_query: " << error_query << std::endl;
+	std::string query = StringTools::stoa(error_code);
+	verbose(V) << "(TemplatePage) query: " << query << std::endl;
 
 	DataFold data(config.getDataFold());
-	verbose(V) << "(TemplatePage) data: " << data << std::endl;
+	verbose(V + 1) << "(TemplatePage) data: " << data << std::endl;
 
-	std::string t_file = data.getValStr(error_query);
-	verbose(V) << "(TemplatePage) t_tile: " << t_file << std::endl;
+	std::string t_file = data.getValStr(query);
+	verbose(V + 1) << "(TemplatePage) t_tile: " << t_file << std::endl;
 
 	std::string full_t_file = path + "/" + t_file;
-	verbose(V) << "(TemplatePage) full_t_file: " << full_t_file << std::endl;
+	verbose(V + 1) << "(TemplatePage) full_t_file: " << full_t_file << std::endl;
 
 	stool.remove_dup_char(full_t_file, '/');
 	return full_t_file;

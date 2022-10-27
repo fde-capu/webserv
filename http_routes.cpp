@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 01:42:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 14:40:24 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ int ws_reply_instance::is_413_507_422(ws_server_instance& si)
 	}
 	if (si.in_header.content_length > MEMORY_LIMIT)
 	{
-		verbose(V) << "(is_413_507_422) Client declared " << si.in_header.content_length << "." << std::endl;
+		verbose(V - 2) << "(is_413_507_422) Client declared " << si.in_header.content_length << "." << std::endl;
 		set_code(507, "Insufficient Resources");
 		template_page(507, custom_error(507, si));
 		return 507;

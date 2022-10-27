@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 01:38:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 14:35:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ WebServ::WebServ(DataFold& u_config)
 
 void WebServ::init()
 {
-	int V(1);
-
 	try
 	{
 		hook_it();
@@ -49,8 +47,6 @@ void WebServ::init()
 		catch(std::exception& e)
 		{
 			verbose(CRITICAL) << "(webserv) Error: " << e.what() << std::endl;
-			verbose(V) << "MAX " << FOPEN_MAX << std::endl;
-			BREAK_REPEAT_LIMIT(0);
 		}
 		if (!lit)
 			break ;
@@ -180,7 +176,8 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (remove_client[fd])
 		{
-			verbose(V + 0) << "(dispatch) Closing fd " << fd << std::endl;
+			verbose(V) << fd << " :: " << respond[fd].out_header.status << " :: " << respond[fd].out_header.status_msg << std::endl;
+			verbose(V + 1) << "(dispatch) Closing fd " << fd << std::endl;
 			close(fd);
 			respond.erase(fd);
 			remove_from_poll(fd);

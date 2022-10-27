@@ -6,7 +6,7 @@
 # All variables are true if some string "anything" and false as empty string.
 
 	name_server="127.0.0.1";
-	step_by_step="";
+	step_by_step="yes";
 	clean_upfiles_after_test="";
 	verbose="";
 
@@ -65,7 +65,7 @@
 		[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
 
 		if [ "$out" = "000" ]; then
-			{ anounce ERROR 'Make sure the server is running! (Response 0?)'; } 2> /dev/null;
+			{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
 			exit 1;
 		fi
 
@@ -86,9 +86,9 @@
 
 		[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
 
-		[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm ${MYDIR}/$upfile;
-		[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm tmp_trace_ascii
-		rm tmp_response;
+		[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm -f ${MYDIR}/$upfile;
+		[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm -f tmp_trace_ascii
+		[ "$clean_upfiles_after_test" != "" ] && rm -f tmp_response;
 
 		resetvars;
 	}
@@ -174,9 +174,9 @@ do
 done
 
 { ${MYDIR}/clean_uploads.sh; }
-rm tmp_response;
 
 { set +x; } 2> /dev/null
+rm -f tmp_response;
 if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
