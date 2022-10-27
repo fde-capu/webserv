@@ -1196,7 +1196,7 @@ stressupmulti()
 			\
 			; } 2> /dev/null
 
-			set +x;
+		set +x;
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
 		i=1;
@@ -1208,9 +1208,8 @@ stressupmulti()
 		wait;
 		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
 		colorge "\rCount of 201 Created must be $stress_count, and it is $stress_result" "$stress_result" "$more_than";
-##		rm -f stress_out;
+		rm -f stress_out;
 		rm -f file.noise;
-		set -x;
 }
 
 stress_count=100;
@@ -1223,20 +1222,21 @@ noise_size="3MB";
 more_than="95";
 stressupmulti
 
-stress_count=100;
+stress_count=50;
 noise_size="5MB";
-more_than="95";
-stressupmulti
-
-stress_count=100;
-noise_size="10MB";
-more_than="50";
+more_than="45";
 stressupmulti
 
 stress_count=10;
 noise_size="10MB";
 more_than="9";
 stressupmulti
+
+stress_count=2;
+noise_size="50MB";
+more_than="1";
+stressupmulti
+
 
 ##################################################################
 

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 19:57:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 20:33:14 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void WebServ::light_up()
 	while (lit) // Main loop.
 	{
 		std::cout << *this; // Animation.
-		tick.btn_reset(); while (tick < 1);
+		tick.btn_reset(); while (tick < 10);
 		client = dispatch(ready);
 		if (client)
 			ready.erase(client);
