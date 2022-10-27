@@ -27,6 +27,7 @@
 		outdir="";
 		chunked="";
 		trace="";
+		silent="";
 		show_output="";
 		short_output="";
 		compare_size="";
@@ -59,7 +60,13 @@
 		[ "$trace" != "" ] && fullcmd="$fullcmd --trace-ascii tmp_trace_ascii";
 		fullcmd="$fullcmd -o tmp_response";
 		
-		out=`eval "$fullcmd"`;
+		if [ "$silent" != "" ] ; then
+			fullcmd="$fullcmd 2> /dev/null";
+#			out=`eval "$fullcmd" 2> /dev/null`;
+			out=`eval "$fullcmd"`;
+		else
+			out=`eval "$fullcmd"`;
+		fi
 
 		[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
 		[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
@@ -181,8 +188,6 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ##################################################################
 
@@ -498,7 +503,36 @@ unittest "50MB success"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
+
+{ anounce MULTI_SUCCESS_104MB \
+\
+	'Large file 104MB success on multipart.' \
+\
+; } 2> /dev/null
+
+noise="104MB"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+code="201"
+unittest "104MB multi-part"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+
 #####################################################################
+#####################################################################
+#####################################################################
+
+{ anounce MULTI_FAIL_105MB \
+\
+	'Large file 105MB fail on multipart.' \
+\
+; } 2> /dev/null
+
+noise="105MB"
+cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
+code="507"
+fail="true"
+unittest "105MB multi-part (fail)"
+ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+
 #####################################################################
 
 { anounce MULTI_FAIL_1 \
@@ -515,21 +549,6 @@ code="424"
 fail="true"
 message="Response code might have been chosen differently."
 unittest "webserv must close connection"
-
-#####################################################################
-
-{ anounce MULTI_FAIL_100MB \
-\
-	'Large file 100MB fail on multipart.' \
-\
-; } 2> /dev/null
-
-noise="100MB"
-cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
-code="507"
-fail="true"
-unittest "100MB rejection (out of resources)"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
 ##################################################################
@@ -682,28 +701,28 @@ ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 ##################################################################
 
-{ anounce CHUNK_50M_NOISE \
+{ anounce CHUNK_104M_NOISE \
 \
-	'How about 50MB?\n
+	'How about 104MB?\n
 	This takes long, because of chunk decoding.' \
 \
 ; } 2> /dev/null
 
 chunked="true";
-noise="50MB"
+noise="104MB"
 cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
-unittest "50MB success"
+unittest "Chunked 104MB success"
 ls -l ${MYDIR}/confs/html/uploads_large/file.noise
 
 #####################################################################
 
 { anounce CHUNK_PARTIAL \
 \
-	'How about 100MB? This time, it is accepted as partial upload, \n
+	'How about 110MB? This time, it is accepted as partial upload, \n
 	since curl is set to close and webserv must always close.\n
-	Note: takes long. 200MB would get curl oom killed on Workspace.' \
+	Note: takes long.' \
 \
 ; } 2> /dev/null
 
@@ -1139,7 +1158,6 @@ stress_count=142;
 ; } 2> /dev/null
 
 set +x;
-
 rm -f stress_out;
 i=1;
 while [ "$i" -le "$stress_count" ]; do
@@ -1154,5 +1172,64 @@ rm -f stress_out;
 set -x;
 
 ##################################################################
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+stress_count=42;
+noise_size="10MB";
+
+{ anounce STRESS_UPLOADS_MULTI \
+\
+	"Stress testing $stress_count uploads simultanouslly." \
+\
+; } 2> /dev/null
+
+set +x;
+rm -f stress_out;
+head -c $noise_size /dev/urandom > file.noise;
+i=1;
+while [ "$i" -le "$stress_count" ]; do
+	echo -n "\r $i ";
+	curl -H "Expect:" http://127.0.0.1:3490/large_upload -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
+	i=$(( i + 1 ));
+done;
+wait;
+stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
+colorscore "\rCount of 201 Created repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
+rm -f stress_out;
+rm -f file.noise;
+set -x;
+
+##################################################################
+
+stress_count=10;
+
+{ anounce STRESS_UPLOADS_CHUNKED \
+\
+	"Stress testing $stress_count uploads simultanouslly, chunked." \
+\
+; } 2> /dev/null
+
+set +x;
+i=1;
+while [ "$i" -le "$stress_count" ]; do
+	echo -n "\r $i ";
+	chunked="true";
+	noise="1MB";
+	outdir="${MYDIR}/confs/html/uploads_large";
+	cmd="curl http://$name_server:3490/large_upload"
+	code="201"
+	silent="true"
+	unittest "Sequential chunked uploads"
+	i=$(( i + 1 ));
+done;
+wait;
+stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
+colorscore "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
+rm -f stress_out;
+set -x;
+
+##################################################################
+
 
 finish; # < < < < < < < < < < < < < < < < < < < < < End line!

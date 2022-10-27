@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 14:40:24 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 18:50:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,11 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 		verbose(V) << "(is_201) Opening " << full_path << "." << std::endl;
 		file_save = open(full_path.c_str(), O_WRONLY | O_CREAT | O_NONBLOCK | O_CLOEXEC, S_IRUSR | S_IWUSR);
 		if (file_save == -1)
-			throw std::domain_error(itoa(si.fd) + " (is_201) Cannot open file to save data.");
+		{
+			set_code(429, "Too Many Requests");
+			template_page(429);
+			return 429;
+		}
 		if (fcntl(file_save, F_SETFL, O_NONBLOCK) == -1)
 			throw std::domain_error(itoa(si.fd) + " (is_201) Could not set non-blocking file.");
 		verbose(V) << "(is_201) as " << file_save << "." << std::endl;
