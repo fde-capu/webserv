@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 22:15:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 13:52:44 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,16 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 			{
 				verbose(V) << "(is_working_load) Cannot read " << poll_list[i].fd << std::endl;
 				to_work_load = false;
+				close(file_page);
+				file_page = 0;
 				return false;
 			}
 			if (rbytes == 0) // 0
 			{
 				verbose(V) << "(is_working_load) Nothing." << std::endl;
 				to_work_load = false;
+				close(file_page);
+				file_page = 0;
 				return false;
 			}
 			if (rbytes > 0)
@@ -164,6 +168,8 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 			verbose(V) << " - Saved " << sbytes << ", " << data->length() << " left." << std::endl;
 			if (data->length() == 0)
 			{
+				close(file_save);
+				file_save = 0;
 				verbose(V) << poll_list[i].fd << " - Finished saving." << std::endl;
 				return false;
 			}

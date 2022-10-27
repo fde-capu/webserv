@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/26 22:14:20 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 13:41:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ bool ws_reply_instance::cgi_receiving()
 
 int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::string>& argv)
 {
-	int V(3);
+	int V(4);
 
 	child_pid = -1;
 	if (pipe2(pipe_pc, O_CLOEXEC | O_DIRECT | O_NONBLOCK) == -1)
@@ -171,7 +171,7 @@ int ws_reply_instance::cgi_pipe(ws_server_instance& si, const std::vector<std::s
 
 int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 {
-	int V(3);
+	int V(4);
 
 	if (!FileString::exists(si.location_path()))
 	{
@@ -222,7 +222,7 @@ int ws_reply_instance::cgi_prepare(ws_server_instance& si, std::string program)
 
 int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 {
-	int V(3);
+	int V(4);
 	std::string call_extension;
 	std::string cgi_params_str;
 	std::vector<std::string> cgi_params;

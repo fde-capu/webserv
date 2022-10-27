@@ -6,12 +6,12 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/27 01:36:34 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/27 13:53:07 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 MAKESILENT	  = @
-VERBOSE		  =	3
+VERBOSE		  =	2
 ENVS		  =	-DAGV_SKIP_CHECK=0
 TRACKMAKEFILE = Makefile
 
