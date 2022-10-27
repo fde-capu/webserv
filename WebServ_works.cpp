@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 14:17:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 19:58:07 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,14 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 		data = &si.chunked_content;
 	else
 		data = &si.in_body;
-	
+	if (data->length() == 0)
+	{
+		close(file_save);
+		verbose(V) << file_save << " <- Nothing to save into." << std::endl;
+		file_save = 0;
+		return false;
+	}
+
 	verbose(V + 0) << "(webserv) >" << SHORT((*data)) << \
 		"< will be saved into " << full_path << \
 		"." << std::endl;
@@ -143,6 +150,7 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 3. Saving file.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
+	verbose(V + 1) << "(webserv) Saving poll size: " << poll_list.size() << std::endl;
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
 		if (poll_list[i].fd != file_save)

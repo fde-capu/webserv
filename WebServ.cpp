@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 14:35:21 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 19:57:31 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ void WebServ::light_up()
 	int client;
 	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
 	int poll_count;
+	Chronometer tick;
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
@@ -99,6 +100,7 @@ void WebServ::light_up()
 	while (lit) // Main loop.
 	{
 		std::cout << *this; // Animation.
+		tick.btn_reset(); while (tick < 1);
 		client = dispatch(ready);
 		if (client)
 			ready.erase(client);
@@ -406,6 +408,6 @@ void WebServ::dup_into_poll(int oldfd)
 	timer[newfd].btn_reset();
 	virgin[newfd] = true;
 
-	verbose(V) << "(webserv) Connection from fd (" << oldfd << \
-		")->" << newfd << "." << std::endl;
+	verbose(V) << "(webserv) Connection " << poll_list.size() << \
+		" from fd (" << oldfd << ")->" << newfd << "." << std::endl;
 }

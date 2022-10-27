@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 18:50:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 19:38:20 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,7 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 		file_save = open(full_path.c_str(), O_WRONLY | O_CREAT | O_NONBLOCK | O_CLOEXEC, S_IRUSR | S_IWUSR);
 		if (file_save == -1)
 		{
+			file_save = 0;
 			set_code(429, "Too Many Requests");
 			template_page(429);
 			return 429;

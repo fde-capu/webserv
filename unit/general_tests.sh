@@ -5,105 +5,102 @@
 
 # All variables are true if some string "anything" and false as empty string.
 
-	name_server="127.0.0.1";
-	step_by_step="yes";
-	clean_upfiles_after_test="";
-	verbose="";
+name_server="127.0.0.1";
+step_by_step="yes";
+clean_upfiles_after_test="";
+verbose="";
 
-	MYSELF="$(realpath "$0")"
-	MYDIR="${MYSELF%/*}"
-	ok_count=0;
-	ko_count=0;
-	tot_count=0;
+MYSELF="$(realpath "$0")"
+MYDIR="${MYSELF%/*}"
+ok_count=0;
+ko_count=0;
+tot_count=0;
 
-	resetvars()
-	{
-		cmd="";
-		code="";
-		testfile="";
-		upfile="";
-		noise="";
-		fail="";
-		outdir="";
-		chunked="";
-		trace="";
-		silent="";
-		show_output="";
-		short_output="";
-		compare_size="";
-		message="";
-	}
-	resetvars;
+resetvars()
+{
+	cmd="";
+	code="";
+	testfile="";
+	upfile="";
+	noise="";
+	fail="";
+	outdir="";
+	chunked="";
+	trace="";
+	silent="";
+	show_output="";
+	short_output="";
+	compare_size="";
+	message="";
+}
+resetvars;
 
-	unittest()
-	{
-		fullcmd="$cmd";
+unittest()
+{
+	fullcmd="$cmd";
 
-		if [ "$noise" != "" ] ; then
-			upfile="file.noise";
-			head -c $noise /dev/urandom > "${MYDIR}/$upfile";
-			[ "$verbose" != "" ] && echo "upfile:" && ls -l "${MYDIR}/$upfile";
-			[ "$chunked" != "" ] && fullcmd="$fullcmd/$upfile";
-		fi
+	if [ "$noise" != "" ] ; then
+		upfile="file.noise";
+		head -c $noise /dev/urandom > "${MYDIR}/$upfile";
+		[ "$verbose" != "" ] && echo "upfile:" && ls -l "${MYDIR}/$upfile";
+		[ "$chunked" != "" ] && fullcmd="$fullcmd/$upfile";
+	fi
 
-		fullcmd="set -x; $fullcmd -sSvw '%{http_code}'";
+	fullcmd="set -x; $fullcmd -sSvw '%{http_code}'";
 
-		if [ "$upfile" != "" ] ; then
-			if [ "$chunked" = "" ] ; then
-				fullcmd="$fullcmd -F \"file=@${MYDIR}/$upfile\"";
-			else
-				fullcmd="$fullcmd --data-binary \"@${MYDIR}/$upfile\"";
-				fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
-			fi
-		fi
-
-		[ "$trace" != "" ] && fullcmd="$fullcmd --trace-ascii tmp_trace_ascii";
-		fullcmd="$fullcmd -o tmp_response";
-		
-		if [ "$silent" != "" ] ; then
-			fullcmd="$fullcmd 2> /dev/null";
-#			out=`eval "$fullcmd" 2> /dev/null`;
-			out=`eval "$fullcmd"`;
+	if [ "$upfile" != "" ] ; then
+		if [ "$chunked" = "" ] ; then
+			fullcmd="$fullcmd -F \"file=@${MYDIR}/$upfile\"";
 		else
-			out=`eval "$fullcmd"`;
+			fullcmd="$fullcmd --data-binary \"@${MYDIR}/$upfile\"";
+			fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
 		fi
+	fi
 
-		[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
-		[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
+	[ "$trace" != "" ] && fullcmd="$fullcmd --trace-ascii tmp_trace_ascii";
+	fullcmd="$fullcmd -o tmp_response";
+	if [ "$silent" != "" ] ; then
+		fullcmd="$fullcmd 2> /dev/null";
+		out=`eval "$fullcmd" 2> /dev/null`;
+	else
+		out=`eval "$fullcmd"`;
+	fi
 
-		if [ "$out" = "000" ]; then
-			{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
-			exit 1;
-		fi
+	[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
+	[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
 
-		[ "$fail" = "" ] && [ "$testfile" != "" ] && echo "File comparison: $testfile";
+	if [ "$out" = "000" ]; then
+		{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
+		exit 1;
+	fi
 
-		colorscore "$1 | expect $code, got $out" "$out" "$code"
+	[ "$fail" = "" ] && [ "$testfile" != "" ] && echo "File comparison: $testfile";
 
-		if [ "$fail" = "" ] ; then
-			[ "$testfile" != "" ] && colorscore "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
-			[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorscore "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
-		fi
+	colorscore "$1 | expect $code, got $out" "$out" "$code"
 
-		if [ "$compare_size" != "" ] ; then
-			colorscore "$1 | compare sizes" "`ls -l tmp_response | awk '{print $5}'`" "$compare_size";
-		fi
+	if [ "$fail" = "" ] ; then
+		[ "$testfile" != "" ] && colorscore "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
+		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorscore "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
+	fi
 
-		[ "$trace" != "" ] && cat tmp_trace_ascii
+	if [ "$compare_size" != "" ] ; then
+		colorscore "$1 | compare sizes" "`ls -l tmp_response | awk '{print $5}'`" "$compare_size";
+	fi
 
-		[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
+	[ "$trace" != "" ] && cat tmp_trace_ascii;
+	[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
 
-		[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm -f ${MYDIR}/$upfile;
-		[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm -f tmp_trace_ascii
-		[ "$clean_upfiles_after_test" != "" ] && rm -f tmp_response;
+	[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm -f ${MYDIR}/$upfile;
+	[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm -f tmp_trace_ascii;
+	[ "$clean_upfiles_after_test" != "" ] && rm -f tmp_response;
 
-		resetvars;
-	}
+	resetvars;
+}
 
-	enterkey()
-	{
-		[ "$step_by_step" = "" ] && return;
-		{ set +x; } 2> /dev/null
+enterkey()
+{
+	[ "$step_by_step" = "" ] && return;
+	{ set +x; } 2> /dev/null
 	echo -n "\t\t\t\t\t--> Next ";
 	read anything;
 	set -x
@@ -166,6 +163,21 @@ colorscore()
 	b=`echo "$3"`;
 	echo -n "$1 ";
 	if [ "$a" = "$b" ] ; then
+		echo "\033[0;32m [ OK ]\033[0;37m";
+		ok_count=$((ok_count+1));
+	else
+		echo "\033[0;31m [ KO ] \033[0;37m";
+		ko_count=$((ko_count+1));
+	fi
+	tot_count=$((tot_count+1));
+}
+
+colorge()
+{
+	a=`echo "$2"`;
+	b=`echo "$3"`;
+	echo -n "$1 ";
+	if [ "$a" -ge "$b" ] ; then
 		echo "\033[0;32m [ OK ]\033[0;37m";
 		ok_count=$((ok_count+1));
 	else
@@ -1167,7 +1179,7 @@ while [ "$i" -le "$stress_count" ]; do
 done;
 wait;
 stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
-colorscore "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
+colorscore "\rCount of 200 OK must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
 rm -f stress_out;
 set -x;
 
@@ -1175,30 +1187,56 @@ set -x;
 
 fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
-stress_count=42;
+stressupmulti()
+{
+	{ anounce STRESS_UPLOADS_MULTI \
+		\
+			"Stress testing $stress_count uploads simultanouslly of $noise_size.\n
+			 Needs score of $more_than or more." \
+			\
+			; } 2> /dev/null
+
+			set +x;
+		rm -f stress_out;
+		head -c $noise_size /dev/urandom > file.noise;
+		i=1;
+		while [ "$i" -le "$stress_count" ]; do
+			echo -n "\r $i ";
+		curl -H "Expect:" http://127.0.0.1:3490/large_upload -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
+			i=$(( i + 1 ));
+		done;
+		wait;
+		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
+		colorge "\rCount of 201 Created must be $stress_count, and it is $stress_result" "$stress_result" "$more_than";
+##		rm -f stress_out;
+		rm -f file.noise;
+		set -x;
+}
+
+stress_count=100;
+noise_size="1MB";
+more_than="95";
+stressupmulti
+
+stress_count=100;
+noise_size="3MB";
+more_than="95";
+stressupmulti
+
+stress_count=100;
+noise_size="5MB";
+more_than="95";
+stressupmulti
+
+stress_count=100;
 noise_size="10MB";
+more_than="50";
+stressupmulti
 
-{ anounce STRESS_UPLOADS_MULTI \
-\
-	"Stress testing $stress_count uploads simultanouslly." \
-\
-; } 2> /dev/null
-
-set +x;
-rm -f stress_out;
-head -c $noise_size /dev/urandom > file.noise;
-i=1;
-while [ "$i" -le "$stress_count" ]; do
-	echo -n "\r $i ";
-	curl -H "Expect:" http://127.0.0.1:3490/large_upload -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
-	i=$(( i + 1 ));
-done;
-wait;
-stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
-colorscore "\rCount of 201 Created repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
-rm -f stress_out;
-rm -f file.noise;
-set -x;
+stress_count=10;
+noise_size="10MB";
+more_than="9";
+stressupmulti
 
 ##################################################################
 
@@ -1225,7 +1263,7 @@ while [ "$i" -le "$stress_count" ]; do
 done;
 wait;
 stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
-colorscore "\rCount of 200 OK repsponses must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
+colorscore "\rCount of 200 OK must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
 rm -f stress_out;
 set -x;
 

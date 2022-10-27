@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:48:34 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/21 00:55:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/27 19:43:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 std::ostream & operator<< (std::ostream & o, WebServ const & self)
 {
+	if (!VERBOSE)
+		return o;
 	static Chronometer webserv_chrono;
 	static std::string animation(" _,.-~^'        ");
 	static size_t frame(0);
@@ -25,8 +27,8 @@ std::ostream & operator<< (std::ostream & o, WebServ const & self)
 		o.flush();
 		frame += frame + 1 == animation.size() ? - frame : 1;
 	}
-	(void)self;
 	return o;
+	static_cast<void>(self);
 }
 
 std::ostream& operator<< (std::ostream & o, ws_server_instance const & wssi)
