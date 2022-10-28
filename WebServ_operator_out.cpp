@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:48:34 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 00:39:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 15:17:49 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ std::ostream & operator<< (std::ostream & o, WebServ const & self)
 	if (webserv_chrono > 42)
 	{
 		webserv_chrono.btn_reset();
-		o << '\r' << animation.at(frame) << " " << WebServ::memuse << " ";
+		o << '\r' << animation.at(frame) << " " << WebServ::memuse << "         ";
 		o.flush();
 		frame += frame + 1 == animation.size() ? - frame : 1;
 	}

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 02:38:09 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 15:58:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,6 @@ void WebServ::light_up()
 	int client;
 	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
 	int poll_count;
-	Chronometer tick;
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
@@ -102,7 +101,6 @@ void WebServ::light_up()
 	while (lit) // Main loop.
 	{
 		std::cout << *this; // Animation.
-		tick.btn_reset(); while (tick < 10);
 		client = dispatch(ready);
 		if (client)
 			ready.erase(client);
@@ -158,6 +156,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 	bool* pollin;
 	bool* pollout;
 	std::map<int, std::pair<bool, bool> >::iterator it;
+	TICK(ready.size() > 1 ? ready.size() / 3 : 0);
 
 	for (std::map<int, Chronometer>::iterator it = timer.begin(); it != timer.end(); it++)
 	{
@@ -183,7 +182,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			verbose(V + 1) << "(dispatch) Closing fd " << fd << std::endl;
 			close(fd);
 			memuse -= respond[fd].out_body.length();
-			verbose(-2) << "(dispatch) out_body memuse -= " << respond[fd].out_body.length() << " (" << WebServ::memuse << ")" << std::endl;
+			verbose(V) << "(dispatch) out_body memuse -= " << respond[fd].out_body.length() << " (" << WebServ::memuse << ")" << std::endl;
 			respond.erase(fd);
 			remove_from_poll(fd);
 			webserver.erase(fd);
@@ -193,7 +192,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			chosen_instance.erase(fd);
 			encapsulated.erase(fd);
 			memuse -= raw[fd].length();
-			verbose(-2) << "(dispatch) raw memuse -= " << raw[fd].length() << " (" << WebServ::memuse << ")" << std::endl;
+			verbose(V) << "(dispatch) raw memuse -= " << raw[fd].length() << " (" << WebServ::memuse << ")" << std::endl;
 			raw.erase(fd);
 			in_header.erase(fd);
 			remove_client.erase(fd);
@@ -207,12 +206,6 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (*pollin)
 		{
-			if (WebServ::memuse > 123456789)
-			{
-				webserver[fd].chronometer.btn_reset();
-				timer[fd].btn_reset();
-				continue ;
-			}
 			rbytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
 			*pollin = false;
 			if (rbytes < 0) // -1
@@ -227,9 +220,11 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 			{
 				if (raw[fd].length() + rbytes > MEMORY_LIMIT)
 					continue ;
+				if (WebServ::memuse + rbytes > 80000000) // XXX
+					continue ;
 				raw[fd].append(buffer, rbytes);
 				memuse += rbytes;
-				verbose(-2) << "(*pollin) memuse += " << rbytes << " (" << WebServ::memuse << ")" << std::endl;
+				verbose(V) << "(*pollin) memuse += " << rbytes << " (" << WebServ::memuse << ")" << std::endl;
 				webserver[fd].chronometer.btn_reset();
 				timer[fd].btn_reset();
 			}
@@ -306,7 +301,7 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 						sbytes = respond[fd].out_body.length();
 					StringTools::consume_bytes(respond[fd].out_body, sbytes);
 					memuse -= sbytes;
-					verbose(-2) << "(*pollout) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;
+					verbose(V) << "(*pollout) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;
 					webserver[fd].chronometer.btn_reset();
 					timer[fd].btn_reset();
 				}

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 02:28:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 15:16:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int ws_reply_instance::bad_gateway(std::string u_filename)
 
 int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
 {
+	int V(4);
 	DIR *dp;
 	struct dirent *dirp;
 	std::string list;
@@ -46,7 +47,7 @@ int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
 		"</title><body><h1>" + g_config.getValStr("server_name") + \
 		"</h1>" + list + "</body></html>";
 	WebServ::memuse += out_body.length();
-	verbose(-2) << "(list_autoindex) memuse ajust: " << WebServ::memuse << std::endl;
+	verbose(V) << "(list_autoindex) memuse ajust: " << WebServ::memuse << std::endl;
 	return 200;
 }
 
@@ -195,7 +196,7 @@ void ws_reply_instance::encapsulate()
 	verbose(V) << "(encapsulate) pre header:" << std::endl << out << std::endl;
 	verbose(V) << "(encapsulate) pre body:" << LONG(out_body) << std::endl;
 	WebServ::memuse += out.length();
-	verbose(-2) << "(encapsulate) memuse += " << out.length() << " (" << WebServ::memuse << ")" << std::endl;
+	verbose(V) << "(encapsulate) memuse += " << out.length() << " (" << WebServ::memuse << ")" << std::endl;
 	out_body = out + out_body;
 	package_length = out_body.length();
 	verbose(V) << "(encapsulate) package_length " << package_length << std::endl;
@@ -484,6 +485,7 @@ void ws_reply_instance::cgi_setenv(ws_server_instance& si, std::string path_info
 
 void ws_reply_instance::header_from_body()
 {
+	int V(4);
 	size_t dbreak[3];
 	size_t h_body(std::string::npos);
 	size_t dblen;
@@ -506,7 +508,7 @@ void ws_reply_instance::header_from_body()
 		out_body.erase(0, h_body + dblen);
 	b_after = out_body.length();
 	WebServ::memuse -= (b_before - b_after);
-	verbose(-2) << "(header_from_body) memuse adjust to " << WebServ::memuse << std::endl;
+	verbose(V) << "(header_from_body) memuse adjust to " << WebServ::memuse << std::endl;
 }
 
 bool ws_server_instance::is_cgi() const
@@ -539,7 +541,7 @@ void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 		o_after = out_body.length();
 		WebServ::memuse -= o_before;
 		WebServ::memuse += o_after;
-		verbose(-2) << "(template_page) memuse adjust to " << WebServ::memuse << std::endl;
+		verbose(V) << "(template_page) memuse adjust to " << WebServ::memuse << std::endl;
 		return ;
 	}
 	file_page = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);

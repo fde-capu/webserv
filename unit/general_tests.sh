@@ -1,14 +1,19 @@
 #!/bin/sh
 
+#XXX below
+# SAFE_LIMIT on Dispatch
+
 # unit test for webserv
 # by fde-capu
 
 # All variables are true if some string "anything" and false as empty string.
 
 name_server="127.0.0.1";
-step_by_step="yes";
+step_by_step="";
 clean_upfiles_after_test="";
 verbose="";
+show_transactions="";
+ultrasilent="";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -27,7 +32,8 @@ resetvars()
 	outdir="";
 	chunked="";
 	trace="";
-	silent="";
+	[ "$show_transactions" = "" ] && silent="true";
+	[ "$show_transactions" != "" ] && silent="";
 	show_output="";
 	short_output="";
 	compare_size="";
@@ -66,15 +72,17 @@ unittest()
 		out=`eval "$fullcmd"`;
 	fi
 
-	[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
-	[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
+	if [ "$silent" = "" ] ; then
+		[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
+		[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
+	fi
 
 	if [ "$out" = "000" ]; then
 		{ anounce ERROR 'Make sure the server is running!'; } 2> /dev/null;
 		exit 1;
 	fi
 
-	[ "$fail" = "" ] && [ "$testfile" != "" ] && echo "File comparison: $testfile";
+	[ "$fail" = "" ] && [ "$testfile" != "" ] && [ "$silent" = "" ] && echo "File comparison: $testfile";
 
 	colorscore "$1 | expect $code, got $out" "$out" "$code"
 
@@ -87,14 +95,25 @@ unittest()
 		colorscore "$1 | compare sizes" "`ls -l tmp_response | awk '{print $5}'`" "$compare_size";
 	fi
 
-	[ "$trace" != "" ] && cat tmp_trace_ascii;
-	[ "$message" != "" ] && echo "\033[0;33m$message\033[0;37m";
+	[ "$trace" != "" ] && [ "$silent" = "" ] && cat tmp_trace_ascii;
+	[ "$message" != "" ] && [ "$silent" = "" ] && echo "\033[0;33m$message\033[0;37m";
 
 	[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm -f ${MYDIR}/$upfile;
 	[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm -f tmp_trace_ascii;
 	[ "$clean_upfiles_after_test" != "" ] && rm -f tmp_response;
 
 	resetvars;
+}
+
+run()
+{
+	fullcmd="$1";
+	if [ "$silent" != "" ] ; then
+		fullcmd="$fullcmd 2> /dev/null";
+		out=`eval "$fullcmd" 2> /dev/null`;
+	else
+		out=`eval "$fullcmd"`;
+	fi
 }
 
 stressupmulti()
@@ -109,6 +128,8 @@ stressupmulti()
 		set +x;
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
+		[ "$silent" != "" ] && echo "$stress_count x $noise_size";
+		sleep 1
 		i=1;
 		while [ "$i" -le "$stress_count" ]; do
 			echo -n "\r $i ";
@@ -117,7 +138,7 @@ stressupmulti()
 		done;
 		wait;
 		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
-		colorge "\rTotal $stress_count, accept $more_than, score  $stress_result" "$stress_result" "$more_than";
+		colorge "\rTotal $stress_count, accept $more_than, score $stress_result" "$stress_result" "$more_than";
 		rm -f stress_out;
 		rm -f file.noise;
 }
@@ -134,15 +155,18 @@ stressupchunk()
 		set +x;
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
+		[ "$silent" != "" ] && echo "$stress_count x $noise_size";
+		sleep 1
 		i=1;
 		while [ "$i" -le "$stress_count" ]; do
+			sleep 0.05
 			echo -n "\r $i ";
 			curl -H "Expect:" -H "Content-Type: test/file" -H "Transfer-Encoding: chunked" http://127.0.0.1:3490/large_upload/file.nois -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
 			i=$(( i + 1 ));
 		done;
 		wait;
 		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
-		colorge "\rTotal $stress_count, accept $more_than, score  $stress_result" "$stress_result" "$more_than";
+		colorge "\rTotal $stress_count, accept $more_than, score $stress_result" "$stress_result" "$more_than";
 		rm -f stress_out;
 		rm -f file.noise;
 }
@@ -165,16 +189,19 @@ div()
 divider()
 {
 	{ set +x; } 2> /dev/null
-	echo "\n\n######### $1 #####################################"
+	[ "$silent = "" ] && [ "$ultrasilent" = "" ] && echo "\n\n######### $1 #####################################"
 	set -x
 }
 
 anounce()
 {
 	enterkey;
-	{ divider $1; } 2> /dev/null
-	echo $2
-	{ echo '-------------------------------------------------'; } 2> /dev/null
+	if [ "$silent" = "" ] ; then
+		{ divider $1; } 2> /dev/null
+		echo $2
+		{ echo '-------------------------------------------------'; } 2> /dev/null
+	fi
+	[ "$silent" != "" ] && [ "$ultrasilent" = "" ] && echo -n "$1 ";
 	{ set +x; } 2> /dev/null
 }
 
@@ -190,13 +217,14 @@ getbodyandcode()
 
 finish()
 {
-	{ ${MYDIR}/clean_uploads.sh; }
+	clean;
 	{ anounce FINISHED \
 	\
 		'..........now........\n
 		\t......the.....\n\t\t....results......' \
 	\
 	; } 2> /dev/null
+	[ "$silent" != "" ] && echo "";
 	echo " Total:\t\t $tot_count";
 	echo "\033[0;32m [ OK ] \t $ok_count \033[0;37m";
 	if [ "$ko_count" = "0" ] ; then
@@ -211,30 +239,47 @@ colorscore()
 {
 	a=`echo "$2"`;
 	b=`echo "$3"`;
-	echo -n "$1 ";
+	[ "$ultrasilent" = "" ] && echo -n "$1 ";
 	if [ "$a" = "$b" ] ; then
-		echo "\033[0;32m [ OK ]\033[0;37m";
+		printf "\e[32m%s\e[37m " "[ OK ]";
 		ok_count=$((ok_count+1));
 	else
-		echo "\033[0;31m [ KO ] \033[0;37m";
+		printf "\e[31m%s\e[37m " "[ KO ]";
 		ko_count=$((ko_count+1));
 	fi
 	tot_count=$((tot_count+1));
+	[ "$ultrasilent" = "" ] && echo "";
 }
 
 colorge()
 {
 	a=`echo "$2"`;
 	b=`echo "$3"`;
-	echo -n "$1 ";
+	[ "$ultrasilent" = "" ] && echo -n "$1 ";
 	if [ "$a" -ge "$b" ] ; then
-		echo "\033[0;32m [ OK ]\033[0;37m";
+		printf "\e[32m%s\e[37m " "[ OK ]";
 		ok_count=$((ok_count+1));
 	else
-		echo "\033[0;31m [ KO ] \033[0;37m";
+		printf "\e[31m%s\e[37m " "[ KO ]";
 		ko_count=$((ko_count+1));
 	fi
 	tot_count=$((tot_count+1));
+	[ "$ultrasilent" = "" ] && echo "";
+}
+
+list()
+{
+	[ "$ultrasilent" = "" ] && [ "$silent" = "" ] && ls -l "$1";
+}
+
+dog()
+{
+	[ "$ultrasilent" = "" ] && [ "$silent" = "" ] && cat "$1";
+}
+
+say()
+{
+	[ "$ultrasilent" = "" ]  && [ "$silent" = "" ] && echo "$1";
 }
 
 for i in 1 2 3 4 5 6 7 8 9 10
@@ -242,7 +287,11 @@ do
 	{ divider "#"; } 2> /dev/null
 done
 
-{ ${MYDIR}/clean_uploads.sh; }
+clean()
+{
+	[ "$silent" = "" ] && { ${MYDIR}/clean_uploads.sh; }
+	[ "$silent" != "" ] && { ${MYDIR}/clean_uploads.sh; } > /dev/null
+}
 
 { set +x; } 2> /dev/null
 rm -f tmp_response;
@@ -250,6 +299,8 @@ if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 
 ############################################################### Begin
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 ##################################################################
 
@@ -454,9 +505,9 @@ outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 code="201";
 unittest "Simple post";
-ls -l ${MYDIR}/confs/html/99B.words;
 rm ${MYDIR}/99B.words
-cat ${MYDIR}/confs/html/99B.words;
+list "${MYDIR}/confs/html/99B.words";
+dog "${MYDIR}/confs/html/99B.words";
 
 ##################################################################
 
@@ -514,7 +565,7 @@ outdir="${MYDIR}/confs/html/uploads_large";
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
 unittest "Noise to large_upload 42B"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 #####################################################################
 
@@ -530,7 +581,7 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "1MB success"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 #####################################################################
 
@@ -545,7 +596,7 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "2MB success"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 #####################################################################
 
@@ -562,7 +613,7 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "50MB success"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 #####################################################################
 #####################################################################
@@ -579,7 +630,7 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 code="507"
 fail="true"
 unittest "70MB multi-part (fail)"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 #####################################################################
 
@@ -608,7 +659,8 @@ unittest "webserv must close connection"
 	Now reset test over again for chunked encoding tests.' \
 \
 ; } 2> /dev/null
-{ ${MYDIR}/clean_uploads.sh; }
+
+clean;
 
 ###################################################################
 ###################################################################
@@ -647,9 +699,9 @@ outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 code="201";
 unittest "Simple post";
-ls -l ${MYDIR}/confs/html/99B.words;
+list "${MYDIR}/confs/html/99B.words;";
 rm ${MYDIR}/99B.words
-cat ${MYDIR}/confs/html/99B.words;
+dog ${MYDIR}/confs/html/99B.words;
 
 ##################################################################
 
@@ -712,7 +764,7 @@ outdir="${MYDIR}/confs/html/uploads_large";
 cmd="curl http://$name_server:3490/large_upload"
 code="201"
 unittest "Noise to large_upload 42B"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 ###############################################################
 
@@ -729,7 +781,7 @@ cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "1MB success"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 ##################################################################
 
@@ -745,7 +797,7 @@ cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "2MB success"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 ##################################################################
 
@@ -762,7 +814,7 @@ cmd="curl http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201"
 unittest "Chunked 50MB success"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 #####################################################################
 
@@ -779,7 +831,7 @@ cmd="curl http://$name_server:3490/large_upload"
 code="201"
 fail="true"
 unittest "Accepts, though incomplete"
-ls -l ${MYDIR}/confs/html/uploads_large/file.noise
+list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 ##################################################################
 ##################################################################
@@ -1108,12 +1160,12 @@ unittest "Another autoindex, now with root rewrite"
 before="`ls ${MYDIR}/confs/html/uploads_large`";
 echo 'This file will be deleted.' > "${MYDIR}/confs/html/uploads_large/file_to_be_deleted";
 during="`ls ${MYDIR}/confs/html/uploads_large`";
-out=`curl -X DELETE http://$name_server:3490/large_upload/file_to_be_deleted -sSvw '%{http_code}' -o foo_out`;
+run "curl -X DELETE http://$name_server:3490/large_upload/file_to_be_deleted -sSvw '%{http_code}' -o foo_out";
 after="`ls ${MYDIR}/confs/html/uploads_large`";
-echo "ls before DELETE: $before";
-echo "ls during DELETE: $during";
-echo "ls after DELETE: $after";
-echo "Got body: `cat foo_out`";
+say "ls before DELETE: $before";
+say "ls during DELETE: $during";
+say "ls after DELETE: $after";
+say "Got body: `cat foo_out`";
 rm foo_out;
 colorscore "ls must be the same after DELETE call" "$before" "$after";
 colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "$out" "200";
@@ -1126,14 +1178,14 @@ colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "
 
 before="`ls ${MYDIR}/confs/html/uploads_large`";
 head -c 142 /dev/urandom > ${MYDIR}/noise_to_delete
-curl http://$name_server:3490/large_uploads -F "file=@${MYDIR}/noise_to_delete"
+run "curl http://$name_server:3490/large_uploads -F 'file=@${MYDIR}/noise_to_delete'"
 during="`ls ${MYDIR}/confs/html/uploads_large`";
-out=`curl -X DELETE http://$name_server:3490/large_upload/noise_to_delete -sSvw '%{http_code}' -o foo_out`;
+run "curl -X DELETE http://$name_server:3490/large_upload/noise_to_delete -sSvw '%{http_code}' -o foo_out";
 after="`ls ${MYDIR}/confs/html/uploads_large`";
-echo "ls before DELETE: $before";
-echo "ls during DELETE: $during";
-echo "ls after DELETE: $after";
-echo "Got body: `cat foo_out`";
+say "ls before DELETE: $before";
+say "ls during DELETE: $during";
+say "ls after DELETE: $after";
+say "Got body: `cat foo_out`";
 rm foo_out;
 colorscore "ls must be the same after DELETE call" "$before" "$after";
 colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "$out" "200";
@@ -1146,8 +1198,8 @@ rm ${MYDIR}/noise_to_delete
 	 Forcefully implemented 403 Forbidden for all cases.' \
 ; } 2> /dev/null
 
-out=`curl -X DELETE http://$name_server:3490/large_upload -sSvw '%{http_code}' -o foo_out`;
-echo "Got body: `cat foo_out`";
+run "curl -X DELETE http://$name_server:3490/large_upload -sSvw '%{http_code}' -o foo_out";
+say "Got body: `cat foo_out`";
 rm foo_out;
 colorscore "Expect 403" "$out" "403"
 
@@ -1157,8 +1209,8 @@ colorscore "Expect 403" "$out" "403"
 	'Try to delete an unexistent file.' \
 ; } 2> /dev/null
 
-out=`curl -X DELETE http://$name_server:3490/large_upload/unexistent_file -sSvw '%{http_code}' -o foo_out`;
-echo "Got body: `cat foo_out`";
+run "curl -X DELETE http://$name_server:3490/large_upload/unexistent_file -sSvw '%{http_code}' -o foo_out";
+say "Got body: `cat foo_out`";
 rm foo_out;
 colorscore "Expect 404" "$out" "404"
 
@@ -1173,20 +1225,20 @@ colorscore "Expect 404" "$out" "404"
 ; } 2> /dev/null
 
 set +x
-curl http://$name_server:3490/cgi_cookie.php -b cookiefile -c cookiefile --trace-ascii tmp_response
+run "curl http://$name_server:3490/cgi_cookie.php -b cookiefile -c cookiefile --trace-ascii tmp_response"
 cookieline=`cat tmp_response | grep "Set-Cookie" | sed "s|.*Set-Cookie.*|Set-Cookie|"`
 sessionid=`cat tmp_response | grep "Set-Cookie" | sed "s|.*SESSION_ID=||" | sed "s|;.*||"`
-cat tmp_response;
+dog tmp_response;
 colorscore "Must have gotten some Set-Cookie header." "$cookieline" "Set-Cookie";
 sleep 2
 curl http://$name_server:3490/cgi_cookie.php -b cookiefile -c cookiefile -so tmp_response;
 cookieline=`cat tmp_response | grep "$sessionid"`;
-cat tmp_response;
+dog tmp_response;
 colorscore "SESSION_ID must be set." "$cookieline" "$sessionid";
 sleep 4
 curl http://$name_server:3490/cgi_cookie.php -b cookiefile -c cookiefile -so tmp_response;
 cookieline=`cat tmp_response | grep "$sessionid"`;
-cat tmp_response;
+dog tmp_response;
 colorscore "SESSION_ID expired." "$cookieline" "";
 rm tmp_response;
 rm cookiefile;
@@ -1206,6 +1258,7 @@ stress_count=142;
 
 set +x;
 rm -f stress_out;
+echo "";
 i=1;
 while [ "$i" -le "$stress_count" ]; do
 	echo -n "\r $i";
@@ -1216,7 +1269,6 @@ wait;
 stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
 colorscore "\rCount of 200 OK must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
 rm -f stress_out;
-set -x;
 
 ##################################################################
 
@@ -1240,14 +1292,10 @@ noise_size="10MB";
 more_than="9";
 stressupmulti
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 stress_count=3;
 noise_size="50MB";
 more_than="1";
 stressupmulti
-
-finish; ## XXX
 
 ##################################################################
 
@@ -1272,35 +1320,5 @@ more_than="1";
 stressupchunk
 
 ##################################################################
-
-stress_count=10;
-
-{ anounce STRESS_UPLOADS_CHUNKED \
-\
-	"Stress testing $stress_count uploads simultanouslly, chunked." \
-\
-; } 2> /dev/null
-
-set +x;
-i=1;
-while [ "$i" -le "$stress_count" ]; do
-	echo -n "\r $i ";
-	chunked="true";
-	noise="1MB";
-	outdir="${MYDIR}/confs/html/uploads_large";
-	cmd="curl http://$name_server:3490/large_upload"
-	code="201"
-	silent="true"
-	unittest "Sequential chunked uploads"
-	i=$(( i + 1 ));
-done;
-wait;
-stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
-colorscore "\rCount of 200 OK must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
-rm -f stress_out;
-set -x;
-
-##################################################################
-
 
 finish; # < < < < < < < < < < < < < < < < < < < < < End line!

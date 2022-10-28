@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 02:11:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 15:16:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 				if (data == &si.in_body)
 				{
 					WebServ::memuse -= sbytes;
-					verbose(-2) << "(cgi_dumping) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;
+					verbose(V) << "(cgi_dumping) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;
 				}
 			}
 			if (si.is_multipart())
@@ -121,7 +121,7 @@ bool ws_reply_instance::cgi_receiving()
 				verbose(V + 1) << "(cgi_receiving) Append, reset." << std::endl;
 				out_body.append(buffer, rbytes);
 				WebServ::memuse += rbytes;
-				verbose(-2) << "(cgi_receiving) memuse += " << rbytes << " (" << WebServ::memuse << ")" << std::endl;
+				verbose(V) << "(cgi_receiving) memuse += " << rbytes << " (" << WebServ::memuse << ")" << std::endl;
 				chronometer.btn_reset();
 				return true;
 			}
