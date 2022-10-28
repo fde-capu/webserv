@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 01:50:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 02:38:09 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,6 +207,12 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 
 		if (*pollin)
 		{
+			if (WebServ::memuse > 123456789)
+			{
+				webserver[fd].chronometer.btn_reset();
+				timer[fd].btn_reset();
+				continue ;
+			}
 			rbytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
 			*pollin = false;
 			if (rbytes < 0) // -1
