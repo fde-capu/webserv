@@ -125,11 +125,12 @@ stressupmulti()
 		set +x;
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
-		[ "$silent" != "" ] && echo "$stress_count x $noise_size";
+		[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
+		[ "$ultrasilent" != "" ] && echo "";
 		sleep 1
 		i=1;
 		while [ "$i" -le "$stress_count" ]; do
-			echo -n "\r $i ";
+			[ "$ultrasilent" = "" ] && echo -n "\r $i ";
 			curl -H "Expect:" http://127.0.0.1:3490/large_upload -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
 			i=$(( i + 1 ));
 		done;
@@ -152,12 +153,13 @@ stressupchunk()
 		set +x;
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
-		[ "$silent" != "" ] && echo "$stress_count x $noise_size";
+		[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
+		[ "$ultrasilent" != "" ] && echo "";
 		sleep 1
 		i=1;
 		while [ "$i" -le "$stress_count" ]; do
 			sleep 0.05
-			echo -n "\r $i ";
+			[ "$ultrasilent" = "" ] && echo -n "\r $i ";
 			curl -H "Expect:" -H "Content-Type: test/file" -H "Transfer-Encoding: chunked" http://127.0.0.1:3490/large_upload/file.nois -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
 			i=$(( i + 1 ));
 		done;
@@ -198,7 +200,7 @@ anounce()
 		echo $2
 		{ echo '-------------------------------------------------'; } 2> /dev/null
 	fi
-	[ "$silent" != "" ] && [ "$ultrasilent" = "" ] && echo -n "$1 ";
+	[ "$silent" != "" ] && [ "$ultrasilent" = "" ] && echo -n "$1 | ";
 	{ set +x; } 2> /dev/null
 }
 
@@ -518,7 +520,7 @@ noise="99"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
-unittest "Simple post with noise";
+unittest "Multipart post with noise";
 
 ##################################################################
 
@@ -532,7 +534,7 @@ noise="100"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
-unittest "Post noise 100B";
+unittest "Multipart noise 100B";
 
 ##################################################################
 
@@ -547,7 +549,7 @@ outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="413";
 fail="true";
-unittest "Post noise 101B";
+unittest "Multipart noise 101B";
 
 ##################################################################
 
@@ -729,7 +731,7 @@ noise="100"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
-unittest "Post noise 100B";
+unittest "Chunked noise 100B";
 
 #################################################################
 
@@ -745,7 +747,7 @@ outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="413";
 fail="true"
-unittest "Post noise 101B";
+unittest "Chunked noise 101B";
 
 ###################################################################
 
@@ -1255,10 +1257,10 @@ stress_count=142;
 
 set +x;
 rm -f stress_out;
-echo "";
+[ "$ultrasilent" != "" ] && echo "";
 i=1;
 while [ "$i" -le "$stress_count" ]; do
-	echo -n "\r $i";
+	[ "$ultrasilent" = "" ] && echo -n "\r $i";
 	curl -sv http://localhost:3491/ 2>> stress_out 1> /dev/null &
 	i=$(( i + 1 ));
 done;
@@ -1279,9 +1281,9 @@ noise_size="2MB";
 more_than="95";
 stressupmulti
 
-stress_count=50;
+stress_count=20;
 noise_size="3MB";
-more_than="45";
+more_than="15";
 stressupmulti
 
 stress_count=10;
@@ -1304,6 +1306,11 @@ stressupchunk
 stress_count=50;
 noise_size="2MB";
 more_than="45";
+stressupchunk
+
+stress_count=30;
+noise_size="3MB";
+more_than="25";
 stressupchunk
 
 stress_count=10;
