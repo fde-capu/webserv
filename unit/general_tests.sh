@@ -906,6 +906,7 @@ testfile="test_php";
 echo "<-- there should NOT be and 'echo' here!!!\r\n" > "$testfile";
 message="There should the output of a script, not the script itself.";
 unittest "Get cgi php";
+rm -f "test_php";
 
 ##################################################################
 
