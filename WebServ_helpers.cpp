@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 15:16:59 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 18:54:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -302,7 +302,7 @@ void ws_server_instance::set_props()
 
 void ws_server_instance::set_sizes()
 {
-	static int V(3);
+	int V(3);
 	size_t payload_start, payload_end;
 
 	if (is_multipart())
@@ -367,7 +367,7 @@ DataFold ws_server_instance::get_location_config() const
 DataFold ws_server_instance::server_location_config(const std::string& key, \
 	std::string u_default) const
 {
-	static int V(5);
+	int V(5);
 	DataFold locations(config.get<DataFold>("location"));
 	DataFold loc;
 	DataFold out;
@@ -415,7 +415,7 @@ std::string ws_server_instance::location_get_single \
 
 std::string ws_server_instance::location_path(const std::string default_file) const
 {
-	static int V(5);
+	int V(5);
 	std::string html_dir = config.getValStr("root");
 	std::string uri2root = location_get_single("root", default_file);
 	std::string sys_dir = root_config.getValStr("root");

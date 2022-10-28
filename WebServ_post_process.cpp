@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 22:50:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 01:31:52 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 18:54:27 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int ws_server_instance::process_post()
 
 void ws_server_instance::mount_chunked()
 {
-	static int V(4);
+	int V(4);
 	std::string chunk_size_hex;
 	std::string chunk_extension;
 	size_t chunk_size_bytes;

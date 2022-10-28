@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 15:58:11 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 20:04:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,13 +89,12 @@ void WebServ::light_up()
 	struct pollfd event;
 	std::map<int, std::pair<bool, bool> > ready;
 	int client;
-	int TIME_OUT = 0; // 0: non-blocking, -1: blocking, N: cycle blocking ms
 	int poll_count;
 
 	verbose(V) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
 	if (!lit)
-		verbose(CRITICAL) << config.getValStr("welcome_message") << std::endl;
+		verbose(V) << config.getValStr("welcome_message") << std::endl;
 	
 	lit = true;
 	while (lit) // Main loop.
@@ -104,7 +103,7 @@ void WebServ::light_up()
 		client = dispatch(ready);
 		if (client)
 			ready.erase(client);
-		poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 1. Incomming connections.
+		poll_count = poll(&poll_list[0], poll_list.size(), ZERO_TIMEOUT); // 1. Incomming connections.
 		if (poll_count == -1)
 			throw std::domain_error("(webserv) Poll error.");
 		for (size_t i = 0; i < poll_list.size(); i++)
@@ -147,169 +146,70 @@ void WebServ::light_up()
 
 int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 {
-	int V(2);
-	int INCOME_TIMEOUT(50);
-	int ACTIVITY_TIMEOUT(2000);
-	int rbytes;
-	int sbytes;
+	int bytes;
 	int fd;
 	bool* pollin;
 	bool* pollout;
 	std::map<int, std::pair<bool, bool> >::iterator it;
+
 	TICK(ready.size() > 1 ? ready.size() / 3 : 0);
-
-	for (std::map<int, Chronometer>::iterator it = timer.begin(); it != timer.end(); it++)
-	{
-		fd = it->first;
-		if (timer[fd] > ACTIVITY_TIMEOUT && !virgin[fd])
-		{
-			verbose(V + 1) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
-			ready[fd].first = true;
-			remove_client[fd] = true;
-		}
-	}
-
+	if_timout_mark_remove(ready);
 	for (it = ready.begin(); it != ready.end(); it++)
 	{
 		fd = it->first;
 		pollin = &(it->second.first);
 		pollout = &(it->second.second);
 		virgin[fd] = false;
-
-		if (remove_client[fd])
-		{
-			verbose(V) << fd << " :: " << respond[fd].out_header.status << " :: " << respond[fd].out_header.status_msg << std::endl;
-			verbose(V + 1) << "(dispatch) Closing fd " << fd << std::endl;
-			close(fd);
-			memuse -= respond[fd].out_body.length();
-			verbose(V) << "(dispatch) out_body memuse -= " << respond[fd].out_body.length() << " (" << WebServ::memuse << ")" << std::endl;
-			respond.erase(fd);
-			remove_from_poll(fd);
-			webserver.erase(fd);
-			in_ended.erase(fd);
-			out_ended.erase(fd);
-			body_ok.erase(fd);
-			chosen_instance.erase(fd);
-			encapsulated.erase(fd);
-			memuse -= raw[fd].length();
-			verbose(V) << "(dispatch) raw memuse -= " << raw[fd].length() << " (" << WebServ::memuse << ")" << std::endl;
-			raw.erase(fd);
-			in_header.erase(fd);
-			remove_client.erase(fd);
-			response_working.erase(fd);
-			chosen_response.erase(fd);
-			timer.erase(fd);
-			virgin.erase(fd);
-			verbose(V) << fd << " - Removed." << std::endl;
+		if (is_marked_to_remove(fd))
 			return fd;
-		}
-
 		if (*pollin)
 		{
-			rbytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
+			bytes = read(fd, buffer, BUFFER_SIZE); // Reads from client.
 			*pollin = false;
-			if (rbytes < 0) // -1
+			if (bytes < 0) // -1
 			{
-				verbose(V + 1) << "(webserv) Marked to remove by read fail " << fd << std::endl;
-				remove_client[fd] = true;
+				mark_to_remove(fd);
 				continue ;
 			}
-			if (rbytes == 0) // 0
+			if (bytes == 0) // 0
 				in_ended[fd] = true;
-			if (rbytes > 0)
+			if (bytes > 0)
 			{
-				if (raw[fd].length() + rbytes > MEMORY_LIMIT)
+				if (above_memory_limits(fd, bytes))
 					continue ;
-				if (WebServ::memuse + rbytes > 80000000) // XXX
-					continue ;
-				raw[fd].append(buffer, rbytes);
-				memuse += rbytes;
-				verbose(V) << "(*pollin) memuse += " << rbytes << " (" << WebServ::memuse << ")" << std::endl;
-				webserver[fd].chronometer.btn_reset();
-				timer[fd].btn_reset();
+				raw[fd].append(buffer, bytes);
+				mem_usage_add(bytes);
+				reset_chronometers(fd);
 			}
-			if (!in_header[fd].is_valid)
-				in_header[fd] = get_header(raw[fd]);
-			if (in_header[fd].is_valid && !chosen_instance[fd])
-			{
-				verbose(V) << fd << " - Got header." << std::endl;
-				webserver[fd] = choose_instance(in_header[fd], fd_to_port[fd]);
-				verbose(V) << fd << " - Has instance." << std::endl;
-				webserver[fd].chronometer.btn_reset();
-				timer[fd].btn_reset();
-				chosen_instance[fd] = true;
-			}
+			try_to_get_header(fd);
+			try_to_choose_instance(fd);
 			continue ;
 		}
 
-		if (!in_ended[fd] && chosen_instance[fd] \
-			&& webserver[fd].chronometer > INCOME_TIMEOUT)
-			in_ended[fd] = true;
-		if (in_ended[fd] && !body_ok[fd])
-		{
-			webserver[fd].in_body = get_body(raw[fd]);
-			verbose(V) << fd << " - In body mounted." << std::endl;
-			webserver[fd].set_props();
-			webserver[fd].set_sizes();
-			webserver[fd].fd = fd;
-			body_ok[fd] = true;
-		}
-		if (!chosen_response[fd] && in_ended[fd])
-		{
-			verbose(V) << fd << " - Will reply." << std::endl;
-			respond[fd] = ws_reply_instance(webserver[fd]); // ...oonn...
-			chosen_response[fd] = true;
-			verbose(V) << fd << " - Chosen reply." << std::endl;
-			response_working[fd] = true;
-		}
-		if (chosen_response[fd] && respond[fd].to_work_load)
-		{
-			response_working[fd] = true;
-		}
-		if (response_working[fd])
-		{
-			bool l(respond[fd].is_working_load(webserver[fd]));
-			bool s(respond[fd].is_working_save(webserver[fd]));
-			bool c(respond[fd].is_working_cgi(webserver[fd]));
-			if (l || s || c)
-				timer[fd].btn_reset();
-			response_working[fd] = l || s || c;
-		}
-		if (chosen_response[fd] && !response_working[fd] && !encapsulated[fd])
-		{
-			respond[fd].encapsulate();
-			encapsulated[fd] = true;
-			verbose(V) << fd << " - Response encapsulated." << std::endl;
-		}
+		check_in_finished(fd);
+		check_if_body_ok(fd);
+		choose_a_reply(fd);
+		process_response(fd);
 
 		if (*pollout)
 		{
 			if (encapsulated[fd])
 			{
 				*pollout = false;
-				sbytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0); // Writes to client.
-				if (sbytes < 0) // -1
+				bytes = send(fd, respond[fd].out_body.c_str(), respond[fd].package_length, 0); // Writes to client.
+				if (bytes < 0) // -1
 				{
-					verbose(V + 1) << "(webserv) Marked to remove by send fail " << fd << std::endl;
-					remove_client[fd] = true;
+					mark_to_remove(fd);
 					continue ;
 				}
-				if (sbytes == 0) {} // 0
-				if (sbytes > 0)
+				if (bytes == 0) {} // 0
+				if (bytes > 0)
 				{
-					if (sbytes > static_cast<int>(respond[fd].out_body.length()))
-						sbytes = respond[fd].out_body.length();
-					StringTools::consume_bytes(respond[fd].out_body, sbytes);
-					memuse -= sbytes;
-					verbose(V) << "(*pollout) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;
-					webserver[fd].chronometer.btn_reset();
-					timer[fd].btn_reset();
+					unload_body(fd, bytes);
+					mem_usage_substract(bytes);
+					reset_chronometers(fd);
 				}
-				verbose(V + 1) << fd << " - Sent " << sbytes << ", " << respond[fd].out_body.length() << " left." << std::endl;
-				out_ended[fd] = respond[fd].out_body.length() == 0;
-				remove_client[fd] = out_ended[fd];
-				if (remove_client[fd])
-					verbose(V + 1) << "(dispatch) Marked to remove by nothing left " << fd << std::endl;
+				check_for_anything_left(fd);
 			}
 			continue ;
 		}

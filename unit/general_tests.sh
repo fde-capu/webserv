@@ -1,8 +1,5 @@
 #!/bin/sh
 
-#XXX below
-# SAFE_LIMIT on Dispatch
-
 # unit test for webserv
 # by fde-capu
 
@@ -653,7 +650,7 @@ unittest "webserv must close connection"
 ##################################################################
 ##################################################################
 
-{ anounce Clean_Uploads \
+{ [ "$silent" != "" ] && anounce Clean_Uploads \
 \
 	'All large uploads were multipart/form-data.\n
 	Now reset test over again for chunked encoding tests.' \
@@ -1277,12 +1274,12 @@ more_than="95";
 stressupmulti
 
 stress_count=100;
-noise_size="3MB";
+noise_size="2MB";
 more_than="95";
 stressupmulti
 
 stress_count=50;
-noise_size="5MB";
+noise_size="3MB";
 more_than="45";
 stressupmulti
 
@@ -1291,7 +1288,7 @@ noise_size="10MB";
 more_than="9";
 stressupmulti
 
-stress_count=3;
+stress_count=2;
 noise_size="50MB";
 more_than="1";
 stressupmulti
@@ -1313,7 +1310,7 @@ noise_size="10MB";
 more_than="9";
 stressupchunk
 
-stress_count=3;
+stress_count=2;
 noise_size="50MB";
 more_than="1";
 stressupchunk
@@ -1321,3 +1318,5 @@ stressupchunk
 ##################################################################
 
 finish; # < < < < < < < < < < < < < < < < < < < < < End line!
+
+##################################################################

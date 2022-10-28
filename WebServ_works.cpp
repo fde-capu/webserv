@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 15:15:30 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 18:57:41 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,13 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 bool ws_reply_instance::is_working_load(ws_server_instance& si)
 {
 	int V(4);
-	int TIME_OUT = 0; // non-blocking.
 	int rbytes;
 	int poll_count(0);
 
 	if (!to_work_load || si.is_cgi())
 		return false;
 	init_buffer();
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 2. Loading file for reply.
+	poll_count = poll(&poll_list[0], poll_list.size(), ZERO_TIMEOUT); // 2. Loading file for reply.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)
@@ -115,7 +114,6 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 	int V(3);
 	std::string* data;
 	int poll_count;
-	int TIME_OUT = 0; // non-blocking.
 	int sbytes;
 	size_t wr_size;
 
@@ -149,7 +147,7 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 		"< will be saved into " << full_path << \
 		"." << std::endl;
 
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 3. Saving file.
+	poll_count = poll(&poll_list[0], poll_list.size(), ZERO_TIMEOUT); // 3. Saving file.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 	verbose(V + 1) << "(webserv) Saving poll size: " << poll_list.size() << std::endl;

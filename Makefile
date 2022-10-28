@@ -6,12 +6,12 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/28 15:09:07 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/10/28 20:03:54 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 MAKESILENT	  = @
-VERBOSE		  =	1
+VERBOSE		  =	0
 ENVS		  =	-DAGV_SKIP_CHECK=0
 TRACKMAKEFILE = Makefile
 
@@ -24,7 +24,7 @@ SRCS	=	FileString.cpp DataFold.cpp \
 			http_routes.cpp Chronometer.cpp \
 			WebServ_post_process.cpp WebServ_proc_header.cpp \
 			WebServ_operator_out.cpp WebServ_ports.cpp WebServ.cpp \
-			TemplatePage.cpp cgi.cpp WebServ_works.cpp
+			TemplatePage.cpp cgi.cpp WebServ_works.cpp WebServ_dispatches.cpp
 SRCS1	=	main.cpp
 HEAD	=	$(TRACKMAKEFILE) argval_ws.conf header.hpp \
 			FileString.hpp DataFold.hpp StringTools.hpp ArgVal.hpp \
@@ -44,9 +44,8 @@ VALFLAG	=	--tool=memcheck \
 			--show-reachable=yes
 DOT		=	@echo -n ".";
 
-all:		intro line $(NAME1)
-	@echo "\n************************\n"
 ws:			line $(NAME1)
+all:		intro line $(NAME1) lynx siege clean lynx-clean siege-clean line
 1:			ws
 intro:		line
 	@echo "Using CC CCFLAGS = $(CC) $(CCFLAGS)"

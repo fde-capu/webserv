@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 15:16:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 18:55:38 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 	int V(4);
 	std::string* data;
 	int poll_count;
-	int TIME_OUT = 0; // non-blocking.
 	int sbytes;
 	size_t wr_size;
 
@@ -40,7 +39,7 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 	else
 		data = &si.in_body;
 	
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 4. Dumping body into CGI.
+	poll_count = poll(&poll_list[0], poll_list.size(), ZERO_TIMEOUT); // 4. Dumping body into CGI.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 
@@ -90,7 +89,6 @@ bool ws_reply_instance::cgi_receiving()
 {
 	int V(4);
 	int poll_count;
-	int TIME_OUT = 0; // non-blocking.
 	int rbytes;
 
 	init_buffer();
@@ -98,7 +96,7 @@ bool ws_reply_instance::cgi_receiving()
 		chronometer.btn_reset();
 	if (chronometer > CGI_TIMEOUT)
 		return false;
-	poll_count = poll(&poll_list[0], poll_list.size(), TIME_OUT); // 5. Receiving data from CGI.
+	poll_count = poll(&poll_list[0], poll_list.size(), ZERO_TIMEOUT); // 5. Receiving data from CGI.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
 	for (size_t i = 0; i < poll_list.size(); i++)

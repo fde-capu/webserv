@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 23:23:05 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 19:45:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,6 +202,22 @@ class WebServ
 		std::map<int, Chronometer> timer;
 		std::map<int, bool> virgin;
 		int dispatch(std::map<int, std::pair<bool, bool> >&);
+		void if_timout_mark_remove(std::map<int, std::pair<bool, bool> >&);
+		bool is_marked_to_remove(int);
+		void mark_to_remove(int);
+		bool above_memory_limits(int, int);
+		void mem_usage_add(int);
+		void mem_usage_substract(int);
+		void reset_chronometers(int);
+		void choose_instance(int);
+		void check_in_finished(int);
+		void check_if_body_ok(int);
+		void choose_a_reply(int);
+		void process_response(int);
+		void unload_body(int, int&);
+		void try_to_get_header(int);
+		void try_to_choose_instance(int);
+		void check_for_anything_left(int);
 
 	public:
 		WebServ(DataFold&);
