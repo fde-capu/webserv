@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 19:45:33 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 23:16:01 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ struct ws_server_instance
 	bool multipart_finished;
 	bool is_cgi() const;
 	bool cgi_flag;
-	std::string location_path(const std::string = "") const;
+	std::string location_path(const std::string = "");
 	DataFold server_location_config(const std::string&, std::string = "") const;
 	std::string location_get_single(const std::string&, std::string = "") const;
 };

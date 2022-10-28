@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 20:04:54 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 23:14:04 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,16 +85,16 @@ void WebServ::hook_it()
 
 void WebServ::light_up()
 {
-	int V(2);
+	int V(3);
 	struct pollfd event;
 	std::map<int, std::pair<bool, bool> > ready;
 	int client;
 	int poll_count;
 
-	verbose(V) << "Light up server: " << \
+	verbose(V - 1) << "Light up server: " << \
 		config.getValStr("server_name") << std::endl;
 	if (!lit)
-		verbose(V) << config.getValStr("welcome_message") << std::endl;
+		verbose(V - 2) << config.getValStr("welcome_message") << std::endl;
 	
 	lit = true;
 	while (lit) // Main loop.
@@ -152,10 +152,10 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 	bool* pollout;
 	std::map<int, std::pair<bool, bool> >::iterator it;
 
-	TICK(ready.size() > 1 ? ready.size() / 3 : 0);
 	if_timout_mark_remove(ready);
 	for (it = ready.begin(); it != ready.end(); it++)
 	{
+		TICK(ready.size() > 1 ? ready.size() / 2 : 0);
 		fd = it->first;
 		pollin = &(it->second.first);
 		pollout = &(it->second.second);

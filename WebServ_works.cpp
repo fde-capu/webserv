@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 18:57:41 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 22:49:35 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 {
-	int V(3);
+	int V(4);
 	bool action_dump(false);
 	bool action_get(false);
 
@@ -111,7 +111,7 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 
 bool ws_reply_instance::is_working_save(ws_server_instance& si)
 {
-	int V(3);
+	int V(4);
 	std::string* data;
 	int poll_count;
 	int sbytes;

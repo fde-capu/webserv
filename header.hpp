@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 19:51:18 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 23:05:10 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 # define WS_ARGVAL "argval_ws.conf"
 # define BUFFER_SIZE 10485760
 # define MEMORY_LIMIT 64000000
+# define SAFE_LIMIT 65000000
 # define ASYNC_CHUNK_SIZE 1048576
 # define CGI_TIMEOUT 250
-# define SAFE_LIMIT 65000000
 # define INCOME_TIMEOUT 50
 # define ACTIVITY_TIMEOUT 2000
 

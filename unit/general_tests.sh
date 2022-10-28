@@ -115,6 +115,7 @@ run()
 
 stressupmulti()
 {
+	sleep 4
 	{ anounce STRESS_UPLOADS_MULTI \
 		\
 			"Stress testing $stress_count uploads simultanouslly of $noise_size.\n
@@ -125,9 +126,7 @@ stressupmulti()
 		set +x;
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
-		[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
-		[ "$ultrasilent" != "" ] && echo "";
-		sleep 1
+		[ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
 		i=1;
 		while [ "$i" -le "$stress_count" ]; do
 			[ "$ultrasilent" = "" ] && echo -n "\r $i ";
@@ -143,6 +142,7 @@ stressupmulti()
 
 stressupchunk()
 {
+	sleep 4
 	{ anounce STRESS_UPLOADS_CHUNK \
 		\
 			"Stress testing $stress_count chunked uploads simultanouslly of $noise_size.\n
@@ -153,9 +153,7 @@ stressupchunk()
 		set +x;
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
-		[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
-		[ "$ultrasilent" != "" ] && echo "";
-		sleep 1
+		[ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
 		i=1;
 		while [ "$i" -le "$stress_count" ]; do
 			sleep 0.05
@@ -1257,7 +1255,7 @@ stress_count=142;
 
 set +x;
 rm -f stress_out;
-[ "$ultrasilent" != "" ] && echo "";
+[ "$ultrasilent" = "" ] && echo "";
 i=1;
 while [ "$i" -le "$stress_count" ]; do
 	[ "$ultrasilent" = "" ] && echo -n "\r $i";
@@ -1276,9 +1274,9 @@ noise_size="1MB";
 more_than="95";
 stressupmulti
 
-stress_count=100;
+stress_count=50;
 noise_size="2MB";
-more_than="95";
+more_than="45";
 stressupmulti
 
 stress_count=20;

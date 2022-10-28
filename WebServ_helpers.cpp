@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 20:32:50 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 23:17:23 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,9 +413,10 @@ std::string ws_server_instance::location_get_single \
 	return 0;
 }
 
-std::string ws_server_instance::location_path(const std::string default_file) const
+std::string ws_server_instance::location_path(const std::string default_file)
 {
-	int V(3);
+	int V(5);
+
 	std::string html_dir = config.getValStr("root");
 	std::string uri2root = location_get_single("root", default_file);
 	std::string sys_dir = root_config.getValStr("root");
@@ -449,12 +450,12 @@ std::string ws_server_instance::location_path(const std::string default_file) co
 	{
 		full_path += "/" + default_file;
 		stool.remove_rep_char(full_path, '/');
-		verbose(V) << "(location_path) Returns (is directory, append file): " \
+		verbose(V - 1) << "(location_path) " \
 			<< full_path << "." << std::endl;
 		return full_path;
 	}
 	stool.remove_rep_char(full_path, '/');
-	verbose(V) << "(location_path) Returns: " << \
+	verbose(V - 1) << "(location_path) " << \
 		full_path << "." << std::endl;
 	return full_path;
 }
