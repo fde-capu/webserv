@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 00:53:02 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 01:50:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,8 +247,6 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 		if (in_ended[fd] && !body_ok[fd])
 		{
 			webserver[fd].in_body = get_body(raw[fd]);
-			memuse += webserver[fd].in_body.length();
-			verbose(-2) << "(dispatch) in_body memuse += " << webserver[fd].in_body.length() << " (" << WebServ::memuse << ")" << std::endl;
 			verbose(V) << fd << " - In body mounted." << std::endl;
 			webserver[fd].set_props();
 			webserver[fd].set_sizes();
@@ -298,6 +296,8 @@ int WebServ::dispatch(std::map<int, std::pair<bool, bool> >& ready)
 				if (sbytes == 0) {} // 0
 				if (sbytes > 0)
 				{
+					if (sbytes > static_cast<int>(respond[fd].out_body.length()))
+						sbytes = respond[fd].out_body.length();
 					StringTools::consume_bytes(respond[fd].out_body, sbytes);
 					memuse -= sbytes;
 					verbose(-2) << "(*pollout) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;

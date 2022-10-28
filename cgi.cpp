@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 23:50:49 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 02:11:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 {
-	int V(2);
+	int V(4);
 	std::string* data;
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
@@ -62,8 +62,11 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 			if (sbytes > 0)
 			{
 				StringTools::just_consume_bytes(*data, sbytes);
-				WebServ::memuse -= sbytes;
-				verbose(-2) << "(cgi_dumping) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;
+				if (data == &si.in_body)
+				{
+					WebServ::memuse -= sbytes;
+					verbose(-2) << "(cgi_dumping) memuse -= " << sbytes << " (" << WebServ::memuse << ")" << std::endl;
+				}
 			}
 			if (si.is_multipart())
 				data = &si.multipart_content;
@@ -85,7 +88,7 @@ bool ws_reply_instance::cgi_dumping(ws_server_instance& si)
 
 bool ws_reply_instance::cgi_receiving()
 {
-	int V(2);
+	int V(4);
 	int poll_count;
 	int TIME_OUT = 0; // non-blocking.
 	int rbytes;

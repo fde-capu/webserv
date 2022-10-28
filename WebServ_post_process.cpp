@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/15 22:50:52 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 00:39:31 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 01:31:52 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,10 @@ int ws_server_instance::process_post()
 
 void ws_server_instance::mount_chunked()
 {
-	static int V(3);
+	static int V(4);
 	std::string chunk_size_hex;
 	std::string chunk_extension;
 	size_t chunk_size_bytes;
-	size_t in_before(in_body.length());
-	size_t in_after;
-	size_t chunked_before(chunked_content.length());
-	size_t chunked_after;
 
 	set_sizes();
 	if (in_header.method == "GET")
@@ -61,14 +57,7 @@ void ws_server_instance::mount_chunked()
 			return ;
 		}
 		chunked_content += StringTools::consume_bytes(in_body, chunk_size_bytes);
-		chunked_after = chunked_content.length();
 		StringTools::just_consume_until(in_body, "\r\n");
-		in_after = in_body.length();
-
-		WebServ::memuse += (static_cast<int>(in_after) - static_cast<int>(in_before));
-		verbose(-2) << "(mount_chunked) in_body memuse += " << (static_cast<int>(in_after) - static_cast<int>(in_before)) << " (" << WebServ::memuse << ")" << std::endl;
-		WebServ::memuse += (chunked_after - chunked_before);
-		verbose(-2) << "(mount_chunked) chunked_content memuse += " << (chunked_after - chunked_before) << " (" << WebServ::memuse << ")" << std::endl;
 
 		verbose(V + 1) << "(mount_chunked) chunked_content " << SHORT(chunked_content) << std::endl;
 		verbose(V + 1) << "(mount_chunked) in_body " << SHORT(in_body) << std::endl;

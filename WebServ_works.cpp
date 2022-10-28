@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 00:29:48 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 01:44:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 
 bool ws_reply_instance::is_working_load(ws_server_instance& si)
 {
-	int V(3);
+	int V(4);
 	int TIME_OUT = 0; // non-blocking.
 	int rbytes;
 	int poll_count(0);

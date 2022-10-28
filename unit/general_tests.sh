@@ -614,8 +614,6 @@ unittest "webserv must close connection"
 ###################################################################
 ###################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce CHUNK_99_WORDS_FAIL \
 \
 	'POST chunked tests. \n
@@ -1241,6 +1239,8 @@ stress_count=10;
 noise_size="10MB";
 more_than="9";
 stressupmulti
+
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 stress_count=3;
 noise_size="50MB";

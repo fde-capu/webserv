@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 00:58:06 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/28 02:28:54 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ int ws_reply_instance::list_autoindex(std::string dir, ws_server_instance& si)
 		g_config.getValStr("server_name") + \
 		"</title><body><h1>" + g_config.getValStr("server_name") + \
 		"</h1>" + list + "</body></html>";
+	WebServ::memuse += out_body.length();
+	verbose(-2) << "(list_autoindex) memuse ajust: " << WebServ::memuse << std::endl;
 	return 200;
 }
 
@@ -485,6 +487,8 @@ void ws_reply_instance::header_from_body()
 	size_t dbreak[3];
 	size_t h_body(std::string::npos);
 	size_t dblen;
+	int b_before(out_body.length());
+	int b_after;
 
 	out_header.status = atoi(StringTools::query_for("Status", out_body).c_str());
 	out_header.status_msg = StringTools::query_for(itoa(out_header.status), out_body);
@@ -500,6 +504,9 @@ void ws_reply_instance::header_from_body()
 	dblen = h_body == dbreak[0] ? 4 : 2;
 	if (h_body != std::string::npos)
 		out_body.erase(0, h_body + dblen);
+	b_after = out_body.length();
+	WebServ::memuse -= (b_before - b_after);
+	verbose(-2) << "(header_from_body) memuse adjust to " << WebServ::memuse << std::endl;
 }
 
 bool ws_server_instance::is_cgi() const
@@ -521,12 +528,18 @@ void ws_reply_instance::init_buffer()
 void ws_reply_instance::template_page(size_t error_code, std::string u_filename)
 {
 	int V(4);
+	int o_before(out_body.length());
+	int o_after;
 
 	file_name = u_filename != "" ? u_filename : TemplatePage::for_code(error_code);
 	verbose(V) << "(template_page) file_name " << file_name << std::endl;
 	if (!FileString::is_file(file_name) || !FileString::exists(file_name))
 	{
 		out_body = "Response code: " + itoa(error_code) + "\n";
+		o_after = out_body.length();
+		WebServ::memuse -= o_before;
+		WebServ::memuse += o_after;
+		verbose(-2) << "(template_page) memuse adjust to " << WebServ::memuse << std::endl;
 		return ;
 	}
 	file_page = open(file_name.c_str(), O_CLOEXEC | O_NONBLOCK | O_RDONLY);
