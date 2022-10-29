@@ -6,11 +6,11 @@
 # All variables are true if some string "anything" and false as empty string.
 
 name_server="127.0.0.1";
-step_by_step="";
+step_by_step="true";
 clean_upfiles_after_test="";
-verbose="";
-show_transactions="";
+verbose="true";
 ultrasilent="";
+silent="true";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -29,8 +29,6 @@ resetvars()
 	outdir="";
 	chunked="";
 	trace="";
-	[ "$show_transactions" = "" ] && silent="true";
-	[ "$show_transactions" != "" ] && silent="";
 	show_output="";
 	short_output="";
 	compare_size="";
@@ -123,7 +121,6 @@ stressupmulti()
 			\
 			; } 2> /dev/null
 
-		set +x;
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
 		[ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
@@ -150,7 +147,6 @@ stressupchunk()
 			\
 			; } 2> /dev/null
 
-		set +x;
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
 		[ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
@@ -171,35 +167,29 @@ stressupchunk()
 enterkey()
 {
 	[ "$step_by_step" = "" ] && return;
-	{ set +x; } 2> /dev/null
 	echo -n "\t\t\t\t\t--> Next ";
 	read anything;
-	set -x
 }
 
 div()
 {
-	{ set +x; } 2> /dev/null
 	echo "\n\n # # # # # #\n"
 }
 
 divider()
 {
-	{ set +x; } 2> /dev/null
-	[ "$silent = "" ] && [ "$ultrasilent" = "" ] && echo "\n\n######### $1 #####################################"
-	set -x
+	[ "$silent" = "" ] && echo "\n\n######### $1 #####################################";
 }
 
 anounce()
 {
 	enterkey;
 	if [ "$silent" = "" ] ; then
-		{ divider $1; } 2> /dev/null
-		echo $2
-		{ echo '-------------------------------------------------'; } 2> /dev/null
+		divider $1;
+		echo $2;
+		echo '-------------------------------------------------';
 	fi
-	[ "$silent" != "" ] && [ "$ultrasilent" = "" ] && echo -n "$1 | ";
-	{ set +x; } 2> /dev/null
+	passtitle="$1";
 }
 
 getcode()
@@ -234,9 +224,10 @@ finish()
 
 colorscore()
 {
+	[ "$silent" != "" ] && echo -n "$passtitle | ";
 	a=`echo "$2"`;
 	b=`echo "$3"`;
-	[ "$ultrasilent" = "" ] && echo -n "$1 ";
+	echo -n "$1 ";
 	if [ "$a" = "$b" ] ; then
 		printf "\e[32m%s\e[37m " "[ OK ]";
 		ok_count=$((ok_count+1));
@@ -286,12 +277,12 @@ done
 
 clean()
 {
-	[ "$silent" = "" ] && { ${MYDIR}/clean_uploads.sh; }
-	[ "$silent" != "" ] && { ${MYDIR}/clean_uploads.sh; } > /dev/null
+	anounce "CLEAN" 'Clean test files.' && { ${MYDIR}/clean_uploads.sh; }
 }
 
-{ set +x; } 2> /dev/null
-rm -f tmp_response;
+{ set +x; } 2> /dev/null;
+
+clean
 if false; then
 	echo "dummy line so jump may be right below" 2> /dev/null
 

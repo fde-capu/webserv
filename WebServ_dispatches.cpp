@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 18:58:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 19:59:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/29 18:39:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ bool WebServ::above_memory_limits(int fd, int bytes)
 
 void WebServ::mem_usage_add(int bytes)
 {
-	int V(2);
+	int V(4);
 
 	memuse += bytes;
 	verbose(V) << " * memuse += " << bytes << " (" << WebServ::memuse << ")" << std::endl;
@@ -86,7 +86,7 @@ void WebServ::mem_usage_add(int bytes)
 
 void WebServ::mem_usage_substract(int bytes)
 {
-	int V(2);
+	int V(4);
 
 	memuse -= bytes;
 	verbose(V) << " * memuse -= " << bytes << " (" << WebServ::memuse << ")" << std::endl;
