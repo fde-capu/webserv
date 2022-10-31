@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 23:14:04 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/31 15:36:55 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ void WebServ::light_up()
 				{
 					if (is_a_webserv(event.fd))
 					{
-						verbose(V) << " . . . . . . . . . . . . . . . " << std::endl;
+						verbose(2) << " . . . . . . . . . . . . . . . " << std::endl;
 						dup_into_poll(event.fd);
 						continue ;
 					}

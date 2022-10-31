@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/31 14:58:40 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/31 15:30:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 {
-	int V(4);
+	int V(3);
 	bool action_dump(false);
 	bool action_get(false);
 
@@ -41,7 +41,7 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 			wait(0);
 			getting_from_cgi = false;
 			close(pipe_cp[0]);
-			verbose(V) << "(is_working_cgi) Got >>>" << LONG(out_body) << "<<<" << std::endl;
+			verbose(V) << "(is_working_cgi) Got >>>" << SHORT(out_body) << "<<<" << std::endl;
 			header_from_body();
 			if (si.in_header.is_post())
 			{
@@ -60,7 +60,7 @@ bool ws_reply_instance::is_working_cgi(ws_server_instance& si)
 
 bool ws_reply_instance::is_working_load(ws_server_instance& si)
 {
-	int V(4);
+	int V(2);
 	int rbytes;
 	int poll_count(0);
 
@@ -82,7 +82,7 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 			verbose(V) << "(is_working_load) " << rbytes << " bytes from " << poll_list[i].fd << "." << std::endl;
 			if (rbytes < 0) // -1
 			{
-				verbose(V) << "(is_working_load) Cannot read " << poll_list[i].fd << std::endl;
+				verbose(V) << "(is_working_load) Finished. Cannot read " << poll_list[i].fd << std::endl;
 				to_work_load = false;
 				close(file_page);
 				file_page = 0;
@@ -90,7 +90,7 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 			}
 			if (rbytes == 0) // 0
 			{
-				verbose(V) << "(is_working_load) Nothing." << std::endl;
+				verbose(V) << "(is_working_load) Finished. Nothing to read." << std::endl;
 				to_work_load = false;
 				close(file_page);
 				file_page = 0;
@@ -98,10 +98,10 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 			}
 			if (rbytes > 0)
 			{
-				verbose(V) << "(is_working_load) Append." << std::endl;
+				verbose(V + 1) << "(is_working_load) Append." << std::endl;
 				out_body.append(buffer, rbytes);
 				WebServ::memuse += rbytes;
-				verbose(V) << "(is_working_load) memuse += " << rbytes << " (" << WebServ::memuse << ")" << std::endl;
+				verbose(V + 1) << "(is_working_load) memuse += " << rbytes << " (" << WebServ::memuse << ")" << std::endl;
 				return true;
 			}
 		}

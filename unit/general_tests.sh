@@ -298,6 +298,8 @@ if false; then
 
 ############################################################### Begin
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -507,8 +509,6 @@ dog "${MYDIR}/confs/html/99B.words";
 
 ##################################################################
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 { anounce MULTI_99_NOISE \
 \
 	'POST test. 99B again, noise this time.' \
@@ -547,9 +547,7 @@ noise="99"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
-unittest "Multipart post with noise";
-
-finish ; # XXX
+unittest "Multipart post noise less than existent file";
 
 ##################################################################
 
