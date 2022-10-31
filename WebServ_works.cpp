@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/21 17:57:36 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 22:49:35 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/10/31 14:58:40 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ bool ws_reply_instance::is_working_load(ws_server_instance& si)
 
 bool ws_reply_instance::is_working_save(ws_server_instance& si)
 {
-	int V(4);
+	int V(2);
 	std::string* data;
 	int poll_count;
 	int sbytes;
@@ -143,14 +143,13 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 		return false;
 	}
 
-	verbose(V + 0) << "(webserv) >" << SHORT((*data)) << \
+	verbose(V + 1) << "(webserv) >" << SHORT((*data)) << \
 		"< will be saved into " << full_path << \
 		"." << std::endl;
 
 	poll_count = poll(&poll_list[0], poll_list.size(), ZERO_TIMEOUT); // 3. Saving file.
 	if (poll_count == -1)
 		throw std::domain_error("(webserv) Poll error.");
-	verbose(V + 1) << "(webserv) Saving poll size: " << poll_list.size() << std::endl;
 	for (size_t i = 0; i < poll_list.size(); i++)
 	{
 		if (poll_list[i].fd != file_save)
@@ -166,9 +165,7 @@ bool ws_reply_instance::is_working_save(ws_server_instance& si)
 				return false;
 			if (sbytes == 0) {} // 0
 			if (sbytes > 0)
-			{
 				StringTools::consume_bytes(*data, sbytes);
-			}
 			if (si.is_multipart())
 				data = &si.multipart_content;
 			else if (si.is_chunked())

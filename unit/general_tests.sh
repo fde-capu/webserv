@@ -6,9 +6,9 @@
 # All variables are true if some string "anything" and false as empty string.
 
 name_server="127.0.0.1";
-step_by_step="true";
+step_by_step="";
 clean_upfiles_after_test="";
-silent="";
+silent="true";
 ultrasilent="";
 
 MYSELF="$(realpath "$0")"
@@ -298,8 +298,6 @@ if false; then
 
 ############################################################### Begin
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -509,6 +507,8 @@ dog "${MYDIR}/confs/html/99B.words";
 
 ##################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 { anounce MULTI_99_NOISE \
 \
 	'POST test. 99B again, noise this time.' \
@@ -534,6 +534,22 @@ outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
 unittest "Multipart noise 100B";
+
+##################################################################
+
+{ anounce MULTI_99_NOISE_AGAIN \
+\
+	'POST test. 99B again, this time file has to have been overidden.' \
+\
+; } 2> /dev/null
+
+noise="99"
+outdir="${MYDIR}/confs/html";
+cmd="curl http://$name_server:3490";
+code="201";
+unittest "Multipart post with noise";
+
+finish ; # XXX
 
 ##################################################################
 
