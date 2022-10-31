@@ -8,9 +8,8 @@
 name_server="127.0.0.1";
 step_by_step="true";
 clean_upfiles_after_test="";
-verbose="true";
+silent="";
 ultrasilent="";
-silent="true";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -43,7 +42,7 @@ unittest()
 	if [ "$noise" != "" ] ; then
 		upfile="file.noise";
 		head -c $noise /dev/urandom > "${MYDIR}/$upfile";
-		[ "$verbose" != "" ] && echo "upfile:" && ls -l "${MYDIR}/$upfile";
+		[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "upfile:" && ls -l "${MYDIR}/$upfile";
 		[ "$chunked" != "" ] && fullcmd="$fullcmd/$upfile";
 	fi
 
@@ -60,14 +59,14 @@ unittest()
 
 	[ "$trace" != "" ] && fullcmd="$fullcmd --trace-ascii tmp_trace_ascii";
 	fullcmd="$fullcmd -o tmp_response";
-	if [ "$silent" != "" ] ; then
+	if [ "$silent" != "" ] || [ "$ultrasilent" != "" ] ; then
 		fullcmd="$fullcmd 2> /dev/null";
 		out=`eval "$fullcmd" 2> /dev/null`;
 	else
 		out=`eval "$fullcmd"`;
 	fi
 
-	if [ "$silent" = "" ] ; then
+	if [ "$silent" = "" ] && [ "$ultrasilent" = "" ] ; then
 		[ "$show_output" != "" ] && echo "<<<" && cat tmp_response && echo "<<<";
 		[ "$short_output" != "" ] && ls -l tmp_response && head -c 80 tmp_response && echo "...";
 	fi
@@ -77,7 +76,7 @@ unittest()
 		exit 1;
 	fi
 
-	[ "$fail" = "" ] && [ "$testfile" != "" ] && [ "$silent" = "" ] && echo "File comparison: $testfile";
+	[ "$fail" = "" ] && [ "$testfile" != "" ] && [ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "File comparison: $testfile";
 
 	colorscore "$1 | expect $code, got $out" "$out" "$code"
 
@@ -90,8 +89,8 @@ unittest()
 		colorscore "$1 | compare sizes" "`ls -l tmp_response | awk '{print $5}'`" "$compare_size";
 	fi
 
-	[ "$trace" != "" ] && [ "$silent" = "" ] && cat tmp_trace_ascii;
-	[ "$message" != "" ] && [ "$silent" = "" ] && echo "\033[0;33m$message\033[0;37m";
+	[ "$trace" != "" ] && [ "$silent" = "" ] && [ "$ultrasilent" = "" ] && cat tmp_trace_ascii;
+	[ "$message" != "" ] && [ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "\033[0;33m$message\033[0;37m";
 
 	[ "$clean_upfiles_after_test" != "" ] && [ "$noise" != "" ] && rm -f ${MYDIR}/$upfile;
 	[ "$clean_upfiles_after_test" != "" ] && [ "$trace" != "" ] && rm -f tmp_trace_ascii;
@@ -103,7 +102,7 @@ unittest()
 run()
 {
 	fullcmd="$1";
-	if [ "$silent" != "" ] ; then
+	if [ "$silent" != "" ] || [ "$ultrasilent" != "" ] ; then
 		fullcmd="$fullcmd 2> /dev/null";
 		out=`eval "$fullcmd" 2> /dev/null`;
 	else
@@ -123,16 +122,17 @@ stressupmulti()
 
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
-		[ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
+		[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "MULTIPART | $stress_count x $noise_size";
+		[ "$silent" != "" ] && echo -n "MULTIPART | $stress_count x $noise_size | ";
 		i=1;
 		while [ "$i" -le "$stress_count" ]; do
-			[ "$ultrasilent" = "" ] && echo -n "\r $i ";
+			[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo -n "\r $i ";
 			curl -H "Expect:" http://127.0.0.1:3490/large_upload -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
 			i=$(( i + 1 ));
 		done;
 		wait;
 		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
-		colorge "\rTotal $stress_count, accept $more_than, score $stress_result" "$stress_result" "$more_than";
+		colorge "Total $stress_count, accept $more_than, score $stress_result" "$stress_result" "$more_than";
 		rm -f stress_out;
 		rm -f file.noise;
 }
@@ -149,17 +149,18 @@ stressupchunk()
 
 		rm -f stress_out;
 		head -c $noise_size /dev/urandom > file.noise;
-		[ "$ultrasilent" = "" ] && echo "$stress_count x $noise_size";
+		[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "CHUNKED | $stress_count x $noise_size";
+		[ "$silent" != "" ] && echo -n "CHUNKED | $stress_count x $noise_size | ";
 		i=1;
 		while [ "$i" -le "$stress_count" ]; do
 			sleep 0.05
-			[ "$ultrasilent" = "" ] && echo -n "\r $i ";
+			[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo -n "\r $i ";
 			curl -H "Expect:" -H "Content-Type: test/file" -H "Transfer-Encoding: chunked" http://127.0.0.1:3490/large_upload/file.nois -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
 			i=$(( i + 1 ));
 		done;
 		wait;
 		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
-		colorge "\rTotal $stress_count, accept $more_than, score $stress_result" "$stress_result" "$more_than";
+		colorge "Total $stress_count, accept $more_than, score $stress_result" "$stress_result" "$more_than";
 		rm -f stress_out;
 		rm -f file.noise;
 }
@@ -178,16 +179,20 @@ div()
 
 divider()
 {
-	[ "$silent" = "" ] && echo "\n\n######### $1 #####################################";
+	if [ "$ultrasilent" = "" ] ; then
+		[ "$silent" = "" ] && echo "\n\n######### $1 #####################################";
+	fi
 }
 
 anounce()
 {
 	enterkey;
-	if [ "$silent" = "" ] ; then
-		divider $1;
-		echo $2;
-		echo '-------------------------------------------------';
+	if [ "$ultrasilent" = "" ] ; then
+		if [ "$silent" = "" ] ; then
+			divider $1;
+			echo $2;
+			echo '-------------------------------------------------';
+		fi
 	fi
 	passtitle="$1";
 }
@@ -212,8 +217,8 @@ finish()
 	\
 	; } 2> /dev/null
 	[ "$silent" != "" ] && echo "";
-	echo " Total:\t\t $tot_count";
-	echo "\033[0;32m [ OK ] \t $ok_count \033[0;37m";
+	[ "$ultrasilent" = "" ] && echo " Total:\t\t $tot_count";
+	[ "$ultrasilent" = "" ] && echo "\033[0;32m [ OK ] \t $ok_count \033[0;37m";
 	if [ "$ko_count" = "0" ] ; then
 		echo "\033[0;32m Nice! \033[0;37m\n";
 	else
@@ -224,10 +229,10 @@ finish()
 
 colorscore()
 {
-	[ "$silent" != "" ] && echo -n "$passtitle | ";
+	[ "$silent" != "" ] && [ "$ultrasilent" = "" ] && echo -n "$passtitle | ";
 	a=`echo "$2"`;
 	b=`echo "$3"`;
-	echo -n "$1 ";
+	[ "$ultrasilent" = "" ] && echo -n "$1 ";
 	if [ "$a" = "$b" ] ; then
 		printf "\e[32m%s\e[37m " "[ OK ]";
 		ok_count=$((ok_count+1));
@@ -277,7 +282,12 @@ done
 
 clean()
 {
-	anounce "CLEAN" 'Clean test files.' && { ${MYDIR}/clean_uploads.sh; }
+	[ "$ultrasilent" = "" ] && [ "$silent" = "" ] && anounce "CLEAN" 'Clean test files.' && { ${MYDIR}/clean_uploads.sh; }
+	if [ "$ultrasilent" = "" ] ; then
+		[ "$silent" != "" ] && { ${MYDIR}/clean_uploads.sh; } > /dev/null
+	else
+		{ ${MYDIR}/clean_uploads.sh; } > /dev/null
+	fi
 }
 
 { set +x; } 2> /dev/null;
@@ -1235,8 +1245,6 @@ rm cookiefile;
 ##################################################################
 ##################################################################
 
-stress_count=142;
-
 { anounce STRESS_GET \
 \
 	"Stress testing $stress_count calls. Wait for it.\n
@@ -1244,9 +1252,11 @@ stress_count=142;
 \
 ; } 2> /dev/null
 
+stress_count=142;
+
 set +x;
 rm -f stress_out;
-[ "$ultrasilent" = "" ] && echo "";
+[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "";
 i=1;
 while [ "$i" -le "$stress_count" ]; do
 	[ "$ultrasilent" = "" ] && echo -n "\r $i";
