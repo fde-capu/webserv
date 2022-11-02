@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/11/02 21:28:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 21:48:50 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,8 @@ WebServ::~WebServ()
 		if (close(it->first) == -1)
 			verbose(CRITICAL) << "(webserv) Could not close port." << std::endl;
 	}
+	for (size_t i = 0; i < SYSTEM_ULIMIT_SN; ++i)
+		close (i);
 	free(static_cast<void*>(buffer));
 }
 

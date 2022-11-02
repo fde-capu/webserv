@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/18 19:19:04 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 23:05:10 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 21:48:33 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # define CGI_TIMEOUT 250
 # define INCOME_TIMEOUT 50
 # define ACTIVITY_TIMEOUT 2000
+# define SYSTEM_ULIMIT_SN 1024
 
 # include <map>
 # include <string>

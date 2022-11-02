@@ -1,4 +1,6 @@
 #!/bin/sh
+# XXX track fds after stress
+# XXX track fds after general
 # XXX open ports
 # XXX redirect URL
 
