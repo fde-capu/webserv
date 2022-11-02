@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 18:58:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/11/02 21:25:47 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 22:32:59 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ void WebServ::mem_usage_substract(int bytes)
 	int V(4);
 
 	memuse -= bytes;
+	if (memuse < 0)
+		memuse = 0;
 	verbose(V) << " * memuse -= " << bytes << " (" << WebServ::memuse << ")" << std::endl;
 }
 
