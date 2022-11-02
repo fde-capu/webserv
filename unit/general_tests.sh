@@ -1,6 +1,7 @@
 #!/bin/sh
 # XXX --resolve method
 # XXX open ports
+# XXX redirect URL
 
 # unit test for webserv
 # by fde-capu
@@ -8,9 +9,9 @@
 # All variables are true if some string "anything" and false as empty string.
 
 name_server="127.0.0.1";
-step_by_step="yes";
+step_by_step="";
 clean_upfiles_after_test="";
-silent="";
+silent="yes";
 ultrasilent="";
 
 MYSELF="$(realpath "$0")"
@@ -305,6 +306,8 @@ if false; then
 
 ############################################################### Begin
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -438,12 +441,12 @@ unittest "DELETE rejection";
 
 { anounce UNKNOWN_METHOD \
 \
-	':3491 Unknow method, returns Not Allowed.' \
+	':3491 Unknow method, returns Not Implemented.' \
 \
 ; } 2> /dev/null
 
 cmd="curl -X WTFMETHOD http://$name_server:3491";
-code="405";
+code="501";
 fail="true";
 unittest "Unknown method";
 
@@ -566,7 +569,7 @@ noise="99"
 outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
-unittest "Multipart post noise less than existent file";
+unittest "Multipart post noise truncate file";
 
 ##################################################################
 
@@ -678,7 +681,7 @@ cmd="curl http://$name_server:3490/large_upload"
 code="424"
 fail="true"
 message="Response code might have been chosen differently."
-unittest "webserv must close connection"
+unittest "webserv close connection"
 
 ##################################################################
 ##################################################################
@@ -696,8 +699,6 @@ clean;
 ###################################################################
 ###################################################################
 ###################################################################
-
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 
 { anounce PLAIN_TEXT_FAIL \
 \
@@ -938,7 +939,7 @@ unittest "Get cgi somesub/sh";
 cmd="curl http://$name_server:3490/uri_alias/hi.sh"
 code="200";
 show_output="true";
-unittest "Get cgi uri_alias/hi.sh";
+unittest "Get cgi alias";
 
 ##################################################################
 
