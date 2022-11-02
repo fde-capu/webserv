@@ -1,5 +1,6 @@
 #!/bin/sh
 # XXX --resolve method
+# XXX open ports
 
 # unit test for webserv
 # by fde-capu
@@ -7,9 +8,9 @@
 # All variables are true if some string "anything" and false as empty string.
 
 name_server="127.0.0.1";
-step_by_step="";
+step_by_step="yes";
 clean_upfiles_after_test="";
-silent="true";
+silent="";
 ultrasilent="";
 
 MYSELF="$(realpath "$0")"
@@ -28,6 +29,7 @@ resetvars()
 	fail="";
 	outdir="";
 	chunked="";
+	plaintext="";
 	trace="";
 	show_output="";
 	short_output="";
@@ -55,6 +57,10 @@ unittest()
 		else
 			fullcmd="$fullcmd --data-binary \"@${MYDIR}/$upfile\"";
 			fullcmd="$fullcmd -H \"Expect:\" -H \"Content-Type: test/file\" -H \"Transfer-Encoding: chunked\""
+		fi
+	else
+		if [ "$plaintext" != "" ] ; then
+			fullcmd="$fullcmd -H \"Content-Type: plain/text\" -d \"$plaintext\"";
 		fi
 	fi
 
@@ -299,8 +305,6 @@ if false; then
 
 ############################################################### Begin
 
-fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
-
 ##################################################################
 
 { anounce BASIC_ONE \
@@ -405,19 +409,6 @@ unittest "Client redirecting";
 ##################################################################
 ##################################################################
 
-{ anounce UNKNOWN_SERVERNAME \
-\
-	'If server_name is unexistent, defaults to previous: 200' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:3490 -H 'Host: wtf_server'";
-testfile="$MYDIR/confs/html/index.htm";
-code="200";
-unittest "Unexistent server_name defaults to first";
-
-##################################################################
-
 { anounce GET_REFUSAL \
 \
 	':3491 accepts only GET. Testing POST is not allowed. 405' \
@@ -470,6 +461,19 @@ unittest "server_name w/o root (forbidden)";
 
 ##################################################################
 
+{ anounce UNKNOWN_SERVERNAME \
+\
+	'If server_name is unexistent, defaults to previous: 200' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3490 -H 'Host: wtf_server'";
+testfile="$MYDIR/confs/html/index.htm";
+code="200";
+unittest "Unexistent server_name defaults to first";
+
+##################################################################
+
 { anounce FORBIDDEN \
 \
 	':3492 is solenly a `server { listen 3492; }`, \n
@@ -487,6 +491,23 @@ unittest "Forbidden";
 ##################################################################
 ##################################################################
 
+{ anounce PLAIN_TEXT_POST \
+\
+	'Basic plain/text.' \
+\
+; } 2> /dev/null
+
+plaintext="This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!";
+cmd="curl http://$name_server:3490/99B.words";
+outdir="${MYDIR}/confs/html/";
+code="201";
+unittest "Simple post multipart";
+list "${MYDIR}/confs/html/99B.words";
+dog "${MYDIR}/confs/html/99B.words";
+rm "${MYDIR}/confs/html/99B.words";
+
+##################################################################
+
 { anounce MULTI_99_WORDS \
 \
 	'POST multipart/form-data tests. \n
@@ -499,10 +520,11 @@ cmd="curl http://$name_server:3490";
 outdir="${MYDIR}/confs/html/";
 upfile="99B.words" 
 code="201";
-unittest "Simple post";
+unittest "Simple post multipart";
 rm ${MYDIR}/99B.words
 list "${MYDIR}/confs/html/99B.words";
 dog "${MYDIR}/confs/html/99B.words";
+rm "${MYDIR}/confs/html/99B.words";
 
 ##################################################################
 
@@ -675,6 +697,24 @@ clean;
 ###################################################################
 ###################################################################
 
+fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
+
+{ anounce PLAIN_TEXT_FAIL \
+\
+	'Plain/text fails without file name.' \
+\
+; } 2> /dev/null
+
+plaintext="This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!";
+cmd="curl http://$name_server:3490/"; # <------ No file name!
+outdir="${MYDIR}/confs/html/";
+code="201";
+unittest "Simple post multipart";
+list "${MYDIR}/confs/html/99B.words";
+dog "${MYDIR}/confs/html/99B.words";
+rm "${MYDIR}/confs/html/99B.words";
+
+##################################################################
 { anounce CHUNK_99_WORDS_FAIL \
 \
 	'POST chunked tests. \n
