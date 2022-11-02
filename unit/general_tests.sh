@@ -1,4 +1,5 @@
 #!/bin/sh
+# XXX --resolve method
 
 # unit test for webserv
 # by fde-capu
@@ -334,14 +335,11 @@ unittest "Root by servername";
 
 { anounce SUBDIRECTORY \
 \
-	'Accepts subdirectory calls. \n
-	-L tells curl to follow redirect. \n
-	nginx returns 301 on these cases, and client folows, \n
-	but webserv here is directly serving.' \
+	'Accepts subdirectory calls.' \
 \
 ; } 2> /dev/null
 
-cmd="curl -vL http://$name_server:3490/somesub"
+cmd="curl -v http://$name_server:3490/somesub"
 code="200"
 testfile="$MYDIR/confs/html/somesub/index.htm";
 show_output="true";
@@ -351,12 +349,11 @@ unittest "Subdirectory";
 
 { anounce SUBSDIRECTORY_SLASH \
 \
-	"Subdirectory ending with '/' has the same effect. \n
-	This time, curl -L is not required." \
+	"Subdirectory ending with '/' has the same effect." \
 \
 ; } 2> /dev/null
 
-cmd="curl -vL http://$name_server:3490/somesub/"
+cmd="curl -v http://$name_server:3490/somesub/"
 code="200"
 testfile="$MYDIR/confs/html/somesub/index.htm";
 show_output="true";
@@ -395,29 +392,17 @@ unittest "Client not redirecting";
 { anounce REDIRECT \
 \
 	':3493 server redirects 301 to :3490. \n
-	- client redirecting:' \
+	- client redirecting makes two calls:' \
 \
 ; } 2> /dev/null
 
 cmd="curl -L http://$name_server:3493"
 testfile="$MYDIR/confs/html/index.htm";
 code="200";
-unittest "Client redirecting made two calls";
+unittest "Client redirecting";
 
 ##################################################################
 ##################################################################
-##################################################################
-
-{ anounce NOT_THIS_DIRECTORY
-\
-	'Forbid existent server_name without root definition. 403' \
-\
-; } 2> /dev/null
-
-cmd="curl http://$name_server:3490 -H 'Host: rootless'";
-code="403";
-unittest "server_name w/o root (forbidden)";
-
 ##################################################################
 
 { anounce UNKNOWN_SERVERNAME \
@@ -462,14 +447,26 @@ unittest "DELETE rejection";
 
 { anounce UNKNOWN_METHOD \
 \
-	':3491 Unknow method.' \
+	':3491 Unknow method, returns Not Allowed.' \
 \
 ; } 2> /dev/null
 
-cmd="curl -X DELETE http://$name_server:3491";
+cmd="curl -X WTFMETHOD http://$name_server:3491";
 code="405";
 fail="true";
 unittest "Unknown method";
+
+##################################################################
+
+{ anounce NOT_THIS_DIRECTORY
+\
+	'Forbid existent server_name without root definition. 403' \
+\
+; } 2> /dev/null
+
+cmd="curl http://$name_server:3490 -H 'Host: rootless'";
+code="403";
+unittest "server_name w/o root (forbidden)";
 
 ##################################################################
 
