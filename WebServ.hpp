@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 23:16:01 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 20:26:22 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ struct ws_server_instance
 	void mount_multipart();
 
 	DataFold get_location_config() const;
+	bool is_post() const;
 	bool is_multipart() const;
 	bool is_chunked() const;
 	bool chunk_finished;

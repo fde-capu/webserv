@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/31 15:36:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 20:10:26 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void WebServ::init()
 		throw e;
 	}
 
-	while (true)
+	while (true) // Will never die.
 	{
 		try
 		{

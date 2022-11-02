@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:37:23 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/27 13:44:55 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 20:30:51 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,9 @@ struct ws_header WebServ::get_header(const std::string& full_file)
 	verbose(V) << "(get_header) " << header << std::endl;
 	return header;
 }
+
+bool ws_server_instance::is_post() const
+{ return stool.is_equal_insensitive(in_header.method, "post"); }
 
 bool ws_server_instance::is_multipart() const
 { return in_header.content_type.find("multipart") == 0; }

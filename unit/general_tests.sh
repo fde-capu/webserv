@@ -708,11 +708,8 @@ fi # > > > > > > > > > > > > > > > > > > > > > > > Jump line!
 plaintext="This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!";
 cmd="curl http://$name_server:3490/"; # <------ No file name!
 outdir="${MYDIR}/confs/html/";
-code="201";
-unittest "Simple post multipart";
-list "${MYDIR}/confs/html/99B.words";
-dog "${MYDIR}/confs/html/99B.words";
-rm "${MYDIR}/confs/html/99B.words";
+code="400";
+unittest "POST plain text Bad Request";
 
 ##################################################################
 { anounce CHUNK_99_WORDS_FAIL \

@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/31 15:25:51 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 20:32:28 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,9 @@ int ws_reply_instance::PUT_mock(ws_server_instance& si)
 int ws_reply_instance::is_501(ws_server_instance& si)
 {
 	if (
-		(si.in_header.method == "PUT")
+		(si.in_header.method != "GET")
+	&&	(si.in_header.method != "POST")
+	&&	(si.in_header.method != "DELETE")
 	)
 	{
 		set_code(501, "Not Implemented");
@@ -203,7 +205,7 @@ int ws_reply_instance::is_424(ws_server_instance& si)
 int ws_reply_instance::is_400(ws_server_instance& si)
 {
 	std::string full_path = si.location_path(si.multipart_filename);
-	if (si.is_chunked() && FileString::is_dir(full_path))
+	if (si.is_post() && FileString::is_dir(full_path) && !si.is_multipart())
 	{
 		set_code(400, "Bad Request");
 		template_page(400);
@@ -224,9 +226,9 @@ int ws_reply_instance::is_201(ws_server_instance& si)
 		if (file_save == -1)
 		{
 			file_save = 0;
-			set_code(429, "Too Many Requests");
-			template_page(429);
-			return 429;
+			set_code(500, "Internal Server Error");
+			template_page(500);
+			return 500;
 		}
 		if (fcntl(file_save, F_SETFL, O_NONBLOCK) == -1)
 			throw std::domain_error(itoa(si.fd) + " (is_201) Could not set non-blocking file.");
