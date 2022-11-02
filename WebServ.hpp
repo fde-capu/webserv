@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:08 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/11/02 20:26:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 21:17:08 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ class WebServ
 		std::map<int, ws_server_instance> webserver;
 		std::vector<struct pollfd> poll_list;
 		std::map<int, int> fd_to_port;
-		std::vector<int> taken_ports;
+		std::vector<int> taken_sockets;
 		bool lit;
 		void hook_it();
 		ws_server_instance dftosi(DataFold);
@@ -178,7 +178,7 @@ class WebServ
 		static bool read_1st_line(std::string&, ws_header&, bool&);
 		static bool host_from_header(std::string&, ws_header&, bool&);
 		void flush_stdin();
-		bool is_port_taken(int) const;
+		bool is_socket_taken(int) const;
 		bool same_port_another_name(const ws_server_instance*) const;
 		bool is_a_webserv(int) const;
 		void dup_into_poll(int);

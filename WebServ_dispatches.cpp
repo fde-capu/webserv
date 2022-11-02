@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/28 18:58:39 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/29 18:39:39 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 21:25:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,14 @@ void WebServ::if_timout_mark_remove(std::map<int, std::pair<bool, bool> >& ready
 	int V(3);
 	int fd;
 
-	for (std::map<int, Chronometer>::iterator it = timer.begin(); it != timer.end(); it++)
+	for (std::map<int, Chronometer>::iterator it = timer.begin(); \
+		it != timer.end(); it++)
 	{
 		fd = it->first;
 		if (timer[fd] > ACTIVITY_TIMEOUT && !virgin[fd])
 		{
-			verbose(V) << "(dispatch) Marked to remove by timeout " << fd << std::endl;
+			verbose(V) << "(dispatch) Marked to remove by timeout " << fd \
+				<< std::endl;
 			ready[fd].first = true;
 			remove_client[fd] = true;
 		}

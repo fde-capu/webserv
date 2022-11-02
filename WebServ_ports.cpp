@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/04 15:40:40 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/15 23:08:22 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 21:16:39 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,10 @@ int WebServ::bind_socket_to_local(int u_port)
 	return sfd;
 }
 
-bool WebServ::is_port_taken(int port) const
+bool WebServ::is_socket_taken(int port) const
 {
-	for (size_t i = 0; i < taken_ports.size(); i++)
-		if (taken_ports[i] == port)
+	for (size_t i = 0; i < taken_sockets.size(); i++)
+		if (taken_sockets[i] == port)
 			return true;
 	return false;
 }

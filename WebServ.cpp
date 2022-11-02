@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/22 14:24:28 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/11/02 20:10:26 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 21:17:19 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void WebServ::hook_it()
 	{
 		for (size_t j = 0; j < instance[i].port.size(); j++)
 		{
-			if (!is_port_taken(instance[i].port[j]))
+			if (!is_socket_taken(instance[i].port[j]))
 			{
 				instance[i].listen_sock.push_back(bind_socket_to_local(instance[i].port[j]));
 				ufds = pollfd();
@@ -73,7 +73,7 @@ void WebServ::hook_it()
 				poll_list.push_back(ufds);
 				if (listen(instance[i].listen_sock[j], SOMAXCONN) != 0)
 					throw std::domain_error("(webserv) Listening problem.");
-				taken_ports.push_back(instance[i].port[j]);
+				taken_sockets.push_back(instance[i].port[j]);
 			}
 			else if (same_port_another_name(&instance[i]))
 				verbose(2) << "(webserv) Warning: multiple servers on same port. Using first." << std::endl;

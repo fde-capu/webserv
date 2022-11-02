@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/10/31 15:36:22 by fde-capu         ###   ########.fr        #
+#    Updated: 2022/11/02 20:59:59 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,13 +35,13 @@ CC		=	$(MAKESILENT) c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(VERBOSE) $(ENVS)
 CCFLAGS	=	-Wall -Werror -Wextra -g -O0
 OBJS	=	$(SRCS:.cpp=.o)
 OBJS1	=	$(SRCS1:.cpp=.o)
-OBJS2	=	$(SRCS2:.cpp=.o)
 VAL		=	valgrind
 VALFLAG	=	--tool=memcheck \
 			--leak-check=full \
 			--show-leak-kinds=all \
 			--track-origins=yes \
-			--show-reachable=yes
+			--show-reachable=yes \
+			--track-fds=yes
 DOT		=	@echo -n ".";
 
 ws:			line $(NAME1)
@@ -61,13 +61,9 @@ $(OBJS):	%.o : %.cpp $(HEAD)
 $(OBJS1):	%.o : %.cpp
 	$(DOT)
 	$(CC) $(CCFLAGS) -o $@ -c $<
-$(OBJS2):	%.o : %.cpp
-	$(DOT)
-	$(CC) $(CCFLAGS) -o $@ -c $<
 clean:		lynx-clean siege-clean
 	-@rm -f $(OBJS)
 	-@rm -f $(OBJS1)
-	-@rm -f $(OBJS2)
 fclean:		clean lynx-fclean siege-fclean
 	-@rm -f $(NAME1)
 	@./unset_working_directory.sh

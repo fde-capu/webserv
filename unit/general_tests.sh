@@ -1,5 +1,4 @@
 #!/bin/sh
-# XXX --resolve method
 # XXX open ports
 # XXX redirect URL
 
