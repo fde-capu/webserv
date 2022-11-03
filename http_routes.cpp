@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:31:47 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/11/02 20:32:28 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/03 19:59:11 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,27 @@ int ws_reply_instance::is_501(ws_server_instance& si)
 
 int ws_reply_instance::is_301(ws_server_instance& si)
 {
-	std::vector<std::string> returns;
-	returns = si.config.get_vector_str("return");
-	if (!returns.empty())
+	int V(4);
+	std::string redirect;
+
+	redirect = si.config.getValStr("redirect");
+	if (redirect != "")
 	{
-		if (atoi(returns[0].c_str()) == 301)
+		verbose(V) << "(is_301) redirect >" << redirect << "<" << std::endl;
+		set_redirect(redirect + \
+				si.in_header.directory.substr( \
+					si.in_header.directory[0] == '/' ? 1 : 0));
+		if (!si.is_post())
 		{
 			set_code(301, "Moved Permanently");
 			template_page(301);
-			set_redirect(returns[1]);
 			return 301;
+		}
+		else
+		{
+			set_code(308, "Permanent Redirect");
+			template_page(308);
+			return 308;
 		}
 	}
 	return 0;

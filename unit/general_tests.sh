@@ -1,5 +1,4 @@
 #!/bin/sh
-# XXX redirect URL
 
 # unit test for webserv
 # by fde-capu
@@ -7,9 +6,9 @@
 # All variables are true if some string "anything" and false as empty string.
 
 name_server="127.0.0.1";
-step_by_step="yes";
+step_by_step="";
 clean_upfiles_after_test="";
-silent="";
+silent="yes";
 ultrasilent="";
 lightmode="";
 
@@ -18,6 +17,7 @@ MYDIR="${MYSELF%/*}";
 ok_count=0;
 ko_count=0;
 tot_count=0;
+words99="This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!";
 
 resetvars()
 {
@@ -36,6 +36,7 @@ resetvars()
 	compare_size="";
 	message="";
 	heavy="";
+	comparetext="";
 };
 resetvars;
 
@@ -91,7 +92,12 @@ unittest()
 	colorscore "$1 | expect $code, got $out" "$out" "$code";
 
 	if [ "$fail" = "" ] ; then
-		[ "$testfile" != "" ] && colorscore "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
+		if [ "$comparetext" = "" ] ; then
+			[ "$testfile" != "" ] && colorscore "$1 | compare ouput" "`cat tmp_response`" "`cat $testfile`";
+		else
+			[ "$testfile" != "" ] && colorscore "$1 | compare text" "`cat $testfile`" "$comparetext";
+			[ "$testfile" = "" ] && colorscore "$1 | compare response" "`cat tmp_response`" "$comparetext";
+		fi ;
 		[ "$outdir" != "" ] && [ "$upfile" != "" ] && colorscore "$1 | compare files" "`cat $outdir/$upfile`" "`cat ${MYDIR}/$upfile`";
 	fi;
 
@@ -156,7 +162,7 @@ stressupchunk()
 		while [ "$i" -le "$stress_count" ]; do
 			sleep 0.05;
 			[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo -n "\r $i ";
-			curl -H "Expect:" -H "Content-Type: test/file" -H "Transfer-Encoding: chunked" http://127.0.0.1:3490/large_upload/file.nois -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
+			curl -H "Expect:" -H "Content-Type: test/file" -H "Transfer-Encoding: chunked" http://127.0.0.1:3490/large_upload/file.noise -sv -F file=@./file.noise 2>> stress_out 1> /dev/null &
 			i=$(( i + 1 ));
 		done;
 		wait;
@@ -336,7 +342,8 @@ unittest "Basic one";
 
 { anounce ROOT_BY_HOSTNAME \
 \
-	'If server_name is existent on another root: 200' \
+	'Multiple server_names may use same port,\n
+	 and may serve other sites.' \
 \
 ; } 2> /dev/null;
 
@@ -424,8 +431,8 @@ unittest "Port to server";
 
 { anounce DUMB_CLIENT \
 \
-	' - client NOT redirecting (gets 301):\n
-	(dumb test, redirect is client-side).' \
+	' - client NOT redirecting gets 301:\n
+	redirecting is client-side.' \
 \
 ; } 2> /dev/null;
 
@@ -494,18 +501,18 @@ unittest "3493 to 3490 to aliased";
 \
 ; } 2> /dev/null;
 
-cmd="curl -L http://$name_server:3493/some_sub/get-a-file";
+cmd="curl -L http://$name_server:3493/uri_alias/get-a-file";
 testfile="$MYDIR/confs/html/uri_substitution/get-a-file";
 code="200";
-unittest "File from aliased redirect.";
+unittest "File from aliased redirect";
 
 ##################################################################
 ##################################################################
 ##################################################################
 
-{ anounce GET_REFUSAL \
+{ anounce METHOD_NOT_ALLOWED \
 \
-	':3491 accepts only GET. Testing POST is not allowed. 405' \
+	':3491 accepts only GET. 405' \
 \
 ; } 2> /dev/null;
 
@@ -517,7 +524,7 @@ unittest "POST rejection";
 
 ##################################################################
 
-{ anounce DELETE_REFUSAL \
+{ anounce METHOD_NOT_ALLOWED_2 \
 \
 	':3491 accepts only GET. Testing DELETE is not allowed. 405' \
 \
@@ -564,7 +571,7 @@ unittest "server_name w/o root (forbidden)";
 cmd="curl http://$name_server:3490 -H 'Host: wtf_server'";
 testfile="$MYDIR/confs/html/index.htm";
 code="200";
-unittest "Default server_name";
+unittest "Defaults to first";
 
 ##################################################################
 
@@ -594,6 +601,8 @@ unittest "Forbidden";
 plaintext="This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!";
 cmd="curl http://$name_server:3490/99B.words";
 outdir="${MYDIR}/confs/html/";
+testfile="$MYDIR/confs/html/99B.words";
+comparetext="$plaintext";
 code="201";
 unittest "Simple post multipart";
 list "${MYDIR}/confs/html/99B.words";
@@ -604,32 +613,38 @@ rm "${MYDIR}/confs/html/99B.words";
 
 { anounce ALIAS_POST \
 \
-	'uri_alias is actualy uri_substitution directory.' \
+	'uri_alias is actually uri_substitution directory.' \
 \
 ; } 2> /dev/null;
 
 plaintext="This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!";
-cmd="curl http://$name_server:3490/uri_alias";
+cmd="curl http://$name_server:3490/uri_alias/99B.words";
 outdir="${MYDIR}/confs/html/uri_substitution";
+testfile="${MYDIR}/confs/html/uri_substitution/99B.words";
+comparetext="$plaintext";
 code="201";
 unittest "Alias post";
-list "${MYDIR}/confs/html/99B.words";
-dog "${MYDIR}/confs/html/99B.words";
-rm "${MYDIR}/confs/html/99B.words";
+list "${MYDIR}/confs/html/uri_substitution/99B.words";
+dog "${MYDIR}/confs/html/uri_substitution/99B.words";
+rm "${MYDIR}/confs/html/uri_substitution/99B.words";
 
 ##################################################################
 
 { anounce REDIRECT_POST \
 \
-	'Post to 3493 must be answered by 3490.' \
+	'Post to 3493 must be answered by 3490.\n
+	 Note webserv returns 308 for the first call. \n
+	 If it was 301, curl would swtich from POST to GET.' \
 \
 ; } 2> /dev/null;
 
 plaintext="This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!";
 cmd="curl -L http://$name_server:3493/99B.words";
 outdir="${MYDIR}/confs/html/";
+testfile="${MYDIR}/confs/html/99B.words";
+comparetext="$plaintext";
 code="201";
-unittest "3493 -> 3490";
+unittest "POST 3493 -> 3490";
 list "${MYDIR}/confs/html/99B.words";
 dog "${MYDIR}/confs/html/99B.words";
 rm "${MYDIR}/confs/html/99B.words";
@@ -713,18 +728,20 @@ unittest "Multipart noise 101B";
 
 ##################################################################
 
-{ anounce MULTI_LARGE_42 \
+{ anounce MULTI_FAIL_CONTINUE \
 \
-	'Not large, but shows "uri /large_upload" is working. 42B. 201' \
+	'Now POSTing 1MB.noise.\n
+	This shall NOT be accepted, because curl will expect 100-continue,\n
+	but webserv must always close the connection. Chose 424 for answer.' \
 \
 ; } 2> /dev/null;
 
-noise="42";
-outdir="${MYDIR}/confs/html/uploads_large";
+noise="1MB";
 cmd="curl http://$name_server:3490/large_upload";
-code="201";
-unittest "Noise to large_upload 42B";
-list "${MYDIR}/confs/html/uploads_large/file.noise";
+code="424";
+fail="true";
+message="Response code might have been chosen differently.";
+unittest "webserv close connection";
 
 #####################################################################
 
@@ -740,21 +757,6 @@ cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload";
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201";
 unittest "1MB success";
-list "${MYDIR}/confs/html/uploads_large/file.noise";
-
-#####################################################################
-
-{ anounce MULTI_2M_NOISE \
-\
-	'Now 2MB.noise, sending the file right away.' \
-\
-; } 2> /dev/null;
-
-noise="2MB";
-cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload";
-outdir="${MYDIR}/confs/html/uploads_large";
-code="201";
-unittest "2MB success";
 list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 #####################################################################
@@ -791,23 +793,6 @@ fail="true";
 unittest "70MB multi-part (fail)";
 list "${MYDIR}/confs/html/uploads_large/file.noise";
 
-#####################################################################
-
-{ anounce MULTI_FAIL_CONTINUE \
-\
-	'Now POSTing 1MB.noise.\n
-	This shall NOT be accepted, because curl will expect 100-continue,\n
-	but webserv must always close the connection. Chose 424 for answer.' \
-\
-; } 2> /dev/null;
-
-noise="1MB";
-cmd="curl http://$name_server:3490/large_upload";
-code="424";
-fail="true";
-message="Response code might have been chosen differently.";
-unittest "webserv close connection";
-
 ##################################################################
 ##################################################################
 ##################################################################
@@ -827,16 +812,18 @@ clean;
 
 { anounce PLAIN_TEXT_CHUNK \
 \
-	'Plain/text fails without file name.' \
+	'Plain/text go good.' \
 \
 ; } 2> /dev/null;
 
 chunked="true";
 plaintext="This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!";
-cmd="curl http://$name_server:3490/99-text.txt";
+testfile="${MYDIR}/confs/html/99B.words";
+comparetext="$plaintext";
+cmd="curl http://$name_server:3490/99B.words";
 outdir="${MYDIR}/confs/html/";
-code="400";
-unittest "POST plain text Bad Request";
+code="201";
+unittest "Chunked POST plain text";
 
 ###################################################################
 
@@ -855,45 +842,6 @@ unittest "POST plain text Bad Request";
 
 ##################################################################
 
-{ anounce CHUNK_99_WORDS_FAIL \
-\
-	'POST chunked tests. \n
-	This rejects, because post does not specify a filename.' \
-\
-; } 2> /dev/null;
-
-chunked="true";
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words;
-cmd="curl http://$name_server:3490"; # <------- No file name!
-outdir="${MYDIR}/confs/html/";
-upfile="99B.words";
-code="400";
-fail="true";
-unittest "Chunked fail 400 Bad Request";
-rm ${MYDIR}/99B.words;
-
-##################################################################
-
-{ anounce CHUNK_99_WORDS \
-\
-	'POST chunked tests. \n
-	Within limits of client_max_body_size:' \
-\
-; } 2> /dev/null;
-
-chunked="true";
-echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words;
-cmd="curl http://$name_server:3490/99B.words";
-outdir="${MYDIR}/confs/html/";
-upfile="99B.words";
-code="201";
-unittest "Simple post";
-list "${MYDIR}/confs/html/99B.words;";
-rm ${MYDIR}/99B.words;
-dog ${MYDIR}/confs/html/99B.words;
-
-##################################################################
-
 { anounce CHUNK_99_NOISE \
 \
 	'99B using noise file.' \
@@ -906,22 +854,6 @@ outdir="${MYDIR}/confs/html";
 cmd="curl http://$name_server:3490";
 code="201";
 unittest "Simple post with noise";
-
-#################################################################
-
-{ anounce CHUNK_100_NOISE \
-\
-	'Same, with 100B.noise. Max is at 100B, this passes. \n
-	Same file name, so it overwrites.'\
-\
-; } 2> /dev/null;
-
-chunked="true";
-noise="100";
-outdir="${MYDIR}/confs/html";
-cmd="curl http://$name_server:3490";
-code="201";
-unittest "Chunked noise 100B";
 
 #################################################################
 
@@ -941,22 +873,6 @@ unittest "Chunked noise 101B";
 
 ###################################################################
 
-{ anounce CHUNK_LARGE_42 \
-\
-	'Not large, but shows "uri /large_upload" is working. 42B. 202' \
-\
-; } 2> /dev/null;
-
-chunked="true";
-noise="42";
-outdir="${MYDIR}/confs/html/uploads_large";
-cmd="curl http://$name_server:3490/large_upload";
-code="201";
-unittest "Noise to large_upload 42B";
-list "${MYDIR}/confs/html/uploads_large/file.noise";
-
-###############################################################
-
 { anounce CHUNK_1M_NOISE \
 \
 	'1MB.noise.\n
@@ -970,22 +886,6 @@ cmd="curl http://$name_server:3490/large_upload";
 outdir="${MYDIR}/confs/html/uploads_large";
 code="201";
 unittest "1MB success";
-list "${MYDIR}/confs/html/uploads_large/file.noise";
-
-##################################################################
-
-{ anounce CHUNK_2M_NOISE \
-\
-	'Now 2MB.noise.' \
-\
-; } 2> /dev/null;
-
-chunked="true";
-noise="2MB";
-cmd="curl http://$name_server:3490/large_upload";
-outdir="${MYDIR}/confs/html/uploads_large";
-code="201";
-unittest "2MB success";
 list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 ##################################################################
@@ -1084,7 +984,22 @@ unittest "Get cgi somesub/sh";
 cmd="curl http://$name_server:3490/uri_alias/hi.sh";
 code="200";
 show_output="true";
+message="There should the output of a script, not the script itself.";
 unittest "Get cgi alias";
+
+##################################################################
+
+{ anounce CGI_GET_ON_REDIRECT \
+\
+	'Test CGI when redirecting.' \
+\
+; } 2> /dev/null;
+
+cmd="curl -L http://$name_server:3493/cgi_test.sh";
+code="200";
+show_output="true";
+message="There should the output of a script, not the script itself.";
+unittest "Get cgi redirect";
 
 ##################################################################
 
@@ -1107,13 +1022,13 @@ rm -f "test_php";
 
 { anounce CGI_GET_NOTFOUND \
 \
-	'Test CGI with GET method, xxxx.sh (unexistent).' \
+	'Test CGI with GET method, xxxx.bla (unexistent).' \
 \
 ; } 2> /dev/null;
 
-cmd="curl http://$name_server:3490/xxxx.sh";
+cmd="curl http://$name_server:3490/xxxx.bla";
 code="404";
-unittest "Get cgi sh but no";
+unittest "Get cgi bla but not";
 
 ##################################################################
 ##################################################################
@@ -1154,13 +1069,14 @@ rm ${MYDIR}/99B.words;
 
 ###################################################################
 
-{ anounce MULTI_CGI_BLA_OK \
+{ anounce CGI_MULTI_BLA_OK \
 \
 	'Test CGI call when posting and calling something (existent) .bla.' \
 \
 ; } 2> /dev/null;
 
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words;
+comparetext="THIS FILE IS EXACTLY 99 BYTES LONG, AND IS USED TO TEST POST REQUESTS. THIS TEXT IS PRINTABLE: EOF!";
 cmd="curl http://$name_server:3490/bla.bla";
 upfile="99B.words";
 code="202";
@@ -1179,6 +1095,7 @@ rm ${MYDIR}/99B.words;
 
 chunked="true";
 echo -n "This file is exactly 99 bytes long, and is used to test POST requests. This text is printable: EOF!" > ${MYDIR}/99B.words;
+comparetext="THIS FILE IS EXACTLY 99 BYTES LONG, AND IS USED TO TEST POST REQUESTS. THIS TEXT IS PRINTABLE: EOF!";
 cmd="curl http://$name_server:3490/bla.bla";
 upfile="99B.words";
 code="202";
@@ -1190,14 +1107,13 @@ rm ${MYDIR}/99B.words;
 ##################################################################
 
 heavy="true";
+largecgi="42428000";
 { anounce CGI_POST_MULTI_LARGE \
 \
 	"Test CGI call when posting multipart for large file. \n
 	 Value of $largecgi is a best for not getting oom killed on Workspace." \
 \
 ; } 2> /dev/null;
-
-largecgi="42428000";
 
 head -c $largecgi /dev/zero | tr '\0' 'z' > "${MYDIR}/youpi.bla";
 head -c $largecgi /dev/zero | tr '\0' 'Z' > "${MYDIR}/youpi_expected_result.bla";
@@ -1209,7 +1125,8 @@ testfile="${MYDIR}/youpi_expected_result.bla";
 short_output="true";
 compare_size="$largecgi";
 fail="true"; # comparing files would get general_tests.sh oom killed.
-unittest "Test POST multipart /directory/youpi.bla large file.";
+message "Return should consist of capital ZZZZ...";
+unittest "$largecgi sized";
 rm "${MYDIR}/youpi.bla";
 rm "${MYDIR}/youpi_expected_result.bla";
 rm "${MYDIR}/confs/html/uploads_large/bla.bla";
@@ -1236,7 +1153,7 @@ testfile="${MYDIR}/youpi_expected_result.bla";
 short_output="true";
 compare_size="$largecgi";
 fail="true"; # comparing files would get general_tests.sh oom killed.
-unittest "Test POST chunked /directory/youpi.bla large file.";
+unittest "$largecgi sized";
 rm "${MYDIR}/youpi.bla";
 rm "${MYDIR}/youpi_expected_result.bla";
 rm "${MYDIR}/confs/html/uploads_large/bla.bla";
@@ -1282,7 +1199,7 @@ rm ${MYDIR}/99B.words;
 ##################################################################
 ##################################################################
 
-{ anounce Custom_Error \
+{ anounce CUSTOM_ERROR_WITH \
 \
 	':3490 has custom error.' \
 \
@@ -1296,7 +1213,7 @@ unittest "Error 404 with custom configuration";
 
 #################################################################
 
-{ anounce Custom_Error \
+{ anounce CUSTOM_ERROR_WITHOUT \
 \
 	':3491 does not have custom.' \
 \
@@ -1310,7 +1227,7 @@ unittest "Error 404 without custom";
 
 #################################################################
 
-{ anounce Directory_Listing \
+{ anounce DIRECTORY_LISTING \
 	'autoindex-demo' \
 ; } 2> /dev/null;
 
@@ -1322,7 +1239,7 @@ unittest "Autoindex";
 
 #################################################################
 
-{ anounce Directory_Listing_OFF \
+{ anounce DIRECTORY_LISTING_OFF \
 	'autoindex-off, existent directory, expect 403' \
 ; } 2> /dev/null;
 
@@ -1333,7 +1250,7 @@ unittest "Autoindex off";
 
 #################################################################
 
-{ anounce ReRoot_Autoindex \
+{ anounce DIRECTORY_LIST_ALIAS \
 	'This shows files that were previously uploaded \n
 	 to large_uploads (root uploads_large).' \
 ; } 2> /dev/null;
@@ -1341,7 +1258,7 @@ unittest "Autoindex off";
 cmd="curl http://$name_server:3490/large_uploads";
 code="200";
 show_output="true";
-unittest "Another autoindex, now with root rewrite";
+unittest "Another autoindex, now with alias";
 
 #################################################################
 #################################################################
@@ -1452,6 +1369,8 @@ if [ "$lightmode" = "" ] ; then
 ; } 2> /dev/null;
 
 set +x;
+stress_count="100";
+accepts="99";
 rm -f stress_out;
 [ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "";
 i=1;
