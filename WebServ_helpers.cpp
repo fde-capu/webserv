@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/18 15:25:13 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/11/02 22:35:32 by fde-capu         ###   ########.fr       */
+/*   Updated: 2022/11/02 22:50:21 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ WebServ::~WebServ()
 		it != fd_to_port.end(); it++)
 	{
 		if (close(it->first) == -1)
-			verbose(3) << "(webserv:warning) Dismissed error closing " << \
+			verbose(3) << "(webserv:warningt) Dismissed error closing " << \
 			it->first << std::endl;
 	}
 	for (size_t i = 0; i < SYSTEM_ULIMIT_SN; ++i)

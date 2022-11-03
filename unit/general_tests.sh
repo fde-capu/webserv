@@ -1,7 +1,5 @@
 #!/bin/sh
-# XXX track fds after stress
 # XXX track fds after general
-# XXX open ports
 # XXX redirect URL
 
 # unit test for webserv
@@ -14,6 +12,7 @@ step_by_step="";
 clean_upfiles_after_test="";
 silent="yes";
 ultrasilent="";
+lightmode="yes";
 
 MYSELF="$(realpath "$0")"
 MYDIR="${MYSELF%/*}"
@@ -37,11 +36,14 @@ resetvars()
 	short_output="";
 	compare_size="";
 	message="";
+	heavy="";
 }
 resetvars;
 
 unittest()
 {
+	[ "$lightmode" != "" ] && [ "$heavy" != "" ] && resetvars && return ;
+
 	fullcmd="$cmd";
 
 	if [ "$noise" != "" ] ; then
@@ -108,19 +110,9 @@ unittest()
 	resetvars;
 }
 
-run()
-{
-	fullcmd="$1";
-	if [ "$silent" != "" ] || [ "$ultrasilent" != "" ] ; then
-		fullcmd="$fullcmd 2> /dev/null";
-		out=`eval "$fullcmd" 2> /dev/null`;
-	else
-		out=`eval "$fullcmd"`;
-	fi
-}
-
 stressupmulti()
 {
+	[ "$lightmode" != "" ] && return ;
 	sleep 4
 	{ anounce STRESS_UPLOADS_MULTI \
 		\
@@ -141,13 +133,14 @@ stressupmulti()
 		done;
 		wait;
 		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
-		colorge "Total $stress_count, accept $more_than, score $stress_result" "$stress_result" "$more_than";
+		thresholdscore "Stress" "$stress_count" "$more_than" "$stress_result";
 		rm -f stress_out;
 		rm -f file.noise;
 }
 
 stressupchunk()
 {
+	[ "$lightmode" != "" ] && return ;
 	sleep 4
 	{ anounce STRESS_UPLOADS_CHUNK \
 		\
@@ -169,9 +162,20 @@ stressupchunk()
 		done;
 		wait;
 		stress_result=$(cat stress_out | grep HTTP | grep "201 Created" | wc -l);
-		colorge "Total $stress_count, accept $more_than, score $stress_result" "$stress_result" "$more_than";
+		thresholdscore "Stress" "$stress_count" "$more_than" "$stress_result";
 		rm -f stress_out;
 		rm -f file.noise;
+}
+
+run()
+{
+	fullcmd="$1";
+	if [ "$silent" != "" ] || [ "$ultrasilent" != "" ] ; then
+		fullcmd="$fullcmd 2> /dev/null";
+		out=`eval "$fullcmd" 2> /dev/null`;
+	else
+		out=`eval "$fullcmd"`;
+	fi
 }
 
 enterkey()
@@ -195,6 +199,7 @@ divider()
 
 anounce()
 {
+	[ "$lightmode" != "" ] && [ "$heavy" != "" ] && return ;
 	enterkey;
 	if [ "$ultrasilent" = "" ] ; then
 		if [ "$silent" = "" ] ; then
@@ -253,11 +258,12 @@ colorscore()
 	[ "$ultrasilent" = "" ] && echo "";
 }
 
-colorge()
+thresholdscore()
 {
-	a=`echo "$2"`;
+	n=`echo "$2"`;
 	b=`echo "$3"`;
-	[ "$ultrasilent" = "" ] && echo -n "$1 ";
+	a=`echo "$4"`;
+	[ "$ultrasilent" = "" ] && echo -n "$1 | max $2 | accept $b | got $a ";
 	if [ "$a" -ge "$b" ] ; then
 		printf "\e[32m%s\e[37m " "[ OK ]";
 		ok_count=$((ok_count+1));
@@ -288,6 +294,8 @@ for i in 1 2 3 4 5 6 7 8 9 10
 do
 	{ divider "#"; } 2> /dev/null
 done
+
+[ "$lightmode" != "" ] && echo "Running in light mode.";
 
 clean()
 {
@@ -453,7 +461,7 @@ unittest "Unknown method";
 
 ##################################################################
 
-{ anounce NOT_THIS_DIRECTORY
+{ anounce NOT_THIS_DIRECTORY \
 \
 	'Forbid existent server_name without root definition. 403' \
 \
@@ -467,14 +475,14 @@ unittest "server_name w/o root (forbidden)";
 
 { anounce UNKNOWN_SERVERNAME \
 \
-	'If server_name is unexistent, defaults to previous: 200' \
+	'If server_name is unexistent, defaults to first in config.' \
 \
 ; } 2> /dev/null
 
 cmd="curl http://$name_server:3490 -H 'Host: wtf_server'";
 testfile="$MYDIR/confs/html/index.htm";
 code="200";
-unittest "Unexistent server_name defaults to first";
+unittest "Default server_name";
 
 ##################################################################
 
@@ -629,12 +637,13 @@ list "${MYDIR}/confs/html/uploads_large/file.noise";
 noise="2MB"
 cmd="curl -H \"Expect:\" http://$name_server:3490/large_upload"
 outdir="${MYDIR}/confs/html/uploads_large";
-code="201"
+code="201";
 unittest "2MB success"
 list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 #####################################################################
 
+heavy="true";
 { anounce MULTI_50M_NOISE \
 \
 	'How about 50MB?\n
@@ -654,6 +663,7 @@ list "${MYDIR}/confs/html/uploads_large/file.noise";
 #####################################################################
 #####################################################################
 
+heavy="true";
 { anounce MULTI_FAIL_70MB \
 \
 	'Large file 70MB fail on multipart. webserv is limited to 64MB.' \
@@ -849,6 +859,7 @@ list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 ##################################################################
 
+heavy="true";
 { anounce CHUNK_50M_NOISE \
 \
 	'How about 50MB?\n
@@ -866,6 +877,7 @@ list "${MYDIR}/confs/html/uploads_large/file.noise";
 
 #####################################################################
 
+heavy="true";
 { anounce CHUNK_PARTIAL \
 \
 	'How about 70MB? This time, it is accepted as partial upload, \n
@@ -885,6 +897,7 @@ list "${MYDIR}/confs/html/uploads_large/file.noise";
 ##################################################################
 ##################################################################
 
+heavy="true";
 { anounce GET_LARGE_FILE \
 \
 	'Gets a large file.' \
@@ -1045,6 +1058,7 @@ rm ${MYDIR}/99B.words
 
 ##################################################################
 
+heavy="true";
 { anounce CGI_POST_MULTI_LARGE \
 \
 	"Test CGI call when posting multipart for large file. \n
@@ -1071,6 +1085,7 @@ rm "${MYDIR}/confs/html/uploads_large/bla.bla"
 
 ###################################################################
 
+heavy="true";
 { anounce CGI_POST_CHUNK_LARGE \
 \
 	'CGI POST chunked for large file.' \
@@ -1111,7 +1126,7 @@ upfile="99B.words"
 code="421";
 show_output="true";
 message="Arbitrary choice of 421. POST using CGI on bad URL."
-unittest "Error calling CGI multipart with wrong file";
+unittest "CGI multipart wrong file";
 rm ${MYDIR}/99B.words
 
 ###################################################################
@@ -1129,7 +1144,7 @@ upfile="99B.words"
 code="421";
 show_output="true";
 message="Arbitrary choice of 421. POST using CGI on bad URL."
-unittest "Error calling CGI chunked with wrong file";
+unittest "CGI chunked wrong file";
 rm ${MYDIR}/99B.words
 
 #################################################################
@@ -1216,7 +1231,9 @@ say "ls after DELETE: $after";
 say "Got body: `cat foo_out`";
 rm foo_out;
 colorscore "ls must be the same after DELETE call" "$before" "$after";
-colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "$out" "200";
+colorscore "Expect 200 OK" "$out" "200";
+message="200 if has body, 204 if reply is bodyless.";
+[ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "\033[0;33m$message\033[0;37m";
 
 #################################################################
 
@@ -1226,7 +1243,7 @@ colorscore "Expect 200 OK if has body, 204 No Content if response has no body" "
 
 before="`ls ${MYDIR}/confs/html/uploads_large`";
 head -c 142 /dev/urandom > ${MYDIR}/noise_to_delete
-run "curl http://$name_server:3490/large_uploads -F 'file=@${MYDIR}/noise_to_delete'"
+run "curl -s http://$name_server:3490/large_uploads -F 'file=@${MYDIR}/noise_to_delete'"
 during="`ls ${MYDIR}/confs/html/uploads_large`";
 run "curl -X DELETE http://$name_server:3490/large_upload/noise_to_delete -sSvw '%{http_code}' -o foo_out";
 after="`ls ${MYDIR}/confs/html/uploads_large`";
@@ -1273,7 +1290,7 @@ colorscore "Expect 404" "$out" "404"
 ; } 2> /dev/null
 
 set +x
-run "curl http://$name_server:3490/cgi_cookie.php -b cookiefile -c cookiefile --trace-ascii tmp_response"
+run "curl -s http://$name_server:3490/cgi_cookie.php -b cookiefile -c cookiefile --trace-ascii tmp_response"
 cookieline=`cat tmp_response | grep "Set-Cookie" | sed "s|.*Set-Cookie.*|Set-Cookie|"`
 sessionid=`cat tmp_response | grep "Set-Cookie" | sed "s|.*SESSION_ID=||" | sed "s|;.*||"`
 dog tmp_response;
@@ -1291,10 +1308,11 @@ colorscore "SESSION_ID expired." "$cookieline" "";
 rm tmp_response;
 rm cookiefile;
 
-#################################################################
+##################################################################
 ##################################################################
 ##################################################################
 
+if [ "$lightmode" = "" ] ; then
 { anounce STRESS_GET \
 \
 	"Stress testing $stress_count calls. Wait for it.\n
@@ -1302,21 +1320,20 @@ rm cookiefile;
 \
 ; } 2> /dev/null
 
-stress_count=142;
-
 set +x;
 rm -f stress_out;
 [ "$silent" = "" ] && [ "$ultrasilent" = "" ] && echo "";
 i=1;
 while [ "$i" -le "$stress_count" ]; do
 	[ "$ultrasilent" = "" ] && echo -n "\r $i";
-	curl -sv http://localhost:3491/ 2>> stress_out 1> /dev/null &
+	curl -sv http://localhost:3490/empty_page 2>> stress_out 1> /dev/null &
 	i=$(( i + 1 ));
 done;
 wait;
 stress_result=$(cat stress_out | grep HTTP | grep "200 OK" | wc -l);
-colorscore "\rCount of 200 OK must be $stress_count, and it is $stress_result" "$stress_count" "$stress_result";
+thresholdscore "\rGET_EMPTY_PAGE" "$stress_count" "$accepts" "$stress_result";
 rm -f stress_out;
+fi
 
 ##################################################################
 
