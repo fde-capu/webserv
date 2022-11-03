@@ -1125,7 +1125,7 @@ testfile="${MYDIR}/youpi_expected_result.bla";
 short_output="true";
 compare_size="$largecgi";
 fail="true"; # comparing files would get general_tests.sh oom killed.
-message "Return should consist of capital ZZZZ...";
+message="Return should consist of capital ZZZZ...";
 unittest "$largecgi sized";
 rm "${MYDIR}/youpi.bla";
 rm "${MYDIR}/youpi_expected_result.bla";
