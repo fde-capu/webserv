@@ -6,7 +6,7 @@
 #    By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/05 21:07:02 by fde-capu          #+#    #+#              #
-#    Updated: 2022/11/02 20:59:59 by fde-capu         ###   ########.fr        #
+#    Updated: 2024/03/13 16:57:09 by fde-capu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ HEAD	=	$(TRACKMAKEFILE) argval_ws.conf header.hpp \
 			datafold_type.hpp DataFold_defines.hpp bladefs.hpp WebServ.hpp \
 			Chronometer.hpp TemplatePage.hpp
 SHELL	=	/bin/sh
-CC		=	$(MAKESILENT) c++ -std=c++98 -Wfatal-errors -DVERBOSE=$(VERBOSE) $(ENVS)
+CC		=	$(MAKESILENT) clang++ -std=c++98 -Wfatal-errors -DVERBOSE=$(VERBOSE) $(ENVS)
 CCFLAGS	=	-Wall -Werror -Wextra -g -O0
 OBJS	=	$(SRCS:.cpp=.o)
 OBJS1	=	$(SRCS1:.cpp=.o)

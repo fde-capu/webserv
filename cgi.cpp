@@ -6,7 +6,7 @@
 /*   By: fde-capu <fde-capu@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/26 17:26:51 by fde-capu          #+#    #+#             */
-/*   Updated: 2022/10/28 18:55:38 by fde-capu         ###   ########.fr       */
+/*   Updated: 2024/03/13 17:18:47 by fde-capu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,6 +256,8 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 		verbose(V) << "(is_cgi_exec) cgi_extension " << cgi_extension << std::endl;
 		cgi_children = cgi_params_str.substr(cgi_extension.length() + 1);
 		verbose(V) << "(is_cgi_exec) cgi_children " << cgi_children << std::endl;
+		if (cgi_extension != call_extension)
+			return 0;
 		si.cgi_flag = true;
 		return cgi_prepare(si, cgi_children);
 	}
@@ -267,6 +269,7 @@ int ws_reply_instance::is_cgi_exec(ws_server_instance& si)
 		verbose(V) << "(is_cgi_exec) cgi_extension " << cgi_extension << std::endl;
 		if (cgi_extension != call_extension)
 			continue ;
+		verbose(V) << "(is_cgi_exec) passing for " << call_extension << ", because it is " << cgi_extension << std::endl;
 		cgi_children = cgi_vec.val.substr(cgi_extension.length() + 1);
 		verbose(V) << "(is_cgi_exec) cgi_children " << cgi_children << std::endl;
 		si.cgi_flag = true;
